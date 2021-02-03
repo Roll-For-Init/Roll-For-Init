@@ -7,7 +7,6 @@ const User = require("../models/User.js");
 //  @route POST /users/register
 //  @desc Register user
 //  @access Public
-//teest
 router.post("/register", (req, res, next) => { //will probably want some kind of sanitizer for user input
   console.log(req.body);
   const error = new Error('');
