@@ -3,9 +3,11 @@
   "version": "0.1.0",
   "description": "A MERN stack template to start future projects.",
   "private": true,
+  "homepage": ".",
   "scripts": {
     "dev": "webpack -p --progress --profile --colors && node server",
-    "start": "node server"
+    "start": "node server",
+    "build": "webpack -p --progress --config ./webpack/webpack.prod.js"
   },
   "engines": {
     "node": ">=6"
