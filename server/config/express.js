@@ -44,7 +44,7 @@ module.exports.init = () => {
         app.use(
             webpackDevMiddleware(compiler, {
                 publicPath: webpackConfig.output.publicPath,
-                contentBase: path.resolve(__dirname, "../client/public"),
+                contentBase: path.resolve(__dirname, "../../client/public"),
                 stats: {
                     colors: true,
                     hash: false,
@@ -57,10 +57,10 @@ module.exports.init = () => {
         );
 
         app.use(webpackHotMiddleware(compiler));
-        app.use(express.static(path.resolve(__dirname, "../dist")));
+        app.use(express.static(path.resolve(__dirname, "../../dist")));
     }
     else {
-        app.use(express.static(path.resolve(__dirname, "../dist")));
+        app.use(express.static(path.resolve(__dirname, "../../dist")));
 
         app.get("*", function (req, res) {
             res.sendFile(path.resolve(__dirname, "../dist/index.html"));
