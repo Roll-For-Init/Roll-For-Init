@@ -53,6 +53,7 @@ const CharacterSchema = new Schema({
       utility: [
         {
           name: String,
+          duration: String,
           description: String,
           mechanics: [
             {
@@ -103,6 +104,7 @@ const CharacterSchema = new Schema({
       utility: [
         {
           name: String,
+          duration: String,
           description: String,
           mechanics: [
             {
