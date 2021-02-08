@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import "./styles.css";
+import "./styles.scss";
 
 const Create = () => {
   return (
@@ -104,12 +104,12 @@ const Create = () => {
           </div>
           <div className="d-grid gap-2">
             <Link to="/">
-              <button type="button" className="btn btn-lg top-buttons">
+              <button type="button" className="btn btn-lg btn-secondary">
                 Back
               </button>
             </Link>
             <Link to="/create">
-              <button type="button" className="btn btn-lg top-buttons">
+              <button type="button" className="btn btn-lg btn-primary">
                 Next
               </button>
             </Link>
