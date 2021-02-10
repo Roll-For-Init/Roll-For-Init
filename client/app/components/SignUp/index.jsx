@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Form, Field } from "react-final-form";
 import { signUp } from "../../actions";
 
-import "./styles.css";
+import "./styles.scss";
 
 const reduxField = ({ placeholder, input, meta }) => (
   <div className="input-group mb-3">
@@ -49,38 +49,38 @@ const SignUp = () => {
           }
           return errors;
         }}
-        render={({ handleSubmit, form, submitting, pristine, values }) => (
+        render={({ handleSubmit, form, submitting, invalid, values }) => (
           <form onSubmit={handleSubmit} className="needs-validation input-form">
             <Field
               type="text"
               name="username"
               component={reduxField}
-              placeholder="Username"
+              placeholder="username"
             />
             <Field
               type="text"
               name="email"
               component={reduxField}
-              placeholder="Email"
+              placeholder="email"
             />
             <Field
               type="password"
               name="password"
               component={reduxField}
-              placeholder="Password"
+              placeholder="password"
             />
             <Field
               type="password"
               name="confirmPassword"
               component={reduxField}
-              placeholder="Confirm Password"
+              placeholder="confirm password"
             />
             <div className="d-grid gap-2">
               <Link to="/">
                 <button
                   type="button"
                   onClick={form.reset}
-                  className="btn btn-lg top-buttons"
+                  className="btn btn-lg btn-secondary"
                   disabled={submitting}
                 >
                   Back
@@ -88,8 +88,8 @@ const SignUp = () => {
               </Link>
               <button
                 type="submit"
-                disabled={submitting || pristine}
-                className="btn btn-lg top-buttons"
+                disabled={submitting || invalid}
+                className="btn btn-lg btn-primary"
               >
                 Sign Up
               </button>

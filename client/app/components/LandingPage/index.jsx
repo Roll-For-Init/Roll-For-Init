@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-import "./styles.css";
+import "./styles.scss";
 
 const LandingPage = () => {
   return (
@@ -15,25 +15,25 @@ const LandingPage = () => {
       </div>
       <div className="d-grid gap-2">
         <Link to="/create">
-          <button type="button" className="btn btn-lg top-buttons">
-            Create new character
+          <button type="button" className="btn btn-secondary btn-lg top-buttons">
+            Create New Character
           </button>
         </Link>
         <Link to="/upload">
-          <button type="button" className="btn btn-lg top-buttons">
-            Upload existing character
+          <button type="button" className="btn btn-secondary btn-lg top-buttons">
+            Upload Existing Character
           </button>
         </Link>
       </div>
       <div className="d-grid gap-6">
         <Link to="/login">
-          <button type="button" className="btn btn-lg btm-buttons">
-            Log in
+          <button type="button" className="btn btn-primary btn-lg btm-buttons">
+            Log In
           </button>
         </Link>
         <Link to="/signup">
-          <button type="button" className="btn btn-lg btm-buttons">
-            Sign up
+          <button type="button" className="btn btn-primary btn-lg btm-buttons">
+            Sign Up
           </button>
         </Link>
       </div>

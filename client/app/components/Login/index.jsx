@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { Form, Field } from "react-final-form";
 import { login } from "../../actions";
 
-import "./styles.css";
+import "./styles.scss";
 
 const reduxField = ({ placeholder, input, meta }) => (
   <div className="input-group mb-3">
@@ -41,26 +41,26 @@ const Login = () => {
           }
           return errors;
         }}
-        render={({ handleSubmit, form, submitting, pristine, values }) => (
+        render={({ handleSubmit, form, submitting, invalid, values }) => (
           <form onSubmit={handleSubmit} className="needs-validation input-form">
             <Field
               type="text"
               name="email"
               component={reduxField}
-              placeholder="Email"
+              placeholder="email"
             />
             <Field
               type="password"
               name="password"
               component={reduxField}
-              placeholder="Password"
+              placeholder="password"
             />
             <div className="d-grid gap-2">
               <Link to="/">
                 <button
                   type="button"
                   onClick={form.reset}
-                  className="btn btn-lg top-buttons"
+                  className="btn btn-secondary btn-lg"
                   disabled={submitting}
                 >
                   Back
@@ -69,8 +69,8 @@ const Login = () => {
               {/* <Link to="/dashboard"> */}
               <button
                 type="submit"
-                disabled={submitting || pristine}
-                className="btn btn-lg top-buttons"
+                disabled={submitting || invalid}
+                className="btn btn-primary btn-lg"
               >
                 Log In
               </button>

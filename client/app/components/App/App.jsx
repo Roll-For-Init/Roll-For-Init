@@ -1,6 +1,6 @@
 import React from "react";
 // import Header from "../Header/Header";
-import "./styles.css";
+import "./styles.scss";
 // eslint-disable-next-line react/prop-types
 const App = ({ children }) => (
   <>

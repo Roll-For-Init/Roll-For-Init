@@ -1,3 +1,5 @@
+@import 'client/app/variables';
+
 .container {
   height: calc(100vh - 56px);
   text-align: center;
@@ -13,22 +15,16 @@
   width: auto;
 }
 
-.top-buttons,
-.top-buttons:hover {
-  background-color: #4a2932;
-  color: white;
+.top-buttons{
   max-width: 325px;
-  width: 40%;
+  width: 40% !important;
   margin: 25px;
-  border-radius: 15px;
 }
 
 .btm-buttons {
-  background-color: #f0e6d3;
-  color: #172838;
-  width: 200px;
-  margin: 25px 75px;
-  border-radius: 15px;
+  max-width: 200px;
+  width: 30% !important;
+  margin: 25px 87.5px;
 }
 
 .filler-space {
