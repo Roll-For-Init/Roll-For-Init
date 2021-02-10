@@ -1,122 +1,126 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React, { useState } from "react";
+import Race from "./Race";
+import Class from "./Class";
+import Background from "./Background";
+import Abilities from "./Abilities";
+import Options from "./Options";
+import Descriptions from "./Descriptions";
+import Equipment from "./Equipment";
 
 import "./styles.scss";
 
 const Create = () => {
+  const [page, setPage] = useState("race");
+
+  const onPageChange = page => {
+    setPage(page);
+  };
+
+  let pages;
+
+  switch (page) {
+    case "race":
+      pages = <Race />;
+      break;
+    case "class":
+      console.log(page);
+      pages = <Class />;
+      break;
+    case "background":
+      pages = <Background />;
+      break;
+    case "abilities":
+      pages = <Abilities />;
+      break;
+    case "options":
+      pages = <Options />;
+      break;
+    case "description":
+      pages = <Descriptions />;
+      break;
+    case "equipment":
+      pages = <Equipment />;
+      break;
+  }
+
   return (
-    <div className="container">
-      <div className="row page-row">
-        <div className="col-3 side-drawer">
-          <div className="accordion" id="accordionExample">
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingOne">
-                <button
-                  className="accordion-button"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseOne"
-                  aria-expanded="true"
-                  aria-controls="collapseOne"
-                >
-                  Race
-                </button>
-              </h2>
-              <div
-                id="collapseOne"
-                className="accordion-collapse collapse show"
-                aria-labelledby="headingOne"
-                data-bs-parent="#accordionExample"
+    <>
+      <h1
+        className="bg-secondary"
+        style={{ width: "100vw", textAlign: "center" }}
+      >
+        Roll For Init
+      </h1>
+      <div className="container">
+        <div className="row">
+          <div className="col-sm-4">
+            <div
+              className="btn-group-vertical"
+              role="group"
+              style={{ width: "100%" }}
+            >
+              <button
+                type="button"
+                className="btn btn-lg btn-primary"
+                style={{ marginLeft: 0, marginRight: 0, borderRadius: 5 }}
+                onClick={() => onPageChange("race")}
               >
-                <div className="accordion-body">
-                  <strong>This is the first item's accordion body.</strong> It
-                  is hidden by default, until the collapse plugin adds the
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingTwo">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseTwo"
-                  aria-expanded="false"
-                  aria-controls="collapseTwo"
-                >
-                  Accordion Item #2
-                </button>
-              </h2>
-              <div
-                id="collapseTwo"
-                className="accordion-collapse collapse"
-                aria-labelledby="headingTwo"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <strong>This is the second item's accordion body.</strong> It
-                  is hidden by default, until the collapse plugin adds the
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingThree">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseThree"
-                  aria-expanded="false"
-                  aria-controls="collapseThree"
-                >
-                  Accordion Item #3
-                </button>
-              </h2>
-              <div
-                id="collapseThree"
-                className="accordion-collapse collapse"
-                aria-labelledby="headingThree"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <strong>This is the third item's accordion body.</strong> It
-                  is hidden by default, until the collapse plugin adds the
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div className="col-9">
-          <h1>Race</h1>
-          <div className="input-form">
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" />
-            </div>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" />
-            </div>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" />
-            </div>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" />
-            </div>
-          </div>
-          <div className="d-grid gap-2">
-            <Link to="/">
-              <button type="button" className="btn btn-lg btn-secondary">
-                Back
+                RACE
               </button>
-            </Link>
-            <Link to="/create">
-              <button type="button" className="btn btn-lg btn-primary">
-                Next
+              <button
+                type="button"
+                className="btn btn-lg btn-primary"
+                style={{ marginLeft: 0, marginRight: 0, borderRadius: 5 }}
+                onClick={() => onPageChange("class")}
+              >
+                CLASS
               </button>
-            </Link>
+              <button
+                type="button"
+                className="btn btn-lg btn-primary"
+                style={{ marginLeft: 0, marginRight: 0, borderRadius: 5 }}
+                onClick={() => onPageChange("background")}
+              >
+                BACKGROUND
+              </button>
+              <button
+                type="button"
+                className="btn btn-lg btn-primary"
+                style={{ marginLeft: 0, marginRight: 0, borderRadius: 5 }}
+                onClick={() => onPageChange("abilities")}
+              >
+                ABILITIES
+              </button>
+              <button
+                type="button"
+                className="btn btn-lg btn-primary"
+                style={{ marginLeft: 0, marginRight: 0, borderRadius: 5 }}
+                onClick={() => onPageChange("options")}
+              >
+                OPTIONS
+              </button>
+              <button
+                type="button"
+                className="btn btn-lg btn-primary"
+                style={{ marginLeft: 0, marginRight: 0, borderRadius: 5 }}
+                onClick={() => onPageChange("description")}
+              >
+                DESCRIPTION
+              </button>
+              <button
+                type="button"
+                className="btn btn-lg btn-primary"
+                style={{ marginLeft: 0, marginRight: 0, borderRadius: 5 }}
+                onClick={() => onPageChange("equipment")}
+              >
+                EQUIPMENT
+              </button>
+            </div>
           </div>
+          <div className="col-sm-8">{pages}</div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
