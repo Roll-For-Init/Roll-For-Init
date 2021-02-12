@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import Race from "./Race";
 import Class from "./Class";
 import Background from "./Background";
@@ -6,9 +7,9 @@ import Abilities from "./Abilities";
 import Options from "./Options";
 import Descriptions from "./Descriptions";
 import Equipment from "./Equipment";
+import SidePanel from "./SidePanel";
 
 import "./styles.scss";
-import { SidePanel } from "./SidePanel";
 
 const buttonNames = [
   "race",
@@ -20,9 +21,9 @@ const buttonNames = [
   "equipment"
 ];
 
-const Create = () => {
+const Create = props => {
+  const { selectedInfo } = props.info;
   const [page, setPage] = useState({ name: "race", index: 0 });
-
   const onPageChange = (page, index) => {
     setPage({ name: page, index });
   };
@@ -88,7 +89,15 @@ const Create = () => {
             {pages}
           </div>
           <div className="col-4 p-4 container overflow-auto">
-            <SidePanel />
+            {selectedInfo ? (
+              <SidePanel />
+            ) : (
+              <div className="card bg-dark mt-5 p-5">
+                <div className="card-header">
+                  <h4>Nothing Is Selected</h4>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -96,4 +105,10 @@ const Create = () => {
   );
 };
 
-export default Create;
+const mapStateToProps = state => ({
+  info: state.createCharacter
+});
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Create);

@@ -1,26 +1,14 @@
-import React, { useState } from "react";
+import React from "react";
 import { connect } from "react-redux";
+import { getRaceInfo } from "../../actions";
 
-export const Race = props => {
-  const [races, setRaces] = useState([
-    { name: "dragonborn", subraces: [] },
-    { name: "dwarf", subraces: [] },
-    { name: "elf", subraces: [] },
-    { name: "gnome", subraces: [] },
-    {
-      name: "half-elf",
-      subraces: [
-        {
-          name: "high elf"
-        }
-      ]
-    },
-    { name: "half-orc", subraces: [] },
-    { name: "halfling", subraces: [] },
-    { name: "human", subraces: [] },
-    { name: "tiefling", subraces: [] }
-  ]);
-  
+const Race = props => {
+  const { races } = props.races;
+
+  const selectRace = race => {
+    props.selectRace(race);
+  };
+
   return (
     <>
       <h2
@@ -50,6 +38,7 @@ export const Race = props => {
                   <button
                     key={idx}
                     className="w-100 m-0 border-0 shadow-none text-center text-uppercase"
+                    onClick={() => selectRace(subrace.name)}
                   >
                     {subrace.name}
                   </button>
@@ -76,8 +65,12 @@ export const Race = props => {
   );
 };
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  races: state.createCharacter
+});
 
-const mapDispatchToProps = {};
+const mapDispatchToProps = dispatch => ({
+  selectRace: name => dispatch(getRaceInfo(name))
+});
 
 export default connect(mapStateToProps, mapDispatchToProps)(Race);

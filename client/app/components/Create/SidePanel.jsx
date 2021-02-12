@@ -1,7 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 
-export const SidePanel = props => {
+const SidePanel = props => {
+  const { name, skills, traits } = props.info;
   return (
     <div className="card bg-secondary w-100">
       <div className="card-body">
@@ -10,7 +11,7 @@ export const SidePanel = props => {
             style={{ backgroundColor: "white", padding: 20 }}
             className="card-title text-uppercase text-dark rounded w-75 m-auto"
           >
-            High Elf
+            {name}
           </div>
         </h4>
         <h6 className="card-subtitle container-fluid px-0 mt-4 ">
@@ -23,9 +24,8 @@ export const SidePanel = props => {
             }}
             className="text-dark col-5 d-inline-block rounded"
           >
-            +2 dexterity
-            <br />
-            +1 Intelligence
+            +{skills.dexterity} dexterity
+            <br />+{skills.intelligence} Intelligence
           </div>
           <div
             style={{
@@ -36,9 +36,9 @@ export const SidePanel = props => {
             }}
             className="text-dark col-5 offset-2 d-inline-block rounded"
           >
-            Speed: 30
+            Speed: {skills.speed}
             <br />
-            Size: Medium
+            Size: {skills.size}
           </div>
         </h6>
         <div
@@ -47,40 +47,26 @@ export const SidePanel = props => {
         >
           <h6 className="row mb-3">
             <div className="col-12 text-dark text-center bg-light p-2 rounded text-uppercase">
-              elf traits
+              {name} traits
             </div>
           </h6>
-          <div className="row">
-            <p className="col-12 text-dark bg-light p-2 rounded">
-              <b className="text-uppercase text-dark fs-2">Dark Vision - </b>
-              You have superior vision blah blah blah
-            </p>
-          </div>
-          <div className="row">
-            <p className="col-12 text-dark bg-light p-2 rounded">
-              <b className="text-uppercase text-dark fs-2">Dark Vision - </b>
-              You have superior vision blah blah blah
-            </p>
-          </div>
-          <div className="row">
-            <p className="col-12 text-dark bg-light p-2 rounded">
-              <b className="text-uppercase text-dark fs-2">Dark Vision - </b>
-              You have superior vision blah blah blah
-            </p>
-          </div>
-          <div className="row">
-            <p className="col-12 text-dark bg-light p-2 rounded">
-              <b className="text-uppercase text-dark fs-2">Dark Vision - </b>
-              You have superior vision blah blah blah
-            </p>
-          </div>
+          {traits.map((trait, idx) => (
+            <div className="row" key={idx}>
+              <p className="col-12 text-dark bg-light p-2 rounded">
+                <b className="text-uppercase text-dark fs-2">{trait.name} - </b>
+                {trait.description}
+              </p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
   );
 };
 
-const mapStateToProps = state => ({});
+const mapStateToProps = state => ({
+  info: state.createCharacter.selectedInfo
+});
 
 const mapDispatchToProps = {};
 
