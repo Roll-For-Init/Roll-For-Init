@@ -20,15 +20,20 @@ export const Race = props => {
     { name: "human", subraces: [] },
     { name: "tiefling", subraces: [] }
   ]);
+  
   return (
     <>
-      <h2 className="bg-secondary">Race</h2>
-      <div className="dropdown btn-group-vertical w-100">
+      <h2
+        className="bg-secondary"
+        style={{ position: "sticky", top: -50, zIndex: 99 }}
+      >
+        Race
+      </h2>
+      <div className="dropdown btn-group-vertical w-75">
         {races.map((race, idx) => (
           <div className="w-100 h-auto" key={idx}>
             <button
-              className="btn btn-lg btn-secondary dropdown-toggle text-uppercase w-100"
-              style={{ margin: "10px 0px" }}
+              className="btn btn-lg my-3 mx-0 btn-secondary dropdown-toggle text-uppercase w-100"
               type="button"
               id={`dropdownMenuButton1${idx}`}
               data-toggle="dropdown"
@@ -37,24 +42,21 @@ export const Race = props => {
               {race.name}
             </button>
             <div
-              className="dropdown-menu w-100"
-              style={{ padding: 0 }}
+              className="dropdown-menu w-100 p-0"
               aria-labelledby={`dropdownMenuButton1${idx}`}
             >
               {race.subraces.length > 0 ? (
                 race.subraces.map((subrace, idx) => (
                   <button
                     key={idx}
-                    className="w-100 border-0 shadow-none text-center text-uppercase"
-                    style={{ margin: 0 }}
+                    className="w-100 m-0 border-0 shadow-none text-center text-uppercase"
                   >
                     {subrace.name}
                   </button>
                 ))
               ) : (
                 <button
-                  className="w-100 border-0 shadow-none text-center text-uppercase"
-                  style={{ margin: 0 }}
+                  className="w-100 m-0 border-0 shadow-none text-center text-uppercase"
                   disabled
                 >
                   No subraces
@@ -64,6 +66,12 @@ export const Race = props => {
           </div>
         ))}
       </div>
+      <button
+        className="text-uppercase btn-primary btn-lg px-5"
+        style={{ position: "sticky", bottom: 10 }}
+      >
+        OK
+      </button>
     </>
   );
 };
