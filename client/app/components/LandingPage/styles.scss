@@ -1,0 +1,42 @@
+@import 'client/app/variables';
+
+.container {
+  height: calc(100vh - 56px);
+  text-align: center;
+}
+
+.logo {
+  background-image: url("../../../static/logo.png");
+  background-repeat: no-repeat;
+  background-size: contain;
+  height: 200px;
+  min-width: 100px;
+  margin-bottom: 25px;
+  width: auto;
+}
+
+.top-buttons{
+  max-width: 325px;
+  width: 40% !important;
+  margin: 25px;
+}
+
+.btm-buttons {
+  max-width: 200px;
+  width: 30% !important;
+  margin: 25px 87.5px;
+}
+
+.filler-space {
+  height: 5%;
+}
+
+.input-group {
+  min-width: 400px;
+}
+
+.log-out-button {
+  float: right;
+  margin-top: 50px;
+  height: 50px;
+}

@@ -1,0 +1,86 @@
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica&display=swap');
+@import 'client/app/variables';
+
+body {
+  background-image: url("../static/background.jpeg");
+  background-color: #172838;
+  background-size: cover;
+}
+
+.title {
+  width: 100%;
+  border-bottom: 1px white solid;
+}
+
+div {
+  color: white;
+}
+
+button {
+  font-family: "IM Fell DW Pica";
+  font-size: 1.4rem;
+  margin: 25px;
+  padding: 10px;
+  border-radius: 8px;
+  border: none !important;
+  box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
+  text-transform: lowercase;
+}
+
+.btn {
+  width: 200px;
+}
+
+.btn-primary {
+  background-color: $blue;
+  color: white;
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+  background-color: $medium-blue;
+  color: white;
+}
+
+.btn-primary:active {
+  background-color: $dark-blue !important;
+}
+
+.btn-primary:disabled {
+  background-color: $blue-disabled !important;
+  color: hsla(0, 0, 100, 50%);
+}
+
+.btn-secondary{
+  background-color: $off-white;
+  color: $dark-blue;
+}
+
+.btn-secondary:hover,
+.btn-secondary:focus {
+  background-color: $medium-off-white;
+  color: black;
+}
+
+.btn-secondary:active {
+  background-color: $dark-off-white !important;
+  color: white;
+}
+
+.btn-secondary:disabled {
+  background-color: $off-white-disabled;
+  color: $dark-blue-disabled;
+}
+
+input {
+  background-color: #f0e6d3 !important;
+  color: #172838 !important;
+  font-family: "IM Fell DW Pica" !important;
+  font-size: 1rem !important;
+  border-radius: 8px !important;
+  border-width: 3px !important;
+  border-color: #4a2932 !important;
+  max-width: 500px !important;
+  padding: 10px;
+  margin: auto;
+}
