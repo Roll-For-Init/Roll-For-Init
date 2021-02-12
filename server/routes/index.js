@@ -1,9 +1,8 @@
-const router = require('express').Router();
+const fs = require("fs");
 
-router.use('/users', require('./users.js'));
-
-router.all('*', (req, res) => {
-    res.status(404).send("Unknown route.")
-})
-
-module.exports = router;
+module.exports = app => {
+  // API routes
+  fs.readdirSync(__dirname + "/api/").forEach(file => {
+    require(`./api/${file.substr(0, file.indexOf("."))}`)(app);
+  });
+};

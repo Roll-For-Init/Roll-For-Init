@@ -4,10 +4,7 @@
   "description": "A MERN stack template to start future projects.",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "client": "webpack -p --progress --profile --colors",
-    "server": "node server",
-    "api": "node ../5e-srd-api/server",
+    "dev": "webpack -p --progress --profile --colors && node server",
     "start": "node server"
   },
   "engines": {
@@ -62,7 +59,6 @@
     "sass-loader": "^7.3.1",
     "serialize-javascript": "^5.0.1",
     "style-loader": "0.23.1",
-    "validator": "^13.5.2",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-middleware": "^3.7.3",
