@@ -3,19 +3,25 @@ const authenticateUser = (req, res, next) => {
   const jwt = require("jsonwebtoken");
   const userCookie = req.cookies.auth; //Reminder: cookie MUST be set with the auth header
 
-  if(!userCookie) 
-    return res.status(401).send("No authorization token found. Please login to continue.");
+  if(!userCookie) {
+    res.status(401).send("No authorization token found. Please login to continue if this is your profile.");
+    res.locals.auth = null;
+    return next();
+  }
 
   jwt.verify(userCookie, process.env.JWT_SECRET, (error, decoded) => {
-    if (error) 
-      return res.status(403).send("Authorization token could not be verified. Please clear your cookies and sign in again.");
+    if (error) {
+      res.status(403).send("Authorization token could not be verified. Please clear your cookies and sign in again.")
+      res.locals.auth = null;
+      return next();
+    }
 
-    req.auth = decoded; //Automatically adds the JWT payload to the request for further use.
-    next(); //Proceeds beyond the middleware to the actual route.
+    res.locals.auth = decoded; //Automatically adds the JWT payload to the middleware chain for further use.
+    return next(); //Proceeds beyond the middleware to the actual route.
   });
 }
 
-export default authenticateUser;
+module.exports = authenticateUser;
 
 /*
 JWT+cookie initialization upon successful login:
@@ -28,10 +34,8 @@ JWT+cookie initialization upon successful login:
         {maxAge: 360000, httpOnly: true})
         .send("Authentication cookie set."); //MAY REQUIRE cors package with use with fetch()...CHECK!
   });
-
 Cookie deletion on successful logout:
   res.clearCookie('auth').send("Cookie cleared.");
-
 Password hashing upon successful signup:
   const bcrypt = require('bcrypt');
   let hashedPassword;
@@ -40,7 +44,6 @@ Password hashing upon successful signup:
       return res.status(500).send("Some error who knows.");
     hashedPassword = hash;
   })
-
 Password hashing for verification on login:
   const bcrypt = require('bcrypt');
   bcrypt.compare(password, hash, (error, result) => {
