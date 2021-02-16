@@ -2,12 +2,10 @@
     //validator = require('validator'),
     bcrypt = require('bcrypt'),
     User = require('../models/UserModel.js');
-
 function validateSignupForm(body) {
     const errors = {};
     let isFormValid = true;
     let message = "";
-
     if (
         !body ||
         typeof body.email !== "string" ||
@@ -16,7 +14,6 @@ function validateSignupForm(body) {
         isFormValid = false;
         errors.email = "Please provide a correct email address.";
     }
-
     if (
         !body ||
         typeof body.password !== "string" ||
@@ -25,7 +22,6 @@ function validateSignupForm(body) {
         isFormValid = false;
         errors.password = "Password must have at least 8 characters.";
     }
-
     if (
         !body ||
         typeof body.username !== "string" ||
@@ -34,18 +30,15 @@ function validateSignupForm(body) {
         isFormValid = false;
         errors.username = "Please provide your username.";
     }
-
     if (!isFormValid) {
         message = "Check the form for errors.";
     }
-
     return {
         success: isFormValid,
         message,
         errors,
     };
 }
-
 //Handles signup
 const registerHandler = (req, res, next) => {
     // Verify that user is not signed into an account already
@@ -96,13 +89,10 @@ const registerHandler = (req, res, next) => {
         });
     })(req, res, next);
 };
-
-
 function validateLoginForm(body) {
     const errors = {};
     let isFormValid = true;
     let message = "";
-
     if (
         !body ||
         typeof body.email !== "string" ||
@@ -111,7 +101,6 @@ function validateLoginForm(body) {
         isFormValid = false;
         errors.email = "Please provide your email address.";
     }
-
     if (
         !body ||
         typeof body.password !== "string" ||
@@ -120,18 +109,15 @@ function validateLoginForm(body) {
         isFormValid = false;
         errors.password = "Please provide your password.";
     }
-
     if (!isFormValid) {
         message = "Check the form for errors.";
     }
-
     return {
         success: isFormValid,
         message,
         errors,
     };
 }
-
 const loginHandler = (req, res, next) => {
     const validationResult = validateLoginForm(req.body);
     if (!validationResult.success) {
@@ -177,7 +163,6 @@ const loginHandler = (req, res, next) => {
         // });
     })(req, res, next);
 };
-
 const authenticationHandler = (req, res, next) => {
     jwt = {}
     authenticateJwt(jwt, (err, user) => {
@@ -189,16 +174,11 @@ const authenticationHandler = (req, res, next) => {
         }
     })
 }
-
-
 //Signup
 router.post("/register", registerHandler);
-
 //Login
 router.post("/login", loginHandler);
-
 //Authed users may access the API
 router.use("/", authenticationHandler);
-
 module.exports = router;
 */

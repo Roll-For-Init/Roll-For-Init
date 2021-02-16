@@ -34,10 +34,8 @@ JWT+cookie initialization upon successful login:
         {maxAge: 360000, httpOnly: true})
         .send("Authentication cookie set."); //MAY REQUIRE cors package with use with fetch()...CHECK!
   });
-
 Cookie deletion on successful logout:
   res.clearCookie('auth').send("Cookie cleared.");
-
 Password hashing upon successful signup:
   const bcrypt = require('bcrypt');
   let hashedPassword;
@@ -46,7 +44,6 @@ Password hashing upon successful signup:
       return res.status(500).send("Some error who knows.");
     hashedPassword = hash;
   })
-
 Password hashing for verification on login:
   const bcrypt = require('bcrypt');
   bcrypt.compare(password, hash, (error, result) => {

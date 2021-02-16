@@ -1,3 +1,10 @@
+# NOTE
+To run this application, create a file secret.env in the root directory. Its contents should be:
+```
+JWT_SECRET=adjfaljfakj
+```
+Where the random "adjfaljfakj" is replaced with a secret code such as a uuid.
+
 # GitHub Ettiquette
 - Commit new features to SEPARATE BRANCHES. Never commit to master.
 - Pull often and frequently.
