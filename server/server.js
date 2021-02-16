@@ -1,3 +1,11 @@
+const path = require('path');
+const dotenv = require('dotenv');
+
+dotenv.config({
+  path: path.resolve(__dirname, '../secret.env'),
+  debug: process.env.DEBUG
+});
+
 const express = require('./config/express.js');
 
 const host = process.env.HOST || '0.0.0.0';

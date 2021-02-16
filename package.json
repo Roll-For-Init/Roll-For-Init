@@ -4,11 +4,17 @@
   "description": "A MERN stack template to start future projects.",
   "private": true,
   "scripts": {
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "client": "webpack -p --progress --profile --colors",
-    "server": "node server",
-    "api": "node ../5e-srd-api/server",
-    "start": "node server"
+    "dev": "node server",
+    "api:start": "node ../5e-srd-api/server",
+    "server:start": "node server/server.js",
+    "client:build": "webpack --config webpack.config.js",
+    "start": "npm run server:start",
+    "build": "npm run client:build",
+    "postbuild": "npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Roll-For-Init/Roll-For-Init.git"
   },
   "engines": {
     "node": ">=6"

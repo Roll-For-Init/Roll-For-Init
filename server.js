@@ -7,16 +7,11 @@ dotenv.config({
   debug: process.env.DEBUG
 });
 
-console.log(process.env.NODE_ENV)
-console.log(process.env.LEGACY_WATCH)
-
 const watchList = ['server/'];
 const isDev = (process.env.NODE_ENV === 'development');
 
 const legacyWatch = (process.env.LEGACY_WATCH) ? (isDev ? true : false) : false;
 const watch = isDev ? watchList : false;
-
-console.log(isDev, legacyWatch, watch)
 
 nodemon({
   script: path.join(__dirname, 'server/server'),

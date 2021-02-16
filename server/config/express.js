@@ -1,9 +1,10 @@
 const express = require('express'),
     mongoose = require('mongoose'),
     historyApiFallback = require("connect-history-api-fallback"),
-    path = require("path"),
+    // cors = require('cors'),
     config = require("./config"),
     webpack = require("webpack"),
+    helpers = require("../../webpack/helpers"),
     webpackHotMiddleware = require("webpack-hot-middleware"),
     webpackDevMiddleware = require("webpack-dev-middleware"),
     webpackConfig = require("../../webpack.config");
@@ -31,30 +32,42 @@ module.exports.init = async() => {
 
     // Set up express
     const app = express();
+    // app.use(cors())
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
 
     // Middleware
-    // app.use(require('body-parser').json({type: "application/json"}));
     app.use(require('cookie-parser')());
+
+    // app.use((req, res, next) => {
+    //     res.header("Access-Control-Allow-Origin", 'http://localhost:8080');
+    //     res.header(
+    //       "Access-Control-Allow-Headers",
+    //       "Origin, X-Requested-With, Content-Type, Accept, Authorization"
+    //     );
+    //     if (req.method === 'OPTIONS') {
+    //         res.header('Access-Control-Allow-Methods', 'PUT, POST, PATCH, DELETE, GET');
+    //         return res.status(200).json({});
+    //     }
+    //     next();
+    //   });
 
     // API Routing
     app.use('/api/v1/', require('../routes'));
 
     // Serve static files
     if (isDev) {
-        const compiler = webpack(webpackConfig);
-
         app.use(
             historyApiFallback({
                 verbose: false
             })
         );
-
+        const compiler = webpack(webpackConfig);
         app.use(
             webpackDevMiddleware(compiler, {
                 publicPath: webpackConfig.output.publicPath,
-                contentBase: path.resolve(__dirname, "../client/public"),
+                contentBase: helpers.root('client/public'),
+                noInfo: process.env.SILENCE_WEBPACK,
                 stats: {
                     colors: true,
                     hash: false,
@@ -65,14 +78,13 @@ module.exports.init = async() => {
                 }
             })
         );
-
         app.use(webpackHotMiddleware(compiler));
-        app.use(express.static(path.resolve(__dirname, "../dist")));
+        app.use(express.static(helpers.root('dist')));
     } else {
-        app.use(express.static(path.resolve(__dirname, "../dist")));
+        app.use(express.static(helpers.root('dist')));
 
         app.get("*", function (req, res) {
-            res.sendFile(path.resolve(__dirname, "../dist/index.html"));
+            res.sendFile(helpers.root('dist/index.html'));
             res.end();
         });
     }
