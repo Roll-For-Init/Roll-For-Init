@@ -8,6 +8,7 @@ Where the random "adjfaljfakj" is replaced with a secret code such as a uuid.
 # GitHub Ettiquette
 - Commit new features to SEPARATE BRANCHES. Never commit to master.
 - Pull often and frequently.
+- Ensure that your commits are frequent and descriptive.
 
 # MERN Stack Template Project
 
