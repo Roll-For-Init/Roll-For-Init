@@ -9,7 +9,7 @@ const express = require('express'),
     webpackConfig = require("../../webpack.config");
 
 
-module.exports.init = () => {
+module.exports.init = async() => {
     // Configuration
     const isDev = process.env.NODE_ENV !== "production";
 
@@ -19,9 +19,11 @@ module.exports.init = () => {
         useNewUrlParser: true,
         useUnifiedTopology: true,
         useCreateIndex: true,
+        useFindAndModify: false
     };
 
-    mongoose.connect(mongoDB, mongoOptions).then((db) => {
+    console.log('Attempting to connect to mongoose database.')
+    await mongoose.connect(mongoDB, mongoOptions).then(() => {
         console.log('Successfully connected to mongoose database.')
     }, (error) => {
         console.log('MongoDB Connection Error:', error)
@@ -33,10 +35,11 @@ module.exports.init = () => {
     app.use(express.json());
 
     // Middleware
+    // app.use(require('body-parser').json({type: "application/json"}));
     app.use(require('cookie-parser')());
 
     // API Routing
-    app.use('/api/', require('../routes'));
+    app.use('/api/v1/', require('../routes'));
 
     // Serve static files
     if (isDev) {

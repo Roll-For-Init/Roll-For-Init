@@ -8,7 +8,7 @@ const CharacterSchema = new Schema({
     type: String,
     required: true,
   },
-  user: [
+  player: [
     {
       type: Schema.Types.ObjectId,
       ref: "User",

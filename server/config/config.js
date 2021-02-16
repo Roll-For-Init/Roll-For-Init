@@ -4,6 +4,6 @@
 // };
 
 module.exports = {
-  db: 'mongodb+srv://admin:adminpass@rollforinit.xhpae.mongodb.net/users?retryWrites=true&w=majority',
-  db_dev: 'mongodb+srv://rollforinit.xhpae.mongodb.net/users?retryWrites=true&w=majority',
+  db: 'mongodb+srv://admin:adminpass@rollforinit.xhpae.mongodb.net/userSpecific?retryWrites=true&w=majority',
+  db_dev: 'mongodb+srv://admin:adminpass@rollforinit.xhpae.mongodb.net/userSpecific?retryWrites=true&w=majority',
 };
