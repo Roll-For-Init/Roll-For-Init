@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 const SidePanel = props => {
   const { name, skills, traits } = props.info;
   return (
-    <div className="card bg-secondary w-100">
+    <div className="card w-100 side-bar">
       <div className="card-body">
         <h4 className="card-title">
           <div

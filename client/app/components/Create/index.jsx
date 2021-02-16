@@ -23,7 +23,7 @@ const buttonNames = [
 
 const Create = props => {
   const { selectedInfo } = props.info;
-  const [page, setPage] = useState({ name: "race", index: 0 });
+  const [page, setPage] = useState({ name: "class", index: 1 });
   const onPageChange = (page, index) => {
     setPage({ name: page, index });
   };
@@ -32,76 +32,86 @@ const Create = props => {
 
   switch (page.name) {
     case "race":
-      pages = <Race />;
+      pages = <Race setPage={setPage} />;
       break;
     case "class":
-      pages = <Class />;
+      pages = <Class setPage={setPage} />;
       break;
     case "background":
-      pages = <Background />;
+      pages = <Background setPage={setPage} />;
       break;
     case "abilities":
-      pages = <Abilities />;
+      pages = <Abilities setPage={setPage} />;
       break;
     case "options":
-      pages = <Options />;
+      pages = <Options setPage={setPage} />;
       break;
     case "description":
-      pages = <Descriptions />;
+      pages = <Descriptions setPage={setPage} />;
       break;
     case "equipment":
-      pages = <Equipment />;
+      pages = <Equipment setPage={setPage} />;
       break;
   }
 
   return (
-    <>
+    <div className="create">
       <header>
-        <h1 className="bg-dark text-center m-0">Roll For Init</h1>
+        <h1 className="text-center m-0" style={{ backgroundColor: "#333" }}>
+          Roll For Init
+        </h1>
       </header>
       <div className="container-fluid">
         <div className="row">
-          <div className="col-3 p-5 bg-secondary overflow-auto">
+          <div className="col-3 p-5 side-bar overflow-auto">
             <div className="btn-group-vertical w-100" role="group">
-              {buttonNames.map((name, idx) => (
-                <button
-                  key={name}
-                  type="button"
-                  className={
-                    page.index < idx && page.name !== name
-                      ? "btn btn-lg btn-primary text-uppercase text-white-50"
-                      : "btn btn-lg btn-light text-uppercase"
-                  }
-                  style={{
-                    marginLeft: 0,
-                    marginRight: 0,
-                    borderRadius: 5,
-                    minWidth: 200
-                  }}
-                  onClick={() => onPageChange(name, idx)}
-                >
-                  {name}
-                </button>
-              ))}
+              {buttonNames.map((name, idx) => {
+                let classname = "btn btn-lg btn-secondary text-uppercase";
+                if (page.index < idx) {
+                  classname =
+                    "btn btn-lg btn-secondary text-uppercase disabled";
+                }
+                if (page.name === name) {
+                  classname = "btn btn-lg btn-primary text-uppercase";
+                }
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    className={classname}
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 0,
+                      borderRadius: 5,
+                      minWidth: 200
+                    }}
+                    onClick={() => {
+                      page.index > idx && onPageChange(name, idx);
+                    }}
+                  >
+                    {name}
+                  </button>
+                );
+              })}
             </div>
           </div>
           <div className="col-5 pb-0 px-5 pt-5 container overflow-auto position-relative">
             {pages}
           </div>
-          <div className="col-4 p-4 container overflow-auto">
+          {/* <div className="col-4 p-4 container overflow-auto">
             {selectedInfo ? (
               <SidePanel />
             ) : (
-              <div className="card bg-dark mt-5 p-5">
+              <div className="card mt-5 p-5 side-bar">
                 <div className="card-header">
                   <h4>Nothing Is Selected</h4>
                 </div>
               </div>
             )}
-          </div>
+          </div> */}
         </div>
       </div>
-    </>
+    </div>
   );
 };
 

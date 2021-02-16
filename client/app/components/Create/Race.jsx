@@ -10,18 +10,15 @@ const Race = props => {
   };
 
   return (
-    <>
-      <h2
-        className="bg-secondary"
-        style={{ position: "sticky", top: -50, zIndex: 99 }}
-      >
+    <div className="race">
+      <h2 className="p-4" style={{ position: "sticky", top: -50, zIndex: 99 }}>
         Race
       </h2>
       <div className="dropdown btn-group-vertical w-75">
         {races.map((race, idx) => (
           <div className="w-100 h-auto" key={idx}>
             <button
-              className="btn btn-lg my-3 mx-0 btn-secondary dropdown-toggle text-uppercase w-100"
+              className="btn btn-lg my-3 mx-0 options dropdown-toggle text-uppercase w-100"
               type="button"
               id={`dropdownMenuButton1${idx}`}
               data-toggle="dropdown"
@@ -58,10 +55,11 @@ const Race = props => {
       <button
         className="text-uppercase btn-primary btn-lg px-5"
         style={{ position: "sticky", bottom: 10 }}
+        onClick={() => props.setPage({ index: 1, name: "class" })}
       >
         OK
       </button>
-    </>
+    </div>
   );
 };
 

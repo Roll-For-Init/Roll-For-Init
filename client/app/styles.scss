@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica&display=swap');
-@import 'client/app/variables';
+@import url("https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica&display=swap");
+@import "client/app/variables";
 
 body {
   background-image: url("../static/background.jpeg");
@@ -51,7 +51,7 @@ button {
   color: hsla(0, 0, 100, 50%);
 }
 
-.btn-secondary{
+.btn-secondary {
   background-color: $off-white;
   color: $dark-blue;
 }
@@ -83,4 +83,23 @@ input {
   max-width: 500px !important;
   padding: 10px;
   margin: auto;
+}
+
+.create {
+  .side-bar {
+    background-color: $lighter-maroon;
+  }
+  h1 {
+    background-color: #333;
+  }
+  h2 {
+    background-color: $maroon;
+  }
+  .race {
+    .options {
+      background-color: white;
+      border: $maroon 1px solid !important;
+      color: $dark-blue;
+    }
+  }
 }

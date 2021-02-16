@@ -2,7 +2,8 @@ import {
   LOADING_ON,
   LOADING_OFF,
   THROW_ERROR,
-  GET_RACE_INFO
+  GET_RACE_INFO,
+  GET_CLASS_INFO
 } from "../actions";
 
 export const createCharacter = (
@@ -10,10 +11,8 @@ export const createCharacter = (
     races: [
       { name: "dragonborn", subraces: [] },
       { name: "dwarf", subraces: [] },
-      { name: "elf", subraces: [] },
-      { name: "gnome", subraces: [] },
       {
-        name: "half-elf",
+        name: "elf",
         subraces: [
           {
             name: "high elf",
@@ -44,13 +43,55 @@ export const createCharacter = (
           }
         ]
       },
+      { name: "gnome", subraces: [] },
+      { name: "half-elf", subraces: [] },
       { name: "half-orc", subraces: [] },
       { name: "halfling", subraces: [] },
       { name: "human", subraces: [] },
       { name: "tiefling", subraces: [] }
     ],
-    selectedRace: null,
-    selectedInfo: null
+    classes: [
+      {
+        name: "Barbarian"
+      },
+      {
+        name: "Bard"
+      },
+      {
+        name: "Cleric"
+      },
+      {
+        name: "Druid"
+      },
+      {
+        name: "Fighter"
+      },
+      {
+        name: "Monk"
+      },
+      {
+        name: "Paladin"
+      },
+      {
+        name: "Ranger"
+      },
+      {
+        name: "Rogue"
+      },
+      {
+        name: "Sorcerer"
+      }
+    ],
+    selectedInfo: null,
+    character: {
+      race: null,
+      class: null,
+      background: null,
+      abilities: null,
+      options: null,
+      description: null,
+      equipment: null
+    }
   },
   action
 ) => {
@@ -68,19 +109,33 @@ export const createCharacter = (
       };
 
     case GET_RACE_INFO:
-      let result;
+      let raceResult;
       state.races.find(race =>
         race.subraces.find(subrace => {
           if (subrace.name === action.payload) {
-            result = subrace;
+            raceResult = subrace;
           }
         })
       );
 
       return {
         ...state,
-        selectedRace: result,
-        selectedInfo: result
+        character: { ...state.character, race: raceResult },
+        selectedInfo: raceResult
+      };
+
+    case GET_CLASS_INFO:
+      let classResult;
+      state.classes.find(classes => {
+        if (classes.name === action.payload) {
+          console.log(classes.name, action.payload);
+          classResult = classes;
+        }
+      });
+      return {
+        ...state,
+        character: { ...state.character, class: classResult },
+        selectedInfo: classResult
       };
 
     case THROW_ERROR:
