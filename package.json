@@ -1,11 +1,20 @@
 {
-  "name": "mern-stack-template",
+  "name": "roll-for-init",
   "version": "0.1.0",
   "description": "A MERN stack template to start future projects.",
   "private": true,
   "scripts": {
-    "dev": "webpack -p --progress --profile --colors && node server",
-    "start": "node server"
+    "dev": "node server",
+    "api:start": "node ../5e-srd-api/server",
+    "server:start": "node server/server.js",
+    "client:build": "webpack --config webpack.config.js",
+    "start": "npm run server:start",
+    "build": "npm run client:build",
+    "postbuild": "npm install"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Roll-For-Init/Roll-For-Init.git"
   },
   "engines": {
     "node": ">=6"
@@ -45,6 +54,7 @@
     "node-sass": "^4.14.1",
     "nodemon": "^1.19.4",
     "postcss-loader": "3.0.0",
+    "promise": "^8.1.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-final-form": "^6.5.2",

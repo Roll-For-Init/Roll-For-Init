@@ -1,11 +1,33 @@
 # NOTE
-To run this application, create a file secret.env in the root directory. Its contents should be:
+
+To run this application, create a file secret.env in the root directory like so:
+
 ```
-JWT_SECRET=adjfaljfakj
+JWT_SECRET=secret
+MONGODB_URI=uri
 ```
-Where the random "adjfaljfakj" is replaced with a secret code such as a uuid.
+
+## Required Variables
+
+- JWT_SECRET
+  - A secret code such as a uuid.
+- MONGODB_URI
+  - Link to the mongodb
+
+## Additional Variables
+
+- MONGODB_URI_DEV
+  - Use if you want an alternative database link for development
+- NODE_ENV
+  - Set to 'production' if you are building for deployment
+  - Set to 'development' if you are developing
+- LEGACY_WATCH=1
+  - Try adding this flag if you cannot get nodemon to update on changes
+- SILENCE_WEBPACK=1
+  - Add this flag if you want to silence webpack output
 
 # GitHub Ettiquette
+
 - Commit new features to SEPARATE BRANCHES. Never commit to master.
 - Pull often and frequently.
 - Ensure that your commits are frequent and descriptive.
@@ -36,9 +58,9 @@ These instructions will get you a copy of the project up and running on your loc
   - ESLint
 - After installing ESLint, go into its settings by clicking the cog in it’s listing in the extenstion tab, and clicking ‘Configure Extenstion Settings’
 - In here, enable auto fix on save.
-Once thats done, close the ESLint tab that is open, and press Command-Shift-P on Mac, or Ctrl-Shift-P on windows, and type ‘Git Clone’ into the box that appears and hit enter.
+  Once thats done, close the ESLint tab that is open, and press Command-Shift-P on Mac, or Ctrl-Shift-P on windows, and type ‘Git Clone’ into the box that appears and hit enter.
 - In the box that then comes up, enter:
-<https://github.com/bradwindy/mern-stack-template>
+  <https://github.com/bradwindy/mern-stack-template>
 - Then press enter, then once that is done, click open in the bottom right.
 - Once the project loads up, on both Mac and windows, press Ctrl-BACKTICK (the key next to the number 1 on your kb). This opens terminal and is a super useful shortcut :)
 - Checkout working by typing: `git checkout --track origin/working`
