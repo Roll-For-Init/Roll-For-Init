@@ -5,7 +5,6 @@ const User = require("../../models/User.js");
 // Express middleware to verify a user's credentials and pass them on to the calling route for usage.
 // Restricts access to only signed-in users on the route it is applied to
 const authenticateUser = (req, res, next) => {
-  const jwt = require("jsonwebtoken");
   const userCookie = req.cookies.auth; //Reminder: cookie MUST be set with the auth header
 
   if (!userCookie) {
