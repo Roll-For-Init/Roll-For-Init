@@ -54,6 +54,7 @@
     "node-sass": "^4.14.1",
     "nodemon": "^1.19.4",
     "postcss-loader": "3.0.0",
+    "promise": "^8.1.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
     "react-final-form": "^6.5.2",

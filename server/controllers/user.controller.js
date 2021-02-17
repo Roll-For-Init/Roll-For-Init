@@ -9,6 +9,15 @@ const projections = {
     friends: { _id: 0, password: 0 }
 }
 
+// Middleware that attaches character info to the req
+const attachUserInfo = (req, res, next) => {
+    User.findById(req.locals.auth.id, projections.all).then(user => {
+        if (!user) return throwError(res, 401, "No Content.");
+        req.user = user;
+        return next();
+    }).catch(err => throwError(res, 401, "No Content.", err));
+}
+
 // Identical error handling per route for security reasons
 const throwError = (res, code, message, err) => {
     if (process.env.NODE_ENV === 'development'){
@@ -184,4 +193,4 @@ const logout_user = (req, res) => {
     res.clearCookie('auth').status(200).send("Successfully logged out. Cookie cleared.");
 }
 
-module.exports = { user_list, user_detail, delete_user, update_user, register_user, login_user, logout_user }
+module.exports = { user_list, user_detail, delete_user, update_user, register_user, login_user, logout_user, attachUserInfo }

@@ -15,7 +15,6 @@ const authenticateUser = (req, res, next) => {
     if (error) {
       return res.status(403).send("Authorization token could not be verified. Please clear your cookies and sign in again.")
     }
-
     res.locals.auth = decoded; //Automatically adds the JWT payload to the middleware chain for further use.
     return next(); //Proceeds beyond the middleware to the actual route.
   });
