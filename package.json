@@ -5,8 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "node server",
-    "api:build": "cd 5e-srd-api && npm install",
-    "api:start": "cd 5e-srd-api && npm start",
+    "api:build": "npm install --prefix ./5e-srd-api",
+    "api:start": "npm start --prefix ./5e-srd-api",
     "server:start": "node server/server.js",
     "client:build": "webpack --config webpack.config.js",
     "start": "concurrently \"npm run server:start\" \"npm run api:start\"",
@@ -70,6 +70,7 @@
     "sass-loader": "^7.3.1",
     "serialize-javascript": "^5.0.1",
     "style-loader": "0.23.1",
+    "validator": "^13.5.2",
     "webpack": "^4.46.0",
     "webpack-cli": "^3.3.12",
     "webpack-dev-middleware": "^3.7.3",
