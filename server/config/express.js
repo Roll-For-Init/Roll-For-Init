@@ -35,7 +35,7 @@ module.exports.init = async() => {
     app.use(require('cookie-parser')());
 
     // API Routing
-    app.use('/api/v1/', require('../routes'));
+    app.use('/api/', require('../routes'));
 
     // Serve static files
     if (config.isDev) {
