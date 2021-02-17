@@ -7,7 +7,7 @@ const GameSchema = new Schema({
     type: String,
   },
   //DM, GM, owner of the party/lobby
-  host: {
+  owner: {
     type: Schema.Types.ObjectId,
     ref: "User",
     required: true
@@ -24,6 +24,10 @@ const GameSchema = new Schema({
   },
   description: {
     type: String,
+  },
+  current_encounter: {
+    type: Schema.Types.ObjectId,
+    ref: "Encounter"
   },
 }, {
   timestamps: true

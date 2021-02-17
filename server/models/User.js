@@ -25,6 +25,12 @@ const UserSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Character'
   }],
+  notifications: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Notification'
+    }
+  ]
 }, {
   timestamps: true
 })

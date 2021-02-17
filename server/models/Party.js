@@ -6,9 +6,13 @@ const PartySchema = new Schema({
   name: {
     type: String,
   },
+  description: {
+    type: String,
+  },
   game: {
     type: Schema.Types.ObjectId,
     ref: "Game",
+    required: true,
   },
   characters: [
     {
@@ -16,9 +20,12 @@ const PartySchema = new Schema({
       ref: "Character",
     },
   ],
-  description: {
-    type: String,
-  },
+  allies: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Monster",
+    }
+  ],
 }, {
   timestamps: true
 });
