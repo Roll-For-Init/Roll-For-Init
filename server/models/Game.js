@@ -6,6 +6,9 @@ const GameSchema = new Schema({
   name: {
     type: String,
   },
+  description: {
+    type: String,
+  },
   //DM, GM, owner of the party/lobby
   owner: {
     type: Schema.Types.ObjectId,
@@ -18,13 +21,22 @@ const GameSchema = new Schema({
       ref: "User",
     },
   ],
+  invited: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    }
+  ],
   party: {
     type: Schema.Types.ObjectId,
     ref: "Party",
   },
-  description: {
-    type: String,
-  },
+  encounters: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "Encounter"  
+    }
+  ],
   current_encounter: {
     type: Schema.Types.ObjectId,
     ref: "Encounter"

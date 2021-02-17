@@ -1,49 +1,25 @@
-<<<<<<< HEAD
-=======
 const jwt = require("jsonwebtoken");
 const validator = require('validator');
 const User = require("../../models/User.js");
 
->>>>>>> backend/routing
 // Express middleware to verify a user's credentials and pass them on to the calling route for usage.
 // Restricts access to only signed-in users on the route it is applied to
 const authenticateUser = (req, res, next) => {
   const jwt = require("jsonwebtoken");
   const userCookie = req.cookies.auth; //Reminder: cookie MUST be set with the auth header
 
-<<<<<<< HEAD
-  if(!userCookie) {
-    res.status(401).send("No authorization token found. Please login to continue if this is your profile.");
-    res.locals.auth = null;
-    return next();
-=======
   if (!userCookie) {
     return res.status(401).send("No authorization token found. Please login to continue if this is your profile.");
->>>>>>> backend/routing
   }
 
   jwt.verify(userCookie, `${process.env.JWT_SECRET}`, (error, decoded) => {
     if (error) {
-<<<<<<< HEAD
-      res.status(403).send("Authorization token could not be verified. Please clear your cookies and sign in again.")
-      res.locals.auth = null;
-      return next();
-=======
       return res.status(403).send("Authorization token could not be verified. Please clear your cookies and sign in again.")
->>>>>>> backend/routing
     }
     res.locals.auth = decoded; //Automatically adds the JWT payload to the middleware chain for further use.
     return next(); //Proceeds beyond the middleware to the actual route.
   });
 }
-
-<<<<<<< HEAD
-module.exports = authenticateUser;
-=======
-//Deauthenticates a signed-in user
-// const deauthenticateUser = (req, res, next) => {
-//   res.clearCookie('auth').send("Cookie cleared.");
-// }
 
 const validateLoginForm = (req, res, next) => {
   const errors = {};
@@ -130,7 +106,6 @@ function validateRegistrationForm(req, res, next) {
 }
 
 module.exports = { authenticateUser, validateLoginForm, validateRegistrationForm }
->>>>>>> backend/routing
 
 /*
 JWT+cookie initialization upon successful login:
