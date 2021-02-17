@@ -5,37 +5,7 @@ const user_controller = require('../controllers/user.controller')
 //  @route POST /users/register
 //  @desc Register user
 //  @access Public
-router.post("/register", (req, res, next) => { //will probably want some kind of sanitizer for user input
-  console.log(req.body);
-  const error = new Error('');
-    User.findOne({ email: req.body.email }).then((user) => {
-        if (user) {
-            error.message = 'Email';
-            return res.status(401).send(error); //handle this on the frontend--but how?
-        }
-    });
-    User.findOne({ username: req.body.username }).then((user) => {
-        if (user) {
-            error.message = error.message + ', Username';
-            return res.status(401).send(error);
-        }
-    });
-
-    bcrypt.hash(req.body.password, 10, (error, hash) => {
-      if (error) return res.status(500).send('hashing error');
-      const user = new User({
-        username: req.body.username,
-        email: req.body.email,
-        password: hash,
-      });
-      //TODO: Write this function
-      // sendAuthenticationEmail(req, user);
-      User.create(user, (err, post) => {
-        if (err) return next(err);
-        return res.status(200).json(post);
-      });
-    })
-});
+router.post("/register", validateRegistrationForm, user_controller.register_user);
 
 // @route POST /users/login
 // @desc Login user 
