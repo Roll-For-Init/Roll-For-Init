@@ -11,11 +11,8 @@ const express = require('express'),
 
 
 module.exports.init = async() => {
-    // Configuration
-    const isDev = process.env.NODE_ENV !== "production";
-
     // Set up Mongoose
-    const mongoDB = isDev ? config.db_dev : config.db;
+    const mongoDB = config.db;
     const mongoOptions = {
         useNewUrlParser: true,
         useUnifiedTopology: true,
@@ -56,7 +53,7 @@ module.exports.init = async() => {
     app.use('/api/v1/', require('../routes'));
 
     // Serve static files
-    if (isDev) {
+    if (config.isDev) {
         app.use(
             historyApiFallback({
                 verbose: false

@@ -1,9 +1,5 @@
-// module.exports = {
-//   db: 'mongodb://username:password@url:port/db',
-//   db_dev: 'mongodb://url:port/db',
-// };
-
+const isDev = (process.env.NODE_ENV !== "production")
 module.exports = {
-  db: 'mongodb+srv://admin:adminpass@rollforinit.xhpae.mongodb.net/userSpecific?retryWrites=true&w=majority',
-  db_dev: 'mongodb+srv://admin:adminpass@rollforinit.xhpae.mongodb.net/userSpecific?retryWrites=true&w=majority',
+  isDev: isDev,
+  db: isDev ? process.env.MONGODB_URI_DEV : process.env.MONGODB_URI
 };
