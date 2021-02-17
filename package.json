@@ -10,8 +10,7 @@
     "server:start": "node server/server.js",
     "client:build": "webpack --config webpack.config.js",
     "start": "concurrently \"npm run server:start\" \"npm run api:start\"",
-    "build": "npm run client:build && npm run api:build",
-    "postbuild": "redis-server"
+    "build": "npm run client:build && npm run api:build"
   },
   "repository": {
     "type": "git",
