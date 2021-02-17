@@ -5,12 +5,11 @@
   "private": true,
   "scripts": {
     "dev": "node server",
-    "api:build": "npm install --prefix ./5e-srd-api",
-    "api:start": "npm start --prefix ./5e-srd-api",
+    "api:start": "node 5e-srd-api/src/start.js",
     "server:start": "node server/server.js",
     "client:build": "webpack --config webpack.config.js",
     "start": "concurrently \"npm run server:start\" \"npm run api:start\"",
-    "build": "npm run client:build && npm run api:build"
+    "build": "npm run client:build"
   },
   "repository": {
     "type": "git",
@@ -35,6 +34,7 @@
     "cookie-parser": "^1.4.5",
     "copy-webpack-plugin": "^5.1.2",
     "css-loader": "^3.6.0",
+    "dnd-5e-srd-api": "file:5e-srd-api",
     "dot-prop": "^6.0.1",
     "dotenv": "^8.2.0",
     "elliptic": "^6.5.3",
