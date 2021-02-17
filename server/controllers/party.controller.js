@@ -2,6 +2,7 @@
 const Party = require("../models/Party.js");
 
 //Projections
+// eslint-disable-next-line no-unused-vars
 const projections = {
     public: { _id: 0 },
     private: { _id: 0 },
@@ -17,6 +18,7 @@ const throwError = (res, code, message, err) => {
 }
 
 // Middleware that attaches party info to the req
+// eslint-disable-next-line no-unused-vars
 const attachPartyInfo = (req, res, next, id) => {
     next();
 }

@@ -2,6 +2,7 @@
 const Game = require("../models/Game.js");
 
 //Projections
+// eslint-disable-next-line no-unused-vars
 const projections = {
     public: { _id: 0 },
     private: { _id: 0 },
@@ -18,6 +19,7 @@ const throwError = (res, code, message, err) => {
 }
 
 // Middleware that attaches game info to the req
+// eslint-disable-next-line no-unused-vars
 const attachGameInfo = (req, res, next, id) => {
     next();
 }

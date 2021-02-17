@@ -22,7 +22,7 @@ const attachCharacterInfo = (req, res, next, id) => {
     let projection = projections.public;
     if (req.ownership === true) {
         projection = projections.private
-    } else if (req.character.party)){
+    } else if (req.character.party) {
         req.character.party.forEach(partyMember => {
             if(partyMember.player.id === req.user.id){
                 projection = projections.party
