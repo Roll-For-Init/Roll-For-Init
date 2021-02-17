@@ -5,13 +5,13 @@
   "private": true,
   "scripts": {
     "dev": "node server",
-    "api:build": "cd 5e-srd-api && npm install && redis-server",
+    "api:build": "cd 5e-srd-api && npm install",
     "api:start": "cd 5e-srd-api && npm start",
     "server:start": "node server/server.js",
     "client:build": "webpack --config webpack.config.js",
     "start": "concurrently \"npm run server:start\" \"npm run api:start\"",
-    "build": "npm run client:build",
-    "postbuild": "npm install"
+    "build": "npm run client:build && npm run api:build",
+    "postbuild": "redis-server"
   },
   "repository": {
     "type": "git",
