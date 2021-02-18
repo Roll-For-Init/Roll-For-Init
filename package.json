@@ -5,11 +5,12 @@
   "private": true,
   "scripts": {
     "dev": "node server",
-    "api:start": "node 5e-srd-api/src/start.js",
-    "server:start": "node server/server.js",
+    "api:start": "node ./5e-srd-api/src/start.js",
+    "server:start": "node ./server/server.js",
     "client:build": "webpack --config webpack.config.js",
     "start": "concurrently \"npm run server:start\" \"npm run api:start\"",
-    "build": "npm run client:build"
+    "build": "npm run client:build",
+    "heroku-postbuild": "cd 5e-srd-api && npm install"
   },
   "repository": {
     "type": "git",
