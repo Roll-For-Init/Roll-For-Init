@@ -9,8 +9,9 @@
     "server:start": "node ./server/server.js",
     "client:build": "webpack --config webpack.config.js",
     "start": "concurrently \"npm run server:start\" \"npm run api:start\"",
+    "install-all": "npm install; (cd ./5e-srd-api && npm install);",
     "build": "npm run client:build",
-    "heroku-postbuild": "cd 5e-srd-api && npm install"
+    "heroku-postbuild": "npm run install-all"
   },
   "repository": {
     "type": "git",
@@ -35,7 +36,6 @@
     "cookie-parser": "^1.4.5",
     "copy-webpack-plugin": "^5.1.2",
     "css-loader": "^3.6.0",
-    "dnd-5e-srd-api": "file:5e-srd-api",
     "dot-prop": "^6.0.1",
     "dotenv": "^8.2.0",
     "elliptic": "^6.5.3",
