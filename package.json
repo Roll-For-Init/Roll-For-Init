@@ -17,7 +17,7 @@
     "url": "https://github.com/Roll-For-Init/Roll-For-Init.git"
   },
   "engines": {
-    "node": ">=6"
+    "node": "14.x"
   },
   "dependencies": {
     "@babel/core": "^7.12.10",
