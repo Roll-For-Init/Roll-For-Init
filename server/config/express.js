@@ -6,8 +6,9 @@ const express = require('express'),
     helpers = require("../../webpack/helpers"),
     webpackHotMiddleware = require("webpack-hot-middleware"),
     webpackDevMiddleware = require("webpack-dev-middleware"),
-    webpackConfig = require("../../webpack.config");
-
+    webpackConfig = require("../../webpack.config"),
+    cors = require("cors"),
+    { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports.init = async() => {
     // Set up Mongoose
@@ -27,15 +28,22 @@ module.exports.init = async() => {
     });
 
     const app = express();
-    // app.use(cors())
+    app.options('*', cors());
+    app.use(createProxyMiddleware(['/api/**', '!/api/{users, characters}/**', ], { target: `http://[::1]:${config.api.port}`, secure: false, changeOrigin: true }));
     app.use(express.urlencoded({ extended: true }));
     app.use(express.json());
+    app.use(cors({ origin: '*' }));
 
     // Own middleware
     app.use(require('cookie-parser')());
 
     // API Routing
     app.use('/api/', require('../routes'));
+
+    // app.all('/api/', (req, res) => {
+    //     // TODO: Make better, possibly guess the correct route?
+    //     res.status(404).send("Unknown API call.")
+    // })
 
     // Serve static files
     if (config.isDev) {

@@ -7,6 +7,10 @@ module.exports = {
     password: 'password'
   },
   website: {
-    url: process.env.HOST || '0.0.0.0'
+    url: process.env.HOST || '0.0.0.0',
+    port: process.env.PORT || 8080
+  },
+  api: {
+    port: process.env.PORT_API || 3005
   }
 };
