@@ -8,7 +8,7 @@
     "api:start": "npm start --prefix 5e-srd-api/",
     "server:start": "node ./server/server.js",
     "client:build": "webpack --config webpack.config.js",
-    "start": "concurrently \"npm run server:start\" \"npm run api:start\"",
+    "start": "(npm run install-all); concurrently \"npm run server:start\" \"npm run api:start\"",
     "install-all": "npm --prefix ./5e-srd-api install ./5e-srd-api;",
     "build": "npm run client:build"
   },
