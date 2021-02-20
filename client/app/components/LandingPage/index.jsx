@@ -26,9 +26,9 @@ const LandingPage = () => {
         <div className="modal fade" id="uploadModal" role="dialog" aria-labelledby="characterUpload" aria-hidden="true">
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
-              <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+              {/* <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                 <span aria-hidden="true">&times;</span>
-              </button> 
+              </button>  */}
               <div className="modal-sect">
                 <h5>Upload a Character</h5>
               </div>

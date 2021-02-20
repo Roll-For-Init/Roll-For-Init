@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
-//import { yupResolver } from '@hookform/resolvers/yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import "./styles.scss";
@@ -15,17 +15,17 @@ const schema = yup.object().shape({
   char_sheet: yup
     .mixed()
     .required("Please provide a file.")
+    .test("type", "Please only upload a PDF file.", (value) => {
+      return value && SUPPORTED_FORMATS.includes(value[0].type);
+    })
     .test("fileSize", "The file you have provided is too large.", (value) => {
       return value && value[0].size <= FILE_SIZE;
     })
-    .test("type", "Please only upload a PDF file.", (value) => {
-      return value && SUPPORTED_FORMATS.includes(value.type);
-    }),
 });
 
 function Upload() {
   const { register, handleSubmit, errors } = useForm({
-    //resolver: yupResolver(schema)
+    resolver: yupResolver(schema)
   });
 
   const onSubmit = (data) => {
