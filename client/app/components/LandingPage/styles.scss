@@ -46,10 +46,10 @@
   box-shadow: none;
   color: $off-white;
   width: 10%;
-  height: 20%;
+  height: 15%;
   position: absolute;
-  right: 0px;
-  top: 0px;
+  right: -20px;
+  top: -25px;
 }
 .close:hover {
   color: $dark-off-white;
@@ -65,7 +65,8 @@
 }
 
 .modal-dialog {
-  width: 400px;
+  max-width: 400px;
+  width: 85vw;
 }
 
 .modal-sect {

@@ -1,24 +1,31 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import { useForm } from "react-hook-form";
+//import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 
 import "./styles.scss";
 
+const FILE_SIZE = 2 * 1024 * 1024;
+const SUPPORTED_FORMATS = [
+  "application/pdf",
+];
+
 const schema = yup.object().shape({
   char_sheet: yup
     .mixed()
-    .required("Please provide a file")
-    .test("type", "Please only upload a PDF file", (value) => {
-      return value && value[0].type == "image/pdf";
+    .required("Please provide a file.")
+    .test("fileSize", "The file you have provided is too large.", (value) => {
+      return value && value[0].size <= FILE_SIZE;
+    })
+    .test("type", "Please only upload a PDF file.", (value) => {
+      return value && SUPPORTED_FORMATS.includes(value.type);
     }),
-})
-
+});
 
 function Upload() {
-
   const { register, handleSubmit, errors } = useForm({
-    validationSchema: schema,
+    //resolver: yupResolver(schema)
   });
 
   const onSubmit = (data) => {
@@ -29,10 +36,8 @@ function Upload() {
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <input className="upload-container" ref={register} type="file" name="char_sheet" />
-      {errors.char_sheet && <p>{errors.char_sheet_message}</p>}
-      <button type="button" className="btn btn-primary btn-lg btm-buttons">
-        submit
-      </button>
+      {errors.char_sheet && <p>{errors.char_sheet.message}</p>}
+      <button className="btn btn-primary btn-lg btm-buttons modal-buttons">Submit</button>
     </form>
   );
 }
