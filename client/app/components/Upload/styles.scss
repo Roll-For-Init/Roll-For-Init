@@ -1,0 +1,9 @@
+@import 'client/app/variables';
+
+.upload-container {
+  background-color: $off-white;
+  box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
+  color: #172838;
+  border: 3px solid $maroon;
+  border-radius: 8px;
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Upload from "../Upload";
 
 import "./styles.scss";
 
@@ -19,11 +20,27 @@ const LandingPage = () => {
             Create New Character
           </button>
         </Link>
-        <Link to="/upload">
-          <button type="button" className="btn btn-secondary btn-lg top-buttons">
-            Upload Existing Character
-          </button>
-        </Link>
+        <button type="button" className="btn btn-secondary btn-lg top-buttons" data-toggle="modal" data-target="#uploadModal">
+          Upload Existing Character
+        </button>
+        <div className="modal fade" id="uploadModal" role="dialog" aria-labelledby="characterUpload" aria-hidden="true">
+          <div className="modal-dialog modal-dialog-centered" role="document">
+            <div className="modal-content">
+              {/* <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button> */}
+              <div className="modal-sect">
+                <h5>Upload a Character</h5>
+              </div>
+              <div className="modal-sect">
+                <p>
+                  Please upload your Roll For Init PDF character sheet.
+                </p>
+              </div>
+              <Upload />
+            </div>
+          </div>
+        </div>
       </div>
       <div className="d-grid gap-6">
         <Link to="/login">

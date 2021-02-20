@@ -15,7 +15,7 @@ import NotFound from "./components/App/NotFound";
 import LandingPage from "./components/LandingPage";
 import SignUp from "./components/SignUp";
 import Login from "./components/Login";
-import Upload from "./components/Upload";
+//import Upload from "./components/Upload";
 import Create from "./components/Create";
 import DashBoard from "./components/DashBoard";
 
@@ -33,7 +33,7 @@ render(
           <Route exact path="/" component={LandingPage} />
           <Route exact path="/signup" component={SignUp} />
           <Route exact path="/login" component={Login} />
-          <Route exact path="/upload" component={Upload} />
+          {/*<Route exact path="/upload" component={Upload} />*/}
           <Route exact path="/create" component={Create} />
           <Route exact path="/dashboard" component={DashBoard} />
           <Route component={NotFound} />
