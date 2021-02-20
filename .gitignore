@@ -23,5 +23,4 @@ $RECYCLE.BIN/
 *.icloud
 
 # Config files
-config/config.js
 *.env

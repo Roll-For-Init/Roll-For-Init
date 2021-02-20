@@ -1,6 +1,8 @@
 const bcrypt = require("bcrypt");
 const jwt = require('jsonwebtoken');
+
 const User = require("../models/User.js");
+const config = require("../../config/config");
 
 // Projections  https://docs.mongodb.com/manual/tutorial/project-fields-from-query-results/
 const projections = {
@@ -20,7 +22,7 @@ const attachUserInfo = (req, res, next) => {
 
 // Identical error handling per route for security reasons
 const throwError = (res, code, message, err) => {
-    if (process.env.NODE_ENV === 'development'){
+    if (config.isDev){
         if (err) console.log("Unexpected error: ", err);
     }
     return res.status(code).json({message: message});
@@ -171,7 +173,7 @@ const login_user = (req, res) => {
                 username: user.username,
             };
             console.log("Successfully signed in user: ", user.username);
-            jwt.sign(jwtPayload, `${process.env.JWT_SECRET}`, (error, token) => {
+            jwt.sign(jwtPayload, config.jwt.secret, (error, token) => {
                 if (error) return throwError(res, 401, "Invalid credentials.", error)
                 /*
                 //MAY REQUIRE cors package with use with fetch()...CHECK!
@@ -182,7 +184,7 @@ const login_user = (req, res) => {
                     return done(error);
                 }
                 */
-                return res.status(200).cookie('auth', token, { maxAge: 360000, httpOnly: false }).send("Authentication cookie set.");
+                return res.status(200).cookie('auth', token, config.jwt.options).send("Authentication cookie set.");
             });
         }).catch(err => throwError(res, 401, "Invalid credentials.", err));
     }).catch(err => throwError(res, 401, "Invalid credentials.", err));

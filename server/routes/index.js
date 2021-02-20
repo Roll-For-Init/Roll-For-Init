@@ -13,9 +13,4 @@ router.use(authenticateUser);
 
 router.use('/characters', require('./characters.js'));
 
-router.all('/', (req, res) => {
-    // TODO: Make better, possibly guess the correct route?
-    res.status(404).send("Unknown API call.")
-})
-
 module.exports = router;
