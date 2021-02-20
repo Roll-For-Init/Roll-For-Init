@@ -1,4 +1,5 @@
 // eslint-disable-next-line no-unused-vars
+const config = require("../../config/config.js");
 const Character = require("../models/Character.js");
 
 //Projections
@@ -11,7 +12,7 @@ const projections = {
 
 // Identical error handling per route for security reasons
 const throwError = (res, code, message, err) => {
-    if (process.env.NODE_ENV === 'development'){
+    if (config.isDev){
         if (err) console.log("Unexpected error: ", err);
     }
     return res.status(code).json({message: message});

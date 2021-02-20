@@ -1,22 +1,9 @@
-const path = require('path');
-const dotenv = require('dotenv');
+const config = require('../config/config');
 
-dotenv.config({
-  path: path.resolve(__dirname, '../secret.env'),
-  debug: process.env.DEBUG
-});
+const express = require('./express.js');
 
-const express = require('./config/express.js');
-
-const port = process.env.PORT || 8080;
-const host = process.env.HOST || "0.0.0.0";
-
-if (!process.env.NODE_ENV) {
-    console.log(process.env.NODE_ENV)
-    console.log("Node environment not found, using development by default.")
-}
-
-express.init().then(app => {
+module.exports = express.init().then(app => {
+    let {host, port} = config.website;
     app.listen(port, host, err => {
         if (err) {
             console.log(err);
