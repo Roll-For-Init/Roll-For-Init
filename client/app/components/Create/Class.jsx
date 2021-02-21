@@ -10,7 +10,7 @@ export const Class = props => {
   };
 
   return (
-    <div className="race">
+    <div className="race position-relative">
       <h2 className="p-4" style={{ position: "sticky", top: -50, zIndex: 99 }}>
         Class
       </h2>

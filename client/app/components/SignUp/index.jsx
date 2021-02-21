@@ -1,5 +1,5 @@
 import React from "react";
-import { useDispatch } from "react-redux";
+import { connect, useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { Form, Field } from "react-final-form";
 import { signUp } from "../../actions";
@@ -15,10 +15,21 @@ const reduxField = ({ placeholder, input, meta }) => (
   </div>
 );
 
-const SignUp = () => {
+const SignUp = props => {
   const dispatch = useDispatch();
   const onSubmit = values => {
-    dispatch(signUp(values));
+    const promise = new Promise((resolve, reject) => {
+      dispatch(signUp(values));
+      if (props.signupInfo.error || !props.signupInfo.success) {
+        reject(props.signupInfo.error);
+      } else {
+        resolve();
+      }
+    });
+
+    promise.then(() => {
+      props.history.push("/login");
+    });
   };
 
   return (
@@ -76,6 +87,9 @@ const SignUp = () => {
               placeholder="confirm password"
             />
             <div className="d-grid gap-2">
+              <p className="text-center text-danger m-0">
+                {!invalid && props.signupInfo.error}
+              </p>
               <Link to="/">
                 <button
                   type="button"
@@ -101,4 +115,8 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+const mapStateToProps = state => ({
+  signupInfo: state.signUp
+});
+
+export default connect(mapStateToProps)(SignUp);

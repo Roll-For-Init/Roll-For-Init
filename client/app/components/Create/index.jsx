@@ -7,7 +7,7 @@ import Abilities from "./Abilities";
 import Options from "./Options";
 import Descriptions from "./Descriptions";
 import Equipment from "./Equipment";
-import SidePanel from "./SidePanel";
+import { Link } from "react-router-dom";
 
 import "./styles.scss";
 
@@ -22,8 +22,7 @@ const buttonNames = [
 ];
 
 const Create = props => {
-  const { selectedInfo } = props.info;
-  const [page, setPage] = useState({ name: "class", index: 1 });
+  const [page, setPage] = useState({ name: "race", index: 0 });
   const onPageChange = (page, index) => {
     setPage({ name: page, index });
   };
@@ -32,25 +31,25 @@ const Create = props => {
 
   switch (page.name) {
     case "race":
-      pages = <Race setPage={setPage} />;
+      pages = <Race setPage={setPage} page={page} />;
       break;
     case "class":
-      pages = <Class setPage={setPage} />;
+      pages = <Class setPage={setPage} page={page} />;
       break;
     case "background":
-      pages = <Background setPage={setPage} />;
+      pages = <Background setPage={setPage} page={page} />;
       break;
     case "abilities":
-      pages = <Abilities setPage={setPage} />;
+      pages = <Abilities setPage={setPage} page={page} />;
       break;
     case "options":
-      pages = <Options setPage={setPage} />;
+      pages = <Options setPage={setPage} page={page} />;
       break;
     case "description":
-      pages = <Descriptions setPage={setPage} />;
+      pages = <Descriptions setPage={setPage} page={page} />;
       break;
     case "equipment":
-      pages = <Equipment setPage={setPage} />;
+      pages = <Equipment setPage={setPage} page={page} />;
       break;
   }
 
@@ -58,7 +57,9 @@ const Create = props => {
     <div className="create">
       <header>
         <h1 className="text-center m-0" style={{ backgroundColor: "#333" }}>
-          Roll For Init
+          <Link to="/" className="link-regular">
+            Roll For Init
+          </Link>
         </h1>
       </header>
       <div className="container-fluid">
@@ -95,20 +96,9 @@ const Create = props => {
               })}
             </div>
           </div>
-          <div className="col-5 pb-0 px-5 pt-5 container overflow-auto position-relative">
+          <div className="col-9 pb-0 px-5 pt-5 container overflow-auto">
             {pages}
           </div>
-          {/* <div className="col-4 p-4 container overflow-auto">
-            {selectedInfo ? (
-              <SidePanel />
-            ) : (
-              <div className="card mt-5 p-5 side-bar">
-                <div className="card-header">
-                  <h4>Nothing Is Selected</h4>
-                </div>
-              </div>
-            )}
-          </div> */}
         </div>
       </div>
     </div>
