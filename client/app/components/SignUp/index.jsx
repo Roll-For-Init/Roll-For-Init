@@ -20,10 +20,10 @@ const SignUp = props => {
   const onSubmit = values => {
     const promise = new Promise((resolve, reject) => {
       dispatch(signUp(values));
-      if (props.signupInfo.error || !props.signupInfo.success) {
-        reject(props.signupInfo.error);
-      } else {
+      if (!props.signupInfo.error && props.signupInfo.success) {
         resolve();
+      } else {
+        reject(props.signupInfo.error);
       }
     });
 

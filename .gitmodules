@@ -1,0 +1,3 @@
+[submodule "5e-srd-api"]
+	path = 5e-srd-api
+	url = https://github.com/Roll-For-Init/5e-srd-api.git

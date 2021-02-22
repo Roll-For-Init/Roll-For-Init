@@ -1,18 +1,18 @@
 const jwt = require("jsonwebtoken");
 const validator = require('validator');
 const User = require("../../models/User.js");
+const config = require("../../../config/config");
 
 // Express middleware to verify a user's credentials and pass them on to the calling route for usage.
 // Restricts access to only signed-in users on the route it is applied to
 const authenticateUser = (req, res, next) => {
-  const jwt = require("jsonwebtoken");
   const userCookie = req.cookies.auth; //Reminder: cookie MUST be set with the auth header
 
   if (!userCookie) {
     return res.status(401).send("No authorization token found. Please login to continue if this is your profile.");
   }
 
-  jwt.verify(userCookie, `${process.env.JWT_SECRET}`, (error, decoded) => {
+  jwt.verify(userCookie, config.jwt.secret, (error, decoded) => {
     if (error) {
       return res.status(403).send("Authorization token could not be verified. Please clear your cookies and sign in again.")
     }
