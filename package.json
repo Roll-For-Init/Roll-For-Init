@@ -4,12 +4,11 @@
   "description": "A MERN stack template to start future projects.",
   "private": true,
   "scripts": {
-    "build": "webpack --config webpack.config.js",
     "redis:start": "redis-server --daemonize yes",
-    "api:start": "npm start --prefix 5e-srd-api/",
     "api:install": "npm --prefix ./5e-srd-api install ./5e-srd-api",
-    "prestart": "if-env NODE_ENV=production && npm run api:install || (npm run redis:start&)",
-    "start": "concurrently \"node server\" \"npm run api:start\""
+    "api:start": "if-env NODE_ENV=production && npm run api:install || (npm run redis:start&); npm start --prefix 5e-srd-api/",
+    "start": "concurrently \"node server\" \"npm run api:start\"",
+    "build": "webpack --config webpack.config.js"
   },
   "repository": {
     "type": "git",
