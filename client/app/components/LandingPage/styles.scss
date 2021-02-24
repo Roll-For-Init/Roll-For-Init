@@ -1,4 +1,4 @@
-@import 'client/app/variables';
+@import "client/app/variables";
 
 .container {
   height: calc(100vh - 56px);
@@ -15,7 +15,7 @@
   width: auto;
 }
 
-.top-buttons{
+.top-buttons {
   max-width: 325px;
   width: 40% !important;
   margin: 25px;
@@ -40,7 +40,6 @@
   margin-top: 50px;
   height: 50px;
 }
-
 
 .close {
   box-shadow: none;
@@ -79,7 +78,7 @@
   margin: auto;
   margin-bottom: 10px;
   h5 {
-    text-transform: uppercase;
+    font-variant: small-caps;
   }
   p {
     text-align: left;

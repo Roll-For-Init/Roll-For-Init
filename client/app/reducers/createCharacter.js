@@ -83,6 +83,30 @@ export const createCharacter = (
         name: "Sorcerer"
       }
     ],
+    backgrounds: [
+      {
+        name: "acolyte",
+        proficiencies: {
+          skills: ["Askill1", "Askill2"],
+          languages: ["Alanguage1", "alanguage2"]
+        },
+        feature: {
+          name: "shelter of the faithful",
+          description: "la la la la la"
+        }
+      },
+      {
+        name: "brawler",
+        proficiencies: {
+          skills: ["Bskill1", "Bskill2"],
+          languages: ["Blanguage1", "Blanguage2"]
+        },
+        feature: {
+          name: "fists of the pugilist",
+          description: "pow pow"
+        }
+      }
+    ],
     selectedInfo: null,
     character: {
       race: null,

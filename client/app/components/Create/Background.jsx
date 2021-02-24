@@ -5,31 +5,6 @@ import { getBackgroundInfo } from "../../actions";
 export const Background = props => {
   const { backgrounds } = props.backgrounds;
 
-  const test = [
-    {
-      name: "acolyte",
-      proficiencies: {
-        skills: ["Askill1", "Askill2"],
-        languages: ["Alanguage1", "alanguage2"]
-      },
-      feature: {
-        name: "shelter of the faithful",
-        description: "la la la la la"
-      }
-    },
-    {
-      name: "brawler",
-      proficiencies: {
-        skills: ["Bskill1", "Bskill2"],
-        languages: ["Blanguage1", "Blanguage2"]
-      },
-      feature: {
-        name: "fists of the pugilist",
-        description: "pow pow"
-      }
-    }
-  ];
-
   const selectBackground = background => {
     props.selectBackground(background);
   };
@@ -55,7 +30,7 @@ export const Background = props => {
           aria-label="Background selection"
           onChange={e => console.log(e.target.value)}
         >
-          {test.map((background, idx) => (
+          {backgrounds.map((background, idx) => (
             <option key={idx} value={background.name}>
               {background.name}
             </option>
@@ -66,7 +41,9 @@ export const Background = props => {
         </div>
       </div>
       <div className="card translucent-card">
-        <div className="card content-card title-card">Proficiencies</div>
+        <div className="card content-card title-card pb-0">
+          <h5>Proficiencies</h5>
+        </div>
         <div className="skill-container">
           <div className="card content-card skill-card">Skill 1</div>
           <div className="card content-card skill-card">Skill 2</div>
@@ -79,7 +56,9 @@ export const Background = props => {
         </div>
       </div>
       <div className="card translucent-card">
-        <div className="card content-card title-card">Background Feature</div>
+        <div className="card content-card title-card pb-0">
+          <h5>Background Feature</h5>
+        </div>
         <div className="card content-card subtitle-card">
           Shelter of the Faithful
         </div>

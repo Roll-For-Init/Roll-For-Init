@@ -42,7 +42,7 @@
 }
 
 .translucent-card {
-  background-color: #333;
+  background-color: $lighter-maroon;
   padding: 20px;
 }
 
@@ -70,7 +70,7 @@
 .title-card {
   padding: 10px 20px;
   margin: 0px auto 5px auto;
-  text-transform: uppercase;
+  font-variant: small-caps;
 }
 
 .subtitle-card {
