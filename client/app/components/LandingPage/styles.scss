@@ -1,4 +1,4 @@
-@import 'client/app/variables';
+@import "client/app/variables";
 
 .container {
   height: calc(100vh - 56px);
@@ -6,7 +6,7 @@
 }
 
 .logo {
-  background-image: url("../../../static/logo.png");
+  background-image: url("../../../public/assets/imgs/logo.png");
   background-repeat: no-repeat;
   background-size: contain;
   height: 200px;
@@ -15,7 +15,7 @@
   width: auto;
 }
 
-.top-buttons{
+.top-buttons {
   max-width: 325px;
   width: 40% !important;
   margin: 25px;

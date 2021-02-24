@@ -2,7 +2,7 @@ const dotenv = require('dotenv');
 const {root} = require('./helpers');
 
 dotenv.config({
-  path: './secret.env',
+  path: '../secret.env',
   debug: process.env.DEBUG
 });
 
