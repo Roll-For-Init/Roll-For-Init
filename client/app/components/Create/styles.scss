@@ -1,3 +1,5 @@
+@import "client/app/variables";
+
 .side-drawer {
   border-right: 1px solid black;
   padding: 0px;
@@ -15,5 +17,89 @@
   border: 0px;
   border-bottom: 1px solid lightgray !important;
   padding: 0px;
+  width: 100%;
+}
+
+.card {
+  color: #172838;
+  border-radius: 8px;
+  margin: 20px auto;
+}
+
+.content-card {
+  background-color: $medium-off-white;
+  border: 3px solid $maroon;
+}
+
+.shadow-card {
+  box-shadow: 0px 1px 10px hsla(0, 0, 0, 67%);
+}
+
+.background-card {
+  width: 90%;
+  padding: 10px;
+  text-align: left;
+}
+
+.translucent-card {
+  background-color: #333;
+  padding: 20px;
+}
+
+.dropdown-card {
+  background-color: $medium-off-white;
+  border: 3px solid $maroon;
+  margin: 0px auto 5px auto;
+  //display: inline-block;
+  width: 75%;
+  padding: 5px 0px;
+  text-align: center;
+  text-align-last: center;
+  .dropdown-card-large {
+    background: blue;
+    width: 50%;
+    justify-self: center;
+  }
+  .dropdown-card-small {
+    width: 40%;
+    display: inline-block;
+    background-color: black;
+  }
+}
+
+.title-card {
+  padding: 10px 20px;
+  margin: 0px auto 5px auto;
+  text-transform: uppercase;
+}
+
+.subtitle-card {
+  padding: 5px 0px;
+  margin: 5px auto;
+  width: 70%;
+}
+
+.skill-container {
+  display: flex;
+}
+.skill-card {
+  margin: 5px auto;
+  padding: 5px 0px;
+  flex: 1;
+}
+.skill-card:first-child {
+  margin-right: 10px;
+}
+
+.language-card {
+  padding: 5px;
+  width: 50%;
+  margin: 5px auto;
+}
+
+.description-card {
+  padding: 5px;
+  margin: 5px 0px 0px 0px;
+  text-align: left;
   width: 100%;
 }

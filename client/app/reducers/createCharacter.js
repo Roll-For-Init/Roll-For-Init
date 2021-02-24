@@ -3,7 +3,8 @@ import {
   LOADING_OFF,
   THROW_ERROR,
   GET_RACE_INFO,
-  GET_CLASS_INFO
+  GET_CLASS_INFO,
+  GET_BACKGROUND_INFO,
 } from "../actions";
 
 export const createCharacter = (
@@ -136,6 +137,20 @@ export const createCharacter = (
         ...state,
         character: { ...state.character, class: classResult },
         selectedInfo: classResult
+      };
+
+    case GET_BACKGROUND_INFO:
+      let backgroundResult;
+      state.backgrounds.find(backgrounds => {
+        if (backgrounds.name === action.payload) {
+          console.log(backgrounds.name, action.payload);
+          backgroundResult = backgrounds;
+        }
+      });
+      return {
+        ...state,
+        background: { ...state.character, background: backgroundResult },
+        selectedInfo: backgroundResult
       };
 
     case THROW_ERROR:
