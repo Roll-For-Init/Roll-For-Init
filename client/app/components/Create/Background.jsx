@@ -63,6 +63,14 @@ export const Background = props => {
           Shelter of the Faithful
         </div>
         <div className="card content-card description-card shadow-card">
+          Background features are normally soft skills that can help you outside
+          of combat. Background features can help you with social interactions,
+          give you knowledge about a certain topic, or give you resources to
+          otherwise give you an upper hand in specific situations. If you create
+          a custom feature, work with your GM to ensure it makes sense for your
+          character.
+        </div>
+        <div className="card content-card description-card shadow-card mb-0">
           As an acolyte...
         </div>
       </div>
