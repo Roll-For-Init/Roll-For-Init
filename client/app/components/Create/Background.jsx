@@ -1,6 +1,8 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { getBackgroundInfo } from "../../actions";
+import ReadMoreAndLess from "react-read-more-less";
+import Dropdown from "../Dropdown";
 
 export const Background = props => {
   const { backgrounds } = props.backgrounds;
@@ -12,6 +14,9 @@ export const Background = props => {
   const handleChange = e => {
     console.log(e.target.value);
   };
+
+  const options = ["one", "two", "three"];
+  const [bgName, setBgName] = useState([]);
 
   return (
     <div className="background">
@@ -36,8 +41,16 @@ export const Background = props => {
             </option>
           ))}
         </select>
-        <div className="card content-card description-card shadow-card">
-          As an acolyte...
+        <div className="card content-card description-card shadow-card mb-0">
+          <ReadMoreAndLess
+            charLimit={250}
+            readMoreText="Show more"
+            readLessText="Show less"
+            readMoreClassName="read-more-less--more"
+            readLessClassName="read-more-less--less"
+          >
+            {backgrounds[0].desc}
+          </ReadMoreAndLess>
         </div>
       </div>
       <div className="card translucent-card">
@@ -45,9 +58,22 @@ export const Background = props => {
           <h5>Proficiencies</h5>
         </div>
         <div className="skill-container">
-          <div className="card content-card skill-card">Skill 1</div>
-          <div className="card content-card skill-card">Skill 2</div>
+          <div className="card content-card skill-card">
+            {backgrounds[0].starting_proficiencies[0].name}
+          </div>
+          <div className="card content-card skill-card">
+            {backgrounds[0].starting_proficiencies[1].name}
+          </div>
         </div>
+
+        <Dropdown
+          title="Choose 2: Language"
+          items={backgrounds[0].language_options.from.map(
+            language => language.name
+          )}
+          multiSelect
+        />
+
         <div className="card content-card language-card">
           Choose a Tool or Language
         </div>
@@ -71,7 +97,13 @@ export const Background = props => {
           character.
         </div>
         <div className="card content-card description-card shadow-card mb-0">
-          As an acolyte...
+          <ReadMoreAndLess
+            charLimit={250}
+            readMoreText="Read more"
+            readLessText="Read less"
+          >
+            As an acolyte...
+          </ReadMoreAndLess>
         </div>
       </div>
       <button
