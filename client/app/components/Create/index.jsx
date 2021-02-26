@@ -22,10 +22,7 @@ const buttonNames = [
 ];
 
 const Create = props => {
-<<<<<<< HEAD
   const { selectedInfo } = props.info;
-=======
->>>>>>> 310630bcdbf5f84f9e723a5ab5d355efe190f031
   const [page, setPage] = useState({ name: "race", index: 0 });
   const onPageChange = (page, index) => {
     setPage({ name: page, index });
@@ -103,7 +100,6 @@ const Create = props => {
           <div className="col-9 pb-0 px-5 pt-5 container overflow-auto">
             {pages}
           </div>
-<<<<<<< HEAD
           <div className="col-4">
             {/* {selectedInfo ? (
               <SidePanel />
@@ -115,8 +111,6 @@ const Create = props => {
               </div>
             )} */}
           </div>
-=======
->>>>>>> 310630bcdbf5f84f9e723a5ab5d355efe190f031
         </div>
       </div>
     </div>

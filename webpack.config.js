@@ -1,3 +1,9 @@
+const dotenv = require('dotenv');
+
+dotenv.config({
+  path: './secret.env',
+});
+
 switch (process.env.NODE_ENV) {
   case 'prod':
   case 'production':
