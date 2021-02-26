@@ -1,6 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 import { getRaceInfo } from "../../actions";
+import Dropdown from "../Dropdown";
 
 const Race = props => {
   const { races, selectedInfo } = props.races;
@@ -11,64 +12,52 @@ const Race = props => {
 
   return (
     <div className="race position-relative">
-      <div className="mx-auto mb-4 w-75">
-        <div className="w-100 d-flex flex-row">
-          {selectedInfo && (
-            <button
-              onClick={() => props.selectRace(null)}
-              className="float-left p-4 m-0 w-25"
-            >
-              back
-            </button>
-          )}
-          <h2
-            className={
-              selectedInfo
-                ? "p-4 px-5 mx-3 w-50 m-0 float-left rounded"
-                : "p-4 w-100 rounded"
-            }
-          >
-            Race
-          </h2>
-        </div>
-      </div>
-      <div className="dropdown btn-group-vertical w-75">
-        {!selectedInfo ? (
-          races.map((race, idx) => (
-            <div className="w-100 h-auto" key={idx}>
-              <button
-                className={
-                  race.subraces.length > 0
-                    ? "btn btn-lg my-3 mx-0 options dropdown-toggle text-uppercase w-50"
-                    : "btn btn-lg my-3 mx-0 options text-uppercase w-50"
-                }
-                type="button"
-                id={`dropdownMenuButton1${idx}`}
-                data-toggle={race.subraces.length > 0 ? "dropdown" : ""}
-                aria-expanded="true"
-              >
-                {race.name}
-              </button>
-              <div
-                className="dropdown-menu w-50 p-0"
-                aria-labelledby={`dropdownMenuButton1${idx}`}
-              >
-                {race.subraces.map((subrace, idx) => (
-                  <button
-                    key={idx}
-                    className="w-100 m-0 border-0 shadow-none text-center text-uppercase"
-                    onClick={() => selectRace(subrace.name)}
-                  >
-                    {subrace.name}
-                  </button>
-                ))}
+      {!selectedInfo ? (
+        <>
+          <div className="mx-auto mb-4 w-75">
+            <h2 className="p-4 w-100 rounded">Race</h2>
+          </div>
+          <div className="dropdown btn-group-vertical w-75">
+            {races.map((race, idx) => (
+              <div className="w-100 h-auto" key={idx}>
+                <button
+                  className={
+                    race.subraces.length > 0
+                      ? "btn btn-lg m-0 mb-3 options dropdown-toggle text-uppercase"
+                      : "btn btn-lg m-0 mb-3 options text-uppercase"
+                  }
+                  type="button"
+                  id={`dropdownMenuButton1${idx}`}
+                  data-toggle={race.subraces.length > 0 ? "dropdown" : ""}
+                  aria-expanded="true"
+                >
+                  {race.name}
+                </button>
+                <div
+                  className="dropdown-menu m-0 p-0"
+                  aria-labelledby={`dropdownMenuButton1${idx}`}
+                >
+                  {race.subraces.map((subrace, idx) => (
+                    <button
+                      key={idx}
+                      className="w-100 m-0 border-0 shadow-none text-center text-uppercase options-dropdown"
+                      onClick={() => selectRace(subrace.name)}
+                    >
+                      {subrace.name}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
-          ))
-        ) : (
-          <SidePanel info={selectedInfo} setPage={props.setPage} />
-        )}
-      </div>
+            ))}
+          </div>
+        </>
+      ) : (
+        <SidePanel
+          info={selectedInfo}
+          setPage={props.setPage}
+          selectRace={selectRace}
+        />
+      )}
     </div>
   );
 };
@@ -76,63 +65,89 @@ const Race = props => {
 const SidePanel = props => {
   const { name, skills, traits } = props.info;
   return (
-    <div className="w-100">
-      <div className="card w-100 side-bar">
+    <>
+      <div className="mb-3" style={{ height: 70 }}>
+        <button
+          onClick={() => props.selectRace(null)}
+          className="float-left p-3 m-0 mx-2"
+          style={{ width: "10%", height: 70 }}
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="16"
+            height="16"
+            fill="currentColor"
+            className="bi bi-chevron-left"
+            viewBox="0 0 16 16"
+          >
+            <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
+          </svg>
+        </button>
+        <h2 style={{ width: "85%" }} className="p-3 m-0 float-right rounded">
+          Race
+        </h2>
+      </div>
+      <div className="card w-75 side-bar">
         <div className="card-body">
           <h4 className="card-title">
             <div
-              style={{ backgroundColor: "white", padding: 20 }}
-              className="card-title text-uppercase text-dark rounded w-75 m-auto"
+              style={{ padding: 20 }}
+              className="card-title text-uppercase rounded w-75 m-auto text-background"
             >
               {name}
             </div>
           </h4>
-          <h6 className="card-subtitle container-fluid px-0 mt-4 ">
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: 10,
-                fontSize: 12,
-                textAlign: "left"
-              }}
-              className="text-dark col-5 d-inline-block rounded"
-            >
+          <h6 className="card-subtitle mt-4">
+            <div className="w-auto mx-2 p-2 d-inline-block rounded text-background">
               +{skills.dexterity} dexterity
               <br />+{skills.intelligence} Intelligence
             </div>
-            <div
-              style={{
-                backgroundColor: "white",
-                padding: 10,
-                fontSize: 12,
-                textAlign: "left"
-              }}
-              className="text-dark col-5 offset-2 d-inline-block rounded"
-            >
+            <div className="w-auto mx-2 p-2 d-inline-block rounded text-background">
               Speed: {skills.speed}
               <br />
               Size: {skills.size}
             </div>
           </h6>
-          <div
-            className="card-text container-fluid mt-4"
-            style={{ fontSize: 12, textAlign: "left" }}
-          >
-            <h6 className="row mb-3">
-              <div className="col-12 text-dark text-center bg-light p-2 rounded text-uppercase">
-                {name} traits
-              </div>
-            </h6>
-            {traits.map((trait, idx) => (
-              <div className="row" key={idx}>
-                <p className="col-12 text-dark bg-light p-2 rounded">
-                  <b className="text-uppercase text-dark fs-2">
-                    {trait.name} -{" "}
-                  </b>
-                  {trait.description}
-                </p>
-              </div>
-            ))}
+        </div>
+      </div>
+      <div className="card w-75 side-bar">
+        <div className="card-body">
+          <h5 className="card-title">
+            <div
+              style={{ padding: 20 }}
+              className="card-title text-uppercase rounded w-75 m-auto text-background"
+            >
+              race options
+            </div>
+          </h5>
+          <div className="card-subtitle mt-4 ">
+            <Dropdown title="Choose 1 High Elf Cantrip" items={["hello"]} />
+            <Dropdown title="Choose 1 Extra Language" items={["hello"]} />
+          </div>
+        </div>
+      </div>
+      <div className="card w-100 side-bar">
+        <div className="card-body">
+          <h5 className="card-title">
+            <div
+              style={{ padding: 20 }}
+              className="card-title text-uppercase rounded w-75 m-auto text-background"
+            >
+              starting proficiencies
+            </div>
+          </h5>
+          <div className="card-subtitle mt-4 text-background text-left">
+            <p className="text-capitalize m-0">
+              <strong className="text-uppercase">Weapons</strong> - longswords,
+              shortswords, shortbows, longbows
+            </p>
+            <p className="text-capitalize m-0">
+              <strong className="text-uppercase">Skills</strong> - perception
+            </p>
+            <p className="text-capitalize m-0">
+              <strong className="text-uppercase">Languages</strong> - Common,
+              elvish
+            </p>
           </div>
         </div>
       </div>
@@ -143,7 +158,7 @@ const SidePanel = props => {
       >
         OK
       </button>
-    </div>
+    </>
   );
 };
 

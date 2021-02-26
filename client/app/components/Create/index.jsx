@@ -100,8 +100,8 @@ const Create = props => {
           <div className="col-9 pb-0 px-5 pt-5 container overflow-auto">
             {pages}
           </div>
-          <div className="col-4">
-            {/* {selectedInfo ? (
+          {/* <div className="col-4">
+            {selectedInfo ? (
               <SidePanel />
             ) : (
               <div className="card mt-5 p-5 side-bar">
@@ -109,8 +109,8 @@ const Create = props => {
                   <h4>Nothing Is Selected</h4>
                 </div>
               </div>
-            )} */}
-          </div>
+            )}
+          </div> */}
         </div>
       </div>
     </div>
