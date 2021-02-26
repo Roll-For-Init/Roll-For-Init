@@ -31,7 +31,7 @@ render(
       <App>
         <Switch>
           <Route exact path="/" component={LandingPage} />
-          <Route exact path="/signup" component={SignUp} />
+          <Route exact path="/register" component={SignUp} />
           <Route exact path="/login" component={Login} />
           {/*<Route exact path="/upload" component={Upload} />*/}
           <Route exact path="/create" component={Create} />
