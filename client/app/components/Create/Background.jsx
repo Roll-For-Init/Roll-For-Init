@@ -11,6 +11,15 @@ export const Background = props => {
     props.selectBackground(background);
   };
 
+  const [selectionBg, setSelectionBg] = useState([backgrounds[0]]);
+  const [selectionSk1, setSelectionSk1] = useState([]);
+  const [selectionSk2, setSelectionSk2] = useState([]);
+  const [selectionLang, setSelectionLang] = useState([
+    backgrounds[0].language_options.from[0]
+  ]);
+  const [selectionTlLg1, setSelectionTlLg1] = useState([]);
+  const [selectionTlLg2, setSelectionTlLg2] = useState([]);
+
   return (
     <div className="background">
       <h2 className="p-4" style={{ position: "sticky", top: -50, zIndex: 99 }}>
@@ -28,19 +37,36 @@ export const Background = props => {
           items={[...backgrounds, { index: "custom", name: "Custom" }]}
           width="70%"
           header
+          selection={selectionBg}
+          setSelection={setSelectionBg}
         />
-        {backgrounds[0].index === "custom" && (
+        {selectionBg[0].index === "custom" && (
           <div className="card content-card subtitle-card">
-            <form>
-              <input type="text" name="backgroundName" />
+            <form style={{ padding: "0px 5px" }}>
+              <input
+                className="p-0 m-0"
+                style={{ border: "none", width: "100%" }}
+                type="text"
+                name="backgroundName"
+                placeholder="Background Name"
+              />
             </form>
           </div>
         )}
-
         <div className="card content-card description-card shadow-card mb-0">
-          {backgrounds[0].index === "custom" ? (
+          {selectionBg[0].index === "custom" ? (
             <form>
-              <input type="text" name="backgroundDesc" />
+              <textarea
+                className="p-0 m-0"
+                style={{
+                  background: "#f2e9d9",
+                  border: "none",
+                  width: "100%"
+                }}
+                type="text"
+                name="backgroundDesc"
+                placeholder="Background Description (optional)"
+              />
             </form>
           ) : (
             <ReactReadMoreReadLess
@@ -50,7 +76,7 @@ export const Background = props => {
               readMoreClassName="read-more-less--more"
               readLessClassName="read-more-less--less"
             >
-              {backgrounds[0].desc}
+              {selectionBg[0].desc}
             </ReactReadMoreReadLess>
           )}
         </div>
@@ -60,37 +86,67 @@ export const Background = props => {
           <h5>Proficiencies</h5>
         </div>
         <div className="skill-container">
-          {backgrounds[0].index === "custom" ? (
-            <Dropdown title="Choose a Skill" items={[]} width="50%" />
+          {selectionBg[0].index === "custom" ? (
+            <Dropdown
+              title="Choose a Skill"
+              items={[]}
+              width="50%"
+              selection={selectionSk1}
+              setSelection={setSelectionSk1}
+            />
           ) : (
             <div className="card content-card skill-card">
-              {backgrounds[0].starting_proficiencies[0].name}
+              {selectionBg[0].starting_proficiencies[0].name}
             </div>
           )}
-          {backgrounds[0].index === "custom" ? (
-            <Dropdown title="Choose a Skill" items={[]} width="50%" />
+          {selectionBg[0].index === "custom" ? (
+            <Dropdown
+              title="Choose a Skill"
+              items={[]}
+              width="50%"
+              selection={selectionSk2}
+              setSelection={setSelectionSk2}
+            />
           ) : (
             <div className="card content-card skill-card">
-              {backgrounds[0].starting_proficiencies[1].name}
+              {selectionBg[0].starting_proficiencies[1].name}
             </div>
           )}
         </div>
-        <Dropdown
-          title={`Choose ${backgrounds[0].language_options.choose}: ${backgrounds[0].language_options.type}`}
-          items={backgrounds[0].language_options.from.map(language => language)}
-          width="50%"
-          multiSelect
-        />
-        <div className="card content-card language-card">Choose a Tool</div>
-        <div className="card content-card language-card mb-0">
-          Choose a Tool
-        </div>
+        {selectionBg[0].index === "custom" ? (
+          <>
+            <Dropdown
+              title="Choose a Tool or Language"
+              items={[]}
+              width="50%"
+              selection={selectionTlLg1}
+              setSelection={setSelectionTlLg1}
+            />
+            <Dropdown
+              title="Choose a Tool or Language"
+              items={[]}
+              width="50%"
+              selection={selectionTlLg2}
+              setSelection={setSelectionTlLg2}
+            />
+          </>
+        ) : (
+          <Dropdown
+            title={`Choose ${selectionBg[0].language_options.choose}: ${selectionBg[0].language_options.type}`}
+            items={selectionBg[0].language_options.from}
+            selectLimit={selectionBg[0].language_options.choose}
+            width="50%"
+            multiSelect
+            selection={selectionLang}
+            setSelection={setSelectionLang}
+          />
+        )}
       </div>
       <div className="card translucent-card">
         <div className="card content-card title-card pb-0">
           <h5>Background Feature</h5>
         </div>
-        {backgrounds[0].name === "Custom" && (
+        {selectionBg[0].name === "Custom" && (
           <div className="card content-card description-card shadow-card">
             Background features are normally soft skills that can help you
             outside of combat. Background features can help you with social
@@ -101,18 +157,33 @@ export const Background = props => {
           </div>
         )}
         <div className="card content-card subtitle-card">
-          {backgrounds[0].name === "Custom" ? (
-            <form>
-              <input type="text" name="featName" />
+          {selectionBg[0].name === "Custom" ? (
+            <form style={{ padding: "0px 5px" }}>
+              <input
+                className="p-0 m-0"
+                style={{ border: "none", width: "100%" }}
+                type="text"
+                name="featName"
+                placeholder="Feature Name"
+              />
             </form>
           ) : (
-            backgrounds[0].feature.name
+            selectionBg[0].feature.name
           )}
         </div>
         <div className="card content-card description-card shadow-card mb-0">
-          {backgrounds[0].name === "Custom" ? (
+          {selectionBg[0].name === "Custom" ? (
             <form>
-              <input type="text" name="featDesc" />
+              <textarea
+                style={{
+                  background: "#f2e9d9",
+                  border: "none",
+                  width: "100%"
+                }}
+                type="text"
+                name="featDesc"
+                placeholder="Feature Description"
+              />
             </form>
           ) : (
             <ReactReadMoreReadLess
@@ -122,7 +193,7 @@ export const Background = props => {
               readMoreClassName="read-more-less--more"
               readLessClassName="read-more-less--less"
             >
-              {backgrounds[0].feature.desc[0]}
+              {selectionBg[0].feature.desc[0]}
             </ReactReadMoreReadLess>
           )}
         </div>

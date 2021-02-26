@@ -8,14 +8,16 @@ function Dropdown({
   width,
   multiSelect = false,
   selectLimit = 2,
-  header = false
+  header = false,
+  selection,
+  setSelection
 }) {
   const [open, setOpen] = useState(false);
-  const [selection, setSelection] = useState([items[0]]);
-  const [multiSelection, setMultiSelection] = useState([]);
+  // const [selection, setSelection] = useState([items[0]]);
+  // //const [multiSelection, setMultiSelection] = useState([]);
   const [newTitle, setTitle] = useState([title]);
   const toggle = () => setOpen(!open);
-  Dropdown.handleClickOutside = () => setOpen(false);
+  //Dropdown.handleClickOutside = () => setOpen(false);
 
   function handleOnClick(item) {
     if (!selection.some(current => current.index === item.index)) {
@@ -58,9 +60,7 @@ function Dropdown({
         onClick={() => toggle(!open)}
       >
         <div className="dd-header__title">
-          <p className="dd-header__title--bold">
-            {header ? <h5>{newTitle}</h5> : <>{newTitle}</>}
-          </p>
+          {header ? <h5>{newTitle}</h5> : <>{newTitle}</>}
         </div>
         <div className="dd-header__action">
           <p>
