@@ -97,9 +97,12 @@ input {
   }
   .race {
     .options {
-      background-color: white;
-      border: $maroon 1px solid !important;
+      background-color: $medium-off-white;
+      border: $maroon 3px solid !important;
       color: $dark-blue;
     }
+  }
+  .background {
+      font-family: "IM Fell DW Pica" !important;
   }
 }

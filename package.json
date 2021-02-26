@@ -22,6 +22,7 @@
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
     "@babel/preset-react": "^7.12.10",
+    "@hookform/resolvers": "^1.3.4",
     "@reduxjs/toolkit": "^1.5.0",
     "acorn": "^8.0.4",
     "autoprefixer": "^9.8.6",
@@ -60,8 +61,13 @@
     "promise": "^8.1.0",
     "react": "^16.14.0",
     "react-dom": "^16.14.0",
+    "react-dropdown": "^1.9.2",
     "react-final-form": "^6.5.2",
+    "react-hook-form": "^6.15.4",
     "react-hot-loader": "^4.13.0",
+    "react-onclickoutside": "^6.10.0",
+    "react-read-more-less": "^0.1.6",
+    "react-read-more-read-less": "^1.0.7",
     "react-redux": "^7.2.2",
     "react-router": "^5.2.0",
     "react-router-dom": "^5.2.0",
@@ -79,7 +85,8 @@
     "webpack-hot-middleware": "2.25.0",
     "webpack-merge": "^4.2.2",
     "whatwg-fetch": "3.0.0",
-    "yargs-parser": "^20.2.4"
+    "yargs-parser": "^20.2.4",
+    "yup": "^0.32.9"
   },
   "devDependencies": {
     "babel-eslint": "^10.1.0",

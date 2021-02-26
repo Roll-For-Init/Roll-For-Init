@@ -3,6 +3,7 @@ export const LOADING_OFF = "LOADING_OFF";
 
 export const GET_RACE_INFO = "GET_RACE_INFO";
 export const GET_CLASS_INFO = "GET_CLASS_INFO";
+export const GET_BACKGROUND_INFO = "GET_BACKGROUND_INFO";
 export const THROW_ERROR = "THROW_ERROR";
 
 export const getRaceInfo = raceName => (dispatch, getState) => {
@@ -33,6 +34,26 @@ export const getClassInfo = className => (dispatch, getState) => {
   //   .then(() => {
 
   dispatch({ type: GET_CLASS_INFO, payload: className });
+  // })
+  // .catch(error => {
+  //   dispatch({
+  //     type: AUTH_SIGNUP_END,
+  //     payload: {
+  //       error: axios_error(error)
+  //     }
+  //   });
+  // });
+  dispatch({ type: LOADING_OFF });
+};
+
+export const getBackgroundInfo = backgroundName => (dispatch, getState) => {
+  dispatch({ type: LOADING_ON });
+
+  // axios
+  //   .post("/login", data)
+  //   .then(() => {
+
+  dispatch({ type: GET_BACKGROUND_INFO, payload: backgroundName });
   // })
   // .catch(error => {
   //   dispatch({
