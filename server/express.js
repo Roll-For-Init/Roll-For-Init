@@ -42,7 +42,7 @@ module.exports.init = async() => {
     if (config.isDev) {
         app.use(historyApiFallback({ verbose: false }));
         const compiler = webpack(config.webpack.config);
-        app.use(webpackDevMiddleware(compiler, config.webpack.middleware.options)        );
+        app.use(webpackDevMiddleware(compiler, config.webpack.middleware.options));
         app.use(webpackHotMiddleware(compiler));
         app.use(express.static(config.webpack.dist));
     } else {
