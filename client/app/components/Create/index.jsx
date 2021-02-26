@@ -23,7 +23,7 @@ const buttonNames = [
 
 const Create = props => {
   const { selectedInfo } = props.info;
-  const [page, setPage] = useState({ name: "class", index: 1 });
+  const [page, setPage] = useState({ name: "race", index: 0 });
   const onPageChange = (page, index) => {
     setPage({ name: page, index });
   };
@@ -98,8 +98,8 @@ const Create = props => {
           <div className="col-5 pb-0 px-5 pt-5 container overflow-auto position-relative">
             {pages}
           </div>
-          {/* <div className="col-4 p-4 container overflow-auto">
-            {selectedInfo ? (
+          <div className="col-4">
+            {/* {selectedInfo ? (
               <SidePanel />
             ) : (
               <div className="card mt-5 p-5 side-bar">
@@ -107,8 +107,8 @@ const Create = props => {
                   <h4>Nothing Is Selected</h4>
                 </div>
               </div>
-            )}
-          </div> */}
+            )} */}
+          </div>
         </div>
       </div>
     </div>
