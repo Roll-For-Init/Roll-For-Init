@@ -27,7 +27,7 @@
 }
 
 .content-card {
-  background-color: $medium-off-white;
+  background-color: $off-white;
   border: 3px solid $maroon;
 }
 
@@ -44,27 +44,6 @@
 .translucent-card {
   background-color: $lighter-maroon;
   padding: 20px;
-}
-
-.dropdown-card {
-  background-color: $medium-off-white;
-  border: 3px solid $maroon;
-  margin: 0px auto 5px auto;
-  //display: inline-block;
-  width: 75%;
-  padding: 5px 0px;
-  text-align: center;
-  text-align-last: center;
-  .dropdown-card-large {
-    background: blue;
-    width: 50%;
-    justify-self: center;
-  }
-  .dropdown-card-small {
-    width: 40%;
-    display: inline-block;
-    background-color: black;
-  }
 }
 
 .title-card {
@@ -104,12 +83,13 @@
   width: 100%;
 }
 
-.read-more-content {
-  color: blue;
-}
-
 .read-more-less--more,
 .read-more-less--less {
-  color: #999;
-  right: 0px;
+  color: $blue;
+  text-align: right;
+  text-decoration: underline;
+}
+
+.shoop {
+  width: 100%;
 }

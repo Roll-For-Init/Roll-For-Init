@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
 import { getBackgroundInfo } from "../../actions";
-import ReadMoreAndLess from "react-read-more-less";
+import ReactReadMoreReadLess from "react-read-more-read-less";
 import Dropdown from "../Dropdown";
 
 export const Background = props => {
@@ -10,13 +10,6 @@ export const Background = props => {
   const selectBackground = background => {
     props.selectBackground(background);
   };
-
-  const handleChange = e => {
-    console.log(e.target.value);
-  };
-
-  const options = ["one", "two", "three"];
-  const [bgName, setBgName] = useState([]);
 
   return (
     <div className="background">
@@ -30,27 +23,36 @@ export const Background = props => {
         that makes sense for your character.
       </div>
       <div className="card translucent-card">
-        <select
-          className="card dropdown-card"
-          aria-label="Background selection"
-          onChange={e => console.log(e.target.value)}
-        >
-          {backgrounds.map((background, idx) => (
-            <option key={idx} value={background.name}>
-              {background.name}
-            </option>
-          ))}
-        </select>
+        <Dropdown
+          title={backgrounds[0].name}
+          items={[...backgrounds, { index: "custom", name: "Custom" }]}
+          width="70%"
+          header
+        />
+        {backgrounds[0].index === "custom" && (
+          <div className="card content-card subtitle-card">
+            <form>
+              <input type="text" name="backgroundName" />
+            </form>
+          </div>
+        )}
+
         <div className="card content-card description-card shadow-card mb-0">
-          <ReadMoreAndLess
-            charLimit={250}
-            readMoreText="Show more"
-            readLessText="Show less"
-            readMoreClassName="read-more-less--more"
-            readLessClassName="read-more-less--less"
-          >
-            {backgrounds[0].desc}
-          </ReadMoreAndLess>
+          {backgrounds[0].index === "custom" ? (
+            <form>
+              <input type="text" name="backgroundDesc" />
+            </form>
+          ) : (
+            <ReactReadMoreReadLess
+              charLimit={250}
+              readMoreText="Show more"
+              readLessText="Show less"
+              readMoreClassName="read-more-less--more"
+              readLessClassName="read-more-less--less"
+            >
+              {backgrounds[0].desc}
+            </ReactReadMoreReadLess>
+          )}
         </div>
       </div>
       <div className="card translucent-card">
@@ -58,52 +60,71 @@ export const Background = props => {
           <h5>Proficiencies</h5>
         </div>
         <div className="skill-container">
-          <div className="card content-card skill-card">
-            {backgrounds[0].starting_proficiencies[0].name}
-          </div>
-          <div className="card content-card skill-card">
-            {backgrounds[0].starting_proficiencies[1].name}
-          </div>
-        </div>
-
-        <Dropdown
-          title="Choose 2: Language"
-          items={backgrounds[0].language_options.from.map(
-            language => language.name
+          {backgrounds[0].index === "custom" ? (
+            <Dropdown title="Choose a Skill" items={[]} width="50%" />
+          ) : (
+            <div className="card content-card skill-card">
+              {backgrounds[0].starting_proficiencies[0].name}
+            </div>
           )}
+          {backgrounds[0].index === "custom" ? (
+            <Dropdown title="Choose a Skill" items={[]} width="50%" />
+          ) : (
+            <div className="card content-card skill-card">
+              {backgrounds[0].starting_proficiencies[1].name}
+            </div>
+          )}
+        </div>
+        <Dropdown
+          title={`Choose ${backgrounds[0].language_options.choose}: ${backgrounds[0].language_options.type}`}
+          items={backgrounds[0].language_options.from.map(language => language)}
+          width="50%"
           multiSelect
         />
-
-        <div className="card content-card language-card">
-          Choose a Tool or Language
-        </div>
+        <div className="card content-card language-card">Choose a Tool</div>
         <div className="card content-card language-card mb-0">
-          Choose a Tool or Language
+          Choose a Tool
         </div>
       </div>
       <div className="card translucent-card">
         <div className="card content-card title-card pb-0">
           <h5>Background Feature</h5>
         </div>
+        {backgrounds[0].name === "Custom" && (
+          <div className="card content-card description-card shadow-card">
+            Background features are normally soft skills that can help you
+            outside of combat. Background features can help you with social
+            interactions, give you knowledge about a certain topic, or give you
+            resources to otherwise give you an upper hand in specific
+            situations. If you create a custom feature, work with your GM to
+            ensure it makes sense for your character.
+          </div>
+        )}
         <div className="card content-card subtitle-card">
-          Shelter of the Faithful
-        </div>
-        <div className="card content-card description-card shadow-card">
-          Background features are normally soft skills that can help you outside
-          of combat. Background features can help you with social interactions,
-          give you knowledge about a certain topic, or give you resources to
-          otherwise give you an upper hand in specific situations. If you create
-          a custom feature, work with your GM to ensure it makes sense for your
-          character.
+          {backgrounds[0].name === "Custom" ? (
+            <form>
+              <input type="text" name="featName" />
+            </form>
+          ) : (
+            backgrounds[0].feature.name
+          )}
         </div>
         <div className="card content-card description-card shadow-card mb-0">
-          <ReadMoreAndLess
-            charLimit={250}
-            readMoreText="Read more"
-            readLessText="Read less"
-          >
-            As an acolyte...
-          </ReadMoreAndLess>
+          {backgrounds[0].name === "Custom" ? (
+            <form>
+              <input type="text" name="featDesc" />
+            </form>
+          ) : (
+            <ReactReadMoreReadLess
+              charLimit={240}
+              readMoreText="Show more"
+              readLessText="Show less"
+              readMoreClassName="read-more-less--more"
+              readLessClassName="read-more-less--less"
+            >
+              {backgrounds[0].feature.desc[0]}
+            </ReactReadMoreReadLess>
+          )}
         </div>
       </div>
       <button

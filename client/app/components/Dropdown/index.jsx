@@ -1,39 +1,55 @@
 import React, { useState } from "react";
-//import onClickOutside from 'react-onclickoutside';
+import onClickOutside from "react-onclickoutside";
 import "./styles.scss";
 
-function Dropdown({ title, items, multiSelect = false }) {
+function Dropdown({
+  title,
+  items,
+  width,
+  multiSelect = false,
+  selectLimit = 2,
+  header = false
+}) {
   const [open, setOpen] = useState(false);
-  const [selection, setSelection] = useState([]);
+  const [selection, setSelection] = useState([items[0]]);
+  const [multiSelection, setMultiSelection] = useState([]);
+  const [newTitle, setTitle] = useState([title]);
   const toggle = () => setOpen(!open);
-  //Dropdown.handleClickOutside = () => setOpen(false);
+  Dropdown.handleClickOutside = () => setOpen(false);
 
-  function handleOnClick(item, idx) {
-    if (!selection.some(current => current.id === idx)) {
+  function handleOnClick(item) {
+    if (!selection.some(current => current.index === item.index)) {
       if (!multiSelect) {
         setSelection([item]);
+        setTitle([item.name]);
         toggle(!open);
       } else if (multiSelect) {
-        setSelection([...selection, item]);
+        if (selection.length < selectLimit) {
+          setSelection([...selection, item]);
+        }
       }
     } else {
-      let selectionAfterRemoval = selection;
-      selectionAfterRemoval = selectionAfterRemoval.filter(
-        current => current.id !== idx
-      );
-      setSelection([...selectionAfterRemoval]);
+      if (multiSelect) {
+        let selectionAfterRemoval = selection;
+        selectionAfterRemoval = selectionAfterRemoval.filter(
+          current => current.index !== item.index
+        );
+        setSelection([...selectionAfterRemoval]);
+      } else {
+        toggle(!open);
+      }
     }
   }
 
-  function isItemInSelection(idx) {
-    if (selection.some(current => current.id === idx)) {
+  function isItemInSelection(item) {
+    if (selection.some(current => current.index === item.index)) {
       return true;
     }
     return false;
   }
 
   return (
-    <div className="dd-wrapper">
+    <div className="dd-wrapper" style={{ width: width }}>
       <div
         tabIndex={0}
         className="dd-header"
@@ -42,19 +58,27 @@ function Dropdown({ title, items, multiSelect = false }) {
         onClick={() => toggle(!open)}
       >
         <div className="dd-header__title">
-          <p>{title}</p>
+          <p className="dd-header__title--bold">
+            {header ? <h5>{newTitle}</h5> : <>{newTitle}</>}
+          </p>
         </div>
         <div className="dd-header__action">
-          <p>{open ? "C" : "O"}</p>
+          <p>
+            {open
+              ? // <i className="bi bi-chevron-down"></i>
+                "Close"
+              : //<i className="bi bi-chevron-up"></i>
+                "Open"}
+          </p>
         </div>
       </div>
       {open && (
         <ul className="dd-list">
-          {items.map((item, idx) => (
-            <li className="dd-list-item" key={idx}>
-              <button type="button" onClick={() => handleOnClick(item, idx)}>
-                <span>{item}</span>
-                <span>{isItemInSelection(idx) && "Selected"}</span>
+          {items.map(item => (
+            <li className="dd-list-item" key={item.index}>
+              <button type="button" onClick={() => handleOnClick(item)}>
+                <span>{header ? <h5>{item.name}</h5> : <>{item.name}</>}</span>
+                <span>{isItemInSelection(item) && "Selected"}</span>
               </button>
             </li>
           ))}
@@ -68,5 +92,6 @@ const clickOutsideConfig = {
   handleClickOutside: () => Dropdown.handleClickOutside
 };
 
+// TODO: fix this outside clicky boi
 //export default onClickOutside(Dropdown, clickOutsideConfig);
 export default Dropdown;
