@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import { getRaceInfo } from "../../actions";
+import { clearSelectedInfo, getRaceInfo } from "../../actions";
 import Dropdown from "../Dropdown";
 
 const Race = props => {
@@ -56,6 +56,7 @@ const Race = props => {
           info={selectedInfo}
           setPage={props.setPage}
           selectRace={selectRace}
+          clearSelectedInfo={props.clearSelectedInfo}
         />
       )}
     </div>
@@ -64,6 +65,12 @@ const Race = props => {
 
 const SidePanel = props => {
   const { name, skills, traits } = props.info;
+
+  const onNext = () => {
+    props.setPage({ index: 1, name: "class" });
+    props.clearSelectedInfo();
+  };
+
   return (
     <>
       <div className="mb-3" style={{ height: 70 }}>
@@ -154,7 +161,7 @@ const SidePanel = props => {
       <button
         className="text-uppercase btn-primary btn-lg px-5"
         style={{ position: "sticky", bottom: 10 }}
-        onClick={() => props.setPage({ index: 1, name: "class" })}
+        onClick={onNext}
       >
         OK
       </button>
@@ -167,7 +174,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  selectRace: name => dispatch(getRaceInfo(name))
+  selectRace: name => dispatch(getRaceInfo(name)),
+  clearSelectedInfo: () => dispatch(clearSelectedInfo())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Race);
