@@ -51,8 +51,13 @@ const webpack = {
   middleware: {
     options: {
       publicPath: webpackConfig.output.publicPath,
-      contentBase: root('client/public'),
+      contentBase: root('client/'),
       noInfo: process.env.SILENCE_WEBPACK,
+      watchOptions: {
+        poll: 100,
+        ignore: [/node_modules/],
+      },
+      hot: true,
       stats: {
         colors: true,
         hash: false,

@@ -12,7 +12,7 @@ module.exports = merge(commonConfig, {
   mode: "development",
 
   entry: {
-    app: ["webpack-hot-middleware/client?reload=true"]
+    app: ["webpack-hot-middleware/client?path=/__webpack_hmr&timeout=20000"]
   },
 
   output: {
