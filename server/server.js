@@ -1,13 +1,13 @@
-const express = require('./config/express.js');
+const config = require('../config/config');
 
-const port = process.env.PORT || 8080;
+const express = require('./express.js');
 
-const app = express.init();
-
-app.listen(port, "0.0.0.0", err => {
-    if (err) {
-        console.log(err);
-    }
-
-    console.info(">>> 🌎 Open http://0.0.0.0:%s/ in your browser.", port);
+module.exports = express.init().then(app => {
+    let {host, port} = config.website;
+    app.listen(port, host, err => {
+        if (err) {
+            console.log(err);
+        }
+        console.info(">>> 🌎 Open http://%s:%s/ in your browser.", host, port);
+    });
 });

@@ -2,7 +2,6 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-// Create Schema
 const UserSchema = new Schema({
   username: {
     type: String,
@@ -26,10 +25,15 @@ const UserSchema = new Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Character'
   }],
+  notifications: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Notification'
+    }
+  ]
 }, {
   timestamps: true
 })
 
 const User = mongoose.model("User", UserSchema);
 module.exports = User;
-//test

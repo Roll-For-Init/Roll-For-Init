@@ -44,3 +44,6 @@ render(
   // eslint-disable-next-line no-undef
   document.getElementById("app")
 );
+
+if(module.hot) // eslint-disable-line no-undef  
+  module.hot.accept() // eslint-disable-line no-undef 
