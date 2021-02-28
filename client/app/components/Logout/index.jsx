@@ -1,16 +1,10 @@
 import React from 'react';
-import { useDispatch, connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Redirect } from 'react-router-dom';
 import { logout } from '../../redux/actions/auth';
 
-function mapStateToProps(state) {
-  return {
-    isLoggedIn: state.auth.isLoggedIn,
-  };
-}
-
-const Logout = props => {
-  const { isLoggedIn } = props;
+const Logout = () => {
+  const { isLoggedIn } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   if (isLoggedIn === true) {
     dispatch(logout());
@@ -18,4 +12,4 @@ const Logout = props => {
   return <Redirect to="/" />;
 };
 
-export default connect(mapStateToProps)(Logout);
+export default Logout;
