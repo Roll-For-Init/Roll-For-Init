@@ -1,9 +1,9 @@
 import React from 'react';
-import { useDispatch } from 'react-redux';
-import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import { register } from '../../redux/actions/auth';
+import { setAlert } from '../../redux/actions/alert';
 import validator from 'validator';
 
 import './styles.scss';
@@ -40,14 +40,15 @@ const validate = values => {
   return errors;
 };
 
-const SignUp = props => {
-  const { isLoggedIn, message } = props;
-  const [submitted, setSubmitted] = useState(false);
+const SignUp = () => {
+  const { isLoggedIn } = useSelector(state => state.auth);
+  const alert = useSelector(state => state.alert);
+  const submitted = alert && alert.submitted ? alert.submitted : false;
   const dispatch = useDispatch();
   const onSubmit = values => {
     const { username, email, password } = values;
     dispatch(register(username, email, password));
-    setSubmitted(true);
+    dispatch(setAlert({ submitted: true }));
   };
   if (isLoggedIn === true) {
     return <Redirect to="/" />;

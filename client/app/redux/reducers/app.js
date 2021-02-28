@@ -1,8 +1,9 @@
-const initialState = { isAppLoading: true };
-
 import { LOADING_ON, LOADING_OFF } from '../actions/types';
 
+const initialState = { isAppLoading: true };
+
 export default function(state = initialState, action) {
+  // eslint-disable-next-line no-unused-vars
   const { type, payload } = action;
 
   switch (type) {

@@ -1,57 +1,59 @@
-import React from "react";
-import { connect } from "react-redux";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { useSelector } from 'react-redux';
+import { Link } from 'react-router-dom';
 
-import "./styles.scss";
+import './styles.scss';
 
-function mapStateToProps(state) {
-  console.log("state:", state)
-  return {
-    isLoggedIn: state.auth.isLoggedIn,
-    message: state.message
-  }
-}
-
-const LandingPage = (props) => {
-  const {isLoggedIn, message} = props;
-  console.log("props:", props, "ili:", isLoggedIn);
+const LandingPage = () => {
+  const { isLoggedIn } = useSelector(state => state.auth);
   return (
     <div className="container">
       <div className="filler-space"></div>
       <div className="row align-items-center">
         <div className="col"></div>
-        <div className="col-6 logo">
-        </div>
+        <div className="col-6 logo"></div>
         <div className="col"></div>
       </div>
       <div className="d-grid gap-2">
         <Link to="/create">
-          <button type="button" className="btn btn-secondary btn-lg top-buttons">
+          <button
+            type="button"
+            className="btn btn-secondary btn-lg top-buttons"
+          >
             Create New Character
           </button>
         </Link>
         <Link to="/upload">
-          <button type="button" className="btn btn-secondary btn-lg top-buttons">
+          <button
+            type="button"
+            className="btn btn-secondary btn-lg top-buttons"
+          >
             Upload Existing Character
           </button>
         </Link>
       </div>
-      {isLoggedIn !== true &&
+      {isLoggedIn !== true && (
         <div className="d-grid gap-6">
           <Link to="/login">
-            <button type="button" className="btn btn-primary btn-lg btm-buttons">
+            <button
+              type="button"
+              className="btn btn-primary btn-lg btm-buttons"
+            >
               Log In
             </button>
           </Link>
           <Link to="/signup">
-            <button type="button" className="btn btn-primary btn-lg btm-buttons">
+            <button
+              type="button"
+              className="btn btn-primary btn-lg btm-buttons"
+            >
               Sign Up
             </button>
           </Link>
         </div>
-      }
+      )}
     </div>
   );
 };
 
-export default connect(mapStateToProps)(LandingPage);
+export default LandingPage;

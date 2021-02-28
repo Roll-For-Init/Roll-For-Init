@@ -1,9 +1,12 @@
-import { LOADING_ON, LOADING_OFF } from './types';
+import { LOADING_ON, LOADING_OFF, LOGIN_SUCCESS } from '../actions/types';
 
-export const finishLoading = () => ({
-  type: LOADING_OFF,
-});
+export const finishLoading = () => (dispatch, getState) => {
+  const { isLoggedIn } = getState().auth;
 
-export const setLoading = () => ({
-  type: LOADING_ON,
-});
+  dispatch({ type: LOADING_OFF });
+  return;
+};
+
+export const restartLoading = () => dispatch => {
+  return;
+};

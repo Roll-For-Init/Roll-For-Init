@@ -1,5 +1,5 @@
 import React from 'react';
-import { useDispatch, connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import { login } from '../../redux/actions/auth';
@@ -16,13 +16,6 @@ const reduxField = ({ placeholder, input, meta }) => (
   </div>
 );
 
-function mapStateToProps(state) {
-  return {
-    isLoggedIn: state.auth.isLoggedIn,
-    message: state.message,
-  };
-}
-
 const validate = values => {
   const errors = {};
   if (!values.email) {
@@ -38,15 +31,15 @@ const validate = values => {
   return errors;
 };
 
-const Login = props => {
-  const { isLoggedIn, message } = props;
+const Login = () => {
+  const { isLoggedIn } = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const onSubmit = values => {
     const { email, password } = values;
     dispatch(login(email, password));
   };
   if (isLoggedIn === true) {
-    return <Redirect to="/" />;
+    return <Redirect to="/dashboard" />;
   }
   return (
     <div className="container">
@@ -101,4 +94,4 @@ const Login = props => {
   );
 };
 
-export default connect(mapStateToProps)(Login);
+export default Login;

@@ -11,25 +11,23 @@ import AuthService from '../services/auth.service';
 
 export const register = (username, email, password) => dispatch => {
   return AuthService.register(username, email, password).then(
-    response => {
+    res => {
       dispatch({
         type: REGISTER_SUCCESS,
       });
 
       dispatch({
         type: SET_ALERT,
-        payload: response.data.message,
+        payload: res.data.message,
       });
 
       return Promise.resolve();
     },
-    error => {
+    err => {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
+        (err.response && err.response.data && err.response.data.message) ||
+        err.message ||
+        err.toString();
 
       dispatch({
         type: REGISTER_FAIL,
@@ -47,21 +45,20 @@ export const register = (username, email, password) => dispatch => {
 
 export const login = (email, password) => dispatch => {
   return AuthService.login(email, password).then(
-    data => {
+    res => {
       dispatch({
         type: LOGIN_SUCCESS,
-        payload: { user: data },
+        payload: { user: res.data },
       });
 
+      localStorage.setItem('user', JSON.stringify(res.data));
       return Promise.resolve();
     },
-    error => {
+    err => {
       const message =
-        (error.response &&
-          error.response.data &&
-          error.response.data.message) ||
-        error.message ||
-        error.toString();
+        (err.response && err.response.data && err.response.data.message) ||
+        err.message ||
+        err.toString();
 
       dispatch({
         type: LOGIN_FAIL,
