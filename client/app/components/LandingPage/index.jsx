@@ -1,9 +1,20 @@
 import React from "react";
+import { connect } from "react-redux";
 import { Link } from "react-router-dom";
 
 import "./styles.scss";
 
-const LandingPage = () => {
+function mapStateToProps(state) {
+  console.log("state:", state)
+  return {
+    isLoggedIn: state.auth.isLoggedIn,
+    message: state.message
+  }
+}
+
+const LandingPage = (props) => {
+  const {isLoggedIn, message} = props;
+  console.log("props:", props, "ili:", isLoggedIn);
   return (
     <div className="container">
       <div className="filler-space"></div>
@@ -25,20 +36,22 @@ const LandingPage = () => {
           </button>
         </Link>
       </div>
-      <div className="d-grid gap-6">
-        <Link to="/login">
-          <button type="button" className="btn btn-primary btn-lg btm-buttons">
-            Log In
-          </button>
-        </Link>
-        <Link to="/signup">
-          <button type="button" className="btn btn-primary btn-lg btm-buttons">
-            Sign Up
-          </button>
-        </Link>
-      </div>
+      {isLoggedIn !== true &&
+        <div className="d-grid gap-6">
+          <Link to="/login">
+            <button type="button" className="btn btn-primary btn-lg btm-buttons">
+              Log In
+            </button>
+          </Link>
+          <Link to="/signup">
+            <button type="button" className="btn btn-primary btn-lg btm-buttons">
+              Sign Up
+            </button>
+          </Link>
+        </div>
+      }
     </div>
   );
 };
 
-export default LandingPage;
+export default connect(mapStateToProps)(LandingPage);

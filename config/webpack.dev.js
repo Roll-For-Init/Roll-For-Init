@@ -7,7 +7,7 @@ const { root } = require("./helpers");
 const commonConfig = require("./webpack.common");
 
 module.exports = merge(commonConfig, {
-  devtool: "eval-source-map",
+  devtool: "eval",
 
   mode: "development",
 
@@ -21,7 +21,8 @@ module.exports = merge(commonConfig, {
   },
 
   devServer: {
-    contentBase: root("client/public/"),
+    contentBase: root("client/app/public/"),
+    watchContentBase: true,
     historyApiFallback: true,
     // none (or false), errors-only, minimal, normal (or true) and verbose
     stats: {

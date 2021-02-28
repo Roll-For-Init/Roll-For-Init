@@ -24,6 +24,7 @@
     "@reduxjs/toolkit": "^1.5.0",
     "acorn": "^8.0.4",
     "autoprefixer": "^9.8.6",
+    "axios": "^0.21.1",
     "babel-loader": "^8.2.2",
     "bcrypt": "^5.0.0",
     "bootstrap": "^4.6.0",
@@ -99,6 +100,6 @@
     "singleQuote": true,
     "editor.formatOnSave": true,
     "trailingComma": "es5",
-    "tabWidth": 4
+    "tabWidth": 2
   }
 }

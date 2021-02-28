@@ -1,26 +1,53 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { Form, Field } from "react-final-form";
-import { login } from "../../actions";
+import React from 'react';
+import { useDispatch, connect } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
+import { Form, Field } from 'react-final-form';
+import { login } from '../../redux/actions/auth';
 
-import "./styles.scss";
+import './styles.scss';
+import validator from 'validator';
 
 const reduxField = ({ placeholder, input, meta }) => (
   <div className="input-group mb-3">
     <input {...input} className="form-control" placeholder={placeholder} />
     {meta.error && meta.touched && (
-      <span style={{ width: "100%", color: "red" }}>{meta.error}</span>
+      <span style={{ width: '100%', color: 'red' }}>{meta.error}</span>
     )}
   </div>
 );
 
-const Login = () => {
+function mapStateToProps(state) {
+  return {
+    isLoggedIn: state.auth.isLoggedIn,
+    message: state.message,
+  };
+}
+
+const validate = values => {
+  const errors = {};
+  if (!values.email) {
+    errors.email = 'Required';
+  } else {
+    if (!validator.isEmail(values.email)) {
+      errors.email = 'Not a valid email address';
+    }
+  }
+  if (!values.password) {
+    errors.password = 'Required';
+  }
+  return errors;
+};
+
+const Login = props => {
+  const { isLoggedIn, message } = props;
   const dispatch = useDispatch();
   const onSubmit = values => {
-    dispatch(login(values));
+    const { email, password } = values;
+    dispatch(login(email, password));
   };
-
+  if (isLoggedIn === true) {
+    return <Redirect to="/" />;
+  }
   return (
     <div className="container">
       <div className="filler-space"></div>
@@ -31,16 +58,7 @@ const Login = () => {
       </div>
       <Form
         onSubmit={onSubmit}
-        validate={values => {
-          const errors = {};
-          if (!values.email) {
-            errors.email = "Required";
-          }
-          if (!values.password) {
-            errors.password = "Required";
-          }
-          return errors;
-        }}
+        validate={validate}
         render={({ handleSubmit, form, submitting, invalid, values }) => (
           <form onSubmit={handleSubmit} className="needs-validation input-form">
             <Field
@@ -83,4 +101,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default connect(mapStateToProps)(Login);

@@ -1,26 +1,60 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { Form, Field } from "react-final-form";
-import { signUp } from "../../actions";
+import React from 'react';
+import { useDispatch } from 'react-redux';
+import { useState } from 'react';
+import { Link, Redirect } from 'react-router-dom';
+import { Form, Field } from 'react-final-form';
+import { register } from '../../redux/actions/auth';
+import validator from 'validator';
 
-import "./styles.scss";
+import './styles.scss';
 
 const reduxField = ({ placeholder, input, meta }) => (
   <div className="input-group mb-3">
     <input {...input} className="form-control" placeholder={placeholder} />
     {meta.error && meta.touched && (
-      <span style={{ width: "100%", color: "red" }}>{meta.error}</span>
+      <span style={{ width: '100%', color: 'red' }}>{meta.error}</span>
     )}
   </div>
 );
 
-const SignUp = () => {
+const validate = values => {
+  const errors = {};
+  if (!values.username) {
+    errors.username = 'Required';
+  }
+  if (!values.email) {
+    errors.email = 'Required';
+  } else {
+    if (!validator.isEmail(values.email)) {
+      errors.email = 'Not a valid email address';
+    }
+  }
+  if (!values.password) {
+    errors.password = 'Required';
+  }
+  if (!values.confirmPassword) {
+    errors.confirmPassword = 'Required';
+  } else if (values.confirmPassword !== values.password) {
+    errors.confirmPassword = 'Passwords do not match';
+  }
+  return errors;
+};
+
+const SignUp = props => {
+  const { isLoggedIn, message } = props;
+  const [submitted, setSubmitted] = useState(false);
   const dispatch = useDispatch();
   const onSubmit = values => {
-    dispatch(signUp(values));
+    const { username, email, password } = values;
+    dispatch(register(username, email, password));
+    setSubmitted(true);
   };
-
+  if (isLoggedIn === true) {
+    return <Redirect to="/" />;
+  }
+  if (submitted === true) {
+    return <Redirect to="/login" />;
+  }
   return (
     <div className="container">
       <div className="filler-space"></div>
@@ -31,24 +65,7 @@ const SignUp = () => {
       </div>
       <Form
         onSubmit={onSubmit}
-        validate={values => {
-          const errors = {};
-          if (!values.username) {
-            errors.username = "Required";
-          }
-          if (!values.email) {
-            errors.email = "Required";
-          }
-          if (!values.password) {
-            errors.password = "Required";
-          }
-          if (!values.confirmPassword) {
-            errors.confirmPassword = "Required";
-          } else if (values.confirmPassword !== values.password) {
-            errors.confirmPassword = "Password Do Not Match";
-          }
-          return errors;
-        }}
+        validate={validate}
         render={({ handleSubmit, form, submitting, invalid, values }) => (
           <form onSubmit={handleSubmit} className="needs-validation input-form">
             <Field
