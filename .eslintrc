@@ -6,13 +6,12 @@
     }
   },
   "env": {
-    "node": true
+    "node": true,
+    "browser": true,
+    "es6": true
   },
   "parser": "babel-eslint",
-  "extends": [
-    "eslint:recommended",
-    "plugin:react/recommended"
-  ],
+  "extends": ["eslint:recommended", "plugin:react/recommended"],
   "settings": {
     "react": {
       "createClass": "createReactClass", // Regex for Component Factory to use,
@@ -44,7 +43,5 @@
       }
     ]
   },
-  "plugins": [
-    "react"
-  ]
+  "plugins": ["react"]
 }
