@@ -72,7 +72,6 @@
     "react-hook-form": "^6.15.4",
     "react-hot-loader": "^4.13.0",
     "react-onclickoutside": "^6.10.0",
-    "react-read-more-less": "^0.1.6",
     "react-read-more-read-less": "^1.0.7",
     "react-redux": "^7.2.2",
     "react-router": "^5.2.0",

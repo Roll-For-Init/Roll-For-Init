@@ -14,15 +14,15 @@ export const createCharacter = (
       { name: "dragonborn", subraces: [] },
       { name: "dwarf", subraces: [] },
       {
-        name: "elf",
+        name: "Elf",
         subraces: [
           {
-            name: "high elf",
+            name: "High Elf",
             skills: {
               dexterity: 2,
               intelligence: 1,
               speed: 30,
-              size: "medium"
+              size: "Medium"
             },
             traits: [
               {
@@ -194,8 +194,118 @@ export const createCharacter = (
             "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.",
             "You might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple."
           ]
-        }
-      }
+        },
+      },
+      {
+        index: "criminal",
+        name: "Criminal",  
+        desc: "You have spent your life in the service of a criminaling.",          
+        starting_proficiencies: [
+            {
+                "index": "skill-insight",
+                "name": "Skill: Insight",
+                "url": "/api/proficiencies/skill-insight"
+            },
+            {
+                "index": "skill-religion",
+                "name": "Skill: Religion",
+                "url": "/api/proficiencies/skill-religion"
+            }
+        ],
+        language_options: {
+            choose: 2,
+            type: "languages",
+            from: [
+                {
+                    "index": "common",
+                    "name": "Common",
+                    "url": "/api/languages/common"
+                },
+                {
+                    "index": "dwarvish",
+                    "name": "Dwarvish",
+                    "url": "/api/languages/dwarvish"
+                },
+                {
+                    "index": "elvish",
+                    "name": "Elvish",
+                    "url": "/api/languages/elvish"
+                },
+                {
+                    "index": "giant",
+                    "name": "Giant",
+                    "url": "/api/languages/giant"
+                },
+                {
+                    "index": "gnomish",
+                    "name": "Gnomish",
+                    "url": "/api/languages/gnomish"
+                },
+                {
+                    "index": "goblin",
+                    "name": "Goblin",
+                    "url": "/api/languages/goblin"
+                },
+                {
+                    "index": "halfling",
+                    "name": "Halfling",
+                    "url": "/api/languages/halfling"
+                },
+                {
+                    "index": "orc",
+                    "name": "Orc",
+                    "url": "/api/languages/orc"
+                },
+                {
+                    "index": "abyssal",
+                    "name": "Abyssal",
+                    "url": "/api/languages/abyssal"
+                },
+                {
+                    "index": "celestial",
+                    "name": "Celestial",
+                    "url": "/api/languages/celestial"
+                },
+                {
+                    "index": "draconic",
+                    "name": "Draconic",
+                    "url": "/api/languages/draconic"
+                },
+                {
+                    "index": "deep-speech",
+                    "name": "Deep Speech",
+                    "url": "/api/languages/deep-speech"
+                },
+                {
+                    "index": "infernal",
+                    "name": "Infernal",
+                    "url": "/api/languages/infernal"
+                },
+                {
+                    "index": "primordial",
+                    "name": "Primordial",
+                    "url": "/api/languages/primordial"
+                },
+                {
+                    "index": "sylvan",
+                    "name": "Sylvan",
+                    "url": "/api/languages/sylvan"
+                },
+                {
+                    "index": "undercommon",
+                    "name": "Undercommon",
+                    "url": "/api/languages/undercommon"
+                }
+            ]
+        },
+        feature: {
+          name: "Shelter of the Faithful",
+          desc: [
+              "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.",
+              "You might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple."
+          ]
+        },
+      },
     ],
     selectedInfo: null,
     character: {

@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { connect } from "react-redux";
 import { clearSelectedInfo, getRaceInfo } from "../../actions";
-import Dropdown from "../Dropdown";
+import Dropdown from "../shared/Dropdown";
 
 const Race = props => {
   const { races, selectedInfo } = props.races;
@@ -15,7 +15,7 @@ const Race = props => {
       {!selectedInfo ? (
         <>
           <div className="mx-auto mb-4 w-75">
-            <h2 className="p-4 w-100 rounded">Race</h2>
+            <h2 className="title-card p-4">Race</h2>
           </div>
           <div className="dropdown btn-group-vertical w-75">
             {races.map((race, idx) => (
@@ -23,8 +23,8 @@ const Race = props => {
                 <button
                   className={
                     race.subraces.length > 0
-                      ? "btn btn-lg m-0 mb-3 options dropdown-toggle text-uppercase"
-                      : "btn btn-lg m-0 mb-3 options text-uppercase"
+                      ? "btn btn-lg m-0 mb-3 options dropdown-toggle"
+                      : "btn btn-lg m-0 mb-3 options"
                   }
                   type="button"
                   id={`dropdownMenuButton1${idx}`}
@@ -66,6 +66,9 @@ const Race = props => {
 const SidePanel = props => {
   const { name, skills, traits } = props.info;
 
+  const [selection1, setSelection1] = useState([]);
+  const [selection2, setSelection2] = useState([]);
+
   const onNext = () => {
     props.setPage({ index: 1, name: "class" });
     props.clearSelectedInfo();
@@ -73,11 +76,11 @@ const SidePanel = props => {
 
   return (
     <>
-      <div className="mb-3" style={{ height: 70 }}>
+      <div className="mb-3">
         <button
           onClick={() => props.selectRace(null)}
           className="float-left p-3 m-0 mx-2"
-          style={{ width: "10%", height: 70 }}
+          style={{ width: 40, height: 40 }}
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -90,72 +93,65 @@ const SidePanel = props => {
             <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
           </svg>
         </button>
-        <h2 style={{ width: "85%" }} className="p-3 m-0 float-right rounded">
+        <h2 className="title-card p-4">
           Race
         </h2>
       </div>
-      <div className="card w-75 side-bar">
-        <div className="card-body">
-          <h4 className="card-title">
-            <div
-              style={{ padding: 20 }}
-              className="card-title text-uppercase rounded w-75 m-auto text-background"
-            >
+      <div className="card translucent-card">
+        <div className="card content-card card-title">
+          <h5>
               {name}
-            </div>
-          </h4>
-          <h6 className="card-subtitle mt-4">
-            <div className="w-auto mx-2 p-2 d-inline-block rounded text-background">
-              +{skills.dexterity} dexterity
-              <br />+{skills.intelligence} Intelligence
-            </div>
-            <div className="w-auto mx-2 p-2 d-inline-block rounded text-background">
-              Speed: {skills.speed}
-              <br />
-              Size: {skills.size}
-            </div>
-          </h6>
+          </h5>
+        </div>
+        <h6 className="card-subtitle">
+          <div className="w-auto d-inline-block card content-card floating-card">
+            +{skills.dexterity} Dexterity
+            <br />+{skills.intelligence} Intelligence
+          </div>
+          <div className="w-auto d-inline-block card content-card floating-card">
+            Speed: {skills.speed}
+            <br />
+            Size: {skills.size}
+          </div>
+        </h6>
+      </div>
+      <div className="card translucent-card">
+        <h5 className="card content-card card-title">
+            Race Options
+        </h5>
+        <div className="card">
+          <Dropdown
+            title="Choose 1 High Elf Cantrip"
+            items={["hello"]}
+            width="100%"
+            selection={selection1}
+            setSelection={setSelection1} />
+          <Dropdown
+            title="Choose 1 Extra Language"
+            items={["hello"]}
+            width="100%"
+            selection={selection1}
+            setSelection={setSelection1} />
         </div>
       </div>
-      <div className="card w-75 side-bar">
-        <div className="card-body">
-          <h5 className="card-title">
-            <div
-              style={{ padding: 20 }}
-              className="card-title text-uppercase rounded w-75 m-auto text-background"
-            >
-              race options
-            </div>
+      <div className="card translucent-card">
+        <div className="card content-card card-title">
+          <h5>
+            Starting Proficiencies
           </h5>
-          <div className="card-subtitle mt-4 ">
-            <Dropdown title="Choose 1 High Elf Cantrip" items={["hello"]} />
-            <Dropdown title="Choose 1 Extra Language" items={["hello"]} />
-          </div>
         </div>
-      </div>
-      <div className="card w-100 side-bar">
-        <div className="card-body">
-          <h5 className="card-title">
-            <div
-              style={{ padding: 20 }}
-              className="card-title text-uppercase rounded w-75 m-auto text-background"
-            >
-              starting proficiencies
-            </div>
-          </h5>
-          <div className="card-subtitle mt-4 text-background text-left">
-            <p className="text-capitalize m-0">
-              <strong className="text-uppercase">Weapons</strong> - longswords,
-              shortswords, shortbows, longbows
-            </p>
-            <p className="text-capitalize m-0">
-              <strong className="text-uppercase">Skills</strong> - perception
-            </p>
-            <p className="text-capitalize m-0">
-              <strong className="text-uppercase">Languages</strong> - Common,
-              elvish
-            </p>
-          </div>
+        <div className="card content-card description-card">
+          <p className="text-capitalize">
+            <strong className="small-caps">Weapons</strong> – longswords,
+            shortswords, shortbows, longbows
+          </p>
+          <p className="text-capitalize">
+            <strong className="small-caps">Skills</strong> – perception
+          </p>
+          <p className="text-capitalize">
+            <strong className="small-caps">Languages</strong> – Common,
+            Elvish
+          </p>
         </div>
       </div>
       <button

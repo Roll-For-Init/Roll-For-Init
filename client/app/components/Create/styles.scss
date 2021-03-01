@@ -20,14 +20,89 @@
   width: 100%;
 }
 
+.create {
+  h1 {
+    background-color: #333;
+  }
+  h2 {
+    background-color: $maroon;
+  }
+  .race, .class {
+    .options {
+      width: 400px;
+      min-width: 250px;
+      background-color: $off-white;
+      border: $maroon 3px solid !important;
+      // border-bottom: 0px !important;
+      color: $dark-blue;
+      text-transform: capitalize;
+      border-radius: 8px;
+    }
+    .dropdown-menu {
+      min-width: 250px;
+      width: 400px;
+      background-color: $medium-off-white;
+      border-radius: 0;
+      border: $maroon 3px solid !important;
+      border-top: 0px !important;
+    }
+    .dropdown-toggle::after {
+      float: right;
+      margin-top: 12px;
+    }
+    .options-dropdown {
+      color: $dark-blue;
+      background-color: $medium-off-white;
+    }
+
+    .text-background {
+      background-color: $medium-off-white;
+      border: $maroon 3px solid !important;
+      color: $dark-blue;
+    }
+
+    .dd-wrapper {
+      width: 100%;
+      .dd-header__title,
+      .dd-header__action {
+        color: $dark-blue;
+      }
+    }
+  }
+
+  .side-bar {
+    background-color: $light-maroon-translucent;
+  }
+}
+
+.menu-button {
+  margin-left: 0px;
+  margin-right: 0px;
+  border-radius: 8px !important;
+  min-width: 200px;
+  text-transform: capitalize;
+  font-variant: small-caps;
+}
+
+.title-card {
+  background-color: $maroon;
+  border: 30px solid inherit;
+  border-image: url('../../../public/assets/imgs/border-square.png') 156.375 / 156.375 stretch;
+  font-variant: small-caps;
+  margin: 0 auto 25px;
+  max-width: 450px;
+}
+
 .card {
-  color: #172838;
-  border-radius: 8px;
-  margin: 20px auto;
+  color: $dark-blue;
+  margin: 5px auto;
+  background: transparent;
+  border: none;
+  border-radius: 8px; 
 }
 
 .content-card {
-  background-color: $medium-off-white;
+  background-color: $off-white;
   border: 3px solid $maroon;
 }
 
@@ -35,55 +110,42 @@
   box-shadow: 0px 1px 10px hsla(0, 0, 0, 67%);
 }
 
-.background-card {
-  width: 90%;
-  padding: 10px;
-  text-align: left;
-}
-
 .translucent-card {
-  background-color: $lighter-maroon;
-  padding: 20px;
+  background-color: $light-maroon-translucent;
+  padding: 15px 20px;
+  margin: 25px auto;
+  max-width: 660px;
+  border-radius: 8px;
 }
 
-.dropdown-card {
-  background-color: $medium-off-white;
-  border: 3px solid $maroon;
-  margin: 0px auto 5px auto;
-  //display: inline-block;
-  width: 75%;
-  padding: 5px 0px;
-  text-align: center;
-  text-align-last: center;
-  .dropdown-card-large {
-    background: blue;
-    width: 50%;
-    justify-self: center;
-  }
-  .dropdown-card-small {
-    width: 40%;
-    display: inline-block;
-    background-color: black;
-  }
+.floating-card {
+  padding: 15px;
+  margin-right: 5px;
+  margin-left: 5px;
 }
 
-.title-card {
+.card-title {
   padding: 10px 20px;
-  margin: 0px auto 5px auto;
+  // margin: auto;
   font-variant: small-caps;
+  display: inline-block;
+
+  h5 {
+    margin: 0;
+  }
 }
 
-.subtitle-card {
-  padding: 5px 0px;
-  margin: 5px auto;
-  width: 70%;
+.card-subtitle {
+  padding: 5px 10px;
+  max-width: 500px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .skill-container {
   display: flex;
 }
 .skill-card {
-  margin: 5px auto;
   padding: 5px 0px;
   flex: 1;
 }
@@ -94,22 +156,27 @@
 .language-card {
   padding: 5px;
   width: 50%;
-  margin: 5px auto;
+  // margin: auto;
 }
 
 .description-card {
-  padding: 5px;
-  margin: 5px 0px;
+  padding: 10px 10px;
   text-align: left;
   width: 100%;
-}
-
-.read-more-content {
-  color: blue;
+  max-width: 620px;
+  display: inline-block;
+  p {
+    margin: 0 auto;
+  }
 }
 
 .read-more-less--more,
 .read-more-less--less {
-  color: #999;
-  right: 0px;
+  color: $blue;
+  float: right;
+  text-decoration: underline;
+}
+
+.shoop {
+  width: 100%;
 }

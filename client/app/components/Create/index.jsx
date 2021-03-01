@@ -10,6 +10,7 @@ import Equipment from "./Equipment";
 import { Link } from "react-router-dom";
 
 import "./styles.scss";
+import Header from "../shared/Header";
 
 const buttonNames = [
   "race",
@@ -56,37 +57,22 @@ const Create = props => {
 
   return (
     <div className="create">
-      <header>
-        <h1 className="text-center m-0" style={{ backgroundColor: "#333" }}>
-          <Link to="/" className="link-regular">
-            Roll For Init
-          </Link>
-        </h1>
-      </header>
+      <Header />
       <div className="container-fluid">
         <div className="row">
-          <div className="col-3 p-5 side-bar overflow-auto">
+          <div className="col-3 p-5 d-none d-md-block side-bar overflow-auto">
             <div className="btn-group-vertical w-100" role="group">
               {buttonNames.map((name, idx) => {
-                let classname = "btn btn-lg btn-secondary text-uppercase";
-                if (page.index < idx) {
-                  classname =
-                    "btn btn-lg btn-secondary text-uppercase disabled";
-                }
+                let classname = "btn btn-lg btn-secondary menu-button";
                 if (page.name === name) {
-                  classname = "btn btn-lg btn-primary text-uppercase";
+                  classname = "btn btn-lg btn-primary menu-button active";
                 }
                 return (
                   <button
                     key={name}
                     type="button"
                     className={classname}
-                    style={{
-                      marginLeft: 0,
-                      marginRight: 0,
-                      borderRadius: 5,
-                      minWidth: 200
-                    }}
+                    disabled={page.index < idx}
                     onClick={() => {
                       page.index > idx && onPageChange(name, idx);
                     }}
@@ -97,10 +83,10 @@ const Create = props => {
               })}
             </div>
           </div>
-          <div className="col-9 pb-0 px-5 pt-5 container overflow-auto">
+          <div className="col-9 pb-0 pt-4 container overflow-auto">
             {pages}
           </div>
-          {/* <div className="col-4">
+          {/* <div className="col-3 p-4 container overflow-auto">
             {selectedInfo ? (
               <SidePanel />
             ) : (
