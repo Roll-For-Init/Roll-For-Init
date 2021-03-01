@@ -1,7 +1,7 @@
 {
   "name": "roll-for-init",
   "version": "0.1.0",
-  "description": "A MERN stack template to start future projects.",
+  "description": "Full stack table top aide web-application.",
   "private": true,
   "scripts": {
     "redis:start": "redis-server --daemonize yes",
@@ -108,7 +108,9 @@
     "url-loader": "^4.1.1"
   },
   "prettier": {
-    "singleQuote": false,
-    "editor.formatOnSave": true
+    "singleQuote": true,
+    "editor.formatOnSave": true,
+    "trailingComma": "es5",
+    "tabWidth": 4
   }
 }
