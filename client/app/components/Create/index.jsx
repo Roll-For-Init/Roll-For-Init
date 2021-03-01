@@ -83,7 +83,7 @@ const Create = props => {
               })}
             </div>
           </div>
-          <div className="col-6 pb-0 px-5 pt-4 container overflow-auto position-relative">
+          <div className="col-9 pb-0 pt-4 container overflow-auto">
             {pages}
           </div>
           {/* <div className="col-3 p-4 container overflow-auto">

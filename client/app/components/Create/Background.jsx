@@ -25,7 +25,7 @@ export const Background = props => {
       <h2 className="title-card p-4">
         Background
       </h2>
-      <div className="card content-card description-card shadow-card">
+      <div className="card content-card description-card">
         Choose a preset background, or create your own. Your background reveals
         where you came from. how you became an adventurer, and your place in the
         world. If you create a custom background, work with your GM to build one
@@ -53,7 +53,7 @@ export const Background = props => {
             </form>
           </div>
         )}
-        <div className="card content-card description-card shadow-card mb-0">
+        <div className="card content-card description-card mb-0">
           {selectionBg[0].index === "custom" ? (
             <form>
               <textarea
@@ -82,7 +82,7 @@ export const Background = props => {
         </div>
       </div>
       <div className="card translucent-card">
-        <div className="card content-card card-title pb-0">
+        <div className="card content-card card-title">
           <h5>Proficiencies</h5>
         </div>
         <div className="skill-container">
@@ -143,11 +143,11 @@ export const Background = props => {
         )}
       </div>
       <div className="card translucent-card">
-        <div className="card content-card card-title pb-0">
+        <div className="card content-card card-title">
           <h5>Background Feature</h5>
         </div>
         {selectionBg[0].name === "Custom" && (
-          <div className="card content-card description-card shadow-card">
+          <div className="card content-card description-card">
             Background features are normally soft skills that can help you
             outside of combat. Background features can help you with social
             interactions, give you knowledge about a certain topic, or give you
@@ -171,7 +171,7 @@ export const Background = props => {
             selectionBg[0].feature.name
           )}
         </div>
-        <div className="card content-card description-card shadow-card mb-0">
+        <div className="card content-card description-card">
           {selectionBg[0].name === "Custom" ? (
             <form>
               <textarea

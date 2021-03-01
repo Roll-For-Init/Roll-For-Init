@@ -14,15 +14,15 @@ export const createCharacter = (
       { name: "dragonborn", subraces: [] },
       { name: "dwarf", subraces: [] },
       {
-        name: "elf",
+        name: "Elf",
         subraces: [
           {
-            name: "high elf",
+            name: "High Elf",
             skills: {
               dexterity: 2,
               intelligence: 1,
               speed: 30,
-              size: "medium"
+              size: "Medium"
             },
             traits: [
               {
