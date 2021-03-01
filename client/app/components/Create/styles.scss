@@ -25,6 +25,7 @@
   margin-right: 0px;
   border-radius: 8px !important;
   min-width: 200px;
+  text-transform: capitalize;
   font-variant: small-caps;
 }
 
@@ -40,11 +41,12 @@
 .side-bar {
   background-color: $light-maroon-translucent;
 }
-.race {
+.race, .class {
   .options {
     background-color: $off-white;
     border: $maroon 3px solid !important;
     color: $dark-blue;
+    font-variant: small-caps;
   }
 }
 

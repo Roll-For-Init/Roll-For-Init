@@ -7,24 +7,24 @@ import Abilities from "./Abilities";
 import Options from "./Options";
 import Descriptions from "./Descriptions";
 import Equipment from "./Equipment";
-import SidePanel from "./SidePanel";
+import { Link } from "react-router-dom";
 
 import "./styles.scss";
 import Header from "../shared/Header";
 
 const buttonNames = [
-  "Race",
-  "Class",
-  "Background",
-  "Abilities",
-  "Options",
-  "Description",
-  "Equipment"
+  "race",
+  "class",
+  "background",
+  "abilities",
+  "options",
+  "description",
+  "equipment"
 ];
 
 const Create = props => {
   const { selectedInfo } = props.info;
-  const [page, setPage] = useState({ name: "Race", index: 0 });
+  const [page, setPage] = useState({ name: "race", index: 0 });
   const onPageChange = (page, index) => {
     setPage({ name: page, index });
   };
@@ -32,26 +32,26 @@ const Create = props => {
   let pages;
 
   switch (page.name) {
-    case "Race":
-      pages = <Race setPage={setPage} />;
+    case "race":
+      pages = <Race setPage={setPage} page={page} />;
       break;
-    case "Class":
-      pages = <Class setPage={setPage} />;
+    case "class":
+      pages = <Class setPage={setPage} page={page} />;
       break;
-    case "Background":
-      pages = <Background setPage={setPage} />;
+    case "background":
+      pages = <Background setPage={setPage} page={page} />;
       break;
-    case "Abilities":
-      pages = <Abilities setPage={setPage} />;
+    case "abilities":
+      pages = <Abilities setPage={setPage} page={page} />;
       break;
-    case "Options":
-      pages = <Options setPage={setPage} />;
+    case "options":
+      pages = <Options setPage={setPage} page={page} />;
       break;
-    case "Description":
-      pages = <Descriptions setPage={setPage} />;
+    case "description":
+      pages = <Descriptions setPage={setPage} page={page} />;
       break;
-    case "Equipment":
-      pages = <Equipment setPage={setPage} />;
+    case "equipment":
+      pages = <Equipment setPage={setPage} page={page} />;
       break;
   }
 

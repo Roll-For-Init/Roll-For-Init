@@ -59,7 +59,7 @@ const LandingPage = () => {
             Log In
           </button>
         </Link>
-        <Link to="/signup">
+        <Link to="/register">
           <button type="button" className="btn btn-primary btn-lg btm-buttons">
             Sign Up
           </button>

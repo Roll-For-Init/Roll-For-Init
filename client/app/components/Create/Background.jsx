@@ -201,7 +201,7 @@ export const Background = props => {
       <button
         className="text-uppercase btn-primary btn-lg px-5"
         style={{ position: "sticky", bottom: 10 }}
-        onClick={() => props.setPage({ index: 3, name: "Abilities" })}
+        onClick={() => props.setPage({ index: 3, name: "abilities" })}
       >
         OK
       </button>
