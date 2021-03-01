@@ -1,123 +1,126 @@
-import React from "react";
+import React, { useState } from "react";
+import { connect } from "react-redux";
+import Race from "./Race";
+import Class from "./Class";
+import Background from "./Background";
+import Abilities from "./Abilities";
+import Options from "./Options";
+import Descriptions from "./Descriptions";
+import Equipment from "./Equipment";
 import { Link } from "react-router-dom";
 
 import "./styles.scss";
 
-const Create = () => {
+const buttonNames = [
+  "race",
+  "class",
+  "background",
+  "abilities",
+  "options",
+  "description",
+  "equipment"
+];
+
+const Create = props => {
+  const { selectedInfo } = props.info;
+  const [page, setPage] = useState({ name: "race", index: 0 });
+  const onPageChange = (page, index) => {
+    setPage({ name: page, index });
+  };
+
+  let pages;
+
+  switch (page.name) {
+    case "race":
+      pages = <Race setPage={setPage} page={page} />;
+      break;
+    case "class":
+      pages = <Class setPage={setPage} page={page} />;
+      break;
+    case "background":
+      pages = <Background setPage={setPage} page={page} />;
+      break;
+    case "abilities":
+      pages = <Abilities setPage={setPage} page={page} />;
+      break;
+    case "options":
+      pages = <Options setPage={setPage} page={page} />;
+      break;
+    case "description":
+      pages = <Descriptions setPage={setPage} page={page} />;
+      break;
+    case "equipment":
+      pages = <Equipment setPage={setPage} page={page} />;
+      break;
+  }
+
   return (
-    <div className="container">
-      <div className="row page-row">
-        <div className="col-3 side-drawer">
-          <div className="accordion" id="accordionExample">
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingOne">
-                <button
-                  className="accordion-button"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseOne"
-                  aria-expanded="true"
-                  aria-controls="collapseOne"
-                >
-                  Race
-                </button>
-              </h2>
-              <div
-                id="collapseOne"
-                className="accordion-collapse collapse show"
-                aria-labelledby="headingOne"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <strong>This is the first item's accordion body.</strong> It
-                  is hidden by default, until the collapse plugin adds the
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingTwo">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseTwo"
-                  aria-expanded="false"
-                  aria-controls="collapseTwo"
-                >
-                  Accordion Item #2
-                </button>
-              </h2>
-              <div
-                id="collapseTwo"
-                className="accordion-collapse collapse"
-                aria-labelledby="headingTwo"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <strong>This is the second item's accordion body.</strong> It
-                  is hidden by default, until the collapse plugin adds the
-                </div>
-              </div>
-            </div>
-            <div className="accordion-item">
-              <h2 className="accordion-header" id="headingThree">
-                <button
-                  className="accordion-button collapsed"
-                  type="button"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#collapseThree"
-                  aria-expanded="false"
-                  aria-controls="collapseThree"
-                >
-                  Accordion Item #3
-                </button>
-              </h2>
-              <div
-                id="collapseThree"
-                className="accordion-collapse collapse"
-                aria-labelledby="headingThree"
-                data-bs-parent="#accordionExample"
-              >
-                <div className="accordion-body">
-                  <strong>This is the third item's accordion body.</strong> It
-                  is hidden by default, until the collapse plugin adds the
-                </div>
-              </div>
+    <div className="create">
+      <header>
+        <h1 className="text-center m-0" style={{ backgroundColor: "#333" }}>
+          <Link to="/" className="link-regular">
+            Roll For Init
+          </Link>
+        </h1>
+      </header>
+      <div className="container-fluid">
+        <div className="row">
+          <div className="col-3 p-5 side-bar overflow-auto">
+            <div className="btn-group-vertical w-100" role="group">
+              {buttonNames.map((name, idx) => {
+                let classname = "btn btn-lg btn-secondary text-uppercase";
+                if (page.index < idx) {
+                  classname =
+                    "btn btn-lg btn-secondary text-uppercase disabled";
+                }
+                if (page.name === name) {
+                  classname = "btn btn-lg btn-primary text-uppercase";
+                }
+                return (
+                  <button
+                    key={name}
+                    type="button"
+                    className={classname}
+                    style={{
+                      marginLeft: 0,
+                      marginRight: 0,
+                      borderRadius: 5,
+                      minWidth: 200
+                    }}
+                    onClick={() => {
+                      page.index > idx && onPageChange(name, idx);
+                    }}
+                  >
+                    {name}
+                  </button>
+                );
+              })}
             </div>
           </div>
-        </div>
-        <div className="col-9">
-          <h1>Race</h1>
-          <div className="input-form">
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" />
-            </div>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" />
-            </div>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" />
-            </div>
-            <div className="input-group mb-3">
-              <input type="text" className="form-control" />
-            </div>
+          <div className="col-9 pb-0 px-5 pt-5 container overflow-auto">
+            {pages}
           </div>
-          <div className="d-grid gap-2">
-            <Link to="/">
-              <button type="button" className="btn btn-lg btn-secondary">
-                Back
-              </button>
-            </Link>
-            <Link to="/create">
-              <button type="button" className="btn btn-lg btn-primary">
-                Next
-              </button>
-            </Link>
-          </div>
+          {/* <div className="col-4">
+            {selectedInfo ? (
+              <SidePanel />
+            ) : (
+              <div className="card mt-5 p-5 side-bar">
+                <div className="card-header">
+                  <h4>Nothing Is Selected</h4>
+                </div>
+              </div>
+            )}
+          </div> */}
         </div>
       </div>
     </div>
   );
 };
 
-export default Create;
+const mapStateToProps = state => ({
+  info: state.createCharacter
+});
+
+const mapDispatchToProps = {};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Create);
