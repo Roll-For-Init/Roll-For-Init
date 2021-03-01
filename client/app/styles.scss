@@ -84,3 +84,68 @@ input {
   padding: 10px;
   margin: auto;
 }
+
+.create {
+  .side-bar {
+    background-color: $lighter-maroon;
+  }
+  h1 {
+    background-color: #333;
+  }
+  h2 {
+    background-color: $maroon;
+  }
+  .race {
+    padding-right: 42%;
+    padding-left: 8%;
+    .options {
+      width: 80%;
+      min-width: 250px;
+      background-color: $medium-off-white;
+      border: $maroon 3px solid !important;
+      border-bottom: 0px !important;
+      color: $dark-blue;
+    }
+    .dropdown-menu {
+      min-width: 250px;
+      width: 80%;
+      background-color: $medium-off-white;
+      border-radius: 0;
+      border: $maroon 3px solid !important;
+      border-top: 0px !important;
+    }
+    .dropdown-toggle::after {
+      float: right;
+      margin-top: 12px;
+    }
+    .options-dropdown {
+      color: $dark-blue;
+      background-color: $medium-off-white;
+    }
+
+    // sidebar
+
+    .text-background {
+      background-color: $medium-off-white;
+      border: $maroon 3px solid !important;
+      color: $dark-blue;
+    }
+
+    .dd-wrapper {
+      width: 100%;
+      .dd-header__title,
+      .dd-header__action {
+        color: $dark-blue;
+      }
+    }
+  }
+  .background {
+    font-family: "IM Fell DW Pica" !important;
+  }
+}
+
+.link-regular,
+.link-regular:hover {
+  color: white;
+  text-decoration: none;
+}

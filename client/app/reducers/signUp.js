@@ -4,7 +4,8 @@ export const signUp = (
   state = {
     loading: false,
     data: null,
-    error: null
+    error: null,
+    success: false
   },
   action
 ) => {
@@ -24,13 +25,15 @@ export const signUp = (
     case SIGN_UP:
       return {
         ...state,
-        data: action.payload
+        data: action.payload,
+        success: true
       };
 
     case THROW_ERROR:
       return {
         ...state,
-        error: action.payload
+        error: action.payload,
+        success: false
       };
 
     default:
