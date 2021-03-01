@@ -1,0 +1,16 @@
+@import "client/app/variables";
+
+.header {
+  height: 45px;
+  text-align: center;
+  margin: 0;
+  background-color: #333;
+  box-shadow: 0px 1px 10px hsla(0, 0%, 0%, 6%);
+  z-index: 100;
+  position: sticky;
+
+  img {
+    margin-top: 5px;
+    height: 40px;
+  }
+}

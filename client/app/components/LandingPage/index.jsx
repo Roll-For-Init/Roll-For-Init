@@ -6,7 +6,7 @@ import "./styles.scss";
 
 const LandingPage = () => {
   return (
-    <div className="container">
+    <div className="container landing">
       <div className="filler-space"></div>
       <div className="row align-items-center">
         <div className="col"></div>

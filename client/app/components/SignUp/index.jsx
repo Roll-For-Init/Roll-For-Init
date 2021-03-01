@@ -22,7 +22,7 @@ const SignUp = () => {
   };
 
   return (
-    <div className="container">
+    <div className="container signup">
       <div className="filler-space"></div>
       <div className="row align-items-center">
         <div className="col"></div>

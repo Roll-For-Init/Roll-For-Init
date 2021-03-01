@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { getBackgroundInfo } from "../../actions";
 import ReactReadMoreReadLess from "react-read-more-read-less";
-import Dropdown from "../Dropdown";
+import Dropdown from "../shared/Dropdown";
 
 export const Background = props => {
   const { backgrounds } = props.backgrounds;
@@ -22,10 +22,10 @@ export const Background = props => {
 
   return (
     <div className="background">
-      <h2 className="p-4" style={{ position: "sticky", top: -50, zIndex: 99 }}>
+      <h2 className="title-card p-4">
         Background
       </h2>
-      <div className="card content-card background-card shadow-card">
+      <div className="card content-card description-card shadow-card">
         Choose a preset background, or create your own. Your background reveals
         where you came from. how you became an adventurer, and your place in the
         world. If you create a custom background, work with your GM to build one
@@ -41,7 +41,7 @@ export const Background = props => {
           setSelection={setSelectionBg}
         />
         {selectionBg[0].index === "custom" && (
-          <div className="card content-card subtitle-card">
+          <div className="card content-card card-subtitle">
             <form style={{ padding: "0px 5px" }}>
               <input
                 className="p-0 m-0"
@@ -82,7 +82,7 @@ export const Background = props => {
         </div>
       </div>
       <div className="card translucent-card">
-        <div className="card content-card title-card pb-0">
+        <div className="card content-card card-title pb-0">
           <h5>Proficiencies</h5>
         </div>
         <div className="skill-container">
@@ -143,7 +143,7 @@ export const Background = props => {
         )}
       </div>
       <div className="card translucent-card">
-        <div className="card content-card title-card pb-0">
+        <div className="card content-card card-title pb-0">
           <h5>Background Feature</h5>
         </div>
         {selectionBg[0].name === "Custom" && (
@@ -156,7 +156,7 @@ export const Background = props => {
             ensure it makes sense for your character.
           </div>
         )}
-        <div className="card content-card subtitle-card">
+        <div className="card content-card card-subtitle">
           {selectionBg[0].name === "Custom" ? (
             <form style={{ padding: "0px 5px" }}>
               <input
@@ -201,7 +201,7 @@ export const Background = props => {
       <button
         className="text-uppercase btn-primary btn-lg px-5"
         style={{ position: "sticky", bottom: 10 }}
-        onClick={() => props.setPage({ index: 3, name: "abilities" })}
+        onClick={() => props.setPage({ index: 3, name: "Abilities" })}
       >
         OK
       </button>

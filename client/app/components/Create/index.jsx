@@ -10,20 +10,21 @@ import Equipment from "./Equipment";
 import SidePanel from "./SidePanel";
 
 import "./styles.scss";
+import Header from "../shared/Header";
 
 const buttonNames = [
-  "race",
-  "class",
-  "background",
-  "abilities",
-  "options",
-  "description",
-  "equipment"
+  "Race",
+  "Class",
+  "Background",
+  "Abilities",
+  "Options",
+  "Description",
+  "Equipment"
 ];
 
 const Create = props => {
   const { selectedInfo } = props.info;
-  const [page, setPage] = useState({ name: "class", index: 1 });
+  const [page, setPage] = useState({ name: "Race", index: 0 });
   const onPageChange = (page, index) => {
     setPage({ name: page, index });
   };
@@ -31,60 +32,47 @@ const Create = props => {
   let pages;
 
   switch (page.name) {
-    case "race":
+    case "Race":
       pages = <Race setPage={setPage} />;
       break;
-    case "class":
+    case "Class":
       pages = <Class setPage={setPage} />;
       break;
-    case "background":
+    case "Background":
       pages = <Background setPage={setPage} />;
       break;
-    case "abilities":
+    case "Abilities":
       pages = <Abilities setPage={setPage} />;
       break;
-    case "options":
+    case "Options":
       pages = <Options setPage={setPage} />;
       break;
-    case "description":
+    case "Description":
       pages = <Descriptions setPage={setPage} />;
       break;
-    case "equipment":
+    case "Equipment":
       pages = <Equipment setPage={setPage} />;
       break;
   }
 
   return (
     <div className="create">
-      <header>
-        <h1 className="text-center m-0" style={{ backgroundColor: "#333" }}>
-          Roll For Init
-        </h1>
-      </header>
+      <Header />
       <div className="container-fluid">
         <div className="row">
-          <div className="col-3 p-5 side-bar overflow-auto">
+          <div className="col-3 p-5 d-none d-md-block side-bar overflow-auto">
             <div className="btn-group-vertical w-100" role="group">
               {buttonNames.map((name, idx) => {
-                let classname = "btn btn-lg btn-secondary text-uppercase";
-                if (page.index < idx) {
-                  classname =
-                    "btn btn-lg btn-secondary text-uppercase disabled";
-                }
+                let classname = "btn btn-lg btn-secondary menu-button";
                 if (page.name === name) {
-                  classname = "btn btn-lg btn-primary text-uppercase";
+                  classname = "btn btn-lg btn-primary menu-button active";
                 }
                 return (
                   <button
                     key={name}
                     type="button"
                     className={classname}
-                    style={{
-                      marginLeft: 0,
-                      marginRight: 0,
-                      borderRadius: 5,
-                      minWidth: 200
-                    }}
+                    disabled={page.index < idx}
                     onClick={() => {
                       page.index > idx && onPageChange(name, idx);
                     }}
@@ -95,10 +83,10 @@ const Create = props => {
               })}
             </div>
           </div>
-          <div className="col-5 pb-0 px-5 pt-5 container overflow-auto position-relative">
+          <div className="col-6 pb-0 px-5 pt-4 container overflow-auto position-relative">
             {pages}
           </div>
-          {/* <div className="col-4 p-4 container overflow-auto">
+          {/* <div className="col-3 p-4 container overflow-auto">
             {selectedInfo ? (
               <SidePanel />
             ) : (

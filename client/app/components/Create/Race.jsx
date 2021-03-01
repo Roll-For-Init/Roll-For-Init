@@ -11,7 +11,7 @@ const Race = props => {
 
   return (
     <div className="race">
-      <h2 className="p-4" style={{ position: "sticky", top: -50, zIndex: 99 }}>
+      <h2 className="title-card p-4">
         Race
       </h2>
       <div className="dropdown btn-group-vertical w-75">
@@ -55,7 +55,7 @@ const Race = props => {
       <button
         className="text-uppercase btn-primary btn-lg px-5"
         style={{ position: "sticky", bottom: 10 }}
-        onClick={() => props.setPage({ index: 1, name: "class" })}
+        onClick={() => props.setPage({ index: 1, name: "Class" })}
       >
         OK
       </button>

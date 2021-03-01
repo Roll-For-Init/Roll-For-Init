@@ -20,10 +20,38 @@
   width: 100%;
 }
 
+.menu-button {
+  margin-left: 0px;
+  margin-right: 0px;
+  border-radius: 8px !important;
+  min-width: 200px;
+  font-variant: small-caps;
+}
+
+.title-card {
+  background-color: $maroon;
+  border: 30px solid inherit;
+  border-image: url('../../../public/assets/imgs/border-square.png') 156.375 / 156.375 stretch;
+  font-variant: small-caps;
+  margin: 0 auto 25px;
+  max-width: 450px;
+}
+
+.side-bar {
+  background-color: $light-maroon-translucent;
+}
+.race {
+  .options {
+    background-color: $off-white;
+    border: $maroon 3px solid !important;
+    color: $dark-blue;
+  }
+}
+
 .card {
-  color: #172838;
+  color: $dark-blue;
   border-radius: 8px;
-  margin: 20px auto;
+  // margin: 20px auto;
 }
 
 .content-card {
@@ -35,27 +63,22 @@
   box-shadow: 0px 1px 10px hsla(0, 0, 0, 67%);
 }
 
-.background-card {
-  width: 90%;
-  padding: 10px;
-  text-align: left;
-}
-
 .translucent-card {
-  background-color: $lighter-maroon;
-  padding: 20px;
+  background-color: $light-maroon-translucent;
+  padding: 15px 20px;
+  margin: 25px auto;
 }
 
-.title-card {
+.card-title {
   padding: 10px 20px;
-  margin: 0px auto 5px auto;
+  margin: 5px auto;
   font-variant: small-caps;
 }
 
-.subtitle-card {
-  padding: 5px 0px;
+.card-subtitle {
+  padding: 5px 20px;
   margin: 5px auto;
-  width: 70%;
+  max-width: 500px;
 }
 
 .skill-container {
@@ -77,7 +100,7 @@
 }
 
 .description-card {
-  padding: 5px;
+  padding: 15px 15px;
   margin: 5px 0px;
   text-align: left;
   width: 100%;
@@ -88,6 +111,7 @@
   color: $blue;
   text-align: right;
   text-decoration: underline;
+  line-height: .5rem;
 }
 
 .shoop {

@@ -54,31 +54,26 @@ function Dropdown({
     <div className="dd-wrapper" style={{ width: width }}>
       <div
         tabIndex={0}
-        className="dd-header"
+        className={header ? "dd-header header" : "dd-header"}
         role="button"
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
       >
         <div className="dd-header__title">
-          {header ? <h5>{newTitle}</h5> : <>{newTitle}</>}
+          <span >{newTitle}</span>
         </div>
         <div className="dd-header__action">
-          <p>
-            {open
-              ? // <i className="bi bi-chevron-down"></i>
-                "Close"
-              : //<i className="bi bi-chevron-up"></i>
-                "Open"}
-          </p>
+          {open
+            ? <i className="bi bi-chevron-up"></i>
+            : <i className="bi bi-chevron-down"></i>}
         </div>
       </div>
       {open && (
-        <ul className="dd-list">
+        <ul className="dd-list shadow-card">
           {items.map(item => (
             <li className="dd-list-item" key={item.index}>
-              <button type="button" onClick={() => handleOnClick(item)}>
-                <span>{header ? <h5>{item.name}</h5> : <>{item.name}</>}</span>
-                <span>{isItemInSelection(item) && "Selected"}</span>
+              <button type="button" className={isItemInSelection(item) ? "selected" : multiSelect && selection.length >= selectLimit ? "unselectable" : ""} onClick={() => handleOnClick(item)}>
+                <span> {header ? <h5>{item.name}</h5> : <>{item.name}</>}</span>
               </button>
             </li>
           ))}
