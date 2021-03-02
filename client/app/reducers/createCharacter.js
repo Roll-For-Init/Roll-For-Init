@@ -9,10 +9,123 @@ import {
 } from '../actions';
 
 export const createCharacter = (
-    state = {
-        races: [
-            { name: 'dragonborn', subraces: [] },
-            { name: 'dwarf', subraces: [] },
+  state = {
+    races: [
+      { name: "dragonborn", subraces: [] },
+      { name: "dwarf", subraces: [] },
+      {
+        name: "Elf",
+        subraces: [
+          {
+            name: "High Elf",
+            skills: {
+              dexterity: 2,
+              intelligence: 1,
+              speed: 30,
+              size: "Medium"
+            },
+            traits: [
+              {
+                name: "dark vision",
+                description: "You have superior vision blah blah blah"
+              },
+              {
+                name: "dark vision",
+                description: "You have superior vision blah blah blah"
+              },
+              {
+                name: "dark vision",
+                description: "You have superior vision blah blah blah"
+              },
+              {
+                name: "dark vision",
+                description: "You have superior vision blah blah blah"
+              }
+            ]
+          }
+        ]
+      },
+      { name: "gnome", subraces: [] },
+      { name: "half-elf", subraces: [] },
+      { name: "half-orc", subraces: [] },
+      { name: "halfling", subraces: [] },
+      { name: "human", subraces: [] },
+      { name: "tiefling", subraces: [] }
+    ],
+    classes: [
+      {
+        name: "Barbarian"
+      },
+      {
+        name: "Bard"
+      },
+      {
+        name: "Cleric"
+      },
+      {
+        name: "Druid"
+      },
+      {
+        name: "Fighter"
+      },
+      {
+        name: "Monk"
+      },
+      {
+        name: "Paladin"
+      },
+      {
+        name: "Ranger"
+      },
+      {
+        name: "Rogue"
+      },
+      {
+        name: "Sorcerer"
+      }
+    ],
+    backgrounds: [
+      {
+        index: "acolyte",
+        name: "Acolyte",
+        desc:
+          "You have spent your life in the service of a temple to a specific god or pantheon of gods. You act as an intermediary between the realm of the holy and the mortal world, performing sacred rites and offering sacrifices in order to conduct worshippers into the presence of the divine. You are not necessarily a cleric--performing sacred rites is not the same thing as channeling divine power.",
+        starting_proficiencies: [
+          {
+            index: "skill-insight",
+            name: "Skill: Insight",
+            url: "/api/proficiencies/skill-insight"
+          },
+          {
+            index: "skill-religion",
+            name: "Skill: Religion",
+            url: "/api/proficiencies/skill-religion"
+          }
+        ],
+        language_options: {
+          choose: 2,
+          type: "languages",
+          from: [
+            {
+              index: "common",
+              name: "Common",
+              url: "/api/languages/common"
+            },
+            {
+              index: "dwarvish",
+              name: "Dwarvish",
+              url: "/api/languages/dwarvish"
+            },
+            {
+              index: "elvish",
+              name: "Elvish",
+              url: "/api/languages/elvish"
+            },
+            {
+              index: "giant",
+              name: "Giant",
+              url: "/api/languages/giant"
+            },
             {
                 name: 'elf',
                 subraces: [
@@ -86,6 +199,29 @@ export const createCharacter = (
             },
             {
                 name: 'Sorcerer',
+              index: "undercommon",
+              name: "Undercommon",
+              url: "/api/languages/undercommon"
+            }
+          ]
+        },
+        feature: {
+          name: "Shelter of the Faithful",
+          desc: [
+            "As an acolyte, you command the respect of those who share your faith, and you can perform the religious ceremonies of your deity. You and your adventuring companions can expect to receive free healing and care at a temple, shrine, or other established presence of your faith, though you must provide any material components needed for spells. Those who share your religion will support you (but only you) at a modest lifestyle.",
+            "You might also have ties to a specific temple dedicated to your chosen deity or pantheon, and you have a residence there. This could be the temple where you used to serve, if you remain on good terms with it, or a temple where you have found a new home. While near your temple, you can call upon the priests for assistance, provided the assistance you ask for is not hazardous and you remain in good standing with your temple."
+          ]
+        },
+      },
+      {
+        index: "criminal",
+        name: "Criminal",  
+        desc: "You have spent your life in the service of a criminaling.",          
+        starting_proficiencies: [
+            {
+                "index": "skill-insight",
+                "name": "Skill: Insight",
+                "url": "/api/proficiencies/skill-insight"
             },
         ],
         backgrounds: [
@@ -322,8 +458,20 @@ export const createCharacter = (
             description: null,
             equipment: null,
         },
-    },
-    action
+      },
+    ],
+    selectedInfo: null,
+    character: {
+      race: null,
+      class: null,
+      background: null,
+      abilities: null,
+      options: null,
+      description: null,
+      equipment: null
+    }
+  },
+  action
 ) => {
     switch (action.type) {
         case LOADING_ON:

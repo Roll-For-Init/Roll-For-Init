@@ -7,11 +7,19 @@
   margin: 5px auto;
   text-transform: capitalize;
   position: relative;
+
+  &:first-child {
+    margin-top: 0px;
+  }
+  &:last-child {
+    margin-bottom: 0px;
+  }
+
   .dd-header {
     display: flex;
     cursor: pointer;
     width: 100%;
-    padding: 5px 0px;
+    padding: 5px 10px;
     border-radius: 8px;
     background-color: $off-white;
     border: 3px solid $maroon;
@@ -23,7 +31,7 @@
       color: $dark-blue;
     }
     &__action {
-      padding-right: 10px;
+      padding-left: 10px;
       color: $dark-blue;
     }
   }
@@ -54,8 +62,6 @@
       }
 
       button {
-        // position: absolute;
-        // z-index: 10;
         color: $dark-blue;
         display: flex;
         justify-content: space-between;
