@@ -3,7 +3,8 @@ import React, { useEffect } from 'react';
 // import Header from "../Header/Header";
 import './App.scss';
 import { useDispatch, useSelector } from 'react-redux';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { Router, Route, Switch } from 'react-router-dom';
+import { createBrowserHistory } from 'history';
 
 import NotFound from './components/NotFound';
 import LandingPage from './components/LandingPage';
@@ -15,17 +16,28 @@ import Create from './components/Create';
 import DashBoard from './components/DashBoard';
 
 import { finishLoading } from './redux/actions/app';
+import { clearAlert } from './redux/actions/alert';
+
+export const history = createBrowserHistory();
 
 const App = () => {
   const isAppLoading = useSelector(state => state.app.isAppLoading);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    history.listen(() => {
+      dispatch(clearAlert()); // clear message when changing location
+    });
+  }, [dispatch]);
+
   useEffect(() => {
     if (isAppLoading) {
       dispatch(finishLoading());
     }
   }, []);
+
   return (
-    <Router>
+    <Router history={history}>
       {/* <Header /> */}
       <main className="main">
         {isAppLoading && <React.Fragment>LOADING</React.Fragment>}

@@ -6,13 +6,21 @@ import { login } from '../../redux/actions/auth';
 
 import './styles.scss';
 import validator from 'validator';
+import PropTypes from 'prop-types';
+
+// TODO: remove inline styling
+const Error = props => {
+  const { err } = props;
+  return <span style={{ width: '100%', color: 'red' }}>{err}</span>;
+};
+Error.propTypes = {
+  err: PropTypes.string.isRequired,
+};
 
 const reduxField = ({ placeholder, input, meta }) => (
   <div className="input-group mb-3">
     <input {...input} className="form-control" placeholder={placeholder} />
-    {meta.error && meta.touched && (
-      <span style={{ width: '100%', color: 'red' }}>{meta.error}</span>
-    )}
+    {meta.error && meta.touched && <Error err={meta.error} />}
   </div>
 );
 
@@ -33,6 +41,7 @@ const validate = values => {
 
 const Login = () => {
   const { isLoggedIn } = useSelector(state => state.auth);
+  const alert = useSelector(state => state.alert);
   const dispatch = useDispatch();
   const onSubmit = values => {
     const { email, password } = values;
@@ -66,6 +75,7 @@ const Login = () => {
               component={reduxField}
               placeholder="password"
             />
+            {alert && <Error err={alert} />}
             <div className="d-grid gap-2">
               <Link to="/">
                 <button

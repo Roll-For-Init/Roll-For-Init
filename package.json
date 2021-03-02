@@ -4,9 +4,8 @@
   "description": "Full stack table top aide web-application.",
   "private": true,
   "scripts": {
-    "redis:start": "redis-server --daemonize yes",
     "api:install": "npm --prefix ./5e-srd-api install ./5e-srd-api",
-    "api:start": "if-env NODE_ENV=production && npm run api:install || (npm run redis:start&); npm start --prefix 5e-srd-api/",
+    "api:start": "if-env NODE_ENV=production && npm run api:install; npm start --prefix 5e-srd-api/",
     "start": "concurrently \"node server\" \"npm run api:start\"",
     "build": "webpack --config webpack.config.js"
   },
