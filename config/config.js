@@ -54,7 +54,7 @@ const webpack = {
       contentBase: root('client/'),
       noInfo: process.env.SILENCE_WEBPACK,
       watchOptions: {
-        poll: 100,
+        poll: 1000,
         ignore: [/node_modules/],
       },
       hot: true,
