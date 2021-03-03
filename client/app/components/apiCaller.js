@@ -194,10 +194,7 @@ const raceCaller = async () => {
       })
     );
   }
-  Promise.all(promises).then(() => {
-    console.log(races);
-    return races;    
-  });
+  return Promise.all(promises).then(() => races);
     //need to add recursion or something so that descriptions can be had from options! make descriptions, weight, cost available without another fetch. maybe just upon selection of option??
     //should unify race, subrace "trait" call language. is this easy to use? things are still stratified across race and subrace...same with options vs choices
     //need a "fluff" equipment array, later

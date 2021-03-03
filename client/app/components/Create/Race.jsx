@@ -1,10 +1,19 @@
-import React, { useState } from "react";
+import React, { useState, useEffect} from "react";
 import { connect } from "react-redux";
 import { clearSelectedInfo, getRaceInfo } from "../../actions";
 import Dropdown from "../shared/Dropdown";
+import {raceCaller} from "../apiCaller";
 
 const Race = props => {
   const { races, selectedInfo } = props.races;
+  let apiData = null;
+  useEffect(() => {
+    const fetchData = async () => {
+      apiData = await raceCaller();
+      console.log(apiData);
+    }
+    fetchData();
+  }, []);
 
   const selectRace = race => {
     props.selectRace(race);
