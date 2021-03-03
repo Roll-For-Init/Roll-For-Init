@@ -8,9 +8,9 @@ function Dropdown({
   width,
   multiSelect = false,
   selectLimit = 2,
-  header = false,
   selection,
-  setSelection
+  setSelection,
+  classname
 }) {
   const [open, setOpen] = useState(false);
   // const [selection, setSelection] = useState([items[0]]);
@@ -54,7 +54,7 @@ function Dropdown({
     <div className="dd-wrapper" style={{ width: width }}>
       <div
         tabIndex={0}
-        className={header ? "dd-header header" : "dd-header"}
+        className={classname ? "dd-header " + classname : "dd-header"}
         role="button"
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
@@ -73,7 +73,7 @@ function Dropdown({
           {items.map(item => (
             <li className="dd-list-item" key={item.index}>
               <button type="button" className={isItemInSelection(item) ? "selected" : multiSelect && selection.length >= selectLimit ? "unselectable" : ""} onClick={() => handleOnClick(item)}>
-                <span> {header ? <h5>{item.name}</h5> : <>{item.name}</>}</span>
+                <span> {classname == "header" ? <h5>{item.name}</h5> : <>{item.name}</>}</span>
               </button>
             </li>
           ))}

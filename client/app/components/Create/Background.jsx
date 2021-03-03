@@ -20,12 +20,19 @@ export const Background = props => {
   const [selectionTlLg1, setSelectionTlLg1] = useState([]);
   const [selectionTlLg2, setSelectionTlLg2] = useState([]);
 
+  const onNext = () => {
+    props.setPage({ index: 3, name: "abilities" });
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="background">
-      <h2 className="title-card p-4">
-        Background
-      </h2>
-      <div className="card content-card description-card">
+      <div className="mx-auto d-none d-md-flex title-back-wrapper">
+        <h2 className="title-card p-4">
+          Background
+        </h2>
+      </div>
+      <div className="card content-card description-card m-0 mt-4">
         Choose a preset background, or create your own. Your background reveals
         where you came from. how you became an adventurer, and your place in the
         world. If you create a custom background, work with your GM to build one
@@ -36,9 +43,9 @@ export const Background = props => {
           title={backgrounds[0].name}
           items={[...backgrounds, { index: "custom", name: "Custom" }]}
           width="70%"
-          header
           selection={selectionBg}
           setSelection={setSelectionBg}
+          classname="header"
         />
         {selectionBg[0].index === "custom" && (
           <div className="card content-card card-subtitle">
@@ -83,19 +90,19 @@ export const Background = props => {
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h5>Proficiencies</h5>
+          <h4>Proficiencies</h4>
         </div>
-        <div className="skill-container">
+        <div className="choice-container">
           {selectionBg[0].index === "custom" ? (
             <Dropdown
               title="Choose a Skill"
               items={[]}
-              width="50%"
               selection={selectionSk1}
               setSelection={setSelectionSk1}
+              classname="choice"
             />
           ) : (
-            <div className="card content-card skill-card">
+            <div className="card content-card choice">
               {selectionBg[0].starting_proficiencies[0].name}
             </div>
           )}
@@ -103,48 +110,50 @@ export const Background = props => {
             <Dropdown
               title="Choose a Skill"
               items={[]}
-              width="50%"
               selection={selectionSk2}
               setSelection={setSelectionSk2}
+              classname="choice"
             />
           ) : (
-            <div className="card content-card skill-card">
+            <div className="card content-card choice">
               {selectionBg[0].starting_proficiencies[1].name}
             </div>
           )}
         </div>
-        {selectionBg[0].index === "custom" ? (
-          <>
+        <div className="choice-container">
+          {selectionBg[0].index === "custom" ? (
+            <>
+              <Dropdown
+                title="Choose a Tool or Language"
+                items={[]}
+                selection={selectionTlLg1}
+                setSelection={setSelectionTlLg1}
+                classname="choice"
+              />
+              <Dropdown
+                title="Choose a Tool or Language"
+                items={[]}
+                selection={selectionTlLg2}
+                setSelection={setSelectionTlLg2}
+                classname="choice"
+              />
+            </>
+          ) : (
             <Dropdown
-              title="Choose a Tool or Language"
-              items={[]}
-              width="50%"
-              selection={selectionTlLg1}
-              setSelection={setSelectionTlLg1}
+              title={`Choose ${selectionBg[0].language_options.choose}: ${selectionBg[0].language_options.type}`}
+              items={selectionBg[0].language_options.from}
+              selectLimit={selectionBg[0].language_options.choose}
+              multiSelect
+              selection={selectionLang}
+              setSelection={setSelectionLang}
+              classname="choice"
             />
-            <Dropdown
-              title="Choose a Tool or Language"
-              items={[]}
-              width="50%"
-              selection={selectionTlLg2}
-              setSelection={setSelectionTlLg2}
-            />
-          </>
-        ) : (
-          <Dropdown
-            title={`Choose ${selectionBg[0].language_options.choose}: ${selectionBg[0].language_options.type}`}
-            items={selectionBg[0].language_options.from}
-            selectLimit={selectionBg[0].language_options.choose}
-            width="50%"
-            multiSelect
-            selection={selectionLang}
-            setSelection={setSelectionLang}
-          />
-        )}
+          )}
+        </div>
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h5>Background Feature</h5>
+          <h4>Background Feature</h4>
         </div>
         {selectionBg[0].name === "Custom" && (
           <div className="card content-card description-card">
@@ -199,9 +208,8 @@ export const Background = props => {
         </div>
       </div>
       <button
-        className="text-uppercase btn-primary btn-lg px-5"
-        style={{ position: "sticky", bottom: 10 }}
-        onClick={() => props.setPage({ index: 3, name: "abilities" })}
+        className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+        onClick={onNext}
       >
         OK
       </button>

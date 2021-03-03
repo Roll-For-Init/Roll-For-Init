@@ -9,9 +9,11 @@ const LandingPage = () => {
     <div className="container landing">
       <div className="filler-space"></div>
       <div className="row align-items-center">
-        <div className="col"></div>
-        <div className="col-6 logo"></div>
-        <div className="col"></div>
+        <div className="col-1 col-md"></div>
+        <div className="col col-md-6 mb-5">
+          <img className="logo" src={require("../../../public/assets/imgs/logo.png")}/>
+        </div>
+        <div className="col-1 col-md"></div>
       </div>
       <div className="d-grid gap-2">
         <Link to="/create">
@@ -53,7 +55,7 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      <div className="d-grid gap-6">
+      <div className="d-grid gap-6 btm-button-container">
         <Link to="/login">
           <button type="button" className="btn btn-primary btn-lg btm-buttons">
             Log In

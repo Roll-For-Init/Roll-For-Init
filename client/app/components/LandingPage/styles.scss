@@ -5,26 +5,55 @@
   text-align: center;
 }
 
+.container.landing {
+	position: absolute;
+	top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+  	
+	margin: auto;
+}
+
 .logo {
-  background-image: url("../../../public/assets/imgs/logo.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  height: 200px;
-  min-width: 100px;
-  margin-bottom: 25px;
-  width: auto;
+  // margin-bottom: 25px;
+  width: 100%;
 }
 
 .top-buttons {
-  max-width: 325px;
-  width: 40% !important;
-  margin: 25px;
+  width: 80% !important;
+  margin: 15px 0px;
+  @media (min-width: 768px) {
+    max-width: 325px;
+    width: 40% !important;
+    margin: 25px;
+  }
 }
 
 .btm-buttons {
-  max-width: 200px;
-  width: 30% !important;
-  margin: 25px 87.5px;
+  width: 60% !important;
+  // width: auto;
+  margin: 15px 0px;
+  @media (min-width: 768px) {
+    margin: 25px calc((min(40%, 325px) - 200px) / 2 + 25px); 
+    max-width: 200px;
+    width: 30% !important;
+  }
+}
+
+.btm-button-container > a {
+  @media (min-width: 768px) {
+    &:first-child {
+      > .btn {
+        margin-left: 25px;
+      }
+    }
+    &:last-child {
+      > .btn {
+        margin-right: 25px;
+      }
+    }
+  }
 }
 
 .filler-space {
