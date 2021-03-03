@@ -20,12 +20,19 @@ export const Background = props => {
   const [selectionTlLg1, setSelectionTlLg1] = useState([]);
   const [selectionTlLg2, setSelectionTlLg2] = useState([]);
 
+  const onNext = () => {
+    props.setPage({ index: 3, name: "abilities" });
+    window.scrollTo(0, 0);
+  };
+
   return (
     <div className="background">
-      <h2 className="title-card p-4">
-        Background
-      </h2>
-      <div className="card content-card description-card">
+      <div className="mx-auto d-none d-md-flex title-back-wrapper">
+        <h2 className="title-card p-4">
+          Background
+        </h2>
+      </div>
+      <div className="card content-card description-card m-0 mt-4">
         Choose a preset background, or create your own. Your background reveals
         where you came from. how you became an adventurer, and your place in the
         world. If you create a custom background, work with your GM to build one
@@ -83,7 +90,7 @@ export const Background = props => {
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h5>Proficiencies</h5>
+          <h4>Proficiencies</h4>
         </div>
         <div className="skill-container">
           {selectionBg[0].index === "custom" ? (
@@ -144,7 +151,7 @@ export const Background = props => {
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h5>Background Feature</h5>
+          <h4>Background Feature</h4>
         </div>
         {selectionBg[0].name === "Custom" && (
           <div className="card content-card description-card">
@@ -199,9 +206,8 @@ export const Background = props => {
         </div>
       </div>
       <button
-        className="text-uppercase btn-primary btn-lg px-5"
-        style={{ position: "sticky", bottom: 10 }}
-        onClick={() => props.setPage({ index: 3, name: "abilities" })}
+        className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+        onClick={onNext}
       >
         OK
       </button>

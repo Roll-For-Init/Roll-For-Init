@@ -7,6 +7,7 @@ import Abilities from "./Abilities";
 import Options from "./Options";
 import Descriptions from "./Descriptions";
 import Equipment from "./Equipment";
+import MobileMenu from "./MobileMenu";
 import { Link } from "react-router-dom";
 
 import "./styles.scss";
@@ -27,6 +28,7 @@ const Create = props => {
   const [page, setPage] = useState({ name: "race", index: 0 });
   const onPageChange = (page, index) => {
     setPage({ name: page, index });
+    window.scrollTo(0, 0);
   };
 
   let pages;
@@ -59,8 +61,8 @@ const Create = props => {
     <div className="create">
       <Header />
       <div className="container-fluid">
-        <div className="row">
-          <div className="col-3 p-5 d-none d-md-block side-bar overflow-auto">
+        <div className="row position-relative" style={{top: "45px"}}>
+          <div className="col-3 d-none d-md-block side-bar overflow-auto">
             <div className="btn-group-vertical w-100" role="group">
               {buttonNames.map((name, idx) => {
                 let classname = "btn btn-lg btn-secondary menu-button";
@@ -83,7 +85,13 @@ const Create = props => {
               })}
             </div>
           </div>
-          <div className="col-9 pb-0 pt-4 container overflow-auto">
+          <MobileMenu 
+            buttonNames={buttonNames}
+            page={page}
+            pages={pages}
+            setPage={setPage}
+          />
+          <div className="col-md-9 offset-md-3 pb-0 pt-md-3 container">
             {pages}
           </div>
           {/* <div className="col-3 p-4 container overflow-auto">

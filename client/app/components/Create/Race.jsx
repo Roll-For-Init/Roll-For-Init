@@ -14,11 +14,11 @@ const Race = props => {
     <div className="race position-relative">
       {!selectedInfo ? (
         <>
-          <div className="mx-auto mb-4 w-75">
+          <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Race</h2>
           </div>
-          <div className="dropdown btn-group-vertical w-75">
-            {races.map((race, idx) => (
+          <div className="dropdown btn-group-vertical w-100 mt-3">
+          {races.map((race, idx) => (
               <div className="w-100 h-auto" key={idx}>
                 <button
                   className={
@@ -71,39 +71,39 @@ const SidePanel = props => {
 
   const onNext = () => {
     props.setPage({ index: 1, name: "class" });
+    window.scrollTo(0, 0);
     props.clearSelectedInfo();
   };
 
   return (
     <>
-      <div className="mb-3">
+      <div className="d-none d-md-flex title-back-wrapper">
         <button
           onClick={() => props.selectRace(null)}
-          className="float-left p-3 m-0 mx-2"
-          style={{ width: 40, height: 40 }}
+          className="m-0 mr-3 btn btn-secondary btn-back"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            width="16"
-            height="16"
-            fill="currentColor"
-            className="bi bi-chevron-left"
-            viewBox="0 0 16 16"
-          >
-            <path d="M11.354 1.646a.5.5 0 0 1 0 .708L5.707 8l5.647 5.646a.5.5 0 0 1-.708.708l-6-6a.5.5 0 0 1 0-.708l6-6a.5.5 0 0 1 .708 0z" />
-          </svg>
+          <i className="bi bi-chevron-left"></i>
         </button>
         <h2 className="title-card p-4">
           Race
         </h2>
+        <div className="btn-back-spacer ml-3"></div>
+      </div>
+      <div className="d-md-none">
+        <button
+          onClick={() => props.selectRace(null)}
+          className="btn btn-secondary btn-back-sm"
+        >
+          <i className="bi bi-chevron-left"></i><span>Back</span>
+        </button>
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h5>
+          <h4>
               {name}
-          </h5>
+          </h4>
         </div>
-        <h6 className="card-subtitle">
+        <div>
           <div className="w-auto d-inline-block card content-card floating-card">
             +{skills.dexterity} Dexterity
             <br />+{skills.intelligence} Intelligence
@@ -113,22 +113,22 @@ const SidePanel = props => {
             <br />
             Size: {skills.size}
           </div>
-        </h6>
+        </div>
       </div>
       <div className="card translucent-card">
-        <h5 className="card content-card card-title">
+        <h4 className="card content-card card-title">
             Race Options
-        </h5>
+        </h4>
         <div className="card">
           <Dropdown
             title="Choose 1 High Elf Cantrip"
-            items={["hello"]}
+            items={[{ index: "hello", name: "Hello" }]}
             width="100%"
             selection={selection1}
             setSelection={setSelection1} />
           <Dropdown
             title="Choose 1 Extra Language"
-            items={["hello"]}
+            items={[{ index: "hello", name: "Hello" }]}
             width="100%"
             selection={selection1}
             setSelection={setSelection1} />
@@ -136,9 +136,9 @@ const SidePanel = props => {
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h5>
+          <h4>
             Starting Proficiencies
-          </h5>
+          </h4>
         </div>
         <div className="card content-card description-card">
           <p className="text-capitalize">
@@ -155,8 +155,7 @@ const SidePanel = props => {
         </div>
       </div>
       <button
-        className="text-uppercase btn-primary btn-lg px-5"
-        style={{ position: "sticky", bottom: 10 }}
+        className="text-uppercase btn-primary btn-lg px-5 btn-floating"
         onClick={onNext}
       >
         OK

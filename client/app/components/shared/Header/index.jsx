@@ -6,10 +6,12 @@ function Header({
 }) {
 
   return (
-    <header className="header">
-      <Link to="/">
-        <img src={require('/client/public/assets/imgs/navbar-logo.png')} alt="Roll for Init"/>
-      </Link>
+    <header className="navbar">
+      <nav>
+        <Link to="/">
+          <img src={require('/client/public/assets/imgs/navbar-logo.png')} alt="Roll for Init"/>
+        </Link>
+      </nav>
     </header>
   );
 }
