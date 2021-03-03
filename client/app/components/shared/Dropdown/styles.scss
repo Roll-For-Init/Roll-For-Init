@@ -4,16 +4,10 @@
   display: flex;
   flex-wrap: wrap;
   max-width: 400px;
+  width: 100%;
   margin: 5px auto;
   text-transform: capitalize;
   position: relative;
-
-  &:first-child {
-    margin-top: 0px;
-  }
-  &:last-child {
-    margin-bottom: 0px;
-  }
 
   .dd-header {
     display: flex;
