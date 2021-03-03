@@ -43,9 +43,9 @@ export const Background = props => {
           title={backgrounds[0].name}
           items={[...backgrounds, { index: "custom", name: "Custom" }]}
           width="70%"
-          header
           selection={selectionBg}
           setSelection={setSelectionBg}
+          classname="header"
         />
         {selectionBg[0].index === "custom" && (
           <div className="card content-card card-subtitle">
@@ -92,17 +92,17 @@ export const Background = props => {
         <div className="card content-card card-title">
           <h4>Proficiencies</h4>
         </div>
-        <div className="skill-container">
+        <div className="choice-container">
           {selectionBg[0].index === "custom" ? (
             <Dropdown
               title="Choose a Skill"
               items={[]}
-              width="50%"
               selection={selectionSk1}
               setSelection={setSelectionSk1}
+              classname="choice"
             />
           ) : (
-            <div className="card content-card skill-card">
+            <div className="card content-card choice">
               {selectionBg[0].starting_proficiencies[0].name}
             </div>
           )}
@@ -110,44 +110,46 @@ export const Background = props => {
             <Dropdown
               title="Choose a Skill"
               items={[]}
-              width="50%"
               selection={selectionSk2}
               setSelection={setSelectionSk2}
+              classname="choice"
             />
           ) : (
-            <div className="card content-card skill-card">
+            <div className="card content-card choice">
               {selectionBg[0].starting_proficiencies[1].name}
             </div>
           )}
         </div>
-        {selectionBg[0].index === "custom" ? (
-          <>
+        <div className="choice-container">
+          {selectionBg[0].index === "custom" ? (
+            <>
+              <Dropdown
+                title="Choose a Tool or Language"
+                items={[]}
+                selection={selectionTlLg1}
+                setSelection={setSelectionTlLg1}
+                classname="choice"
+              />
+              <Dropdown
+                title="Choose a Tool or Language"
+                items={[]}
+                selection={selectionTlLg2}
+                setSelection={setSelectionTlLg2}
+                classname="choice"
+              />
+            </>
+          ) : (
             <Dropdown
-              title="Choose a Tool or Language"
-              items={[]}
-              width="50%"
-              selection={selectionTlLg1}
-              setSelection={setSelectionTlLg1}
+              title={`Choose ${selectionBg[0].language_options.choose}: ${selectionBg[0].language_options.type}`}
+              items={selectionBg[0].language_options.from}
+              selectLimit={selectionBg[0].language_options.choose}
+              multiSelect
+              selection={selectionLang}
+              setSelection={setSelectionLang}
+              classname="choice"
             />
-            <Dropdown
-              title="Choose a Tool or Language"
-              items={[]}
-              width="50%"
-              selection={selectionTlLg2}
-              setSelection={setSelectionTlLg2}
-            />
-          </>
-        ) : (
-          <Dropdown
-            title={`Choose ${selectionBg[0].language_options.choose}: ${selectionBg[0].language_options.type}`}
-            items={selectionBg[0].language_options.from}
-            selectLimit={selectionBg[0].language_options.choose}
-            width="50%"
-            multiSelect
-            selection={selectionLang}
-            setSelection={setSelectionLang}
-          />
-        )}
+          )}
+        </div>
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">

@@ -21,7 +21,7 @@
 }
 
 .top-buttons {
-  width: 100%;
+  width: 80% !important;
   margin: 15px 0px;
   @media (min-width: 768px) {
     max-width: 325px;
@@ -31,7 +31,7 @@
 }
 
 .btm-buttons {
-  width: 75%;
+  width: 60% !important;
   // width: auto;
   margin: 15px 0px;
   @media (min-width: 768px) {

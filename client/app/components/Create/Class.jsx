@@ -72,7 +72,7 @@ const SidePanel = props => {
       </div>
       <div className="d-md-none">
         <button
-          onClick={() => props.selectRace(null)}
+          onClick={() => props.selectClass(null)}
           className="btn btn-secondary btn-back-sm"
         >
           <i className="bi bi-chevron-left"></i><span>Back</span>
@@ -97,7 +97,7 @@ const SidePanel = props => {
         <h5 className="card content-card card-title">
             Class Options
         </h5>
-        <div className="card">
+        <div>
           <Dropdown
             title="Choose 1 High Elf Cantrip"
             items={[{ index: "hello", name: "Hello" }]}

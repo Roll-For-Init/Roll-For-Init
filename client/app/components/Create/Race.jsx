@@ -119,7 +119,7 @@ const SidePanel = props => {
         <h4 className="card content-card card-title">
             Race Options
         </h4>
-        <div className="card">
+        <div>
           <Dropdown
             title="Choose 1 High Elf Cantrip"
             items={[{ index: "hello", name: "Hello" }]}

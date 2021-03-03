@@ -203,21 +203,19 @@
   font-size: 1.2rem;
 }
 
-.skill-container {
-  display: flex;
-}
-.skill-card {
-  padding: 5px 0px;
+.choice {
+  padding: 5px 10px;
   flex: 1;
-}
-.skill-card:first-child {
-  margin-right: 10px;
+  margin-left: 5px;
+  margin-right: 5px;
+  max-width: 400px;
 }
 
-.language-card {
-  padding: 5px;
-  width: 50%;
-  // margin: auto;
+.choice-container {
+  @media (min-width: 768px) {
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .description-card {
