@@ -6,16 +6,7 @@ import { login } from '../../redux/actions/auth';
 
 import './styles.scss';
 import validator from 'validator';
-import PropTypes from 'prop-types';
-
-// TODO: remove inline styling
-const Error = props => {
-  const { err } = props;
-  return <span style={{ width: '100%', color: 'red' }}>{err}</span>;
-};
-Error.propTypes = {
-  err: PropTypes.string.isRequired,
-};
+import Error from '../Form/Error';
 
 const reduxField = ({ placeholder, input, meta }) => (
   <div className="input-group mb-3">
@@ -61,6 +52,7 @@ const Login = () => {
       <Form
         onSubmit={onSubmit}
         validate={validate}
+        // eslint-disable-next-line no-unused-vars
         render={({ handleSubmit, form, submitting, invalid, values }) => (
           <form onSubmit={handleSubmit} className="needs-validation input-form">
             <Field

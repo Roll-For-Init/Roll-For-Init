@@ -7,13 +7,12 @@ import { setAlert } from '../../redux/actions/alert';
 import validator from 'validator';
 
 import './styles.scss';
+import Error from '../Form/Error';
 
 const reduxField = ({ placeholder, input, meta }) => (
   <div className="input-group mb-3">
     <input {...input} className="form-control" placeholder={placeholder} />
-    {meta.error && meta.touched && (
-      <span style={{ width: '100%', color: 'red' }}>{meta.error}</span>
-    )}
+    {meta.error && meta.touched && <Error>{meta.error}</Error>}
   </div>
 );
 
@@ -67,6 +66,7 @@ const SignUp = () => {
       <Form
         onSubmit={onSubmit}
         validate={validate}
+        // eslint-disable-next-line no-unused-vars
         render={({ handleSubmit, form, submitting, invalid, values }) => (
           <form onSubmit={handleSubmit} className="needs-validation input-form">
             <Field
