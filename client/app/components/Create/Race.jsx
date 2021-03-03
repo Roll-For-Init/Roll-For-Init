@@ -2,15 +2,23 @@ import React, { useState, useEffect} from "react";
 import { connect } from "react-redux";
 import { clearSelectedInfo, getRaceInfo } from "../../actions";
 import Dropdown from "../shared/Dropdown";
-import {raceCaller} from "../apiCaller";
+import {raceCaller, classCaller} from "../apiCaller";
 
 const Race = props => {
   const { races, selectedInfo } = props.races;
-  let apiData = null;
+  let apiData;
   useEffect(() => {
     const fetchData = async () => {
-      apiData = await raceCaller();
+      apiData = await classCaller();
       console.log(apiData);
+      /*apiData.main for the top level race, .sub for the subrace. pull qualities from .main and .sub together to form the interface.
+        all properties are the same as in the api, but you can access .desc for those that were pointers before, such as in traits and options.
+        there are also two properties in .main and .sub, .options and .proficiencies, that group all options and proficiencies together.
+        proficiencies are sorted into .weapons, .languages, .skills, .tools, and .throws. 
+        options is an array where each object in it has a .choose (with how many you should choose, an integer), .header (the type, ie "extra language")
+          and .options subarray with .name and .desc in each. 
+        ANY .DESC DESCRIPTION IS AN ARRAY. proceeed accordingly.
+      */
     }
     fetchData();
   }, []);

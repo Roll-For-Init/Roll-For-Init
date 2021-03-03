@@ -3,12 +3,17 @@ const placeholderDescription = ["Please see the 5e SRD for more details @ https:
 
 const optionsExtractor = async (container, key) => {
   let optionSet = {
+    header: '',
     options: [],
     choose: 0,
   }  
 
   optionSet.choose = container[key].choose;
-  if(container[key].type.toLowerCase().includes("language")) optionSet.header = `extra ${container[key].type}`;
+  if(container[key].type.toLowerCase().includes("feature")) {
+    optionSet.header = container.name;
+    optionSet.desc = container.desc;
+  }
+  else if(container[key].type.toLowerCase().includes("language")) optionSet.header = `extra ${container[key].type}`;
   else optionSet.header = container[key].type.replace('_',/\s/g);
   if(!key.toLowerCase().includes("ability_bonus")) {
     for (let option of container[key].from) {
@@ -68,8 +73,9 @@ const proficiencySorter = async(container, key, destination) => {
     axios.get(proficiency.url)
       .then((profDetails) => {
         profDetails = profDetails.data;
-        type = profDetails.type.toLowerCase();
-        if (type.toLowerCase().includes("tool")) type = "tools";
+        if (!profDetails.type) type="throws";
+        else if (profDetails.type.toLowerCase().includes("tool")) type = "tools";
+        else type = profDetails.type.toLowerCase();
         name = profDetails.name;
         if (name.toLowerCase().includes("skill")) {
           name = name.substring(name.indexOf(':')+1);
@@ -99,7 +105,8 @@ const raceCaller = async () => {
           weapons: [],
           skills: [],
           languages: [],
-          tools: []
+          tools: [],
+          throws: []
         }
       },
       sub: [/*{
@@ -145,7 +152,7 @@ const raceCaller = async () => {
                   }
 
                   Object.keys(subrace).forEach(key => {
-                    if(key.toLowerCase().includes("option")) {
+                    if(key.toLowerCase().includes("option") || key.toLowerCase().includes("choice")) {
                       optionsExtractor(subrace, key)
                         .then(optionSet => {
                           sub.options.push(optionSet);
@@ -155,7 +162,7 @@ const raceCaller = async () => {
                       descriptionAdder(subrace, key)
                         .then();
                     }
-                    else if(key.toLowerCase().includes("proficienc")) {
+                    else if(key.toLowerCase().includes("proficienc") || key.toLowerCase().includes("saving_throw")) {
                       proficiencySorter(subrace, key, sub.proficiencies)
                         .then();
                     }
@@ -168,17 +175,17 @@ const raceCaller = async () => {
             }
           }
           Object.keys(race).forEach(key => {
-            if(key.toLowerCase().includes("option")) {
-             optionsExtractor(race, key)
+            if(key.toLowerCase().includes("option") || key.toLowerCase().includes("choice")) {
+              optionsExtractor(race, key)
                 .then(optionSet => {
                     raceContainer.main.options.push(optionSet);
                 })
-           }
+            }
             else if(key.toLowerCase().includes("trait")) {
               descriptionAdder(race, key)
                 .then();
             }
-            else if(key.toLowerCase().includes("proficienc")) {
+            else if(key.toLowerCase().includes("proficienc")|| key.toLowerCase().includes("saving_throw")) {
               proficiencySorter(race, key, raceContainer.main.proficiencies)
                 .then();
             }
@@ -205,8 +212,75 @@ const raceCaller = async () => {
       //for stuff like resistances that will be grouped together in the model but are all over the traits here, with no indication the trait is a resistance...how? 
 }
 
-const classCaller = () => {
+const classCaller = async () => {
+  var classes=[];
 
+  let classPointerList = await axios.get('/api/classes'); //fetch the list of races
+  let classList = classPointerList.data.results;
+  
+  let promises = [];
+  for(let classPointer of classList) { 
+    let classContainer = {
+      main: {
+        options: [],
+        proficiencies: {
+          weapons: [],
+          skills: [],
+          languages: [],
+          tools: [],
+          throws: []
+        },
+        features: []
+      }
+    };
+  
+    promises.push(
+      axios.get(classPointer.url)
+        .then((theClass) => { //fetch each class in the api
+          theClass = theClass.data;
+
+          Object.keys(theClass).forEach(key => {
+            if(key.toLowerCase().includes("option") || key.toLowerCase().includes("choice")) {
+              optionsExtractor(theClass, key)
+                .then(optionSet => {
+                    classContainer.main.options.push(optionSet);
+                })
+            }
+            else if(key.toLowerCase().includes("proficienc")|| key.toLowerCase().includes("saving_throw")) {
+              proficiencySorter(theClass, key, classContainer.main.proficiencies)
+                .then();
+            }
+          }); 
+          let featureURL = `${theClass.class_levels}/1`;
+          axios.get(featureURL)
+            .then((details) => {
+              details = details.data;
+              if(details.data.feature_choices.length >0) {
+                for (let set of details.data.feature_choices) {
+                  axios.get(set.url)
+                    .then((choice) => {
+                      optionsExtractor(choice.data, choice)
+                        .then(choiceSet => {
+                          classContainer.main.options.push(choiceSet);
+                        })
+                      });
+                }
+              }
+              descriptionAdder(details.data,features)
+                .then();
+            })
+          return theClass;
+      })
+      .then((theClass) => {
+        classContainer.main = {
+          ...classContainer.main,
+          ...theClass
+        };
+        classes.push(classContainer);   
+      })
+    );
+  }
+  return Promise.all(promises).then(() => classes);
 }
 
 module.exports = {raceCaller, classCaller}
