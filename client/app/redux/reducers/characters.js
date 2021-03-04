@@ -22,7 +22,7 @@ const character = (state = initialCharacter, action, charID) => {
   if (state === initialCharacter) {
     state = {
       ...state,
-      charID: charID,
+      ...charID,
     };
   }
 

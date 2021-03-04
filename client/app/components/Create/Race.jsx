@@ -83,8 +83,8 @@ const Race = ({ charID, setPage }) => {
     console.log('2', JSON.stringify(character));
   }, [character]);
 
-  const setSelectedRace = raceName => {
-    dispatch(setRace(charID, raceName));
+  const setSelectedRace = raceIndex => {
+    dispatch(setRace(charID, raceIndex));
   };
 
   return (
@@ -101,7 +101,7 @@ const Race = ({ charID, setPage }) => {
                   return (
                     <RaceView
                       race={race}
-                      setRace={() => setSelectedRace(race.name)}
+                      setRace={() => setSelectedRace(race.index)}
                       key={idx}
                       idx={idx}
                     />
@@ -120,10 +120,84 @@ const Race = ({ charID, setPage }) => {
   );
 };
 
+const BasicInfoCard = () => {
+  return (
+    <div className="w-auto d-inline-block card content-card floating-card">
+      Speed: {speed}
+      <br />
+      Size: {size}
+    </div>
+  );
+};
+
+const AbilityBonusCard = ({ bonus, name, full_name, desc, skills }) => {
+  return (
+    <div className="w-auto d-inline-block card content-card floating-card">
+      +{bonus} {full_name}
+    </div>
+  );
+};
+
+const AbilityBonuses = ({ ability_bonuses }) => {
+  const [abilityScoreInfo, setAbilityScoreInfo] = useState(undefined);
+
+  useEffect(() => {
+    CharacterService.getAbilityScoreInfo().then(
+      response => {
+        setAbilityScoreInfo(response.data.results);
+        console.log(response.data.results);
+      },
+      error => {
+        const err =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        console.log(err);
+      }
+    );
+  }, []);
+
+  return abilityScoreInfo ? (
+    <React.Fragment>
+      {ability_bonuses.map((ability, index) => {
+        return (
+          <AbilityBonusCard
+            full_name={'full_name'}
+            bonus={ability.bonus}
+            key={index}
+          />
+        );
+      })}
+    </React.Fragment>
+  ) : (
+    <Loading />
+  );
+};
+
 const SidePanel = ({ charID, setPage, clearRace }) => {
-  // const { name, skills, traits } = useSelector(
-  //   state => state.characters[charID]
-  // );
+  const { race } = useSelector(state => state.characters[charID]);
+
+  const [raceInfo, setRaceInfo] = useState(undefined);
+
+  useEffect(() => {
+    CharacterService.getRaceInfo(race).then(
+      response => {
+        setRaceInfo(response.data);
+        console.log(response.data);
+      },
+      error => {
+        const err =
+          (error.response &&
+            error.response.data &&
+            error.response.data.message) ||
+          error.message ||
+          error.toString();
+        console.log(err);
+      }
+    );
+  }, []);
 
   const [selection1, setSelection1] = useState([]);
   const [selection2, setSelection2] = useState([]);
@@ -133,7 +207,7 @@ const SidePanel = ({ charID, setPage, clearRace }) => {
     window.scrollTo(0, 0);
   };
 
-  return (
+  return raceInfo ? (
     <>
       <div className="d-none d-md-flex title-back-wrapper">
         <button
@@ -153,18 +227,10 @@ const SidePanel = ({ charID, setPage, clearRace }) => {
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h4>{name}</h4>
+          <h4>{raceInfo.name}</h4>
         </div>
         <div>
-          <div className="w-auto d-inline-block card content-card floating-card">
-            {/* +{skills.dexterity} Dexterity */}
-            {/* <br />+{skills.intelligence} Intelligence */}
-          </div>
-          <div className="w-auto d-inline-block card content-card floating-card">
-            {/* Speed: {skills.speed} */}
-            <br />
-            {/* Size: {skills.size} */}
-          </div>
+          <AbilityBonuses ability_bonuses={raceInfo.ability_bonuses} />
         </div>
       </div>
       <div className="card translucent-card">
@@ -210,6 +276,8 @@ const SidePanel = ({ charID, setPage, clearRace }) => {
         OK
       </button>
     </>
+  ) : (
+    <Loading />
   );
 };
 

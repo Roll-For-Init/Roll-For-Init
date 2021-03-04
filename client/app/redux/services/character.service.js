@@ -31,6 +31,11 @@ const getBackgroundInfo = backgroundName => {
   return axios.get(API_URL + 'backgrounds/' + query);
 };
 
+const getAbilityScoreInfo = abilityScore => {
+  const query = abilityScore ? abilityScore : '';
+  return axios.get(API_URL + 'ability-scores/' + query);
+};
+
 export default {
   createCharacter,
   updateCharacter,
@@ -38,4 +43,5 @@ export default {
   getRaceInfo,
   getClassInfo,
   getBackgroundInfo,
+  getAbilityScoreInfo,
 };
