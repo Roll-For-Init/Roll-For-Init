@@ -56,7 +56,7 @@ const SignUp = () => {
     return <Redirect to="/login" />;
   }
   return (
-    <div className="container">
+    <div className="container signup">
       <div className="filler-space"></div>
       <div className="row align-items-center">
         <div className="col"></div>
@@ -94,6 +94,9 @@ const SignUp = () => {
               placeholder="confirm password"
             />
             <div className="d-grid gap-2">
+              <p className="text-center text-danger m-0">
+                {alert && <Error err={alert} />}
+              </p>
               <Link to="/">
                 <button
                   type="button"

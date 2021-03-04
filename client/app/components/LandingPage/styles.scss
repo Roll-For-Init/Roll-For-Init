@@ -5,26 +5,55 @@
   text-align: center;
 }
 
+.container.landing {
+	position: absolute;
+	top:0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+  	
+	margin: auto;
+}
+
 .logo {
-  background-image: url("../../../public/assets/imgs/logo.png");
-  background-repeat: no-repeat;
-  background-size: contain;
-  height: 200px;
-  min-width: 100px;
-  margin-bottom: 25px;
-  width: auto;
+  // margin-bottom: 25px;
+  width: 100%;
 }
 
 .top-buttons {
-  max-width: 325px;
-  width: 40% !important;
-  margin: 25px;
+  width: 80% !important;
+  margin: 15px 0px;
+  @media (min-width: 768px) {
+    max-width: 325px;
+    width: 40% !important;
+    margin: 25px;
+  }
 }
 
 .btm-buttons {
-  max-width: 200px;
-  width: 30% !important;
-  margin: 25px 87.5px;
+  width: 60% !important;
+  // width: auto;
+  margin: 15px 0px;
+  @media (min-width: 768px) {
+    margin: 25px calc((min(40%, 325px) - 200px) / 2 + 25px); 
+    max-width: 200px;
+    width: 30% !important;
+  }
+}
+
+.btm-button-container > a {
+  @media (min-width: 768px) {
+    &:first-child {
+      > .btn {
+        margin-left: 25px;
+      }
+    }
+    &:last-child {
+      > .btn {
+        margin-right: 25px;
+      }
+    }
+  }
 }
 
 .filler-space {
@@ -39,4 +68,52 @@
   float: right;
   margin-top: 50px;
   height: 50px;
+}
+
+.close {
+  box-shadow: none;
+  color: $off-white;
+  width: 10%;
+  height: 15%;
+  position: absolute;
+  right: -20px;
+  top: -25px;
+}
+.close:hover {
+  color: $dark-off-white;
+}
+
+.modal-content {
+  color: white;
+  border: none;
+  font-family: "IM Fell DW Pica" !important;
+  background-color: $dark-maroon;
+  box-shadow: 0px 1px 10px hsla(0, 0, 0, 67%);
+  padding: 20px;
+}
+
+.modal-dialog {
+  max-width: 400px;
+  width: 85vw;
+}
+
+.modal-sect {
+  background-color: $off-white;
+  box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
+  color: #172838;
+  border: 3px solid $maroon;
+  border-radius: 8px;
+  padding: 10px;
+  margin: auto;
+  margin-bottom: 10px;
+  h5 {
+    font-variant: small-caps;
+  }
+  p {
+    text-align: left;
+  }
+}
+
+.landing .btn {
+  text-transform: lowercase;
 }

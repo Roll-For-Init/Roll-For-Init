@@ -1,4 +1,7 @@
 import {
+  SUBMIT_CHARACTER_SUCCESS,
+  SUBMIT_CHARACTER_FAIL,
+  CREATE_CHARACTER,
   CREATE_CHARACTER_SUCCESS,
   CREATE_CHARACTER_FAIL,
   UPDATE_CHARACTER_SUCCESS,
@@ -6,15 +9,18 @@ import {
   DELETE_CHARACTER_SUCCESS,
   DELETE_CHARACTER_FAIL,
   SET_ALERT,
+  SET_RACE,
 } from './types';
+
+import { v4 as uuidv4 } from 'uuid';
 
 import CharacterService from '../services/character.service';
 
-export const create = () => dispatch => {
-  return CharacterService.createCharacter().then(
+export const submitCharacter = characterInfo => dispatch => {
+  return CharacterService.createCharacter(characterInfo).then(
     res => {
       dispatch({
-        type: CREATE_CHARACTER_SUCCESS,
+        type: SUBMIT_CHARACTER_SUCCESS,
         payload: { character: res.data },
       });
       return Promise.resolve();
@@ -25,7 +31,7 @@ export const create = () => dispatch => {
         err.message ||
         err.toString();
       dispatch({
-        type: CREATE_CHARACTER_FAIL,
+        type: SUBMIT_CHARACTER_FAIL,
       });
       dispatch({
         type: SET_ALERT,
@@ -36,8 +42,8 @@ export const create = () => dispatch => {
   );
 };
 
-export const update = () => dispatch => {
-  return CharacterService.updateCharacter().then(
+export const updateCharacter = character => dispatch => {
+  return CharacterService.updateCharacter(character).then(
     res => {
       dispatch({
         type: UPDATE_CHARACTER_SUCCESS,
@@ -62,7 +68,7 @@ export const update = () => dispatch => {
   );
 };
 
-export const _delete = () => dispatch => {
+export const deleteCharacter = character => dispatch => {
   return CharacterService.deleteCharacter(character).then(
     res => {
       dispatch({
@@ -86,4 +92,18 @@ export const _delete = () => dispatch => {
       return Promise.reject();
     }
   );
+};
+
+export const startCharacter = () => dispatch => {
+  const uuid = uuidv4();
+  dispatch({
+    type: CREATE_CHARACTER,
+    payload: { charID: uuid },
+  });
+  return uuid;
+};
+
+export const setRace = (charID, race) => dispatch => {
+  console.log('SET_RACE', charID, race);
+  dispatch({ type: SET_RACE, payload: { charID, race } });
 };

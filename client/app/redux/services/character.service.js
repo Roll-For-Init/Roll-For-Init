@@ -16,8 +16,26 @@ const deleteCharacter = characterData => {
   return axios.delete(API_URL + 'characters/' + id + '/', characterData);
 };
 
+const getRaceInfo = raceName => {
+  const query = raceName ? raceName : '';
+  return axios.get(API_URL + 'races/' + query);
+};
+
+const getClassInfo = className => {
+  const query = className ? className : '';
+  return axios.get(API_URL + 'classes/' + query);
+};
+
+const getBackgroundInfo = backgroundName => {
+  const query = backgroundName ? backgroundName : '';
+  return axios.get(API_URL + 'backgrounds/' + query);
+};
+
 export default {
   createCharacter,
   updateCharacter,
   deleteCharacter,
+  getRaceInfo,
+  getClassInfo,
+  getBackgroundInfo,
 };

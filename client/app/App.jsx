@@ -21,7 +21,7 @@ import { clearAlert } from './redux/actions/alert';
 export const history = createBrowserHistory();
 
 const App = () => {
-  const isAppLoading = useSelector(state => state.app.isAppLoading);
+  const { isAppLoading, awaiting } = useSelector(state => state.app);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -32,7 +32,7 @@ const App = () => {
 
   useEffect(() => {
     if (isAppLoading) {
-      dispatch(finishLoading());
+      dispatch(finishLoading('app'));
     }
   }, []);
 
@@ -40,7 +40,9 @@ const App = () => {
     <Router history={history}>
       {/* <Header /> */}
       <main className="main">
-        {isAppLoading && <React.Fragment>LOADING</React.Fragment>}
+        {isAppLoading && awaiting.indexOf('app') > -1 && (
+          <React.Fragment>LOADING</React.Fragment>
+        )}
         <div>
           <Switch>
             <Route exact path="/" component={LandingPage} />
