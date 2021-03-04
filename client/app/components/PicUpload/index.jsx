@@ -7,13 +7,13 @@ import './styles.scss';
 
 function Upload() {
     const FILE_SIZE = 2 * 1024 * 1024;
-    const SUPPORTED_FORMATS = ['application/pdf'];
+    const SUPPORTED_FORMATS = ['image/jpg', 'image/png'];
 
     const schema = yup.object().shape({
         char_sheet: yup
             .mixed()
             .required('Please provide a file.')
-            .test('type', 'Please only upload a .pdf file.', value => {
+            .test('type', 'Please only upload a .jpg or .png file.', value => {
                 return value && SUPPORTED_FORMATS.includes(value[0].type);
             })
             .test(
@@ -36,6 +36,7 @@ function Upload() {
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
+            <div className="card content-card portrait-card">hi</div>
             <input
                 className="upload-container"
                 ref={register}

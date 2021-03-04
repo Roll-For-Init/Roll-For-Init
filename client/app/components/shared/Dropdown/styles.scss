@@ -1,86 +1,100 @@
-@import "client/app/variables";
+@import 'client/app/variables';
 
 .dd-wrapper {
-  display: flex;
-  flex-wrap: wrap;
-  max-width: 400px;
-  width: 100%;
-  margin: 5px auto;
-  text-transform: capitalize;
-  position: relative;
-
-  .dd-header {
     display: flex;
-    cursor: pointer;
+    flex-wrap: wrap;
+    max-width: 400px;
     width: 100%;
-    padding: 5px 10px;
-    border-radius: 8px;
-    background-color: $off-white;
-    border: 3px solid $maroon;
-    &.header {
-      font-size: 1.25rem;
-    }
-    &__title {
-      flex: 1;
-      color: $dark-blue;
-    }
-    &__action {
-      padding-left: 10px;
-      color: $dark-blue;
-    }
-  }
+    margin: 5px auto;
+    text-transform: capitalize;
+    position: relative;
 
-  .dd-list {
-    padding: 0px;
-    margin: 0px;
-    width: 100%;
-    position: absolute;
-    top: 100%;
-    z-index: 10;
-    border: 3px solid $maroon;
-    border-radius: 8px;
-    max-height: 500px;
-    li {
-      list-style-type: none;
-
-      &:first-of-type > button {
-        margin-top: 0px;
-        border-top: 1px solid #ccc;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-
-      &:last-of-type > button {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-      }
-
-      button {
-        color: $dark-blue;
+    .dd-header {
         display: flex;
-        justify-content: space-between;
-        background-color: $off-white;
-        font-size: 16px;
-        padding: 5px 15px;
-        border-radius: 0;
-        border-bottom: 1px solid rgb(0, 0, 0);
+        cursor: pointer;
         width: 100%;
-        text-align: left;
-        margin: 0 auto;
-        text-transform: none;
-        
-        &.selected {
-          background-color: $medium-off-white;
+        padding: 5px 10px;
+        border-radius: 8px;
+        background-color: $off-white;
+        border: 3px solid $maroon;
+        &.header {
+            font-size: 1.25rem;
         }
-        &:hover:not(.unselectable),
-        &:focus:not(.unselectable) {
-          cursor: pointer;
-          background-color: $dark-off-white;
+        &__title {
+            flex: 1;
+            color: $dark-blue;
         }
-        &.unselectable {
-          cursor: not-allowed;
+        &__action {
+            padding-left: 10px;
+            color: $dark-blue;
         }
-      }
     }
-  }
+
+    .dd-list {
+        animation: dropDown 200ms ease-in-out forwards;
+        transform-origin: top center;
+        padding: 0px;
+        margin: 0px;
+        width: 100%;
+        position: absolute;
+        top: 100%;
+        z-index: 10;
+        border: 3px solid $maroon;
+        border-radius: 8px;
+        max-height: 500px;
+        li {
+            list-style-type: none;
+
+            &:first-of-type > button {
+                margin-top: 0px;
+                border-top: 1px solid #ccc;
+                border-top-left-radius: 5px;
+                border-top-right-radius: 5px;
+            }
+
+            &:last-of-type > button {
+                border-bottom-left-radius: 5px;
+                border-bottom-right-radius: 5px;
+            }
+
+            button {
+                color: $dark-blue;
+                display: flex;
+                justify-content: space-between;
+                background-color: $off-white;
+                font-size: 16px;
+                padding: 5px 15px;
+                border-radius: 0;
+                border-bottom: 1px solid rgb(0, 0, 0);
+                width: 100%;
+                text-align: left;
+                margin: 0 auto;
+                text-transform: none;
+
+                &.selected {
+                    background-color: $medium-off-white;
+                }
+                &:hover:not(.unselectable),
+                &:focus:not(.unselectable) {
+                    cursor: pointer;
+                    background-color: $dark-off-white;
+                }
+                &.unselectable {
+                    cursor: not-allowed;
+                }
+            }
+        }
+    }
+}
+
+@keyframes dropDown {
+    0% {
+        transform: scaleY(0);
+    }
+    80% {
+        transform: scaleY(1.1);
+    }
+    100% {
+        transform: scaleY(1);
+    }
 }
