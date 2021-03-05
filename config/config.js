@@ -39,6 +39,7 @@ const apiRoutes = [
   '/api/subraces/**',
   '/api/traits/**',
   '/api/weapon-properties/**',
+  '/api/backgrounds/**'
 ];
 
 const db = {

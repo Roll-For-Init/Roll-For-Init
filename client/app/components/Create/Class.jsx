@@ -1,29 +1,14 @@
 import React, { useState } from "react";
 import { connect } from "react-redux";
-import { clearSelectedInfo, getClassInfo } from "../../actions";
+import { clearSelectedInfo, getClassInfo } from "../../redux/actions";
 import Dropdown from "../shared/Dropdown";
-import {classCaller} from "../apiCaller";
-
 
 export const Class = props => {
-  const { classes, selectedInfo } = props.classes;
-  let apiData;
-
-  useEffect(() => {
-    const fetchData = async () => {
-      apiData = await classCaller();
-      console.log(apiData);
-      /*apiData.main for the class. 
-        all properties are the same as in the api. 
-        there are also three properties in .main -- .options, .proficiencies, and .features -- that group all options, features, and proficiencies together.
-        proficiencies are sorted into .weapons, .armor, .languages, .skills, .tools, and .throws. 
-        options is an array where each object in it has a .choose (with how many you should choose, an integer), .header (the type, ie "extra language")
-          and .options subarray with .name and .desc in each. 
-        ANY .DESC DESCRIPTION IS AN ARRAY. proceeed accordingly.
-      */
-    }
-    fetchData();
-  }, []);
+  //const { classes, selectedInfo } = props.classes;
+  /*HOTFIX: TEMPORARY*/
+  const classes = [{name: "Barbarian"}, {name: "Bard"}, {name: "Cleric"}, {name: "Druid"}, {name: "Fighter"}, {name: "Monk"}, {name: "Paladin"}, {name: "Ranger"}, {name: "Rogue"}, {name: "Sorcerer"}, {name: "Warlock"}, {name: "Wizard"}];
+  const selectedInfo = null;
+  /*^^^*/
   const selectClass = name => {
     props.selectClass(name);
   };
