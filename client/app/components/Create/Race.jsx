@@ -1,17 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Dropdown from '../shared/Dropdown';
-
 import { setRace } from '../../redux/actions';
 
 import CharacterService from '../../redux/services/character.service';
+import { PropTypes } from 'prop-types';
 
-const RaceView = ({ race, setRace, idx }) => {
+const RaceButton = ({ race, setRace, idx }) => {
   const hasSubraces = race.subraces !== undefined;
 
   const handleClick = () => {
     if (!hasSubraces) {
-      console.log(hasSubraces, 'hasSubraces');
       setRace();
     }
   };
@@ -57,34 +56,18 @@ const Loading = () => {
 
 const Race = ({ charID, setPage }) => {
   const dispatch = useDispatch();
-  const [races, setRaces] = useState(undefined);
+  const [races, setRaces] = useState(CharacterService.getRaceList());
 
   const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
-    CharacterService.getRaceInfo().then(
-      response => {
-        setRaces(response.data.results);
-        console.log(response.data.results);
-      },
-      error => {
-        const err =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        console.log(err);
-      }
-    );
-  }, []);
-
-  useEffect(() => {
-    console.log('2', JSON.stringify(character));
+    console.log('Character', character);
   }, [character]);
 
-  const setSelectedRace = raceIndex => {
-    dispatch(setRace(charID, raceIndex));
+  //pass in an object of the fields to edit i.e. {index: INDEX} or {choiceA: CHOICE}
+  //access with character.race.choiceA
+  const setSelectedRace = race => {
+    dispatch(setRace(charID, race));
   };
 
   return (
@@ -99,9 +82,9 @@ const Race = ({ charID, setPage }) => {
               races.map((race, idx) => {
                 if (race)
                   return (
-                    <RaceView
+                    <RaceButton
                       race={race}
-                      setRace={() => setSelectedRace(race.index)}
+                      setRace={() => setSelectedRace({ index: race.index })}
                       key={idx}
                       idx={idx}
                     />
@@ -110,17 +93,17 @@ const Race = ({ charID, setPage }) => {
           </div>
         </>
       ) : (
-        <SidePanel
+        <RaceDetails
           charID={charID}
           setPage={setPage}
-          clearRace={() => setSelectedRace(null)}
+          clearRace={() => setSelectedRace({ index: null })}
         />
       )}
     </div>
   );
 };
 
-const BasicInfoCard = () => {
+const BasicInfoCard = ({ speed, size }) => {
   return (
     <div className="w-auto d-inline-block card content-card floating-card">
       Speed: {speed}
@@ -129,72 +112,65 @@ const BasicInfoCard = () => {
     </div>
   );
 };
+BasicInfoCard.propTypes = {
+  speed: PropTypes.number.isRequired,
+  size: PropTypes.string.isRequired,
+};
 
-const AbilityBonusCard = ({ bonus, name, full_name, desc, skills }) => {
+const AbilityBonusCard = ({ bonus, ability_score }) => {
   return (
     <div className="w-auto d-inline-block card content-card floating-card">
-      +{bonus} {full_name}
+      +{bonus}{' '}
+      {ability_score.full_name ? ability_score.full_name : ability_score.name}
     </div>
   );
 };
+const abilityBonusProps = {
+  bonus: PropTypes.number.isRequired,
+  ability_score: PropTypes.shape({
+    index: PropTypes.string.isRequired,
+    full_name: PropTypes.string,
+    name: PropTypes.string,
+  }),
+};
+AbilityBonusCard.propTypes = { ...abilityBonusProps };
 
 const AbilityBonuses = ({ ability_bonuses }) => {
-  const [abilityScoreInfo, setAbilityScoreInfo] = useState(undefined);
-
-  useEffect(() => {
-    CharacterService.getAbilityScoreInfo().then(
-      response => {
-        setAbilityScoreInfo(response.data.results);
-        console.log(response.data.results);
-      },
-      error => {
-        const err =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        console.log(err);
-      }
-    );
-  }, []);
-
-  return abilityScoreInfo ? (
+  return (
     <React.Fragment>
       {ability_bonuses.map((ability, index) => {
         return (
           <AbilityBonusCard
-            full_name={'full_name'}
+            ability_score={ability.ability_score}
             bonus={ability.bonus}
             key={index}
           />
         );
       })}
     </React.Fragment>
-  ) : (
-    <Loading />
   );
 };
+AbilityBonuses.propTypes = {
+  ability_bonuses: PropTypes.arrayOf(
+    PropTypes.shape({
+      ...abilityBonusProps,
+    })
+  ),
+};
 
-const SidePanel = ({ charID, setPage, clearRace }) => {
+const RaceDetails = ({ charID, setPage, clearRace }) => {
   const { race } = useSelector(state => state.characters[charID]);
 
   const [raceInfo, setRaceInfo] = useState(undefined);
 
   useEffect(() => {
-    CharacterService.getRaceInfo(race).then(
-      response => {
-        setRaceInfo(response.data);
-        console.log(response.data);
+    CharacterService.getRaceInfo(race.index).then(
+      race => {
+        setRaceInfo(race.main); //TODO: or subrace
+        console.log(race);
       },
       error => {
-        const err =
-          (error.response &&
-            error.response.data &&
-            error.response.data.message) ||
-          error.message ||
-          error.toString();
-        console.log(err);
+        console.log(error.toString());
       }
     );
   }, []);
@@ -282,3 +258,38 @@ const SidePanel = ({ charID, setPage, clearRace }) => {
 };
 
 export default Race;
+
+// let apiData;
+// useEffect(() => {
+//   const fetchData = async () => {
+//     apiData = await classCaller();
+//     console.log(apiData);
+//     /*apiData.main for the top level race, .sub for the subrace. pull qualities from .main and .sub together to form the interface.
+//     all properties are the same as in the api, but you can access .desc for those that were pointers before, such as in traits and options.
+//     there are also two properties in .main and .sub, .options and .proficiencies, that group all options and proficiencies together.
+//     proficiencies are sorted into .weapons, .armor, .languages, .skills, .tools, and .throws.
+//     options is an array where each object in it has a .choose (with how many you should choose, an integer), .header (the type, ie "extra language")
+//       and .options subarray with .name and .desc in each.
+//     ANY .DESC DESCRIPTION IS AN ARRAY. proceeed accordingly.
+//   */
+//   };
+//   fetchData();
+// }, []);
+
+// useEffect(() => {
+//   CharacterService.getRaceInfo().then(
+//     response => {
+//       setRaces(response.data.results);
+//       console.log(response.data.results);
+//     },
+//     error => {
+//       const err =
+//         (error.response &&
+//           error.response.data &&
+//           error.response.data.message) ||
+//         error.message ||
+//         error.toString();
+//       console.log(err);
+//     }
+//   );
+// }, []);

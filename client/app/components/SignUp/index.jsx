@@ -3,18 +3,19 @@ import { useDispatch, useSelector } from 'react-redux';
 import { Link, Redirect } from 'react-router-dom';
 import { Form, Field } from 'react-final-form';
 import { register } from '../../redux/actions/auth';
-import { setAlert } from '../../redux/actions/alert';
 import validator from 'validator';
 
 import './styles.scss';
 import Error from '../Form/Error';
 
-const reduxField = ({ placeholder, input, meta }) => (
-  <div className="input-group mb-3">
-    <input {...input} className="form-control" placeholder={placeholder} />
-    {meta.error && meta.touched && <Error>{meta.error}</Error>}
-  </div>
-);
+const reduxField = ({ placeholder, input, meta }) => {
+  return (
+    <div className="input-group mb-3">
+      <input {...input} className="form-control" placeholder={placeholder} />
+      {meta.error && meta.touched && <Error err={meta.error} />}
+    </div>
+  );
+};
 
 const validate = values => {
   const errors = {};
@@ -36,6 +37,7 @@ const validate = values => {
   } else if (values.confirmPassword !== values.password) {
     errors.confirmPassword = 'Passwords do not match';
   }
+  console.log('values', values, 'errors', errors);
   return errors;
 };
 
@@ -47,7 +49,6 @@ const SignUp = () => {
   const onSubmit = values => {
     const { username, email, password } = values;
     dispatch(register(username, email, password));
-    dispatch(setAlert({ submitted: true }));
   };
   if (isLoggedIn === true) {
     return <Redirect to="/" />;
@@ -56,7 +57,7 @@ const SignUp = () => {
     return <Redirect to="/login" />;
   }
   return (
-    <div className="container signup">
+    <div className="container">
       <div className="filler-space"></div>
       <div className="row align-items-center">
         <div className="col"></div>
@@ -65,7 +66,7 @@ const SignUp = () => {
       </div>
       <Form
         onSubmit={onSubmit}
-        validate={validate}
+        validate={values => validate(values)}
         // eslint-disable-next-line no-unused-vars
         render={({ handleSubmit, form, submitting, invalid, values }) => (
           <form onSubmit={handleSubmit} className="needs-validation input-form">
@@ -95,7 +96,7 @@ const SignUp = () => {
             />
             <div className="d-grid gap-2">
               <p className="text-center text-danger m-0">
-                {alert && <Error err={alert} />}
+                {alert && alert.message && <Error err={alert.message} />}
               </p>
               <Link to="/">
                 <button

@@ -32,7 +32,10 @@ const character = (state = initialCharacter, action, charID) => {
     case SET_RACE:
       return {
         ...state,
-        race: payload.race,
+        race:
+          payload.race.index === null
+            ? null
+            : { ...state.race, ...payload.race },
       };
     default:
       return state;

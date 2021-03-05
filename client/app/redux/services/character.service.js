@@ -1,5 +1,8 @@
 const axios = require('axios').default;
 
+import { racePointerList } from './constants';
+import apiCaller from '../../components/apiCaller';
+
 const API_URL = '/api/';
 
 const createCharacter = characterData => {
@@ -16,9 +19,24 @@ const deleteCharacter = characterData => {
   return axios.delete(API_URL + 'characters/' + id + '/', characterData);
 };
 
-const getRaceInfo = raceName => {
-  const query = raceName ? raceName : '';
-  return axios.get(API_URL + 'races/' + query);
+const getRaceList = () => {
+  return racePointerList;
+};
+
+//Leave out index to get all race objects
+const getRaceInfo = index => {
+  if (index) {
+    const racePointer = racePointerList.find(
+      racePointer => racePointer.index === index
+    );
+    return apiCaller.propogateRacePointer(racePointer);
+  } else {
+    let raceInfoList = [];
+    for (let racePointer of racePointerList) {
+      raceInfoList.push(apiCaller.propogateRacePointer(racePointer));
+    }
+    return raceInfoList;
+  }
 };
 
 const getClassInfo = className => {
@@ -40,6 +58,7 @@ export default {
   createCharacter,
   updateCharacter,
   deleteCharacter,
+  getRaceList,
   getRaceInfo,
   getClassInfo,
   getBackgroundInfo,

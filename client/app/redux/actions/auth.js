@@ -18,7 +18,7 @@ export const register = (username, email, password) => dispatch => {
 
       dispatch({
         type: SET_ALERT,
-        payload: res.data.message,
+        payload: { message: res.data.message, submitted: true },
       });
 
       return Promise.resolve();
@@ -35,7 +35,7 @@ export const register = (username, email, password) => dispatch => {
 
       dispatch({
         type: SET_ALERT,
-        payload: message,
+        payload: { message: message, submitted: false },
       });
 
       return Promise.reject();
