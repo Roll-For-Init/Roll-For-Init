@@ -11,13 +11,16 @@ MONGODB_URI=uri
 
 - JWT_SECRET
   - A secret code such as a uuid.
-- MONGODB_URI
-  - Link to the mongodb
-
-## Additional Variables
-
+- REDIS_URL
+  - Redis URI and protocol (similar to MONGODB_URI) for 5e-srd-api. 
+  - No need to run local redis-server.
 - MONGODB_URI_DEV
   - Use if you want an alternative database link for development
+
+## Additional Variables
+- MONGODB_URI
+  - If you are running in production mode
+  - Duplicate value for both to be safe.
 - NODE_ENV
   - Set to 'production' if you are building for deployment
   - Set to 'development' if you are developing
