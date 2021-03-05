@@ -1,19 +1,17 @@
-const axios = require('axios').default;
-
-const placeholderDescription = [
-  'Please see the 5e SRD for more details @ https://dnd.wizards.com/articles/features/systems-reference-document-srd',
-];
-
+const axios = require('axios');
+const placeholderDescription = ["Please see the 5e SRD for more details @ https://dnd.wizards.com/articles/features/systems-reference-document-srd"];
+const keywords = {
+  //to do word associations for the rest of the program!
+}
 const optionsExtractor = async (container, key) => {
   let optionSet = {
     header: '',
     options: [],
     choose: 0,
-  };
-
+  }  
+ 
   optionSet.choose = container[key].choose;
-  //console.log(container[key].from[0]);
-  if (container[key].type.toLowerCase().includes('feature')) {
+  if(container[key].type.toLowerCase().includes("feature")) {
     optionSet.header = container.name;
     optionSet.desc = container.desc;
   } else if (container[key].type.toLowerCase().includes('language'))
@@ -394,19 +392,21 @@ const classCaller = async () => {
             }
           });
           let featureURL = `${theClass.class_levels}/1`;
-          axios.get(featureURL).then(details => {
-            console.log(details.data);
-            details = details.data;
-            if (details.feature_choices.length > 0) {
-              for (let set of details.feature_choices) {
-                //console.log(set);
-                axios.get(set.url).then(choice => {
-                  optionsExtractor(choice.data, choice).then(choiceSet => {
-                    classContainer.main.options.push(choiceSet);
-                  });
-                });
+          axios.get(featureURL)
+            .then((details) => {
+              details = details.data;
+              if(details.feature_choices.length >0) {
+                for (let set of details.feature_choices) {
+                  //console.log(set);
+                  axios.get(set.url)
+                    .then((choice) => {
+                      optionsExtractor(choice.data, choice)
+                        .then(choiceSet => {
+                          classContainer.main.options.push(choiceSet);
+                        })
+                      });
+                }
               }
-            }
             descriptionAdder(details, 'features').then();
           });
           return theClass;
@@ -423,4 +423,176 @@ const classCaller = async () => {
   return Promise.all(promises).then(() => classes);
 };
 
-module.exports = { propogateRacePointer, classCaller };
+const getBackgroundList = async () => {
+  var backgrounds=[];
+
+  let backgroundPointerList = await axios.get('/api/backgrounds'); //fetch the list of backgrounds
+  let backgroundList = backgroundPointerList.data.results;
+}
+
+const backgroundCaller = async (url) => {
+  let container = {
+    name: '',
+    proficiencies: {
+        skills: [],
+        saving_throws: [],
+        armor: [],
+        weapons: [],
+        languages: [],
+        tools: [],
+    },
+    options: [
+      /*
+        {
+          choose: 0,
+          header: "Choose ${choose}: ${type}",
+          category: ''//i.e feature_ribbon, feature_utility, skill, language..
+          description: 
+          list: [
+            //ribbon, language, skill
+            {
+              name: '',
+              description: ''
+            }
+            //damaage/utility
+            {
+              name: '',
+              description: '',
+              mechanics: [],
+              charges: {}
+            }
+          ]
+        }
+      */
+    ], 
+    feature: {/*name: '', description ['']*/},
+    combat_equipment: {
+      weapons: [
+        /*{
+          name: String,
+          attack_type: String,
+          damage_type: String,
+          damage_dice: String,
+          modifier: Number,
+          ammunition: {
+            current: Number,
+            max: Number
+          }
+        }
+        */
+      ],
+      armors: [
+      /*{
+        name: String,
+        description: String,
+        type: String,        // e.g. light, medium, heavy
+        base_ac: Number,
+        modifier: String,    // modifier is max +2 bonus?
+        mechanics: [
+          {
+            skill: String,
+            stat: Number,
+            is_active: {
+              type: Boolean,
+              default: false
+            }
+        }
+        ],*/
+      ],
+    },
+    inventory: [
+      /*
+      {
+        name: String,
+        description: String,
+        category: String,
+        weight: Number,
+        quantity: Number,
+        cost: {
+          amount: Number,
+          denomination: String        // e.g. "gp", "sp", etc.
+        },
+    }
+    */
+    ],
+    treasure: {
+      /*
+      cp: Number,
+      sp: Number,
+      ep: Number,
+      gp: Number,
+      pp: Number,
+      other: [
+        {
+          name: String,
+          value: Number
+        }
+      ]*/
+    },
+  };
+
+  axios.get(url).then((background) => {
+      background = background.data;
+      Object.keys(background).forEach(key => {
+        if(key.toLowerCase().includes("option") || key.toLowerCase().includes("choice")) {
+         // console.log(background[key]);
+            if(Array.isArray(background[key])) {
+                for (let options of background[key]) {
+                    let temp = {
+                        key: {}
+                    };
+                    temp[key] = options;
+                    optionsExtractor(temp, key)
+                    .then(optionSet => {
+                        container.options.push(optionSet);
+                    })
+                }
+            }
+            else {
+                optionsExtractor(background, key)
+                .then(optionSet => {
+                    container.options.push(optionSet);
+                })
+            }
+                
+        }
+        else if(key.toLowerCase().includes("proficienc")|| key.toLowerCase().includes("saving_throw")) {
+          proficiencySorter(background, key, container.proficiencies)
+            .then();
+        }
+      });
+      return background;
+  })
+  .then((background) => {
+    container = {
+      ...container,
+      ...background
+    };
+    console.log(container);
+    return container;
+  })
+}
+//for background to work, need to array within _options until you get to the "type" key
+
+/*
+useEffect(() => {
+    const fetchData = async () => {
+      apiData = await classCaller();
+      console.log(apiData);
+      /*apiData.main for the top level race, .sub for the subrace. pull qualities from .main and .sub together to form the interface.
+        all properties are the same as in the api, but you can access .desc for those that were pointers before, such as in traits and options.
+        there are also two properties in .main and .sub, .options and .proficiencies, that group all options and proficiencies together.
+        proficiencies are sorted into .weapons, .armor, .languages, .skills, .tools, and .throws. 
+        options is an array where each object in it has a .choose (with how many you should choose, an integer), .header (the type, ie "extra language")
+          and .options subarray with .name and .desc in each. 
+        ANY .DESC DESCRIPTION IS AN ARRAY. proceeed accordingly.
+      
+    }
+    fetchData();
+  }, []);
+  import {raceCaller, classCaller} from "../apiCaller";
+
+*/
+
+module.exports = { classCaller, backgroundCaller, propogateRacePointer};
+

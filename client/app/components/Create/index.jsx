@@ -13,6 +13,7 @@ import { startCharacter } from '../../redux/actions/';
 
 import './styles.scss';
 import Header from '../shared/Header';
+//import {backgroundCaller} from '../apiCaller';
 
 const buttonNames = [
   'race',
@@ -37,7 +38,16 @@ const PageViewer = ({ charID }) => {
     setPage({ name: page, index: index });
     window.scrollTo(0, 0);
   };
-
+/*FOR DEBUGGING ONLY 
+useEffect(() => {
+  console.log("in useeffect");
+  const fetchData = async () => {
+    let apiData = {dummy: "stupid"}
+    apiData = await backgroundCaller("/api/backgrounds/acolyte");
+  }
+  fetchData();
+}, []);
+*/
   const getPage = page => {
     switch (page.name) {
       case 'race':

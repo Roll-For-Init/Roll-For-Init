@@ -61,7 +61,7 @@ const Race = ({ charID, setPage }) => {
   const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
-    console.log('Character', character);
+    //console.log('Character', character);
   }, [character]);
 
   //pass in an object of the fields to edit i.e. {index: INDEX} or {choiceA: CHOICE}
