@@ -1,12 +1,7 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
 
-export const Options = props => {
+export const Options = () => {
   return <div>Options</div>;
 };
 
-const mapStateToProps = state => ({});
-
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Options);
+export default Options;

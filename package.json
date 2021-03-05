@@ -4,9 +4,8 @@
   "description": "Full stack table top aide web-application.",
   "private": true,
   "scripts": {
-    "redis:start": "redis-server --daemonize yes",
     "api:install": "npm --prefix ./5e-srd-api install ./5e-srd-api",
-    "api:start": "if-env NODE_ENV=production && npm run api:install || (npm run redis:start&); npm start --prefix 5e-srd-api/",
+    "api:start": "if-env NODE_ENV=production && npm run api:install; npm start --prefix 5e-srd-api/",
     "start": "concurrently \"node server\" \"npm run api:start\"",
     "build": "webpack --config webpack.config.js"
   },
@@ -27,7 +26,7 @@
     "autoprefixer": "^9.8.6",
     "axios": "^0.21.1",
     "babel-loader": "^8.2.2",
-    "bcrypt": "^5.0.0",
+    "bcrypt": "^5.0.1",
     "bootstrap": "^4.6.0",
     "bootstrap-icons": "^1.4.0",
     "chokidar": "^3.5.1",
@@ -85,6 +84,7 @@
     "style-loader": "0.23.1",
     "terser-webpack-plugin": "^5.1.1",
     "url-loader": "^4.1.1",
+    "uuid": "^8.3.2",
     "validator": "^13.5.2",
     "webpack": "^5.24.2",
     "webpack-cli": "^4.5.0",
@@ -96,6 +96,7 @@
     "yup": "^0.32.9"
   },
   "devDependencies": {
+    "@babel/plugin-transform-runtime": "^7.13.9",
     "babel-eslint": "^10.1.0",
     "eslint": "^6.8.0",
     "eslint-plugin-react": "^7.22.0",
@@ -110,6 +111,6 @@
     "singleQuote": true,
     "editor.formatOnSave": true,
     "trailingComma": "es5",
-    "tabWidth": 4
+    "tabWidth": 2
   }
 }
