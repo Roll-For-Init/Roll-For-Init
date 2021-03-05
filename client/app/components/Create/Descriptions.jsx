@@ -5,7 +5,8 @@ import FloatingLabel from 'floating-label-react';
 import 'floating-label-react/styles.css';
 import { Form, Field } from 'react-final-form';
 import Dropdown from '../shared/Dropdown';
-import PicUpload from '../PicUpload';
+import charPlaceholder from '../../../public/assets/imgs/char-placeholder.png';
+import Dropzone from 'react-dropzone';
 
 export const Descriptions = props => {
     // const { descriptions } = props.descriptions;
@@ -14,7 +15,70 @@ export const Descriptions = props => {
     //     props.selectDescription(description);
     // };
 
+    const maxImageSize = 10000000; // bytes
+    const acceptedFileTypes =
+        'image/x-png, image/png, image/jpg, image/jpeg, image/gif';
+    const acceptedFileTypesArray = acceptedFileTypes.split(',').map(item => {
+        return item.trim();
+    });
+
     const [selectionAl, setSelectionAl] = useState([]);
+    const [charPort, setCharPort] = useState(charPlaceholder);
+    const [fileName, setFileName] = useState('No file chosen');
+    const [errors, setErrors] = useState('');
+
+    const verifyFile = files => {
+        if (files && files.length > 0) {
+            const currentFile = files[0];
+            const currentFileType = currentFile.type;
+            const currentFileSize = currentFile.size;
+            if (currentFileSize > maxImageSize) {
+                console.log(
+                    'This file is not allowed. ' +
+                        currentFileSize +
+                        ' bytes is too large'
+                );
+                setErrors(
+                    `The uploaded file of ${currentFileSize} bytes is too large.`
+                );
+                return false;
+            }
+            if (!acceptedFileTypesArray.includes(currentFileType)) {
+                console.log('Please only upload an image.');
+                setErrors('Please only upload an image.');
+                return false;
+            }
+            return true;
+        }
+    };
+
+    const handleOnDrop = (files, rejectedFiles) => {
+        if (rejectedFiles && rejectedFiles.length > 0) {
+            setFileName('No file chosen');
+            verifyFile(rejectedFiles);
+        }
+        if (files && files.length > 0) {
+            const isVerified = verifyFile(files);
+            if (isVerified) {
+                setFileName(files[0].name);
+                setErrors('');
+                // imageBase64Data
+                const currentFile = files[0];
+                const myFileItemReader = new global.FileReader();
+                myFileItemReader.addEventListener(
+                    'load',
+                    () => {
+                        console.log(myFileItemReader.result);
+                        const myResult = myFileItemReader.result;
+                        setCharPort(myResult);
+                    },
+                    false
+                );
+
+                myFileItemReader.readAsDataURL(currentFile);
+            }
+        }
+    };
 
     const onNext = () => {
         props.setPage({ index: 4, name: 'abilities' });
@@ -204,13 +268,13 @@ export const Descriptions = props => {
                         </form>
                     </div>{' '}
                     <div className="card content-card physical-card choice">
-                        <FloatingLabel
+                        {/* <FloatingLabel
                             id="weight"
                             name="weight"
                             placeholder="Weight"
                             type="email"
                             value="150"
-                        />
+                        /> */}
                     </div>
                 </div>
                 <div className="card content-card description-card mt-0">
@@ -272,7 +336,38 @@ export const Descriptions = props => {
                 <div className="card content-card card-title mt-0">
                     <h4>Character Portrait</h4>
                 </div>
-                <PicUpload />
+                <img
+                    className="card content-card"
+                    src={charPort}
+                    width="200"
+                    height="200"
+                />
+                <Dropzone
+                    onDrop={handleOnDrop}
+                    accept="image/*"
+                    multiple={false}
+                    maxSize={maxImageSize}
+                >
+                    {({ getRootProps, getInputProps }) => (
+                        <section>
+                            <div
+                                className="card content-card drag-drop-card"
+                                {...getRootProps()}
+                            >
+                                <button className="btn btn-primary btm-buttons upload-buttons">
+                                    Choose File
+                                </button>
+                                <input {...getInputProps()} />
+                                <p>{fileName}</p>
+                            </div>
+                        </section>
+                    )}
+                </Dropzone>
+                {errors !== '' && (
+                    <p style={{ color: 'white' }} className="mb-0 pb-0">
+                        {errors}
+                    </p>
+                )}
             </div>
             <div className="card translucent-card">
                 {' '}
