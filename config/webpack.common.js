@@ -68,7 +68,7 @@ module.exports = {
         include: root("client"),
         loader: "babel-loader",
       },
-      //process node_module source maps
+      // Dependency source map loader
       {
         test: /\.js$/,
         enforce: 'pre',

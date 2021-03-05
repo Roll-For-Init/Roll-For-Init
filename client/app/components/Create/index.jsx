@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Race from './Race';
-// import Class from './Class';
-// import Background from './Background';
-// import Abilities from './Abilities';
+import Class from './Class';
+import Background from './Background';
+import Abilities from './Abilities';
 import Options from './Options';
 import Descriptions from './Descriptions';
 import Equipment from './Equipment';
@@ -54,13 +54,13 @@ useEffect(() => {
         pages = <Race setPage={setPage} page={page} charID={charID} />;
         break;
       case 'class':
-        // pages = <Class setPage={setPage} page={page} />;
+        pages = <Class setPage={setPage} page={page} />;
         break;
       case 'background':
-        // pages = <Background setPage={setPage} page={page} />;
+        pages = <Background setPage={setPage} page={page} />;
         break;
       case 'abilities':
-        // pages = <Abilities setPage={setPage} page={page} />;
+        pages = <Abilities setPage={setPage} page={page} />;
         break;
       case 'options':
         pages = <Options setPage={setPage} page={page} />;
@@ -96,9 +96,9 @@ useEffect(() => {
                 key={name}
                 type="button"
                 className={classname}
-                disabled={page.index < idx}
+                //disabled={page.index < idx}
                 onClick={() => {
-                  page.index > idx && onPageChange(name, idx);
+                  page.index != idx && onPageChange(name, idx);
                 }}
               >
                 {name}
