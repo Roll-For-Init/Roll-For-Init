@@ -1,12 +1,12 @@
-import React from "react";
-import { Link } from "react-router-dom";
+import React from 'react';
+import { Link } from 'react-router-dom';
 
-export const DashBoard = props => {
+export const DashBoard = () => {
   return (
     <div className="container">
       <h1 className="display-1 text-center text-light title">
-        DashBoard
-        <Link to="/login">
+        Dashboard
+        <Link to="/logout">
           <button
             type="button"
             className="btn btn-outline-danger log-out-button"

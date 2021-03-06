@@ -1,12 +1,7 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
 
-export const Abilities = props => {
-  return <div>Abilities Page</div>;
+export const Abilities = () => {
+  return <div>Abilities</div>;
 };
 
-const mapStateToProps = state => ({});
-
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Abilities);
+export default Abilities;

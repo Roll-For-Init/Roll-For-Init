@@ -1,14 +1,21 @@
 const dotenv = require('dotenv');
-const {root} = require('./helpers');
+const { root } = require('./helpers');
 
-dotenv.config({
-  path: '../secret.env',
-  debug: process.env.DEBUG
+const dotenvConfig = dotenv.config({
+  path: './secret.env',
+  debug: process.env.DEBUG,
 });
 
-const isDev = (process.env.NODE_ENV !== "production");
+if (dotenvConfig.error) {
+  console.log(
+    'Error: could not load environment variables.',
+    dotenvConfig.error
+  );
+}
 
-const nodemonWatchList = isDev ? [root('server/')] : false;
+const isDev = process.env.NODE_ENV !== 'production';
+
+const nodemonWatchList = isDev ? [root('server/'), root('config/')] : false;
 
 const webpackConfig = require('../webpack.config');
 
@@ -40,7 +47,7 @@ const db = {
     useNewUrlParser: true,
     useUnifiedTopology: true,
     useCreateIndex: true,
-    useFindAndModify: false
+    useFindAndModify: false,
   },
 };
 
@@ -54,7 +61,7 @@ const webpack = {
       contentBase: root('client/'),
       noInfo: process.env.SILENCE_WEBPACK,
       watchOptions: {
-        poll: 100,
+        poll: 1000,
         ignore: [/node_modules/],
       },
       hot: true,
@@ -64,9 +71,9 @@ const webpack = {
         timings: true,
         chunks: false,
         chunkModules: false,
-        modules: false
-      }
-    }
+        modules: false,
+      },
+    },
   },
 };
 
@@ -74,7 +81,7 @@ const nodemon = {
   script: root('server/server'),
   ext: 'js, json',
   execMap: {
-    js: 'node'
+    js: 'node',
   },
   ignore: [],
   verbose: true,
@@ -84,8 +91,8 @@ const nodemon = {
 };
 
 const api = {
-  host: process.env.HOST_API || (process.env.HOST || '0.0.0.0'),
-  port: process.env.PORT_API || 3005
+  host: process.env.HOST_API || process.env.HOST || '0.0.0.0',
+  port: process.env.PORT_API || 3005,
 };
 
 module.exports = {
@@ -97,23 +104,23 @@ module.exports = {
     port: process.env.PORT || 8080,
     email: {
       email: process.env.EMAIL,
-      password: process.env.EMAIL_PASSWORD
+      password: process.env.EMAIL_PASSWORD,
     },
   },
   webpack: webpack,
   nodemon: nodemon,
   jwt: {
     secret: process.env.JWT_SECRET,
-    options: { maxAge: 360000, httpOnly: false }
+    options: { maxAge: 360000, httpOnly: false },
   },
   proxy: {
     api: {
       routes: apiRoutes,
       options: {
-      target: "http://" + api.host + ':' + api.port,
-      secure: false,
-      changeOrigin: true
-    },
+        target: 'http://' + api.host + ':' + api.port,
+        secure: false,
+        changeOrigin: true,
+      },
     },
   },
 };

@@ -1,12 +1,7 @@
-import React from "react";
-import { connect } from "react-redux";
+import React from 'react';
 
-export const Equipment = props => {
+export const Equipment = () => {
   return <div>Equipment</div>;
 };
 
-const mapStateToProps = state => ({});
-
-const mapDispatchToProps = {};
-
-export default connect(mapStateToProps, mapDispatchToProps)(Equipment);
+export default Equipment;

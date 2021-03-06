@@ -184,7 +184,7 @@ const login_user = (req, res) => {
                     return done(error);
                 }
                 */
-                return res.status(200).cookie('auth', token, config.jwt.options).send("Authentication cookie set.");
+                return res.status(200).cookie('auth', token, config.jwt.options).json(user);
             });
         }).catch(err => throwError(res, 401, "Invalid credentials.", err));
     }).catch(err => throwError(res, 401, "Invalid credentials.", err));
