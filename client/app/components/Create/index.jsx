@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Race from './Race';
 // import Class from './Class';
 // import Background from './Background';
-// import Abilities from './Abilities';
+import Abilities from './Abilities';
 import Options from './Options';
 import Descriptions from './Descriptions';
 import Equipment from './Equipment';
@@ -17,8 +17,8 @@ import Header from '../shared/Header';
 const buttonNames = [
   'race',
   'class',
-  'background',
   'abilities',
+  'background',
   'options',
   'description',
   'equipment',
@@ -31,7 +31,7 @@ const Loading = () => {
 const PageViewer = ({ charID }) => {
   let pages;
 
-  const [page, setPage] = useState({ name: 'race', index: 0 });
+  const [page, setPage] = useState({ name: 'abilities', index: 2 });
 
   const onPageChange = (page, index) => {
     setPage({ name: page, index: index });
@@ -46,11 +46,11 @@ const PageViewer = ({ charID }) => {
       case 'class':
         // pages = <Class setPage={setPage} page={page} />;
         break;
+      case 'abilities':
+        pages = <Abilities setPage={setPage} page={page} />;
+        break;
       case 'background':
         // pages = <Background setPage={setPage} page={page} />;
-        break;
-      case 'abilities':
-        // pages = <Abilities setPage={setPage} page={page} />;
         break;
       case 'options':
         pages = <Options setPage={setPage} page={page} />;
