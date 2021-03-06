@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Dropdown from '../shared/Dropdown';
 import { setRace } from '../../redux/actions';
-
 import CharacterService from '../../redux/services/character.service';
 import { PropTypes } from 'prop-types';
 
@@ -56,9 +55,13 @@ const Loading = () => {
 
 const Race = ({ charID, setPage }) => {
   const dispatch = useDispatch();
-  const [races, setRaces] = useState(CharacterService.getRaceList());
+  const [races, setRaces] = useState(null);
 
   const character = useSelector(state => state.characters[charID]);
+
+  useEffect(() => {
+    CharacterService.getRaceList().then((list) => setRaces(list));
+  }, []);
 
   useEffect(() => {
     //console.log('Character', character);
@@ -84,7 +87,7 @@ const Race = ({ charID, setPage }) => {
                   return (
                     <RaceButton
                       race={race}
-                      setRace={() => setSelectedRace({ index: race.index })}
+                      setRace={() => setSelectedRace({ index: race.name, url: race.url})}
                       key={idx}
                       idx={idx}
                     />
@@ -117,14 +120,27 @@ BasicInfoCard.propTypes = {
   size: PropTypes.string.isRequired,
 };
 
-const AbilityBonusCard = ({ bonus, ability_score }) => {
+const AbilityBonusCard = ({ ability_bonuses }) => {
   return (
     <div className="w-auto d-inline-block card content-card floating-card">
-      +{bonus}{' '}
-      {ability_score.full_name ? ability_score.full_name : ability_score.name}
+      {ability_bonuses.map((ability, index) => {
+        if(index+1 == ability_bonuses.length)
+        return (
+          `+${ability.bonus} ${ability.ability_score.full_name}`
+        )
+        else
+        return (
+          <>
+          +{ability.bonus}{" "}{ability.ability_score.full_name}
+          <br />
+          </>
+        )
+      })}
     </div>
   );
 };
+
+/*
 const abilityBonusProps = {
   bonus: PropTypes.number.isRequired,
   ability_score: PropTypes.shape({
@@ -134,22 +150,17 @@ const abilityBonusProps = {
   }),
 };
 AbilityBonusCard.propTypes = { ...abilityBonusProps };
-
+*/
 const AbilityBonuses = ({ ability_bonuses }) => {
   return (
     <React.Fragment>
-      {ability_bonuses.map((ability, index) => {
-        return (
           <AbilityBonusCard
-            ability_score={ability.ability_score}
-            bonus={ability.bonus}
-            key={index}
+            ability_bonuses={ability_bonuses}
           />
-        );
-      })}
     </React.Fragment>
   );
 };
+/*
 AbilityBonuses.propTypes = {
   ability_bonuses: PropTypes.arrayOf(
     PropTypes.shape({
@@ -157,21 +168,21 @@ AbilityBonuses.propTypes = {
     })
   ),
 };
-
+*/
 const RaceDetails = ({ charID, setPage, clearRace }) => {
   const { race } = useSelector(state => state.characters[charID]);
 
   const [raceInfo, setRaceInfo] = useState(undefined);
 
   useEffect(() => {
-    CharacterService.getRaceInfo(race.index).then(
+    CharacterService.getRaceInfo(race).then(
       race => {
+        console.log(race.main);
         setRaceInfo(race.main); //TODO: or subrace
-        console.log(race);
       },
-      error => {
+      /*error => {
         console.log(error.toString());
-      }
+      }*/
     );
   }, []);
 
@@ -207,32 +218,46 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
         </div>
         <div>
           <AbilityBonuses ability_bonuses={raceInfo.ability_bonuses} />
+          <BasicInfoCard speed={raceInfo.speed} size={raceInfo.size} />
         </div>
       </div>
+      {raceInfo.options.length > 0 && (
       <div className="card translucent-card">
         <h4 className="card content-card card-title">Race Options</h4>
         <div>
-          <Dropdown
-            title="Choose 1 High Elf Cantrip"
-            items={[{ index: 'hello', name: 'Hello' }]}
-            width="100%"
-            selection={selection1}
-            setSelection={setSelection1}
-          />
-          <Dropdown
-            title="Choose 1 Extra Language"
-            items={[{ index: 'hello', name: 'Hello' }]}
-            width="100%"
-            selection={selection1}
-            setSelection={setSelection1}
-          />
+          {raceInfo.options.map((option => {
+            return (
+            <Dropdown
+              title={`Choose ${option.choose} ${option.header}`}
+              items={option.options}
+              width= "100%"
+              selection={selection1} //CHANGE THIS TO BE FLEXIBLE
+              setSelection={setSelection1}
+            />
+            )
+          }))}
         </div>
       </div>
+      )}
+      {raceInfo.profCount > 0 && (
       <div className="card translucent-card">
         <div className="card content-card card-title">
           <h4>Starting Proficiencies</h4>
         </div>
         <div className="card content-card description-card">
+          {//console.log(Object.values(raceInfo.proficiencies))
+          Object.keys(raceInfo.proficiencies).map((key) => {
+            return(
+            <p className="text-capitalize">
+              <strong className="small-caps">{key}</strong> - {raceInfo.proficiencies[key].map((prof, index) => {
+                if(raceInfo.proficiencies[key].length === index+1) return `${prof}`;
+                else return `${prof}, `;
+                })}
+            </p>
+            )
+            
+          })}
+          {/*
           <p className="text-capitalize">
             <strong className="small-caps">Weapons</strong> – longswords,
             shortswords, shortbows, longbows
@@ -242,9 +267,9 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
           </p>
           <p className="text-capitalize">
             <strong className="small-caps">Languages</strong> – Common, Elvish
-          </p>
+          </p>*/}
         </div>
-      </div>
+      </div>)}
       <button
         className="text-uppercase btn-primary btn-lg px-5 btn-floating"
         onClick={onNext}

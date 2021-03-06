@@ -20,13 +20,17 @@ const deleteCharacter = characterData => {
 };
 
 const getRaceList = () => {
-  return racePointerList;
+    return axios.get(`${API_URL}races`).then((races) => {
+        return races.data.results;
+    });
 };
 
 //Leave out index to get all race objects
-const getRaceInfo = index => {
+const getRaceInfo = (race) => {
+    return apiCaller.propogateRacePointer(race.url);
+    /*
   if (index) {
-    const racePointer = racePointerList.find(
+    const racePointer = list.find(
       racePointer => racePointer.index === index
     );
     return apiCaller.propogateRacePointer(racePointer);
@@ -36,7 +40,7 @@ const getRaceInfo = index => {
       raceInfoList.push(apiCaller.propogateRacePointer(racePointer));
     }
     return raceInfoList;
-  }
+  }*/
 };
 
 const getClassInfo = className => {

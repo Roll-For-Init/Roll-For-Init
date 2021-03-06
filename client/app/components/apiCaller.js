@@ -3,7 +3,17 @@ const placeholderDescription = ["Please see the 5e SRD for more details @ https:
 const keywords = {
   //to do word associations for the rest of the program!
 }
-const optionsExtractor = async (container, key) => {
+
+const fullAbScore = {
+    CHA: "Charisma",
+    INT: "Intelligence",
+    STR: "Strength",
+    WIS: "Wisdom",
+    DEX: "Dexterity",
+    CON: "Constitution"
+}
+
+const optionsExtractor = async (container, key, promises) => {
   let optionSet = {
     header: '',
     options: [],
@@ -16,10 +26,11 @@ const optionsExtractor = async (container, key) => {
     optionSet.desc = container.desc;
   } else if (container[key].type.toLowerCase().includes('language'))
     optionSet.header = `extra ${container[key].type}`;
-  else optionSet.header = container[key].type.replace('_', /\s/g);
+  else optionSet.header = container[key].type.replace('_', " ");
   if (key.toLowerCase().includes('ability_bonus')) {
     for (let option of container[key].from) {
-      let optionName = option.ability_score.name;
+      option.ability_score.full_name = fullAbScore[option.ability_score.name];
+      let optionName = option.ability_score.full_name;
       let optionDeets = `+${option.bonus}`;
       let optionObject = {
         name: optionName,
@@ -44,7 +55,7 @@ const optionsExtractor = async (container, key) => {
     if (container[key].type.toLowerCase().includes('equipment')) {
       for (let option of container[key].from) {
         if (option.equipment_option != undefined) {
-          axios
+          promises.push(axios
             .get(option.equipment_option.from.equipment_category.url) //get description for given option
             .then(optionDetails => {
               optionDetails = optionDetails.data;
@@ -57,13 +68,14 @@ const optionsExtractor = async (container, key) => {
                 let optionObject = {
                   name: optionName,
                   desc: optionDeets,
+                  key: optionName
                 };
                 optionSet.options.push(optionObject);
               }
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err)));
         } else if (option.equipment_category != undefined) {
-          axios
+          promises.push(axios
             .get(option.equipment_category.url) //get description for given option
             .then(optionDetails => {
               optionDetails = optionDetails.data;
@@ -80,7 +92,7 @@ const optionsExtractor = async (container, key) => {
                 optionSet.options.push(optionObject);
               }
             })
-            .catch(err => console.error(err));
+            .catch(err => console.error(err)));
         } else {
           //console.log(option);
           if (option['0']) {
@@ -101,7 +113,7 @@ const optionsExtractor = async (container, key) => {
             };
             optionSet.options.push(optionObject);
           } else {
-            axios
+            promises.push(axios
               .get(option.equipment.url) //get description for given option
               .then(optionDetails => {
                 optionDetails = optionDetails.data;
@@ -117,13 +129,13 @@ const optionsExtractor = async (container, key) => {
                 };
                 optionSet.options.push(optionObject);
               })
-              .catch(err => console.error(err));
+              .catch(err => console.error(err)));
           }
         }
       }
     } else {
       for (let option of container[key].from) {
-        axios
+        promises.push(axios
           .get(option.url) //get description for given option
           .then(optionDetails => {
             optionDetails = optionDetails.data;
@@ -138,16 +150,16 @@ const optionsExtractor = async (container, key) => {
             };
             optionSet.options.push(optionObject);
           })
-          .catch(err => console.error(err));
+          .catch(err => console.error(err)));
       }
     }
   }
   return optionSet;
 };
 
-const descriptionAdder = async (container, key) => {
+const descriptionAdder = async (container, key, promises) => {
   for (let item of container[key]) {
-    axios
+    promises.push(axios
       .get(item.url) //get description for given option
       .then(details => {
         details = details.data;
@@ -157,58 +169,51 @@ const descriptionAdder = async (container, key) => {
         } else deets = placeholderDescription;
         item.desc = deets;
       })
-      .catch(err => console.error(err));
+      .catch(err => console.error(err)));
   }
   return;
 };
 
-const proficiencySorter = async (container, key, destination) => {
+const proficiencySorter = async (container, key, destination, promises) => {
+    let dest = destination;
+    //console.log(destination);
+    destination = destination.proficiencies;
   for (let proficiency of container[key]) {
     let type;
     let name;
-    axios
+    promises.push(axios
       .get(proficiency.url)
       .then(profDetails => {
         profDetails = profDetails.data;
-        //console.log(profDetails);
-
-        if (profDetails.type == undefined) type = 'throws';
+        if (key.includes('language')) {
+            type = 'Languages';
+        }
+        else if (profDetails.type == undefined) type = 'Throws';
         else if (
           profDetails.type.toLowerCase().includes('tool') ||
           profDetails.type.toLowerCase().includes('other')
         )
-          type = 'tools';
-        else type = profDetails.type.toLowerCase();
+          type = 'Tools';
+
+        else type = profDetails.type;
         name = profDetails.name;
         if (name.toLowerCase().includes('skill')) {
           name = name.substring(name.indexOf(':') + 2);
         }
       })
       .then(() => {
-        destination[type].push(name);
-      })
-      .catch(err => console.error(err));
+        if(destination[type] == undefined) {    dest.profCount++;
+            destination[type] = []; destination[type].push(name);}
+        else destination[type].push(name);
+      }))
   }
-  return;
 };
 
-// const raceCaller = async () => {
-//   // var races = [];
-//   // let racePointerList = await axios.get('/api/races'); //fetch the list of races
-//   // let raceList = racePointerList.data.results;
-//   // let promises = [];
-//   // return Promise.all(promises).then(() => races);
-//   return;
-
-//   //need to add recursion or something so that descriptions can be had from options! make descriptions, weight, cost available without another fetch. maybe just upon selection of option??
-//   //should unify race, subrace "trait" call language. is this easy to use? things are still stratified across race and subrace...same with options vs choices
-//   //need a "fluff" equipment array, later
-//   //note: 'desc' is an array...
-//   //ensure compatibility with gameplay and character sheet model. i.e., racial traits have mechanics in plain string form.
-//   //will things be determined as combat/ribbon/etc within the database, or here? how are things sorted?
-//   //should everything go in "ribbon" for now and gameplay can be separated out later?
-//   //for stuff like resistances that will be grouped together in the model but are all over the traits here, with no indication the trait is a resistance...how?
-// };
+const getRaceList = () => {
+    return axios.get('/api/races').then((races) => {
+       races = races.data.results;
+    });
+}
 
 const propogateSubracePointer = async subracePointer => {
   return axios
@@ -218,12 +223,14 @@ const propogateSubracePointer = async subracePointer => {
       let sub = {
         options: [],
         proficiencies: {
+            /*
           weapons: [],
           skills: [],
           languages: [],
           tools: [],
           throws: [],
           armor: [],
+          */
         },
       };
 
@@ -252,16 +259,20 @@ const propogateSubracePointer = async subracePointer => {
 };
 
 const propogateRacePointer = async racePointer => {
+    const promises =[];
   let raceContainer = {
     main: {
       options: [],
+      profCount: 0,
       proficiencies: {
+          
         weapons: [],
         skills: [],
         languages: [],
         tools: [],
         throws: [],
         armor: [],
+        
       },
     },
     sub: [
@@ -280,25 +291,30 @@ const propogateRacePointer = async racePointer => {
   };
 
   return axios
-    .get(racePointer.url)
+    .get(racePointer)
     .then(response => {
       //fetch each race in the api
       const race = response.data;
       raceContainer.main.options = [];
+      //raceContainer.main.proficiencyCount = 0;
       raceContainer.main.proficiencies = {
+          /*
         weapons: [],
         skills: [],
         languages: [],
         tools: [],
         throws: [],
         armor: [],
+        */
       };
       //console.log(race);
 
       if (race.subraces.length > 0) {
+          /*
         for (let subracePointer of race.subraces) {
           raceContainer.sub.push(propogateSubracePointer(subracePointer));
         }
+        */
       }
 
       Object.keys(race).forEach(key => {
@@ -306,19 +322,27 @@ const propogateRacePointer = async racePointer => {
           key.toLowerCase().includes('option') ||
           key.toLowerCase().includes('choice')
         ) {
-          optionsExtractor(race, key).then(optionSet => {
+          optionsExtractor(race, key,promises).then(optionSet => {
             raceContainer.main.options.push(optionSet);
           });
         } else if (key.toLowerCase().includes('trait')) {
-          descriptionAdder(race, key).then();
+          descriptionAdder(race, key,promises).then();
         } else if (
           key.toLowerCase().includes('proficienc') ||
-          key.toLowerCase().includes('saving_throw')
+          key.toLowerCase().includes('saving_throw') ||
+          (key.toLowerCase().includes('language') && !key.toLowerCase().includes('_desc'))
         ) {
-          proficiencySorter(race, key, raceContainer.main.proficiencies).then();
+            //console.log(raceContainer.main);
+          proficiencySorter(race, key, raceContainer.main,promises).then(() => console.log(raceContainer.main.proficiencies));
+        }
+        else if (key.toLowerCase().includes('ability')) {
+            for (let score of race[key]) {
+                console.log(score.ability_score);
+               score.ability_score.full_name = fullAbScore[score.ability_score.name];
+            }
         }
       });
-      return race;
+      return Promise.all(promises).then(() => race);
     })
     .then(race => {
       raceContainer.main = {
@@ -572,6 +596,10 @@ const backgroundCaller = async (url) => {
     return container;
   })
 }
+
+const getAlignments = async () => {
+    axios.get('/api/alignments').then((alignments) => {return alignments.data.results});
+}
 //for background to work, need to array within _options until you get to the "type" key
 
 /*
@@ -594,5 +622,5 @@ useEffect(() => {
 
 */
 
-module.exports = { classCaller, backgroundCaller, propogateRacePointer};
+module.exports = { getRaceList, classCaller, backgroundCaller, propogateRacePointer};
 
