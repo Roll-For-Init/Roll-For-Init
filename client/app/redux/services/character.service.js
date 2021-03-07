@@ -42,6 +42,9 @@ const getRaceInfo = (race) => {
     return raceInfoList;
   }*/
 };
+const getRaceDetails = (race) => {
+    return apiCaller.getRaceMiscDescriptions(race);
+}
 
 const getClassInfo = className => {
   const query = className ? className : '';
@@ -67,4 +70,5 @@ export default {
   getClassInfo,
   getBackgroundInfo,
   getAbilityScoreInfo,
+  getRaceDetails
 };

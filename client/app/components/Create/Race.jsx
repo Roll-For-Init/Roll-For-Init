@@ -56,6 +56,7 @@ const Loading = () => {
 const Race = ({ charID, setPage }) => {
   const dispatch = useDispatch();
   const [races, setRaces] = useState(null);
+  const [raceDetails, setRaceDetails] = useState()
 
   const character = useSelector(state => state.characters[charID]);
 
@@ -179,11 +180,14 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
       race => {
         console.log(race.main);
         setRaceInfo(race.main); //TODO: or subrace
-      },
+        return race
+      }
       /*error => {
         console.log(error.toString());
       }*/
-    );
+    ).then(race => {
+      CharacterService.getRaceDetails(race.main).then(race => {setRaceInfo(race)});
+    });
   }, []);
 
   const [selection1, setSelection1] = useState([]);
