@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { connect } from "react-redux";
 import { useSelector, useDispatch } from 'react-redux';
 import CharacterService from '../../redux/services/character.service';
@@ -16,10 +16,6 @@ const Class = ({charID, setPage}) => {
   useEffect(() => {
     CharacterService.getIndexedList("classes").then((list) => setClasses(list));
   }, []);
-
-  
-  useEffect(() => {
-console.log(character)  }, [character]);
   
   const selectClass = theClass => {
     dispatch(setClass(charID, theClass));
@@ -60,8 +56,15 @@ console.log(character)  }, [character]);
 };
 
 const SidePanel = ({charID, setPage, clearClass, dispatch}) => {
+  const reducer = (state, newProp) => {
+    let newState = {...state, ...newProp};
+    dispatch(setClass(charID, {choices: newState}));
+    return newState;
+}
+
   const theClass = useSelector(state => state.characters[charID].class);
 
+  const [userChoices, setUserChoices] = useReducer(reducer, {}); //See background for an example! Make sure to include a key in the dropdown
   const [classInfo, setClassInfo] = useState(undefined);
   const [selection1, setSelection1] = useState([]);
   const [selection2, setSelection2] = useState([]);

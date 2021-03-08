@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Dropdown from '../shared/Dropdown';
 import { setRace } from '../../redux/actions';
@@ -174,6 +174,13 @@ AbilityBonuses.propTypes = {
 };
 */
 const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
+  const reducer = (state, newProp) => {
+    let newState = {...state, ...newProp};
+    dispatch(setRace(charID, {choices: newState}));
+    return newState;
+}
+
+  const [userChoices, setUserChoices] = useReducer(reducer, {});
   const { race } = useSelector(state => state.characters[charID]);
 
   const [raceInfo, setRaceInfo] = useState(undefined);
@@ -241,17 +248,18 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
       <div className="card translucent-card">
         <h4 className="card content-card card-title">Race Options</h4>
         <div>
-          {raceInfo.options.map((option => {
+          {raceInfo.options.map((option, index) => {
             return (
             <Dropdown
               title={`Choose ${option.choose} ${option.header}`}
               items={option.options}
               width= "100%"
-              selection={selection1} //CHANGE THIS TO BE FLEXIBLE
-              setSelection={setSelection1}
-            />
+              selection={userChoices[`dropdown-${index}`]}
+              setSelection={setUserChoices}
+              stateKey={`${option.header.toLowerCase().replace(' ','-')}-${index}`}
+              />
             )
-          }))}
+          })}
         </div>
       </div>
       )}
