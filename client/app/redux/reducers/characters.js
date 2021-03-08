@@ -5,7 +5,8 @@ import {
   UPDATE_CHARACTER_SUCCESS,
   UPDATE_CHARACTER_FAIL,
   SET_RACE,
-  SET_CLASS
+  SET_CLASS,
+  SET_BACKGROUND
 } from '../actions/types';
 
 const initialCharacter = {
@@ -46,6 +47,14 @@ const character = (state = initialCharacter, action, charID) => {
                 ? null
                 : {...state.theClass, ...payload.theClass},
         }
+    case SET_BACKGROUND:
+        return {
+            ...state,
+            class:
+                payload.background.index === null 
+                ? null
+                : {...state.background, ...payload.background},
+        }
     default:
       return state;
   }
@@ -82,6 +91,11 @@ export default function(state = initialState, action) {
         [payload.charID]: character(state[payload.charID], action, payload),
       };
     case SET_CLASS:
+        return {
+            ...state,
+            [payload.charID]: character(state[payload.charID], action, payload),
+        }
+    case SET_BACKGROUND:
         return {
             ...state,
             [payload.charID]: character(state[payload.charID], action, payload),

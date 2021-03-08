@@ -13,6 +13,61 @@ const fullAbScore = {
     CON: "Constitution"
 }
 
+const equipmentOptions = async (container, options, key) => {
+    let equipmentSet = {
+        header: '',
+        options: [],
+        choose: 0
+    }
+    equipmentSet.choose = options.choose;
+    equipmentSet.header = options.type.replace('_', " ");
+    for(let option of options.from) {
+        if (option.equipment_option != undefined) {
+            let optionObject = {
+                name: option.equipment_option.from.equipment_category.name,
+                url: option.equipment_option.from.equipment_category.url
+            }
+            equipmentSet.options.push(optionObject);
+        } else if (option.equipment_category != undefined) {
+            let optionObject = {
+                name: option.equipment_category.name,
+                url: option.equipment_category.url
+            }
+            equipmentSet.options.push(optionObject);
+        } else {
+        //console.log(option);
+        if (option['0']) {
+            let optionName;
+            let urls = [];
+            for (let i = 0; option[i] != undefined; i++) {
+                //console.log(option[i])
+            if (option[i].equipment) {
+                optionName = `1 ${option[i].equipment.name}`;
+                urls.push(option[i].equipment.url)
+            } else{
+                optionName = `${option[i].equipment_option.choose} ${option[i].equipment_option.from.equipment_category.name}`;
+                urls.push(option[i].equipment_option.from.equipment_category.url)
+            }
+            if (option[i + 1]) {
+                optionName += ' and ';
+            }
+            }
+            let optionObject = {
+            name: optionName,
+            url: urls
+            };
+            equipmentSet.options.push(optionObject);
+        } else {
+            let optionObject = {
+                name: option.name ? option.name : option.equipment.name,
+                url: option.url ? option.url : option.equipment.url
+            }
+            equipmentSet.options.push(optionObject);
+        }
+        }
+    }   
+    return ({equipment: equipmentSet})
+}
 const optionsHelper = async (container, options, key) => {
     let optionSet = {
         header: '',
@@ -24,7 +79,6 @@ const optionsHelper = async (container, options, key) => {
           options: [],
           choose: 0
       }
-
     optionSet.choose = options.choose;
     if(options.type.toLowerCase().includes("feature")) {
       optionSet.header = container.name;
@@ -54,53 +108,6 @@ const optionsHelper = async (container, options, key) => {
         optionSet.options.push(optionObject);
       }
     } else {
-      if (options.type.toLowerCase().includes('equipment')) {
-        for (let option of options.from) {
-          if (option.equipment_option != undefined) {
-              let optionObject = {
-                  name: option.equipment_option.from.equipment_category.name,
-                  url: option.equipment_option.from.equipment_category.url
-              }
-              optionSet.options.push(optionObject);
-          } else if (option.equipment_category != undefined) {
-              let optionObject = {
-                  name: option.equipment_category.name,
-                  url: option.equipment_category.url
-              }
-              equipmentSet.options.push(optionObject);
-          } else {
-            //console.log(option);
-            if (option['0']) {
-              let optionName;
-              let urls = [];
-              for (let i = 0; option[i] != undefined; i++) {
-                  //console.log(option[i])
-                if (option[i].equipment) {
-                  optionName = `1 ${option[i].equipment.name}`;
-                  urls.push(option[i].equipment.url)
-                } else{
-                  optionName = `${option[i].equipment_option.choose} ${option[i].equipment_option.from.equipment_category.name}`;
-                  urls.push(option[i].equipment_option.from.equipment_category.url)
-                }
-                if (option[i + 1]) {
-                  optionName += ' and ';
-                }
-              }
-              let optionObject = {
-                name: optionName,
-                url: urls
-              };
-              equipmentSet.options.push(optionObject);
-            } else {
-                let optionObject = {
-                    name: option.name ? option.name : option.equipment.name,
-                    url: option.url ? option.url : option.equipment.url
-                }
-                equipmentSet.options.push(optionObject);
-            }
-          }
-        }
-      } else {
         for (let option of options.from) {
             let optionObject = {
                 name: option.name,
@@ -109,10 +116,10 @@ const optionsHelper = async (container, options, key) => {
             optionSet.options.push(optionObject);
         }
       }
-    }
+    
     if(equipmentSet.header=='') equipmentSet = null;
     if(optionSet.header=='') optionSet = null;
-    return {options: optionSet, equipment: equipmentSet}
+    return {options: optionSet}
 }
 const optionsExtractor = async (container, key) => {
   let promises = [];
@@ -122,20 +129,24 @@ const optionsExtractor = async (container, key) => {
 
   if(Array.isArray(listOfOptions)) {
       for (let options of listOfOptions) {
-        let result = optionsHelper(container, options, key)
+        let result;
+        if(key.includes("equipment")) result = equipmentOptions(container, options, key);
+        else result = optionsHelper(container, options, key);
         promises.push(result);
         result.then((res) => {
             if(res.options) allOptions.push(res.options);
-            if(res.equipment) allEquipment.push(res.equipment);
+            else allEquipment.push(res.equipment);
         })
       }
   }
   else {
-    let result = optionsHelper(container, container[key], key)
+    let result;
+    if(key.includes("equipment")) result = equipmentOptions(container, container[key], key);
+    else result = optionsHelper(container, container[key], key);   
     promises.push(result);
     result.then((res)=> {
         if(res.options) allOptions.push(res.options);
-        if(res.equipment) allEquipment.push(res.equipment);
+        else allEquipment.push(res.equipment);
     
     })
   }
@@ -363,9 +374,24 @@ const classCaller = async (classPointer) => {
     });
 };
 
-const getClassDescriptions = async () => {
-
+const getClassDescriptions = async (theClass) => {
+    let promises = [];
+    console.log(theClass);
+    for (optionSet of theClass.main.options) {
+        optionSet.options.forEach(option => {
+            if(!option.hasOwnProperty('url')) {return;}
+            promises.push(axios.get(option.url)
+            .then(optionDetails => {
+                optionDetails = optionDetails.data;
+                if(optionDetails.desc) option.desc = optionDetails.desc;
+                else option.desc = placeholderDescription;
+            })
+            .catch(err => console.error(err)));
+        })
+    }
+    return Promise.all(promises).then(() => {return theClass})
 }
+
 const getBackgroundList = async () => {
   var backgrounds=[];
 
@@ -374,146 +400,45 @@ const getBackgroundList = async () => {
 }
 
 const backgroundCaller = async (url) => {
-  let container = {
-    name: '',
-    proficiencies: {
-        skills: [],
-        saving_throws: [],
-        armor: [],
-        weapons: [],
-        languages: [],
-        tools: [],
-    },
-    options: [
-      /*
-        {
-          choose: 0,
-          header: "Choose ${choose}: ${type}",
-          category: ''//i.e feature_ribbon, feature_utility, skill, language..
-          description: 
-          list: [
-            //ribbon, language, skill
-            {
-              name: '',
-              description: ''
-            }
-            //damaage/utility
-            {
-              name: '',
-              description: '',
-              mechanics: [],
-              charges: {}
-            }
-          ]
-        }
-      */
-    ], 
-    feature: {/*name: '', description ['']*/},
-    combat_equipment: {
-      weapons: [
-        /*{
-          name: String,
-          attack_type: String,
-          damage_type: String,
-          damage_dice: String,
-          modifier: Number,
-          ammunition: {
-            current: Number,
-            max: Number
-          }
-        }
-        */
-      ],
-      armors: [
-      /*{
-        name: String,
-        description: String,
-        type: String,        // e.g. light, medium, heavy
-        base_ac: Number,
-        modifier: String,    // modifier is max +2 bonus?
-        mechanics: [
-          {
-            skill: String,
-            stat: Number,
-            is_active: {
-              type: Boolean,
-              default: false
-            }
-        }
-        ],*/
-      ],
-    },
-    inventory: [
-      /*
-      {
-        name: String,
-        description: String,
-        category: String,
-        weight: Number,
-        quantity: Number,
-        cost: {
-          amount: Number,
-          denomination: String        // e.g. "gp", "sp", etc.
-        },
-    }
-    */
-    ],
-    treasure: {
-      /*
-      cp: Number,
-      sp: Number,
-      ep: Number,
-      gp: Number,
-      pp: Number,
-      other: [
-        {
-          name: String,
-          value: Number
-        }
-      ]*/
-    },
-  };
-
-  axios.get(url).then((background) => {
-      background = background.data;
-      Object.keys(background).forEach(key => {
-        if(key.toLowerCase().includes("option") || key.toLowerCase().includes("choice")) {
-         // console.log(background[key]);
-            if(Array.isArray(background[key])) {
-                for (let options of background[key]) {
-                    let temp = {
-                        key: {}
-                    };
-                    temp[key] = options;
-                    optionsExtractor(temp, key)
-                    .then(optionSet => {
-                        container.options.push(optionSet);
-                    })
-                }
-            }
-            else {
-                optionsExtractor(background, key)
-                .then(optionSet => {
-                    container.options.push(optionSet);
-                })
-            }
-                
-        }
-        else if(key.toLowerCase().includes("proficienc")|| key.toLowerCase().includes("saving_throw")) {
-          proficiencySorter(background, key, container.proficiencies)
-            .then();
-        }
-      });
-      return background;
-  })
-  .then((background) => {
-    container = {
-      ...container,
-      ...background
+    const promises = [];
+    let container = {
+        profCount: 0,
+        proficiencies: {},
+        options: [], 
+        equipment: []
     };
-    
-    return container;
-  })
+
+    const background = (await axios.get(url)).data;
+    Object.keys(background).some(key => {
+        if (
+            key.toLowerCase().includes('option') ||
+            key.toLowerCase().includes('choice')
+        ) {
+            //console.log(key);
+            promises.push(optionsExtractor(background, key).then(optionSet => {
+                container.options = container.options.concat(optionSet.options);
+                container.equipment = container.equipment.concat(optionSet.equipment);
+            }));
+        } else if (
+            key.toLowerCase().includes('proficienc') ||
+            key.toLowerCase().includes('saving_throw')
+        ) {
+            promises.push(proficiencySorter(
+            background,
+            key,
+            container
+            ).then());
+        }
+        return key === "feature" //for now, stops execution before the personality tables, etc
+    });
+      return Promise.all(promises).then(() => {
+        container = {
+            ...container,
+            ...background
+          };
+
+          return container;
+      })
 }
 
 const getAlignments = async () => {

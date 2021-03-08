@@ -53,9 +53,8 @@ const getClassInfo = (theClass) => {
 const getClassDetails = (theClass) => {
     return apiCaller.getClassDescriptions(theClass);
 }
-const getBackgroundInfo = backgroundName => {
-  const query = backgroundName ? backgroundName : '';
-  return axios.get(API_URL + 'backgrounds/' + query);
+const getBackgroundInfo = background => {
+  return apiCaller.backgroundCaller(`${API_URL}backgrounds/${background.index}`);
 };
 
 const getAbilityScoreInfo = abilityScore => {

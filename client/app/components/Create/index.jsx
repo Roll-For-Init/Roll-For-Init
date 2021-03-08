@@ -58,7 +58,7 @@ useEffect(() => {
         pages = <Class setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'background':
-        pages = <Background setPage={setPage} page={page} />;
+        pages = <Background setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'abilities':
         pages = <Abilities setPage={setPage} page={page} />;
