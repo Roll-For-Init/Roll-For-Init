@@ -23,35 +23,23 @@ const equipmentOptions = async (container, options, key) => {
     equipmentSet.header = options.type.replace('_', " ");
     for(let option of options.from) {
         if (option.equipment_option != undefined) {
-            let optionObject = {
-                name: option.equipment_option.from.equipment_category.name,
-                url: option.equipment_option.from.equipment_category.url,
-            }
+            let optionObject = option.equipment_option.from.equipment_category;
             equipmentSet.options.push(optionObject);
         } else if (option.equipment_category != undefined) {
-            let optionObject = {
-                name: option.equipment_category.name,
-                url: option.equipment_category.url
-            }
+            let optionObject = option.equipment_category;
             equipmentSet.options.push(optionObject);
         } else {
         //console.log(option);
         if (option['0']) {
             let options=[];
             for (let i = 0; option[i] != undefined; i++) {
-                let optionObject = {
-                    name: '',
-                    url: '',
-                    quantity: 0
-                };
+                let optionObject;
         
                 if (option[i].equipment) {
-                    optionObject.name=option[i].equipment.name;
-                    optionObject.url=option[i].equipment.url;
+                    optionObject = option[i].equipment;
                     optionObject.quantity = option[i].quantity;
                 } else{
-                    optionObject.name = option[i].equipment_option.from.equipment_category.name;
-                    optionObject.url = option[i].equipment_option.from.equipment_category.url;
+                    optionObject = option[i].equipment_option.from.equipment_category;
                     optionObject.quantity = option[i].equipment_option.choose;
                 }
                 options.push(optionObject)
@@ -61,6 +49,7 @@ const equipmentOptions = async (container, options, key) => {
             let optionObject = {
                 name: option.name ? option.name : option.equipment.name,
                 url: option.url ? option.url : option.equipment.url,
+                index: option.index ? option.index : option.equipment.index,
                 quantity: option.quantity
             }
             equipmentSet.options.push(optionObject);
@@ -91,11 +80,7 @@ const optionsHelper = async (container, options, key) => {
         optionSet.header = `+${options.from[0].bonus} Ability Bonus`
       for (let option of options.from) {
         option.ability_score.full_name = fullAbScore[option.ability_score.name];
-        let optionName = option.ability_score.full_name;
-        let optionObject = {
-          name: optionName,
-        };
-        optionSet.options.push(optionObject);
+        optionSet.options.push(option.ability_score);
       }
     } else if (
       !options.type.toLowerCase().includes('equipment') &&
@@ -103,17 +88,13 @@ const optionsHelper = async (container, options, key) => {
     ) {
       for (let option of options.from) {
         let optionName = option.name.substring(option.name.indexOf(':') + 2);
-        let optionObject = {
-          name: optionName,
-        };
+        option.name = optionName;
+        let optionObject = option;
         optionSet.options.push(optionObject);
       }
     } else {
         for (let option of options.from) {
-            let optionObject = {
-                name: option.name,
-                url: option.url
-            }
+            let optionObject = option;
             optionSet.options.push(optionObject);
         }
       }

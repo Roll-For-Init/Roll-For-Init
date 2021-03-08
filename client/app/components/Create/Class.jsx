@@ -80,6 +80,8 @@ const SidePanel = ({charID, setPage, clearClass, dispatch}) => {
       CharacterService.getClassDetails(theClass).then(theClass => {setClassInfo(theClass)});
       let equipment = {equipment: theClass.main.starting_equipment};
       dispatch(setClass(charID, equipment));
+      dispatch(setClass(charID, {proficiencies: theClass.proficiencies}))    
+
     });
   }, []);
 

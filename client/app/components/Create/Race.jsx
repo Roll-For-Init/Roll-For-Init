@@ -192,7 +192,8 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
       CharacterService.getRaceDetails(race).then(race => {setRaceInfo(race)});
       let abilityBonuses = race.sub ? race.main.ability_bonuses.concat(race.sub.ability_bonuses)
       : race.main.ability_bonuses;
-      dispatch(setRace(charID, {ability_bonuses: abilityBonuses}));    
+      dispatch(setRace(charID, {ability_bonuses: abilityBonuses}));
+      dispatch(setRace(charID, {proficiencies: race.proficiencies}))    
 
     })
   }, []);

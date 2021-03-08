@@ -29,6 +29,7 @@ export const Background = ({charID, setPage}) => {
             .then((bg) => {
                 let equipment = {equipment: bg.starting_equipment};
                 dispatch(setBackground(charID, equipment));
+                dispatch(setBackground(charID, {proficiencies: bg.proficiencies}))    
             })
         }
     };
@@ -132,7 +133,7 @@ export const Background = ({charID, setPage}) => {
                                     return (
                                     <Dropdown
                                         title={`Choose ${option.choose}: ${option.header}`}
-                                        items={option.from}
+                                        items={option.options}
                                         selectLimit={option.choose}
                                         multiSelect
                                         selection={selectionLang}

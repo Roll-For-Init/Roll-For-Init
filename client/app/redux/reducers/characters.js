@@ -11,9 +11,9 @@ import {
 } from '../actions/types';
 
 const initialCharacter = {
-  race: null, //.ability_bonuses, .choices{equipment: , proficiencies,  etc...}
-  class: null, //.choices{equipment: ,proficiencies:,  etc...}, .equipment
-  background: null, //.equipment, //.choices{}
+  race: null, //.ability_bonuses, .proficiencies, .choices{equipment: , proficiencies,  etc...}
+  class: null, //.choices{equipment: ,proficiencies:,  etc...}, .equipment, .proficiencies
+  background: null, //.equipment, .choices{}, .proficiencies
   abilities: null, 
   options: null,
   description: null,
@@ -49,8 +49,6 @@ const character = (state = initialCharacter, action, charID) => {
                 : {...state.class, ...payload.theClass},
         }
     case SET_BACKGROUND:
-        console.log(payload.background);
-        console.log(state.background);
         return {
             ...state,
             background:
