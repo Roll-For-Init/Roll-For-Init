@@ -11,9 +11,9 @@ import {
 } from '../actions/types';
 
 const initialCharacter = {
-  race: null, //.ability_bonuses, .proficiencies, .choices{equipment: , proficiencies,  etc...}
+  race: null, //.ability_bonuses, .proficiencies, .choices{equipment: , proficiencies,  etc...}, .description {summary, physical, age}
   class: null, //.choices{equipment: ,proficiencies:,  etc...}, .equipment, .proficiencies
-  background: null, //.equipment, .choices{}, .proficiencies
+  background: null, //.equipment, .choices{}, .proficiencies, .personality{traits, ideals, bonds, flaws}
   abilities: null, 
   options: null,
   description: null,

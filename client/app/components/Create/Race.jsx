@@ -196,13 +196,19 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
         console.log(error.toString());
       }*/
     ).then(race => {
-      CharacterService.getRaceDetails(race).then(race => {setRaceInfo(race)});
+      CharacterService.getRaceDetails(race).then(race => {setRaceInfo(race)}); //FUTURE ISSUE: if user navigates away from page too early, they may not have everything they need?
       let abilityBonuses = race.sub ? race.main.ability_bonuses.concat(race.sub.ability_bonuses)
       : race.main.ability_bonuses;
       dispatch(setRace(charID, {ability_bonuses: abilityBonuses}));
       dispatch(setRace(charID, {proficiencies: race.proficiencies}))  
       let allTraits = race.sub ? race.main.traits.concat(race.sub.racial_traits) : race.main.traits;
       dispatch(setRace(charID, {traits: allTraits}))  
+      let description = {
+        summary: [race.main.alignment, race.sub?.desc],
+        age: race.main.age,
+        size: race.main.size_description
+      }
+      dispatch(setRace(charID, {description: description}))
     })
   }, []);
 
