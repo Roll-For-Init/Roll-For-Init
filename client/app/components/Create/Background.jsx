@@ -64,9 +64,28 @@ export const Background = ({charID, setPage}) => {
     const [selectionSk2, setSelectionSk2] = useState([]);
     const [selectionTlLg1, setSelectionTlLg1] = useState([]);
     const [selectionTlLg2, setSelectionTlLg2] = useState([]);
+    const [bgName, setBgName] = useState('');
+    const [bgDesc, setBgDesc] = useState('');
+    const [featureName, setFeatureName] = useState('');
+    const [featureDesc, setFeatureDesc] = useState('');
 
     const onNext = () => {
-        props.setPage({ index: 3, name: 'description' });
+        if(selectionBg[0].index=='custom') {
+            let customBackground = {
+                proficiencies: {
+                    ToolsLanguages: [selectionTlLg1, selectionTlLg2],
+                    Skills: [selectionSk1, selectionSk2]
+                },
+                name: bgName,
+                desc: bgDesc,
+                feature: {
+                    name: featureName,
+                    desc: featureDesc
+                }
+            }
+            dispatch(setBackground(charID, customBackground))
+        }
+        setPage({ index: 3, name: 'description' });
         window.scrollTo(0, 0);
     };
 
@@ -103,6 +122,7 @@ export const Background = ({charID, setPage}) => {
                                     type="text"
                                     name="backgroundName"
                                     placeholder="Background Name"
+                                    onChange={(e) => setBgName(e.target.value)}
                                 />
                             </form>
                         </div>
@@ -120,6 +140,7 @@ export const Background = ({charID, setPage}) => {
                                     type="text"
                                     name="backgroundDesc"
                                     placeholder="Background Description (optional)"
+                                    onChange={(e) => setBgDesc(e.target.value)}
                                 />
                             </form>
                         ) : (
@@ -243,6 +264,7 @@ export const Background = ({charID, setPage}) => {
                                     type="text"
                                     name="featName"
                                     placeholder="Feature Name"
+                                    onChange={(e) => setFeatureName(e.target.value)}
                                 />
                             </form>
                         ) : (
@@ -261,6 +283,7 @@ export const Background = ({charID, setPage}) => {
                                     type="text"
                                     name="featDesc"
                                     placeholder="Feature Description"
+                                    onChange={(e) => setFeatureDesc(e.target.value)}
                                 />
                             </form>
                         ) : (

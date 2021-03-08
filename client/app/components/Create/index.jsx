@@ -61,17 +61,18 @@ useEffect(() => {
         pages = <Background setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'abilities':
-        pages = <Abilities setPage={setPage} page={page} />;
-        break;
-      case 'options':
-        pages = <Options setPage={setPage} page={page} />;
+        pages = <Abilities setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'description':
-        pages = <Descriptions setPage={setPage} page={page} />;
+        pages = <Descriptions setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'equipment':
-        pages = <Equipment setPage={setPage} page={page} />;
+        pages = <Equipment setPage={setPage} page={page} charID = {charID}/>;
         break;
+        /*
+      case 'spells':
+        pages = <Spells setPage={setPage} page={page} charID = {charID}/>;
+      break;*/
     }
   };
 
