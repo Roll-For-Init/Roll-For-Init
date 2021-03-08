@@ -25,7 +25,7 @@ const equipmentOptions = async (container, options, key) => {
         if (option.equipment_option != undefined) {
             let optionObject = {
                 name: option.equipment_option.from.equipment_category.name,
-                url: option.equipment_option.from.equipment_category.url
+                url: option.equipment_option.from.equipment_category.url,
             }
             equipmentSet.options.push(optionObject);
         } else if (option.equipment_category != undefined) {
@@ -37,30 +37,31 @@ const equipmentOptions = async (container, options, key) => {
         } else {
         //console.log(option);
         if (option['0']) {
-            let optionName;
-            let urls = [];
+            let options=[];
             for (let i = 0; option[i] != undefined; i++) {
-                //console.log(option[i])
-            if (option[i].equipment) {
-                optionName = `1 ${option[i].equipment.name}`;
-                urls.push(option[i].equipment.url)
-            } else{
-                optionName = `${option[i].equipment_option.choose} ${option[i].equipment_option.from.equipment_category.name}`;
-                urls.push(option[i].equipment_option.from.equipment_category.url)
+                let optionObject = {
+                    name: '',
+                    url: '',
+                    quantity: 0
+                };
+        
+                if (option[i].equipment) {
+                    optionObject.name=option[i].equipment.name;
+                    optionObject.url=option[i].equipment.url;
+                    optionObject.quantity = option[i].quantity;
+                } else{
+                    optionObject.name = option[i].equipment_option.from.equipment_category.name;
+                    optionObject.url = option[i].equipment_option.from.equipment_category.url;
+                    optionObject.quantity = option[i].equipment_option.choose;
+                }
+                options.push(optionObject)
             }
-            if (option[i + 1]) {
-                optionName += ' and ';
-            }
-            }
-            let optionObject = {
-            name: optionName,
-            url: urls
-            };
-            equipmentSet.options.push(optionObject);
+            equipmentSet.options.push(options);
         } else {
             let optionObject = {
                 name: option.name ? option.name : option.equipment.name,
-                url: option.url ? option.url : option.equipment.url
+                url: option.url ? option.url : option.equipment.url,
+                quantity: option.quantity
             }
             equipmentSet.options.push(optionObject);
         }
@@ -223,7 +224,7 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
           promises.push(optionsExtractor(subrace, key)
             .then((options) => {
               raceContainer.options = raceContainer.options.concat(options.options);
-              raceContainer.equipment = raceContainer.equipment.concat(options.equipment);
+              raceContainer.equipment_options = raceContainer.equipment_options.concat(options.equipment);
             }))
         }
         else if(key.toLowerCase().includes("trait")) {
@@ -271,7 +272,7 @@ const propogateRacePointer = async racePointer => {
         proficiencies: {},
         main: {},
         sub: {},
-        equipment: []
+        equipment_options: []
     };
   const race = (await axios.get(racePointer.url)).data;
   const subrace = racePointer.hasOwnProperty('subrace') ? (await axios.get(racePointer.subrace.url)).data : null;
@@ -284,7 +285,7 @@ const propogateRacePointer = async racePointer => {
     ){
         promises.push(optionsExtractor(race, key).then(options => {
           raceContainer.options = raceContainer.options.concat(options.options);
-          raceContainer.equipment = raceContainer.equipment.concat(options.equipment);
+          raceContainer.equipment_options = raceContainer.equipment_options.concat(options.equipment);
         }));
       } else if (key.toLowerCase().includes('trait')) {
         promises.push(descriptionAdder(race, key).then());
@@ -319,7 +320,7 @@ const classCaller = async (classPointer) => {
       proficiencies: {},
       features: [],
     },
-    equipment: []
+    equipment_options: []
   };
     const theClass = (await axios.get(classPointer.url)).data; //fetch class
     Object.keys(theClass).forEach(key => {
@@ -330,11 +331,12 @@ const classCaller = async (classPointer) => {
             //console.log(key);
             promises.push(optionsExtractor(theClass, key).then(optionSet => {
                 classContainer.main.options = classContainer.main.options.concat(optionSet.options);
-                classContainer.equipment = classContainer.equipment.concat(optionSet.equipment);
+                classContainer.equipment_options = classContainer.equipment_options.concat(optionSet.equipment);
             }));
         } else if (
             key.toLowerCase().includes('proficienc') ||
-            key.toLowerCase().includes('saving_throw')
+            key.toLowerCase().includes('saving_throw') ||
+            (key.toLowerCase().includes('language') && !key.toLowerCase().includes('_desc'))
         ) {
             promises.push(proficiencySorter(
             theClass,
@@ -376,7 +378,6 @@ const classCaller = async (classPointer) => {
 
 const getClassDescriptions = async (theClass) => {
     let promises = [];
-    console.log(theClass);
     for (optionSet of theClass.main.options) {
         optionSet.options.forEach(option => {
             if(!option.hasOwnProperty('url')) {return;}
@@ -405,7 +406,7 @@ const backgroundCaller = async (url) => {
         profCount: 0,
         proficiencies: {},
         options: [], 
-        equipment: []
+        equipment_options: []
     };
 
     const background = (await axios.get(url)).data;
@@ -417,7 +418,7 @@ const backgroundCaller = async (url) => {
             //console.log(key);
             promises.push(optionsExtractor(background, key).then(optionSet => {
                 container.options = container.options.concat(optionSet.options);
-                container.equipment = container.equipment.concat(optionSet.equipment);
+                container.equipment_options = container.equipment_options.concat(optionSet.equipment);
             }));
         } else if (
             key.toLowerCase().includes('proficienc') ||

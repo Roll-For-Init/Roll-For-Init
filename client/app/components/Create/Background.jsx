@@ -16,12 +16,21 @@ export const Background = ({charID, setPage}) => {
     //const { backgrounds } = props.backgrounds;
 
     const selectBackground = background => {
-        background = background[0];
-        dispatch(setBackground(charID, background));
-        CharacterService.getBackgroundInfo(background).then((bg) => {
-            setSelectionBg(bg)
-            console.log(bg)
-        })
+        dispatch(setBackground(charID, background[0]));
+        if (background[0].index == 'custom') {
+            setSelectionBg(background);
+        }
+        else {
+            CharacterService.getBackgroundInfo(background[0]).then((bg) => {
+                setSelectionBg([bg])
+                console.log(bg)
+                return bg
+            })
+            .then((bg) => {
+                let equipment = {equipment: bg.starting_equipment};
+                dispatch(setBackground(charID, equipment));
+            })
+        }
     };
 
     useEffect(() => {
@@ -31,7 +40,7 @@ export const Background = ({charID, setPage}) => {
             dispatch(setBackground(charID, custom[0]));
             return custom;
         }).then((custom) => {
-            setSelectionBg(custom[0]);
+            setSelectionBg(custom);
         });
     }, []);
     
@@ -68,11 +77,11 @@ export const Background = ({charID, setPage}) => {
                             ...backgrounds,
                         ]}
                         width="70%"
-                        selection={[selectionBg]}
+                        selection={selectionBg}
                         setSelection={selectBackground}
                         classname="header"
                     />
-                    {selectionBg.index === 'custom' && (
+                    {selectionBg[0].index === 'custom' && (
                         <div className="card content-card card-subtitle">
                             <form style={{ padding: '0px 5px' }}>
                                 <input
@@ -86,7 +95,7 @@ export const Background = ({charID, setPage}) => {
                         </div>
                     )}
                     <div className="card content-card description-card mb-0">
-                        {selectionBg.index === 'custom' ? (
+                        {selectionBg[0].index === 'custom' ? (
                             <form>
                                 <textarea
                                     className="p-0 m-0"
@@ -108,18 +117,18 @@ export const Background = ({charID, setPage}) => {
                                 readMoreClassName="read-more-less--more"
                                 readLessClassName="read-more-less--less"
                             >
-                                {selectionBg.desc.join('\n')}
+                                {selectionBg[0].desc.join('\n')}
                             </ReactReadMoreReadLess>
                         )}
                     </div>
                 </div>
-                {selectionBg.index != 'custom' && (
+                {selectionBg[0].index != 'custom' && (
                     <div className="card translucent-card">
                         <div className="card content-card card-title">
                             <h4>Background Options</h4>
                         </div>
                         <div className="choice-container">
-                            {selectionBg.options.map((option) => {
+                            {selectionBg[0].options.map((option) => {
                                     return (
                                     <Dropdown
                                         title={`Choose ${option.choose}: ${option.header}`}
@@ -139,7 +148,7 @@ export const Background = ({charID, setPage}) => {
                     <div className="card content-card card-title">
                         <h4>Proficiencies</h4>
                     </div>
-                    {selectionBg.index === 'custom' && (
+                    {selectionBg[0].index === 'custom' && (
                         <div className="choice-container">
                             <>
                             <Dropdown
@@ -160,7 +169,7 @@ export const Background = ({charID, setPage}) => {
                     </div>
                     )}
                     <div className="choice-container">
-                        {selectionBg.index == 'custom' && (
+                        {selectionBg[0].index == 'custom' && (
                             <>
                                 <Dropdown
                                     title="Choose a Tool or Language"
@@ -178,14 +187,14 @@ export const Background = ({charID, setPage}) => {
                                 />
                             </>
                         )}
-                        {selectionBg.index != 'custom' && (
+                        {selectionBg[0].index != 'custom' && (
                             <div className="card content-card description-card">
                             {
-                            Object.keys(selectionBg.proficiencies).map((key) => {
+                            Object.keys(selectionBg[0].proficiencies).map((key) => {
                               return(
                               <p className="text-capitalize">
-                                <strong className="small-caps">{key}</strong> - {selectionBg.proficiencies[key].map((prof, index) => {
-                                  if(selectionBg.proficiencies[key].length === index+1) return `${prof}`;
+                                <strong className="small-caps">{key}</strong> - {selectionBg[0].proficiencies[key].map((prof, index) => {
+                                  if(selectionBg[0].proficiencies[key].length === index+1) return `${prof}`;
                                   else return `${prof}, `;
                                   })}
                               </p>
@@ -200,7 +209,7 @@ export const Background = ({charID, setPage}) => {
                     <div className="card content-card card-title">
                         <h4>Background Feature</h4>
                     </div>
-                    {selectionBg.index === 'custom' && (
+                    {selectionBg[0].index === 'custom' && (
                         <div className="card content-card description-card">
                             Background features are normally soft skills that can
                             help you outside of combat. Background features can help
@@ -212,7 +221,7 @@ export const Background = ({charID, setPage}) => {
                         </div>
                     )}
                     <div className="card content-card card-subtitle">
-                        {selectionBg.index === 'custom' ? (
+                        {selectionBg[0].index === 'custom' ? (
                             <form style={{ padding: '0px 5px' }}>
                                 <input
                                     className="p-0 m-0"
@@ -223,11 +232,11 @@ export const Background = ({charID, setPage}) => {
                                 />
                             </form>
                         ) : (
-                            selectionBg.feature.name
+                            selectionBg[0].feature.name
                         )}
                     </div>
                     <div className="card content-card description-card mb-0">
-                        {selectionBg.index === 'custom' ? (
+                        {selectionBg[0].index === 'custom' ? (
                             <form>
                                 <textarea
                                     style={{
@@ -248,7 +257,7 @@ export const Background = ({charID, setPage}) => {
                                 readMoreClassName="read-more-less--more"
                                 readLessClassName="read-more-less--less"
                             >
-                                {selectionBg.feature.desc.join('\n')}
+                                {selectionBg[0].feature.desc.join('\n')}
                             </ReactReadMoreReadLess>
                         )}
                     </div>

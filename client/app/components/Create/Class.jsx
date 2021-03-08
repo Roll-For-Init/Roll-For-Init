@@ -9,6 +9,7 @@ import {setClass} from "../../redux/actions";
 const Class = ({charID, setPage}) => {
   const dispatch = useDispatch();
   const [classes, setClasses] = useState(null);
+  const [viewClass, setViewClass] = useState(false);
 
   const character = useSelector(state => state.characters[charID]);
 
@@ -16,17 +17,18 @@ const Class = ({charID, setPage}) => {
     CharacterService.getIndexedList("classes").then((list) => setClasses(list));
   }, []);
 
-  useEffect(()=> {
-    console.log(character)
-  }, [character]);
+  
+  useEffect(() => {
+console.log(character)  }, [character]);
   
   const selectClass = theClass => {
     dispatch(setClass(charID, theClass));
+    setViewClass(true);
   };
 
   return (
     <div className="class position-relative">
-      {character.class === null ? (
+      {!viewClass ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Class</h2>
@@ -49,14 +51,15 @@ const Class = ({charID, setPage}) => {
         <SidePanel
           charID = {charID}
           setPage={setPage}
-          clearClass={() => selectClass({ index: null })}
+          clearClass={() => setViewClass(false)}
+          dispatch={dispatch}
         />
       )}
     </div>
   );
 };
 
-const SidePanel = ({charID, setPage, clearClass}) => {
+const SidePanel = ({charID, setPage, clearClass, dispatch}) => {
   const theClass = useSelector(state => state.characters[charID].class);
 
   const [classInfo, setClassInfo] = useState(undefined);
@@ -75,6 +78,8 @@ const SidePanel = ({charID, setPage, clearClass}) => {
       }*/
     ).then(theClass => {
       CharacterService.getClassDetails(theClass).then(theClass => {setClassInfo(theClass)});
+      let equipment = {equipment: theClass.main.starting_equipment};
+      dispatch(setClass(charID, equipment));
     });
   }, []);
 

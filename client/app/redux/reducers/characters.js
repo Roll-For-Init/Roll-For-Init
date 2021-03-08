@@ -6,14 +6,15 @@ import {
   UPDATE_CHARACTER_FAIL,
   SET_RACE,
   SET_CLASS,
-  SET_BACKGROUND
+  SET_BACKGROUND,
+  SET_ABILITIES
 } from '../actions/types';
 
 const initialCharacter = {
-  race: null,
-  class: null,
-  background: null,
-  abilities: null,
+  race: null, //.ability_bonuses, .choices{equipment: , proficiencies,  etc...}
+  class: null, //.choices{equipment: ,proficiencies:,  etc...}, .equipment
+  background: null, //.equipment, //.choices{}
+  abilities: null, 
   options: null,
   description: null,
   equipment: null,
@@ -35,25 +36,33 @@ const character = (state = initialCharacter, action, charID) => {
       return {
         ...state,
         race:
-          payload.race.index === null
-            ? null
+            (payload.race.index && payload.race.index!=state.race?.index)
+            ? payload.race
             : { ...state.race, ...payload.race },
-      };
+     };
     case SET_CLASS:
         return {
             ...state,
             class:
-                payload.theClass.index === null 
-                ? null
-                : {...state.theClass, ...payload.theClass},
+                (payload.theClass.index && payload.theClass.index!=state.class?.index)
+                ? payload.theClass
+                : {...state.class, ...payload.theClass},
         }
     case SET_BACKGROUND:
+        console.log(payload.background);
+        console.log(state.background);
         return {
             ...state,
-            class:
-                payload.background.index === null 
-                ? null
+            background:
+                (payload.background.index && payload.background.index != state.background?.index)
+                ? payload.background
                 : {...state.background, ...payload.background},
+        }
+    case SET_ABILITIES:
+        return {
+            ...state,
+            abilities:
+                {...state.abilities, ...payload.abilities}
         }
     default:
       return state;
@@ -100,6 +109,11 @@ export default function(state = initialState, action) {
             ...state,
             [payload.charID]: character(state[payload.charID], action, payload),
         }
+    case SET_ABILITIES:
+    return {
+        ...state,
+        [payload.charID]: character(state[payload.charID], action, payload),
+    }
     default:
       return state;
   }

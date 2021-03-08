@@ -11,7 +11,8 @@ import {
   SET_ALERT,
   SET_RACE,
   SET_CLASS,
-  SET_BACKGROUND
+  SET_BACKGROUND,
+  SET_ABILITIES
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -119,3 +120,8 @@ export const setBackground = (charID, background) => dispatch => {
     console.log('SET_BACKGROUND', charID, background);
     dispatch({type: SET_BACKGROUND, payload: {charID, background}});
 };
+
+export const setAbilities = (charID, abilities) => dispatch => {
+    console.log('SET_ABILITIES', charID, abilities);
+    dispatch({type: SET_ABILITIES, payload: {charID, abilities}})
+}

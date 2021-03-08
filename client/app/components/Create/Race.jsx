@@ -60,6 +60,7 @@ const Loading = () => {
 const Race = ({ charID, setPage }) => {
   const dispatch = useDispatch();
   const [races, setRaces] = useState(null);
+  const [viewRace, setViewRace] = useState(false)
 
   const character = useSelector(state => state.characters[charID]);
 
@@ -71,11 +72,12 @@ const Race = ({ charID, setPage }) => {
   //access with character.race.choiceA
   const setSelectedRace = race => {
     dispatch(setRace(charID, race));
+    setViewRace(true)
   };
 
   return (
     <div className="race position-relative">
-      {character.race === null ? (
+      {!viewRace  ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Race</h2>
@@ -100,7 +102,8 @@ const Race = ({ charID, setPage }) => {
         <RaceDetails
           charID={charID}
           setPage={setPage}
-          clearRace={() => setSelectedRace({ index: null })}
+          clearRace={() => setViewRace(false)}
+          dispatch={dispatch}
         />
       )}
     </div>
@@ -170,7 +173,7 @@ AbilityBonuses.propTypes = {
   ),
 };
 */
-const RaceDetails = ({ charID, setPage, clearRace }) => {
+const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
   const { race } = useSelector(state => state.characters[charID]);
 
   const [raceInfo, setRaceInfo] = useState(undefined);
@@ -179,7 +182,7 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
     CharacterService.getRaceInfo(race).then(
       race => {
         console.log(race);
-        setRaceInfo(race); //TODO: or subrace
+        setRaceInfo(race);
         return race
       }
       /*error => {
@@ -187,7 +190,11 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
       }*/
     ).then(race => {
       CharacterService.getRaceDetails(race).then(race => {setRaceInfo(race)});
-    });
+      let abilityBonuses = race.sub ? race.main.ability_bonuses.concat(race.sub.ability_bonuses)
+      : race.main.ability_bonuses;
+      dispatch(setRace(charID, {ability_bonuses: abilityBonuses}));    
+
+    })
   }, []);
 
   const [selection1, setSelection1] = useState([]);
