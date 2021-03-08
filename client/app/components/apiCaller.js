@@ -170,7 +170,9 @@ const proficiencySorter = async (container, key, destination) => {
         if (key.includes('language')) {
             type = 'Languages';
         }
-        else if (profDetails.type == undefined) type = 'Throws';
+        else if (profDetails.type == undefined) {
+            type = 'Saving Throws';
+        }
         else if (
           profDetails.type.toLowerCase().includes('tool') ||
           profDetails.type.toLowerCase().includes('other')
@@ -344,7 +346,10 @@ const classCaller = async (classPointer) => {
                 });
             }
         }
-        else morePromises.push(descriptionAdder(details, 'features').then());
+        else {
+            classContainer.main.features = details.features;
+            morePromises.push(descriptionAdder(classContainer.main, 'features').then());
+        }
         return Promise.all(morePromises);
     }));
 
@@ -354,7 +359,7 @@ const classCaller = async (classPointer) => {
             ...theClass,
         }
         return classContainer;
-    });
+    }).catch((err) => console.log(err));
 };
 
 const getClassDescriptions = async (theClass) => {

@@ -193,8 +193,9 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
       let abilityBonuses = race.sub ? race.main.ability_bonuses.concat(race.sub.ability_bonuses)
       : race.main.ability_bonuses;
       dispatch(setRace(charID, {ability_bonuses: abilityBonuses}));
-      dispatch(setRace(charID, {proficiencies: race.proficiencies}))    
-
+      dispatch(setRace(charID, {proficiencies: race.proficiencies}))  
+      let allTraits = race.sub ? race.main.traits.concat(race.sub.racial_traits) : race.main.traits;
+      dispatch(setRace(charID, {traits: allTraits}))  
     })
   }, []);
 
