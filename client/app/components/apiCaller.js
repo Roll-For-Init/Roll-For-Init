@@ -171,7 +171,7 @@ const proficiencySorter = async (container, key, destination) => {
             type = 'Languages';
         }
         else if (profDetails.type == undefined) {
-            type = 'Saving Throws';
+            type = 'Throws';
         }
         else if (
           profDetails.type.toLowerCase().includes('tool') ||
@@ -297,11 +297,12 @@ const propogateRacePointer = async racePointer => {
 const classCaller = async (classPointer) => {
   const promises = [];
   const classContainer = {
+    options: [],
+    proficiencies: {},
+    features: [],
+    profCount: 0,
     main: {
-      options: [],
-      profCount: 0,
-      proficiencies: {},
-      features: [],
+
     },
     equipment_options: []
   };
@@ -313,7 +314,7 @@ const classCaller = async (classPointer) => {
         ) {
             //console.log(key);
             promises.push(optionsExtractor(theClass, key).then(optionSet => {
-                classContainer.main.options = classContainer.main.options.concat(optionSet.options);
+                classContainer.options = classContainer.options.concat(optionSet.options);
                 classContainer.equipment_options = classContainer.equipment_options.concat(optionSet.equipment);
             }));
         } else if (
@@ -324,7 +325,7 @@ const classCaller = async (classPointer) => {
             promises.push(proficiencySorter(
             theClass,
             key,
-            classContainer.main
+            classContainer
             ).then());
         }
     });
@@ -341,30 +342,27 @@ const classCaller = async (classPointer) => {
                     //console.log(choice.data);
                     morePromises.push(optionsExtractor(choice.data, 'choice')
                     .then(choiceSet => {
-                        classContainer.main.options = classContainer.main.options.concat(choiceSet.options);
+                        classContainer.options = classContainer.options.concat(choiceSet.options);
                     }))
                 });
             }
         }
         else {
-            classContainer.main.features = details.features;
-            morePromises.push(descriptionAdder(classContainer.main, 'features').then());
+            classContainer.features = details.features;
+            morePromises.push(descriptionAdder(classContainer, 'features').then());
         }
         return Promise.all(morePromises);
     }));
 
     return Promise.all(promises).then(() => {
-        classContainer.main = {
-            ...classContainer.main,
-            ...theClass,
-        }
+        classContainer.main = theClass;
         return classContainer;
     }).catch((err) => console.log(err));
 };
 
 const getClassDescriptions = async (theClass) => {
     let promises = [];
-    for (optionSet of theClass.main.options) {
+    for (optionSet of theClass.options) {
         optionSet.options.forEach(option => {
             if(!option.hasOwnProperty('url')) {return;}
             promises.push(axios.get(option.url)
@@ -392,7 +390,7 @@ const backgroundCaller = async (url) => {
         profCount: 0,
         proficiencies: {},
         options: [], 
-        equipment_options: []
+        equipment_options: [],
     };
 
     const background = (await axios.get(url)).data;
@@ -420,10 +418,9 @@ const backgroundCaller = async (url) => {
     });
       return Promise.all(promises).then(() => {
         container = {
-            ...container,
-            ...background
-          };
-
+            ...background,
+            ...container
+        };
           return container;
       })
 }

@@ -1,10 +1,10 @@
-import React, { useState , useEffect} from 'react';
+import React, { useState , useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
 import { getBackgroundInfo } from '../../redux/actions';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch} from 'react-redux';
 import {setBackground} from "../../redux/actions";
 
 
@@ -34,6 +34,12 @@ export const Background = ({charID, setPage}) => {
         }
     };
 
+    const reducer = (state, newProp) => {
+        let newState = {...state, ...newProp};
+        dispatch(setBackground(charID, {choices: newState}));
+        return newState;
+    }
+
     useEffect(() => {
         CharacterService.getIndexedList("backgrounds").then((list) => {
             const custom = [{name: 'Custom', index: 'custom'}];
@@ -45,11 +51,10 @@ export const Background = ({charID, setPage}) => {
         });
     }, []);
     
-    
     const [selectionBg, setSelectionBg] = useState(null);
+    const [userChoices, setUserChoices] = useReducer(reducer, {});
     const [selectionSk1, setSelectionSk1] = useState([]);
     const [selectionSk2, setSelectionSk2] = useState([]);
-    const [selectionLang, setSelectionLang] = useState([]);
     const [selectionTlLg1, setSelectionTlLg1] = useState([]);
     const [selectionTlLg2, setSelectionTlLg2] = useState([]);
 
@@ -129,16 +134,17 @@ export const Background = ({charID, setPage}) => {
                             <h4>Background Options</h4>
                         </div>
                         <div className="choice-container">
-                            {selectionBg[0].options.map((option) => {
+                            {selectionBg[0].options.map((option,index) => {
                                     return (
                                     <Dropdown
                                         title={`Choose ${option.choose}: ${option.header}`}
                                         items={option.options}
                                         selectLimit={option.choose}
                                         multiSelect
-                                        selection={selectionLang}
-                                        setSelection={setSelectionLang}
+                                        selection={userChoices[`dropdown-${index}`]}
+                                        setSelection={setUserChoices}
                                         classname="choice"
+                                        stateKey={`${option.header.toLowerCase().replace(' ','-')}-${index}`}
                                     />)
                                 })}
                         </div>
