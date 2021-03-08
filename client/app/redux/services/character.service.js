@@ -27,7 +27,7 @@ const getRaceList = () => {
 
 //Leave out index to get all race objects
 const getRaceInfo = (race) => {
-    return apiCaller.propogateRacePointer(race.url);
+    return apiCaller.propogateRacePointer(race);
     /*
   if (index) {
     const racePointer = list.find(

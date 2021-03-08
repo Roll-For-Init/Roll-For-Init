@@ -6,13 +6,17 @@ import CharacterService from '../../redux/services/character.service';
 import { PropTypes } from 'prop-types';
 
 const RaceButton = ({ race, setRace, idx }) => {
-  const hasSubraces = race.subraces !== undefined;
+  const hasSubraces = race.subraces.length > 0;
 
   const handleClick = () => {
     if (!hasSubraces) {
       setRace();
     }
   };
+
+  const handleSubClick = (subrace) => {
+    setRace(subrace)
+  }
 
   return (
     <div className="w-100 h-auto">
@@ -39,7 +43,7 @@ const RaceButton = ({ race, setRace, idx }) => {
             <button
               key={idx}
               className="w-100 m-0 border-0 shadow-none text-center text-uppercase options-dropdown"
-              onClick={() => handleClick()}
+              onClick={() => handleSubClick(subrace)}
             >
               {subrace.name}
             </button>
@@ -56,7 +60,6 @@ const Loading = () => {
 const Race = ({ charID, setPage }) => {
   const dispatch = useDispatch();
   const [races, setRaces] = useState(null);
-  const [raceDetails, setRaceDetails] = useState()
 
   const character = useSelector(state => state.characters[charID]);
 
@@ -88,7 +91,8 @@ const Race = ({ charID, setPage }) => {
                   return (
                     <RaceButton
                       race={race}
-                      setRace={() => setSelectedRace({ index: race.name, url: race.url})}
+                      setRace={(subrace) => subrace ? setSelectedRace({index: race.name, url: race.url, subrace: {index: subrace.name, url: subrace.url}}) 
+                      : setSelectedRace({ index: race.name, url: race.url})}
                       key={idx}
                       idx={idx}
                     />
@@ -178,15 +182,15 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
   useEffect(() => {
     CharacterService.getRaceInfo(race).then(
       race => {
-        console.log(race.main);
-        setRaceInfo(race.main); //TODO: or subrace
+        console.log(race);
+        setRaceInfo(race); //TODO: or subrace
         return race
       }
       /*error => {
         console.log(error.toString());
       }*/
     ).then(race => {
-      CharacterService.getRaceDetails(race.main).then(race => {setRaceInfo(race)});
+      CharacterService.getRaceDetails(race).then(race => {setRaceInfo(race)});
     });
   }, []);
 
@@ -218,11 +222,14 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h4>{raceInfo.name}</h4>
+          <h4>{raceInfo.sub ? raceInfo.sub.name : raceInfo.main.name}</h4>
         </div>
         <div>
-          <AbilityBonuses ability_bonuses={raceInfo.ability_bonuses} />
-          <BasicInfoCard speed={raceInfo.speed} size={raceInfo.size} />
+          <AbilityBonuses ability_bonuses={
+            raceInfo.sub ? raceInfo.main.ability_bonuses.concat(raceInfo.sub.ability_bonuses)
+            : raceInfo.main.ability_bonuses
+          } />
+          <BasicInfoCard speed={raceInfo.main.speed} size={raceInfo.main.size} />
         </div>
       </div>
       {raceInfo.options.length > 0 && (
@@ -261,19 +268,38 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
             )
             
           })}
-          {/*
-          <p className="text-capitalize">
-            <strong className="small-caps">Weapons</strong> – longswords,
-            shortswords, shortbows, longbows
-          </p>
-          <p className="text-capitalize">
-            <strong className="small-caps">Skills</strong> – perception
-          </p>
-          <p className="text-capitalize">
-            <strong className="small-caps">Languages</strong> – Common, Elvish
-          </p>*/}
         </div>
       </div>)}
+      {raceInfo.main.traits.length > 0 && (
+        <div className="card translucent-card">
+          <div className="card content-card card-title">
+            <h4>{`${raceInfo.main.name} Traits`}</h4>
+          </div>
+          {raceInfo.main.traits.map((trait) => {
+              return (
+                <div className="card content-card description-card">
+                <h3 className="card-subtitle small-caps">{trait.name}</h3>
+                <p>{trait.desc}</p>
+                </div>
+              )
+            })}
+        </div>
+      )}
+      {raceInfo.sub && raceInfo.sub.racial_traits.length > 0 && (
+        <div className="card translucent-card">
+          <div className="card content-card card-title">
+            <h4>{`${raceInfo.sub.name} Traits`}</h4>
+          </div>
+          {raceInfo.sub.racial_traits.map((trait) => {
+              return (
+                <div className="card content-card description-card">
+                <h3 className="card-subtitle small-caps">{trait.name}</h3>
+                <p>{trait.desc}</p>
+                </div>
+              )
+            })}
+        </div>
+      )}
       <button
         className="text-uppercase btn-primary btn-lg px-5 btn-floating"
         onClick={onNext}

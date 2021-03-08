@@ -46,7 +46,7 @@ const optionsExtractor = async (container, key) => {
     container[key].from[0].index.toLowerCase().includes('skill')
   ) {
     for (let option of container[key].from) {
-      let optionName = option.name.substring(option.name.indexOf(':') + 1);
+      let optionName = option.name.substring(option.name.indexOf(':') + 2);
       let optionObject = {
         name: optionName,
       };
@@ -179,52 +179,43 @@ const getRaceList = () => {
     });
 }
 
-const propogateSubracePointer = async subracePointer => {
-  return axios
-    .get(subracePointer.url) //fetch each subrace for that race
-    .then(response => {
-      const subrace = response.data;
-      let sub = {
-        options: [],
-        proficiencies: {
-            /*
-          weapons: [],
-          skills: [],
-          languages: [],
-          tools: [],
-          throws: [],
-          armor: [],
-          */
-        },
-      };
+const propogateSubracePointer = async (subrace, raceContainer) => {
+    const promises =[];
 
       Object.keys(subrace).forEach(key => {
-        if (
-          key.toLowerCase().includes('option') ||
-          key.toLowerCase().includes('choice')
-        ) {
-          optionsExtractor(subrace, key).then(optionSet => {
-            sub.options.push(optionSet);
-          });
-        } else if (key.toLowerCase().includes('trait')) {
-          descriptionAdder(subrace, key).then();
-        } else if (
-          key.toLowerCase().includes('proficienc') ||
-          key.toLowerCase().includes('saving_throw')
-        ) {
-          proficiencySorter(subrace, key, sub.proficiencies).then();
+        if(key.toLowerCase().includes("option") 
+            || key.toLowerCase().includes("choice")) {
+          promises.push(optionsExtractor(subrace, key)
+            .then((options) => {
+              raceContainer.options.push(options.options);
+              raceContainer.equipment.push(options.equipment);
+            }))
+        }
+        else if(key.toLowerCase().includes("trait")) {
+          promises.push(descriptionAdder(subrace, key)
+            .then());
+        }
+        else if(key.toLowerCase().includes("proficienc")
+                || key.toLowerCase().includes("saving_throw") 
+                || (key.toLowerCase().includes('language') && !key.toLowerCase().includes('_desc'))) {
+          promises.push(proficiencySorter(subrace, key, raceContainer)
+            .then());
+        }
+        else if (key.toLowerCase().includes('ability')) {
+            for (let score of subrace[key]) {
+               // console.log(score.ability_score);
+               score.ability_score.full_name = fullAbScore[score.ability_score.name];
+            }
         }
       });
-      return {
-        ...sub,
-        ...subrace,
-      };
-    });
+      return Promise.all(promises);
 };
+
 const getRaceMiscDescriptions = async race => {
     let promises = [];
     for (optionSet of race.options) {
         optionSet.options.forEach(option => {
+            if(!option.hasOwnProperty('url')) {return;}
             promises.push(axios.get(option.url)
             .then(optionDetails => {
                 optionDetails = optionDetails.data;
@@ -240,41 +231,24 @@ const getRaceMiscDescriptions = async race => {
 const propogateRacePointer = async racePointer => {
     const promises =[];
     const raceContainer = {
-        main: {
         options: [],
         profCount: 0,
-        proficiencies: {
-        },
-        },
-        sub: [
-        /*{
-        
-        options: [],
-        proficiencies: {
-            weapons: [],
-            skills: [],
-            languages: [],
-            tools: []
-        }
-        
-        }*/
-        ],
+        proficiencies: {},
+        main: {},
+        sub: {},
         equipment: []
     };
-  const race = (await axios.get(racePointer)).data;
-  if (race.subraces.length > 0) {
-    /*
-  for (let subracePointer of race.subraces) {
-    raceContainer.sub.push(propogateSubracePointer(subracePointer));
-    */
-  }
+  const race = (await axios.get(racePointer.url)).data;
+  const subrace = racePointer.hasOwnProperty('subrace') ? (await axios.get(racePointer.subrace.url)).data : null;
+  if (subrace) promises.push(propogateSubracePointer(subrace, raceContainer));
+
   Object.keys(race).forEach(key => {
     if (
         key.toLowerCase().includes('option') ||
         key.toLowerCase().includes('choice')
     ){
         promises.push(optionsExtractor(race, key).then(options => {
-          raceContainer.main.options.push(options.options);
+          raceContainer.options.push(options.options);
           raceContainer.equipment.push(options.equipment);
         }));
       } else if (key.toLowerCase().includes('trait')) {
@@ -285,7 +259,7 @@ const propogateRacePointer = async racePointer => {
         (key.toLowerCase().includes('language') && !key.toLowerCase().includes('_desc'))
       ) {
           //console.log(raceContainer.main);
-        promises.push(proficiencySorter(race, key, raceContainer.main).then());
+        promises.push(proficiencySorter(race, key, raceContainer).then());
       }
       else if (key.toLowerCase().includes('ability')) {
           for (let score of race[key]) {
@@ -295,7 +269,8 @@ const propogateRacePointer = async racePointer => {
       }
     });
   return Promise.all(promises).then(() => {
-      raceContainer.main = {...raceContainer.main, ...race};
+      raceContainer.main = race;
+      raceContainer.sub = subrace;
       return raceContainer;
   });
 };
