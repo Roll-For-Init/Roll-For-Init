@@ -13,103 +13,133 @@ const fullAbScore = {
     CON: "Constitution"
 }
 
-const optionsExtractor = async (container, key) => {
-  let optionSet = {
-    header: '',
-    options: [],
-    choose: 0,
-  }  
-  let equipmentSet = {
-      header: '',
-      options: [],
-      choose: 0
-  }
-  optionSet.choose = container[key].choose;
-  if(container[key].type.toLowerCase().includes("feature")) {
-    optionSet.header = container.name;
-    optionSet.desc = container.desc;
-  } else if (container[key].type.toLowerCase().includes('language'))
-    optionSet.header = `extra ${container[key].type}`;
-  else optionSet.header = container[key].type.replace('_', " ");
-  if (key.toLowerCase().includes('ability_bonus')) {
-      optionSet.header = `+${container[key].from[0].bonus} Ability Bonus`
-    for (let option of container[key].from) {
-      option.ability_score.full_name = fullAbScore[option.ability_score.name];
-      let optionName = option.ability_score.full_name;
-      let optionObject = {
-        name: optionName,
-      };
-      optionSet.options.push(optionObject);
-    }
-  } else if (
-    !container[key].type.toLowerCase().includes('equipment') &&
-    container[key].from[0].index.toLowerCase().includes('skill')
-  ) {
-    for (let option of container[key].from) {
-      let optionName = option.name.substring(option.name.indexOf(':') + 2);
-      let optionObject = {
-        name: optionName,
-      };
-      optionSet.options.push(optionObject);
-    }
-  } else {
-    if (container[key].type.toLowerCase().includes('equipment')) {
-      for (let option of container[key].from) {
-        if (option.equipment_option != undefined) {
-            let optionObject = {
-                name: option.equipment_option.from.equipment_category.name,
-                url: option.equipment_option.from.equipment_category.url
-            }
-            optionSet.options.push(optionObject);
-        } else if (option.equipment_category != undefined) {
-            let optionObject = {
-                name: option.equipment_category.name,
-                url: option.equipment_category.url
-            }
-            equipmentSet.options.push(optionObject);
-        } else {
-          //console.log(option);
-          if (option['0']) {
-            let optionName;
-            let urls = [];
-            for (let i = 0; option[`${i}`]; i++) {
-              if (option[`${i}`].equipment) {
-                optionName = `1 ${option[i].equipment.name}`;
-                urls.push(option[i].equipment.url)
-              } else
-                optionName = `${option[i].equipment_option.choose} ${option[i].equipment_option.from.equipment_category.name}`;
-                urls.push(option[i].equipment_option.from.equipment_category.url)
+const optionsHelper = async (container, options, key) => {
+    let optionSet = {
+        header: '',
+        options: [],
+        choose: 0,
+      }  
+      let equipmentSet = {
+          header: '',
+          options: [],
+          choose: 0
+      }
 
-
-              if (option[i + 1]) {
-                optionName += ' and ';
-              }
-            }
-            let optionObject = {
-              name: optionName,
-              urls: urls
-            };
-            equipmentSet.options.push(optionObject);
-          } else {
-              let optionObject = {
-                  name: option.name,
-                  url: option.url
-              }
-              equipmentSet.options.push(optionObject);
-          }
-        }
+    optionSet.choose = options.choose;
+    if(options.type.toLowerCase().includes("feature")) {
+      optionSet.header = container.name;
+      optionSet.desc = container.desc;
+    } else if (options.type.toLowerCase().includes('language'))
+      optionSet.header = `extra ${options.type}`;
+    else optionSet.header = options.type.replace('_', " ");
+    if (key.toLowerCase().includes('ability_bonus')) {
+        optionSet.header = `+${options.from[0].bonus} Ability Bonus`
+      for (let option of options.from) {
+        option.ability_score.full_name = fullAbScore[option.ability_score.name];
+        let optionName = option.ability_score.full_name;
+        let optionObject = {
+          name: optionName,
+        };
+        optionSet.options.push(optionObject);
+      }
+    } else if (
+      !options.type.toLowerCase().includes('equipment') &&
+      options.from[0].index.toLowerCase().includes('skill')
+    ) {
+      for (let option of options.from) {
+        let optionName = option.name.substring(option.name.indexOf(':') + 2);
+        let optionObject = {
+          name: optionName,
+        };
+        optionSet.options.push(optionObject);
       }
     } else {
-      for (let option of container[key].from) {
-          let optionObject = {
-              name: option.name,
-              url: option.url
+      if (options.type.toLowerCase().includes('equipment')) {
+        for (let option of options.from) {
+          if (option.equipment_option != undefined) {
+              let optionObject = {
+                  name: option.equipment_option.from.equipment_category.name,
+                  url: option.equipment_option.from.equipment_category.url
+              }
+              optionSet.options.push(optionObject);
+          } else if (option.equipment_category != undefined) {
+              let optionObject = {
+                  name: option.equipment_category.name,
+                  url: option.equipment_category.url
+              }
+              equipmentSet.options.push(optionObject);
+          } else {
+            //console.log(option);
+            if (option['0']) {
+              let optionName;
+              let urls = [];
+              for (let i = 0; option[i] != undefined; i++) {
+                  //console.log(option[i])
+                if (option[i].equipment) {
+                  optionName = `1 ${option[i].equipment.name}`;
+                  urls.push(option[i].equipment.url)
+                } else{
+                  optionName = `${option[i].equipment_option.choose} ${option[i].equipment_option.from.equipment_category.name}`;
+                  urls.push(option[i].equipment_option.from.equipment_category.url)
+                }
+                if (option[i + 1]) {
+                  optionName += ' and ';
+                }
+              }
+              let optionObject = {
+                name: optionName,
+                url: urls
+              };
+              equipmentSet.options.push(optionObject);
+            } else {
+                let optionObject = {
+                    name: option.name ? option.name : option.equipment.name,
+                    url: option.url ? option.url : option.equipment.url
+                }
+                equipmentSet.options.push(optionObject);
+            }
           }
-          optionSet.options.push(optionObject);
+        }
+      } else {
+        for (let option of options.from) {
+            let optionObject = {
+                name: option.name,
+                url: option.url
+            }
+            optionSet.options.push(optionObject);
+        }
       }
     }
+    if(equipmentSet.header=='') equipmentSet = null;
+    if(optionSet.header=='') optionSet = null;
+    return {options: optionSet, equipment: equipmentSet}
+}
+const optionsExtractor = async (container, key) => {
+  let promises = [];
+  let listOfOptions = container[key];
+  let allOptions = [];
+  let allEquipment = [];
+
+  if(Array.isArray(listOfOptions)) {
+      for (let options of listOfOptions) {
+        let result = optionsHelper(container, options, key)
+        promises.push(result);
+        result.then((res) => {
+            if(res.options) allOptions.push(res.options);
+            if(res.equipment) allEquipment.push(res.equipment);
+        })
+      }
   }
-  return {options: optionSet, equipment: equipmentSet};
+  else {
+    let result = optionsHelper(container, container[key], key)
+    promises.push(result);
+    result.then((res)=> {
+        if(res.options) allOptions.push(res.options);
+        if(res.equipment) allEquipment.push(res.equipment);
+    
+    })
+  }
+  return Promise.all(promises).then(() => {return {options: allOptions, equipment: allEquipment}}); 
 };
 
 const descriptionAdder = async (container, key) => {
@@ -173,12 +203,6 @@ const proficiencySorter = async (container, key, destination) => {
   return Promise.all(promises);
 };
 
-const getRaceList = () => {
-    return axios.get('/api/races').then((races) => {
-       races = races.data.results;
-    });
-}
-
 const propogateSubracePointer = async (subrace, raceContainer) => {
     const promises =[];
 
@@ -187,8 +211,8 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
             || key.toLowerCase().includes("choice")) {
           promises.push(optionsExtractor(subrace, key)
             .then((options) => {
-              raceContainer.options.push(options.options);
-              raceContainer.equipment.push(options.equipment);
+              raceContainer.options = raceContainer.options.concat(options.options);
+              raceContainer.equipment = raceContainer.equipment.concat(options.equipment);
             }))
         }
         else if(key.toLowerCase().includes("trait")) {
@@ -248,8 +272,8 @@ const propogateRacePointer = async racePointer => {
         key.toLowerCase().includes('choice')
     ){
         promises.push(optionsExtractor(race, key).then(options => {
-          raceContainer.options.push(options.options);
-          raceContainer.equipment.push(options.equipment);
+          raceContainer.options = raceContainer.options.concat(options.options);
+          raceContainer.equipment = raceContainer.equipment.concat(options.equipment);
         }));
       } else if (key.toLowerCase().includes('trait')) {
         promises.push(descriptionAdder(race, key).then());
@@ -275,100 +299,73 @@ const propogateRacePointer = async racePointer => {
   });
 };
 
-const classCaller = async () => {
-  var classes = [];
-
-  let classPointerList = await axios.get('/api/classes'); //fetch the list of races
-  let classList = classPointerList.data.results;
-
-  let promises = [];
-  for (let classPointer of classList) {
-    let classContainer = {
-      main: {
-        options: [],
-        proficiencies: {
-          weapons: [],
-          skills: [],
-          languages: [],
-          tools: [],
-          throws: [],
-          armor: [],
-        },
-        features: [],
-      },
-    };
-
-    classContainer.main.options = [];
-    classContainer.main.proficiencies = {
-      weapons: [],
-      skills: [],
-      languages: [],
-      tools: [],
-      throws: [],
-      armor: [],
-    };
-    promises.push(
-      axios
-        .get(classPointer.url)
-        .then(theClass => {
-          //fetch each class in the api
-          theClass = theClass.data;
-
-          Object.keys(theClass).forEach(key => {
-            if (
-              key.toLowerCase().includes('option') ||
-              key.toLowerCase().includes('choice')
-            ) {
-              for (let set of theClass[key]) {
-                let temp = {};
-                temp[key] = set;
-                optionsExtractor(temp, key).then(optionSet => {
-                  classContainer.main.options.push(optionSet);
+const classCaller = async (classPointer) => {
+  const promises = [];
+  const classContainer = {
+    main: {
+      options: [],
+      profCount: 0,
+      proficiencies: {},
+      features: [],
+    },
+    equipment: []
+  };
+    const theClass = (await axios.get(classPointer.url)).data; //fetch class
+    Object.keys(theClass).forEach(key => {
+        if (
+            key.toLowerCase().includes('option') ||
+            key.toLowerCase().includes('choice')
+        ) {
+            //console.log(key);
+            promises.push(optionsExtractor(theClass, key).then(optionSet => {
+                classContainer.main.options = classContainer.main.options.concat(optionSet.options);
+                classContainer.equipment = classContainer.equipment.concat(optionSet.equipment);
+            }));
+        } else if (
+            key.toLowerCase().includes('proficienc') ||
+            key.toLowerCase().includes('saving_throw')
+        ) {
+            promises.push(proficiencySorter(
+            theClass,
+            key,
+            classContainer.main
+            ).then());
+        }
+    });
+    let featureURL = `${theClass.class_levels}/1`;
+    promises.push(axios.get(featureURL)
+    .then((details) => {
+        let morePromises = [];
+        details = details.data;
+        if(details.feature_choices.length >0) {
+            for (let set of details.feature_choices) {
+                //console.log(set);
+                axios.get(set.url)
+                .then((choice) => {
+                    //console.log(choice.data);
+                    morePromises.push(optionsExtractor(choice.data, 'choice')
+                    .then(choiceSet => {
+                        classContainer.main.options = classContainer.main.options.concat(choiceSet.options);
+                    }))
                 });
-              }
-            } else if (
-              key.toLowerCase().includes('proficienc') ||
-              key.toLowerCase().includes('saving_throw')
-            ) {
-              proficiencySorter(
-                theClass,
-                key,
-                classContainer.main.proficiencies
-              ).then();
             }
-          });
-          let featureURL = `${theClass.class_levels}/1`;
-          axios.get(featureURL)
-            .then((details) => {
-              details = details.data;
-              if(details.feature_choices.length >0) {
-                for (let set of details.feature_choices) {
-                  //console.log(set);
-                  axios.get(set.url)
-                    .then((choice) => {
-                      optionsExtractor(choice.data, choice)
-                        .then(choiceSet => {
-                          classContainer.main.options.push(choiceSet);
-                        })
-                      });
-                }
-              }
-            descriptionAdder(details, 'features').then();
-          });
-          return theClass;
-        })
-        .then(theClass => {
-          classContainer.main = {
+        }
+        else morePromises.push(descriptionAdder(details, 'features').then());
+        return Promise.all(morePromises);
+    }));
+
+    return Promise.all(promises).then(() => {
+        classContainer.main = {
             ...classContainer.main,
             ...theClass,
-          };
-          classes.push(classContainer);
-        })
-    );
-  }
-  return Promise.all(promises).then(() => classes);
+        }
+        return classContainer;
+    });
 };
 
+const getClassDescriptions = async () => {
+
+}
 const getBackgroundList = async () => {
   var backgrounds=[];
 
@@ -544,5 +541,5 @@ useEffect(() => {
 
 */
 
-module.exports = { getRaceList, classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions};
+module.exports = { classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions, getClassDescriptions};
 

@@ -10,6 +10,7 @@ import {
   DELETE_CHARACTER_FAIL,
   SET_ALERT,
   SET_RACE,
+  SET_CLASS
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -106,4 +107,9 @@ export const startCharacter = () => dispatch => {
 export const setRace = (charID, race) => dispatch => {
   console.log('SET_RACE', charID, race);
   dispatch({ type: SET_RACE, payload: { charID, race } });
+};
+
+export const setClass = (charID, theClass) => dispatch => {
+    console.log('SET_CLASS', charID, theClass);
+    dispatch({type: SET_CLASS, payload: {charID, theClass}});
 };

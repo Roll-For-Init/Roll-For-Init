@@ -19,9 +19,9 @@ const deleteCharacter = characterData => {
   return axios.delete(API_URL + 'characters/' + id + '/', characterData);
 };
 
-const getRaceList = () => {
-    return axios.get(`${API_URL}races`).then((races) => {
-        return races.data.results;
+const getIndexedList = (type) => {
+    return axios.get(`${API_URL}${type}`).then((items) => {
+        return items.data.results;
     });
 };
 
@@ -46,11 +46,13 @@ const getRaceDetails = (race) => {
     return apiCaller.getRaceMiscDescriptions(race);
 }
 
-const getClassInfo = className => {
-  const query = className ? className : '';
-  return axios.get(API_URL + 'classes/' + query);
+const getClassInfo = (theClass) => {
+    return apiCaller.classCaller(theClass);
 };
 
+const getClassDetails = (theClass) => {
+    return apiCaller.getClassDescriptions(theClass);
+}
 const getBackgroundInfo = backgroundName => {
   const query = backgroundName ? backgroundName : '';
   return axios.get(API_URL + 'backgrounds/' + query);
@@ -65,10 +67,11 @@ export default {
   createCharacter,
   updateCharacter,
   deleteCharacter,
-  getRaceList,
+  getIndexedList,
   getRaceInfo,
   getClassInfo,
   getBackgroundInfo,
   getAbilityScoreInfo,
-  getRaceDetails
+  getRaceDetails,
+  getClassDetails
 };

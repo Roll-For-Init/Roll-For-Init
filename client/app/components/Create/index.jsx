@@ -48,13 +48,14 @@ useEffect(() => {
   fetchData();
 }, []);
 */
+
   const getPage = page => {
     switch (page.name) {
       case 'race':
         pages = <Race setPage={setPage} page={page} charID={charID} />;
         break;
       case 'class':
-        pages = <Class setPage={setPage} page={page} />;
+        pages = <Class setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'background':
         pages = <Background setPage={setPage} page={page} />;

@@ -64,12 +64,8 @@ const Race = ({ charID, setPage }) => {
   const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
-    CharacterService.getRaceList().then((list) => setRaces(list));
+    CharacterService.getIndexedList("races").then((list) => setRaces(list));
   }, []);
-
-  useEffect(() => {
-    //console.log('Character', character);
-  }, [character]);
 
   //pass in an object of the fields to edit i.e. {index: INDEX} or {choiceA: CHOICE}
   //access with character.race.choiceA

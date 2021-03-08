@@ -5,6 +5,7 @@ import {
   UPDATE_CHARACTER_SUCCESS,
   UPDATE_CHARACTER_FAIL,
   SET_RACE,
+  SET_CLASS
 } from '../actions/types';
 
 const initialCharacter = {
@@ -37,6 +38,14 @@ const character = (state = initialCharacter, action, charID) => {
             ? null
             : { ...state.race, ...payload.race },
       };
+    case SET_CLASS:
+        return {
+            ...state,
+            class:
+                payload.theClass.index === null 
+                ? null
+                : {...state.theClass, ...payload.theClass},
+        }
     default:
       return state;
   }
@@ -72,6 +81,11 @@ export default function(state = initialState, action) {
         ...state,
         [payload.charID]: character(state[payload.charID], action, payload),
       };
+    case SET_CLASS:
+        return {
+            ...state,
+            [payload.charID]: character(state[payload.charID], action, payload),
+        }
     default:
       return state;
   }

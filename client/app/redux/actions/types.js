@@ -25,6 +25,7 @@ export const DELETE_CHARACTER_SUCCESS = 'DELETE_CHARACTER_SUCCESS';
 export const DELETE_CHARACTER_FAIL = 'DELETE_CHARACTER_FAIL';
 
 export const SET_RACE = 'SET_RACE';
+export const SET_CLASS = 'SET_CLASS';
 
 // ---------------------------  Game --------------------------- //
 export const CREATE_GAME_SUCCESS = 'CREATE_GAME_SUCCESS';
