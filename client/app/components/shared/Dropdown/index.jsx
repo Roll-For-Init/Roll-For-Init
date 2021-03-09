@@ -41,6 +41,7 @@ function Dropdown({
             setSelection(select)
           }
           else setSelection([...selection, item]);
+          console.log(selection, item)
         }
       }
     } else {

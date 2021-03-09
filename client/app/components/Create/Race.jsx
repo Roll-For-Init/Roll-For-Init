@@ -260,7 +260,7 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
               title={`Choose ${option.choose} ${option.header}`}
               items={option.options}
               width= "100%"
-              selection={userChoices[`dropdown-${index}`]}
+              selection={userChoices[`${option.header.toLowerCase().replace(' ','-')}-${index}`]}
               setSelection={setUserChoices}
               stateKey={`${option.header.toLowerCase().replace(' ','-')}-${index}`}
               />

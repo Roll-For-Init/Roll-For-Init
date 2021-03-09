@@ -168,11 +168,12 @@ export const Background = ({charID, setPage}) => {
                                         title={`Choose ${option.choose}: ${option.header}`}
                                         items={option.options}
                                         selectLimit={option.choose}
-                                        multiSelect
-                                        selection={userChoices[`dropdown-${index}`]}
+                                        multiSelect={option.choose > 1}
+                                        selection={userChoices[`${option.header.toLowerCase().replace(' ','-')}-${index}`]}
                                         setSelection={setUserChoices}
                                         classname="choice"
                                         stateKey={`${option.header.toLowerCase().replace(' ','-')}-${index}`}
+                                        key={index}
                                     />)
                                 })}
                         </div>
