@@ -312,6 +312,7 @@ export const Background = ({charID, setPage}) => {
     );
 };
 
+/*
 const mapStateToProps = state => ({
     backgrounds: state.createCharacter,
 });
@@ -321,3 +322,5 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Background);
+*/
+export default Background;

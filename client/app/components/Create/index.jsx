@@ -22,7 +22,6 @@ const buttonNames = [
   'class',
   'background',
   'abilities',
-  'options',
   'description',
   'equipment',
 ];

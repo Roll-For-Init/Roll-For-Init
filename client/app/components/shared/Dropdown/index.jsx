@@ -21,47 +21,47 @@ function Dropdown({
   if (selection == undefined) selection = [];
   //Dropdown.handleClickOutside = () => setOpen(false);
 
-  const clickOutsideConfig = {
-    handleClickOutside: () => Dropdown.handleClickOutside,
-    };
-
-  function handleOnClick(item) {
-    if (!selection.some(current => current.index === item.index)) {
-      if (!multiSelect) {
-        if(stateKey!=undefined) {
-          let select = {};
-          select[stateKey] = [item];
-          setSelection(select)
+    function handleOnClick(item) {
+        if (!selection.some(current => current.index === item.index)) {
+            if (!multiSelect) {
+                if(stateKey!=undefined) {
+                let select = {};
+                select[stateKey] = [item];
+                setSelection(select)
+                }
+                else setSelection([item]);
+                setTitle([item.name]);
+                toggle(!open);
+            } 
+            else if (multiSelect) {
+                if (selection.length < selectLimit) {
+                    if(stateKey!=undefined) {
+                        let select = {};
+                        select[stateKey] = [...selection, item]
+                        setSelection(select)
+                    }
+                    else setSelection([...selection, item]);
+                    console.log(selection, item)
+                }
+            }
         }
-        else setSelection([item]);
-        setTitle([item.name]);
-        toggle(!open);
-      } else if (multiSelect) {
-        if (selection.length < selectLimit) {
-          if(stateKey!=undefined) {
-            let select = {};
-            select[stateKey] = [...selection, item]
-            setSelection(select)
-          }
-          else setSelection([...selection, item]);
-          console.log(selection, item)
+        else {
+            if (multiSelect) {
+                let selectionAfterRemoval = selection;
+                selectionAfterRemoval = selectionAfterRemoval.filter(
+                current => current.index !== item.index
+                );
+                if(stateKey!=undefined) {
+                let select = {};
+                select[stateKey] = [...selectionAfterRemoval];
+                setSelection(select);
+                }
+                else setSelection([...selectionAfterRemoval]);
+            } 
+            else {
+                toggle(!open);
+            }
         }
-      }
-    } else {
-      if (multiSelect) {
-        let selectionAfterRemoval = selection;
-        selectionAfterRemoval = selectionAfterRemoval.filter(
-          current => current.index !== item.index
-        );
-        if(stateKey!=undefined) {
-          let select = {};
-          select[stateKey] = [...selectionAfterRemoval];
-          setSelection(select);
-        }
-        else setSelection([...selectionAfterRemoval]);
-      } else {
-        toggle(!open);
-      }
     }
 
     function isItemInSelection(item) {
@@ -101,7 +101,7 @@ function Dropdown({
                                     isItemInSelection(item)
                                         ? 'selected'
                                         : multiSelect &&
-                                          selection.length >= selectLimit
+                                        selection.length >= selectLimit
                                         ? 'unselectable'
                                         : ''
                                 }
@@ -126,8 +126,13 @@ function Dropdown({
                 </ul>
             )}
         </div>
-    );}   
+    );  
 }
+
+const clickOutsideConfig = {
+    handleClickOutside: () => Dropdown.handleClickOutside,
+    };
+
 // TODO: fix this outside clicky boi
 //export default onClickOutside(Dropdown, clickOutsideConfig);
 export default Dropdown;
