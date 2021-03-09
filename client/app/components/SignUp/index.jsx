@@ -1,39 +1,63 @@
-import React from "react";
-import { connect, useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
-import { Form, Field } from "react-final-form";
-import { signUp } from "../../actions";
+import React from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { Link, Redirect } from 'react-router-dom';
+import { Form, Field } from 'react-final-form';
+import { register } from '../../redux/actions/auth';
+import validator from 'validator';
 
-import "./styles.scss";
+import './styles.scss';
+import Error from '../Form/Error';
 
-const reduxField = ({ placeholder, input, meta }) => (
-  <div className="input-group mb-3">
-    <input {...input} className="form-control" placeholder={placeholder} />
-    {meta.error && meta.touched && (
-      <span style={{ width: "100%", color: "red" }}>{meta.error}</span>
-    )}
-  </div>
-);
+const reduxField = ({ placeholder, input, meta }) => {
+  return (
+    <div className="input-group mb-3">
+      <input {...input} className="form-control" placeholder={placeholder} />
+      {meta.error && meta.touched && <Error err={meta.error} />}
+    </div>
+  );
+};
 
-const SignUp = props => {
+const validate = values => {
+  const errors = {};
+  if (!values.username) {
+    errors.username = 'Required';
+  }
+  if (!values.email) {
+    errors.email = 'Required';
+  } else {
+    if (!validator.isEmail(values.email)) {
+      errors.email = 'Not a valid email address';
+    }
+  }
+  if (!values.password) {
+    errors.password = 'Required';
+  }
+  if (!values.confirmPassword) {
+    errors.confirmPassword = 'Required';
+  } else if (values.confirmPassword !== values.password) {
+    errors.confirmPassword = 'Passwords do not match';
+  }
+  console.log('values', values, 'errors', errors);
+  return errors;
+};
+
+const SignUp = () => {
+  const { isLoggedIn } = useSelector(state => state.auth);
+  const alert = useSelector(state => state.alert);
+  const submitted = alert && alert.submitted ? alert.submitted : false;
   const dispatch = useDispatch();
   const onSubmit = values => {
-    const promise = new Promise((resolve, reject) => {
-      dispatch(signUp(values));
-      if (!props.signupInfo.error && props.signupInfo.success) {
-        resolve();
-      } else {
-        reject(props.signupInfo.error);
-      }
-    });
-
-    promise.then(() => {
-      props.history.push("/login");
-    });
+    const { username, email, password } = values;
+    dispatch(register(username, email, password));
   };
-
+  if (isLoggedIn === true) {
+    return <Redirect to="/" />;
+  }
+  if (submitted === true) {
+    return <Redirect to="/login" />;
+  }
   return (
-    <div className="container signup">
+    <div className="container">
       <div className="filler-space"></div>
       <div className="row align-items-center">
         <div className="col"></div>
@@ -42,24 +66,8 @@ const SignUp = props => {
       </div>
       <Form
         onSubmit={onSubmit}
-        validate={values => {
-          const errors = {};
-          if (!values.username) {
-            errors.username = "Required";
-          }
-          if (!values.email) {
-            errors.email = "Required";
-          }
-          if (!values.password) {
-            errors.password = "Required";
-          }
-          if (!values.confirmPassword) {
-            errors.confirmPassword = "Required";
-          } else if (values.confirmPassword !== values.password) {
-            errors.confirmPassword = "Password Do Not Match";
-          }
-          return errors;
-        }}
+        validate={values => validate(values)}
+        // eslint-disable-next-line no-unused-vars
         render={({ handleSubmit, form, submitting, invalid, values }) => (
           <form onSubmit={handleSubmit} className="needs-validation input-form">
             <Field
@@ -88,7 +96,7 @@ const SignUp = props => {
             />
             <div className="d-grid gap-2">
               <p className="text-center text-danger m-0">
-                {!invalid && props.signupInfo.error}
+                {alert && alert.message && <Error err={alert.message} />}
               </p>
               <Link to="/">
                 <button
@@ -115,8 +123,4 @@ const SignUp = props => {
   );
 };
 
-const mapStateToProps = state => ({
-  signupInfo: state.signUp
-});
-
-export default connect(mapStateToProps)(SignUp);
+export default SignUp;

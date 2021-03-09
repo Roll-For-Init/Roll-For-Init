@@ -3,44 +3,65 @@ import onClickOutside from 'react-onclickoutside';
 import './styles.scss';
 
 function Dropdown({
-    title,
-    items,
-    width,
-    multiSelect = false,
-    selectLimit = 2,
-    selection,
-    setSelection,
-    classname,
+  title,
+  items,
+  width,
+  multiSelect = false,
+  selectLimit = 2,
+  selection,
+  setSelection,
+  classname,
+  stateKey
 }) {
-    const [open, setOpen] = useState(false);
-    // const [selection, setSelection] = useState([items[0]]);
-    // //const [multiSelection, setMultiSelection] = useState([]);
-    const [newTitle, setTitle] = useState([title]);
-    const toggle = () => setOpen(!open);
-    //Dropdown.handleClickOutside = () => setOpen(false);
+  const [open, setOpen] = useState(false);
+  // const [selection, setSelection] = useState([items[0]]);
+  // //const [multiSelection, setMultiSelection] = useState([]);
+  const [newTitle, setTitle] = useState([title]);
+  const toggle = () => setOpen(!open);
+  if (selection == undefined) selection = [];
+  //Dropdown.handleClickOutside = () => setOpen(false);
 
-    function handleOnClick(item) {
-        if (!selection.some(current => current.index === item.index)) {
-            if (!multiSelect) {
-                setSelection([item]);
-                setTitle([item.name]);
-                toggle(!open);
-            } else if (multiSelect) {
-                if (selection.length < selectLimit) {
-                    setSelection([...selection, item]);
-                }
-            }
-        } else {
-            if (multiSelect) {
-                let selectionAfterRemoval = selection;
-                selectionAfterRemoval = selectionAfterRemoval.filter(
-                    current => current.index !== item.index
-                );
-                setSelection([...selectionAfterRemoval]);
-            } else {
-                toggle(!open);
-            }
+  const clickOutsideConfig = {
+    handleClickOutside: () => Dropdown.handleClickOutside,
+    };
+
+  function handleOnClick(item) {
+    if (!selection.some(current => current.index === item.index)) {
+      if (!multiSelect) {
+        if(stateKey!=undefined) {
+          let select = {};
+          select[stateKey] = [item];
+          setSelection(select)
         }
+        else setSelection([item]);
+        setTitle([item.name]);
+        toggle(!open);
+      } else if (multiSelect) {
+        if (selection.length < selectLimit) {
+          if(stateKey!=undefined) {
+            let select = {};
+            select[stateKey] = [...selection, item]
+            setSelection(select)
+          }
+          else setSelection([...selection, item]);
+          console.log(selection, item)
+        }
+      }
+    } else {
+      if (multiSelect) {
+        let selectionAfterRemoval = selection;
+        selectionAfterRemoval = selectionAfterRemoval.filter(
+          current => current.index !== item.index
+        );
+        if(stateKey!=undefined) {
+          let select = {};
+          select[stateKey] = [...selectionAfterRemoval];
+          setSelection(select);
+        }
+        else setSelection([...selectionAfterRemoval]);
+      } else {
+        toggle(!open);
+      }
     }
 
     function isItemInSelection(item) {
@@ -105,13 +126,8 @@ function Dropdown({
                 </ul>
             )}
         </div>
-    );
+    );}   
 }
-
-const clickOutsideConfig = {
-    handleClickOutside: () => Dropdown.handleClickOutside,
-};
-
 // TODO: fix this outside clicky boi
 //export default onClickOutside(Dropdown, clickOutsideConfig);
 export default Dropdown;
