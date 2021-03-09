@@ -10,24 +10,38 @@ function Dropdown({
   selectLimit = 2,
   selection,
   setSelection,
-  classname
+  classname,
+  stateKey
 }) {
   const [open, setOpen] = useState(false);
   // const [selection, setSelection] = useState([items[0]]);
   // //const [multiSelection, setMultiSelection] = useState([]);
   const [newTitle, setTitle] = useState([title]);
   const toggle = () => setOpen(!open);
+  if (selection == undefined) selection = [];
   //Dropdown.handleClickOutside = () => setOpen(false);
 
   function handleOnClick(item) {
+
     if (!selection.some(current => current.index === item.index)) {
       if (!multiSelect) {
-        setSelection([item]);
+        if(stateKey!=undefined) {
+          let select = {};
+          select[stateKey] = [item];
+          setSelection(select)
+        }
+        else setSelection([item]);
         setTitle([item.name]);
         toggle(!open);
       } else if (multiSelect) {
         if (selection.length < selectLimit) {
-          setSelection([...selection, item]);
+          if(stateKey!=undefined) {
+            let select = {};
+            select[stateKey] = [...selection, item]
+            setSelection(select)
+          }
+          else setSelection([...selection, item]);
+          console.log(selection, item)
         }
       }
     } else {
@@ -36,7 +50,12 @@ function Dropdown({
         selectionAfterRemoval = selectionAfterRemoval.filter(
           current => current.index !== item.index
         );
-        setSelection([...selectionAfterRemoval]);
+        if(stateKey!=undefined) {
+          let select = {};
+          select[stateKey] = [...selectionAfterRemoval];
+          setSelection(select);
+        }
+        else setSelection([...selectionAfterRemoval]);
       } else {
         toggle(!open);
       }

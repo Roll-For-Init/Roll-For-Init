@@ -1,49 +1,43 @@
-import React, { useState } from "react";
+import React, { useEffect, useState, useReducer } from "react";
 import { connect } from "react-redux";
-import { clearSelectedInfo, getClassInfo } from "../../actions";
+import { useSelector, useDispatch } from 'react-redux';
+import CharacterService from '../../redux/services/character.service';
+import { clearSelectedInfo, getClassInfo } from "../../redux/actions";
 import Dropdown from "../shared/Dropdown";
-import {classCaller} from "../apiCaller";
+import {setClass} from "../../redux/actions";
 
+const Class = ({charID, setPage}) => {
+  const dispatch = useDispatch();
+  const [classes, setClasses] = useState(null);
+  const [viewClass, setViewClass] = useState(false);
 
-export const Class = props => {
-  const { classes, selectedInfo } = props.classes;
-  let apiData;
+  const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      apiData = await classCaller();
-      console.log(apiData);
-      /*apiData.main for the class. 
-        all properties are the same as in the api. 
-        there are also three properties in .main -- .options, .proficiencies, and .features -- that group all options, features, and proficiencies together.
-        proficiencies are sorted into .weapons, .armor, .languages, .skills, .tools, and .throws. 
-        options is an array where each object in it has a .choose (with how many you should choose, an integer), .header (the type, ie "extra language")
-          and .options subarray with .name and .desc in each. 
-        ANY .DESC DESCRIPTION IS AN ARRAY. proceeed accordingly.
-      */
-    }
-    fetchData();
+    CharacterService.getIndexedList("classes").then((list) => setClasses(list));
   }, []);
-  const selectClass = name => {
-    props.selectClass(name);
+  
+  const selectClass = theClass => {
+    dispatch(setClass(charID, theClass));
+    setViewClass(true);
   };
 
   return (
     <div className="class position-relative">
-      {!selectedInfo ? (
+      {!viewClass ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Class</h2>
           </div>
           <div className="dropdown btn-group-vertical w-100 mt-3">
-            {classes.map((name, idx) => (
+            {classes && classes.map((theClass, idx) => (
               <div className="w-100 h-auto" key={idx}>
                 <button
                   className="btn btn-lg m-0 mb-3 options"
                   type="button"
-                  onClick={() => selectClass(name.name)}
+                  onClick={() => selectClass({index: theClass.name, url: theClass.url})}
                 >
-                  {name.name}
+                  {theClass.name}
                 </button>
               </div>
             ))}
@@ -51,34 +45,60 @@ export const Class = props => {
         </>
       ) : (
         <SidePanel
-          info={selectedInfo}
-          setPage={props.setPage}
-          selectClass={selectClass}
-          clearSelectedInfo={props.clearSelectedInfo}
+          charID = {charID}
+          setPage={setPage}
+          clearClass={() => setViewClass(false)}
+          dispatch={dispatch}
         />
       )}
     </div>
   );
 };
 
-const SidePanel = props => {
+const SidePanel = ({charID, setPage, clearClass, dispatch}) => {
+  const reducer = (state, newProp) => {
+    let newState = {...state, ...newProp};
+    dispatch(setClass(charID, {choices: newState}));
+    return newState;
+}
 
+  const theClass = useSelector(state => state.characters[charID].class);
+
+  const [userChoices, setUserChoices] = useReducer(reducer, {}); //See background for an example! Make sure to include a key in the dropdown
+  const [classInfo, setClassInfo] = useState(undefined);
   const [selection1, setSelection1] = useState([]);
   const [selection2, setSelection2] = useState([]);
 
+  useEffect(() => {
+    CharacterService.getClassInfo(theClass).then(
+      theClass => {
+        console.log(theClass);
+        setClassInfo(theClass); //TODO: or subrace
+        return theClass
+      }
+      /*error => {
+        console.log(error.toString());
+      }*/
+    ).then(theClass => {
+      CharacterService.getClassDetails(theClass).then(theClass => {setClassInfo(theClass)});
+      let equipment = {equipment: theClass.main.starting_equipment};
+      dispatch(setClass(charID, equipment));
+      dispatch(setClass(charID, {proficiencies: theClass.proficiencies}))    
+
+    });
+  }, []);
+
   const onNext = () => {
-    props.setPage({ index: 2, name: "background" });
-    props.clearSelectedInfo();
+    setPage({ index: 2, name: "background" });
+    clearClass();
     window.scrollTo(0, 0);
   };
-
-  console.log(props.info);
 
   return (
     <>
       <div className="d-none d-md-flex title-back-wrapper">
         <button
-          onClick={() => props.selectClass(null)}
+          onClick={clearClass}
           className="m-0 mr-3 btn-secondary btn-back"
         >
           <i className="bi bi-chevron-left"></i>
@@ -90,7 +110,7 @@ const SidePanel = props => {
       </div>
       <div className="d-md-none">
         <button
-          onClick={() => props.selectClass(null)}
+          onClick={clearClass}
           className="btn btn-secondary btn-back-sm"
         >
           <i className="bi bi-chevron-left"></i><span>Back</span>
@@ -158,6 +178,9 @@ const SidePanel = props => {
   );
 };
 
+export default Class;
+/*
+
 const mapStateToProps = state => ({
   classes: state.createCharacter
 });
@@ -168,3 +191,4 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Class);
+*/

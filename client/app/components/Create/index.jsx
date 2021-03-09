@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Race from './Race';
-// import Class from './Class';
-// import Background from './Background';
-// import Abilities from './Abilities';
+import Class from './Class';
+import Background from './Background';
+import Abilities from './Abilities';
 import Options from './Options';
 import Descriptions from './Descriptions';
 import Equipment from './Equipment';
@@ -13,6 +13,7 @@ import { startCharacter } from '../../redux/actions/';
 
 import './styles.scss';
 import Header from '../shared/Header';
+//import {backgroundCaller} from '../apiCaller';
 
 const buttonNames = [
   'race',
@@ -37,6 +38,16 @@ const PageViewer = ({ charID }) => {
     setPage({ name: page, index: index });
     window.scrollTo(0, 0);
   };
+/*FOR DEBUGGING ONLY 
+useEffect(() => {
+  console.log("in useeffect");
+  const fetchData = async () => {
+    let apiData = {dummy: "stupid"}
+    apiData = await backgroundCaller("/api/backgrounds/acolyte");
+  }
+  fetchData();
+}, []);
+*/
 
   const getPage = page => {
     switch (page.name) {
@@ -44,23 +55,24 @@ const PageViewer = ({ charID }) => {
         pages = <Race setPage={setPage} page={page} charID={charID} />;
         break;
       case 'class':
-        // pages = <Class setPage={setPage} page={page} />;
+        pages = <Class setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'background':
-        // pages = <Background setPage={setPage} page={page} />;
+        pages = <Background setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'abilities':
-        // pages = <Abilities setPage={setPage} page={page} />;
-        break;
-      case 'options':
-        pages = <Options setPage={setPage} page={page} />;
+        pages = <Abilities setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'description':
-        pages = <Descriptions setPage={setPage} page={page} />;
+        pages = <Descriptions setPage={setPage} page={page} charID = {charID}/>;
         break;
       case 'equipment':
-        pages = <Equipment setPage={setPage} page={page} />;
+        pages = <Equipment setPage={setPage} page={page} charID = {charID}/>;
         break;
+        /*
+      case 'spells':
+        pages = <Spells setPage={setPage} page={page} charID = {charID}/>;
+      break;*/
     }
   };
 
@@ -86,9 +98,9 @@ const PageViewer = ({ charID }) => {
                 key={name}
                 type="button"
                 className={classname}
-                disabled={page.index < idx}
+                //disabled={page.index < idx}
                 onClick={() => {
-                  page.index > idx && onPageChange(name, idx);
+                  page.index != idx && onPageChange(name, idx);
                 }}
               >
                 {name}

@@ -1,19 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Dropdown from '../shared/Dropdown';
 import { setRace } from '../../redux/actions';
-
 import CharacterService from '../../redux/services/character.service';
 import { PropTypes } from 'prop-types';
 
 const RaceButton = ({ race, setRace, idx }) => {
-  const hasSubraces = race.subraces !== undefined;
+  const hasSubraces = race.subraces.length > 0;
 
   const handleClick = () => {
     if (!hasSubraces) {
       setRace();
     }
   };
+
+  const handleSubClick = (subrace) => {
+    setRace(subrace)
+  }
 
   return (
     <div className="w-100 h-auto">
@@ -40,7 +43,7 @@ const RaceButton = ({ race, setRace, idx }) => {
             <button
               key={idx}
               className="w-100 m-0 border-0 shadow-none text-center text-uppercase options-dropdown"
-              onClick={() => handleClick()}
+              onClick={() => handleSubClick(subrace)}
             >
               {subrace.name}
             </button>
@@ -56,23 +59,25 @@ const Loading = () => {
 
 const Race = ({ charID, setPage }) => {
   const dispatch = useDispatch();
-  const [races, setRaces] = useState(CharacterService.getRaceList());
+  const [races, setRaces] = useState(null);
+  const [viewRace, setViewRace] = useState(false)
 
   const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
-    console.log('Character', character);
-  }, [character]);
+    CharacterService.getIndexedList("races").then((list) => setRaces(list));
+  }, []);
 
   //pass in an object of the fields to edit i.e. {index: INDEX} or {choiceA: CHOICE}
   //access with character.race.choiceA
   const setSelectedRace = race => {
     dispatch(setRace(charID, race));
+    setViewRace(true)
   };
 
   return (
     <div className="race position-relative">
-      {character.race === null ? (
+      {!viewRace  ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Race</h2>
@@ -84,7 +89,8 @@ const Race = ({ charID, setPage }) => {
                   return (
                     <RaceButton
                       race={race}
-                      setRace={() => setSelectedRace({ index: race.index })}
+                      setRace={(subrace) => subrace ? setSelectedRace({index: race.name, url: race.url, subrace: {index: subrace.name, url: subrace.url}}) 
+                      : setSelectedRace({ index: race.name, url: race.url})}
                       key={idx}
                       idx={idx}
                     />
@@ -96,7 +102,8 @@ const Race = ({ charID, setPage }) => {
         <RaceDetails
           charID={charID}
           setPage={setPage}
-          clearRace={() => setSelectedRace({ index: null })}
+          clearRace={() => setViewRace(false)}
+          dispatch={dispatch}
         />
       )}
     </div>
@@ -117,14 +124,27 @@ BasicInfoCard.propTypes = {
   size: PropTypes.string.isRequired,
 };
 
-const AbilityBonusCard = ({ bonus, ability_score }) => {
+const AbilityBonusCard = ({ ability_bonuses }) => {
   return (
     <div className="w-auto d-inline-block card content-card floating-card">
-      +{bonus}{' '}
-      {ability_score.full_name ? ability_score.full_name : ability_score.name}
+      {ability_bonuses.map((ability, index) => {
+        if(index+1 == ability_bonuses.length)
+        return (
+          `+${ability.bonus} ${ability.ability_score.full_name}`
+        )
+        else
+        return (
+          <>
+          +{ability.bonus}{" "}{ability.ability_score.full_name}
+          <br />
+          </>
+        )
+      })}
     </div>
   );
 };
+
+/*
 const abilityBonusProps = {
   bonus: PropTypes.number.isRequired,
   ability_score: PropTypes.shape({
@@ -134,22 +154,17 @@ const abilityBonusProps = {
   }),
 };
 AbilityBonusCard.propTypes = { ...abilityBonusProps };
-
+*/
 const AbilityBonuses = ({ ability_bonuses }) => {
   return (
     <React.Fragment>
-      {ability_bonuses.map((ability, index) => {
-        return (
           <AbilityBonusCard
-            ability_score={ability.ability_score}
-            bonus={ability.bonus}
-            key={index}
+            ability_bonuses={ability_bonuses}
           />
-        );
-      })}
     </React.Fragment>
   );
 };
+/*
 AbilityBonuses.propTypes = {
   ability_bonuses: PropTypes.arrayOf(
     PropTypes.shape({
@@ -157,22 +172,44 @@ AbilityBonuses.propTypes = {
     })
   ),
 };
+*/
+const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
+  const reducer = (state, newProp) => {
+    let newState = {...state, ...newProp};
+    dispatch(setRace(charID, {choices: newState}));
+    return newState;
+}
 
-const RaceDetails = ({ charID, setPage, clearRace }) => {
+  const [userChoices, setUserChoices] = useReducer(reducer, {});
   const { race } = useSelector(state => state.characters[charID]);
 
   const [raceInfo, setRaceInfo] = useState(undefined);
 
   useEffect(() => {
-    CharacterService.getRaceInfo(race.index).then(
+    CharacterService.getRaceInfo(race).then(
       race => {
-        setRaceInfo(race.main); //TODO: or subrace
         console.log(race);
-      },
-      error => {
-        console.log(error.toString());
+        setRaceInfo(race);
+        return race
       }
-    );
+      /*error => {
+        console.log(error.toString());
+      }*/
+    ).then(race => {
+      CharacterService.getRaceDetails(race).then(race => {setRaceInfo(race)}); //FUTURE ISSUE: if user navigates away from page too early, they may not have everything they need?
+      let abilityBonuses = race.sub ? race.main.ability_bonuses.concat(race.sub.ability_bonuses)
+      : race.main.ability_bonuses;
+      dispatch(setRace(charID, {ability_bonuses: abilityBonuses}));
+      dispatch(setRace(charID, {proficiencies: race.proficiencies}))  
+      let allTraits = race.sub ? race.main.traits.concat(race.sub.racial_traits) : race.main.traits;
+      dispatch(setRace(charID, {traits: allTraits}))  
+      let description = {
+        summary: [race.main.alignment, race.sub?.desc],
+        age: race.main.age,
+        size: race.main.size_description
+      }
+      dispatch(setRace(charID, {description: description}))
+    })
   }, []);
 
   const [selection1, setSelection1] = useState([]);
@@ -203,48 +240,89 @@ const RaceDetails = ({ charID, setPage, clearRace }) => {
       </div>
       <div className="card translucent-card">
         <div className="card content-card card-title">
-          <h4>{raceInfo.name}</h4>
+          <h4>{raceInfo.sub ? raceInfo.sub.name : raceInfo.main.name}</h4>
         </div>
         <div>
-          <AbilityBonuses ability_bonuses={raceInfo.ability_bonuses} />
+          <AbilityBonuses ability_bonuses={
+            raceInfo.sub ? raceInfo.main.ability_bonuses.concat(raceInfo.sub.ability_bonuses)
+            : raceInfo.main.ability_bonuses
+          } />
+          <BasicInfoCard speed={raceInfo.main.speed} size={raceInfo.main.size} />
         </div>
       </div>
+      {raceInfo.options.length > 0 && (
       <div className="card translucent-card">
         <h4 className="card content-card card-title">Race Options</h4>
         <div>
-          <Dropdown
-            title="Choose 1 High Elf Cantrip"
-            items={[{ index: 'hello', name: 'Hello' }]}
-            width="100%"
-            selection={selection1}
-            setSelection={setSelection1}
-          />
-          <Dropdown
-            title="Choose 1 Extra Language"
-            items={[{ index: 'hello', name: 'Hello' }]}
-            width="100%"
-            selection={selection1}
-            setSelection={setSelection1}
-          />
+          {raceInfo.options.map((option, index) => {
+            return (
+            <Dropdown
+              title={`Choose ${option.choose} ${option.header}`}
+              items={option.options}
+              width= "100%"
+              selectLimit={option.choose}
+              multiselect={option.choose > 1}
+              selection={userChoices[`${option.header.toLowerCase().replace(' ','-')}-${index}`]}
+              setSelection={setUserChoices}
+              classname="choice"
+              stateKey={`${option.header.toLowerCase().replace(' ','-')}-${index}`}
+              key={index}
+              />
+            )
+          })}
         </div>
       </div>
+      )}
+      {raceInfo.profCount > 0 && (
       <div className="card translucent-card">
         <div className="card content-card card-title">
           <h4>Starting Proficiencies</h4>
         </div>
         <div className="card content-card description-card">
-          <p className="text-capitalize">
-            <strong className="small-caps">Weapons</strong> – longswords,
-            shortswords, shortbows, longbows
-          </p>
-          <p className="text-capitalize">
-            <strong className="small-caps">Skills</strong> – perception
-          </p>
-          <p className="text-capitalize">
-            <strong className="small-caps">Languages</strong> – Common, Elvish
-          </p>
+          {//console.log(Object.values(raceInfo.proficiencies))
+          Object.keys(raceInfo.proficiencies).map((key) => {
+            return(
+            <p className="text-capitalize">
+              <strong className="small-caps">{key}</strong> - {raceInfo.proficiencies[key].map((prof, index) => {
+                if(raceInfo.proficiencies[key].length === index+1) return `${prof}`;
+                else return `${prof}, `;
+                })}
+            </p>
+            )
+            
+          })}
         </div>
-      </div>
+      </div>)}
+      {raceInfo.main.traits.length > 0 && (
+        <div className="card translucent-card">
+          <div className="card content-card card-title">
+            <h4>{`${raceInfo.main.name} Traits`}</h4>
+          </div>
+          {raceInfo.main.traits.map((trait) => {
+              return (
+                <div className="card content-card description-card">
+                <h3 className="card-subtitle small-caps">{trait.name}</h3>
+                <p>{trait.desc}</p>
+                </div>
+              )
+            })}
+        </div>
+      )}
+      {raceInfo.sub && raceInfo.sub.racial_traits.length > 0 && (
+        <div className="card translucent-card">
+          <div className="card content-card card-title">
+            <h4>{`${raceInfo.sub.name} Traits`}</h4>
+          </div>
+          {raceInfo.sub.racial_traits.map((trait) => {
+              return (
+                <div className="card content-card description-card">
+                <h3 className="card-subtitle small-caps">{trait.name}</h3>
+                <p>{trait.desc}</p>
+                </div>
+              )
+            })}
+        </div>
+      )}
       <button
         className="text-uppercase btn-primary btn-lg px-5 btn-floating"
         onClick={onNext}

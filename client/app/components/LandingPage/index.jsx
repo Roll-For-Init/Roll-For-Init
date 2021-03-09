@@ -29,6 +29,7 @@ const LandingPage = () => {
             Create New Character
           </button>
         </Link>
+        {/*
         <Link to="/upload">
           <button
             type="button"
@@ -36,29 +37,8 @@ const LandingPage = () => {
           >
             Upload Existing Character
           </button>
-        </Link>
-      </div>
-      {isLoggedIn !== true && (
-        <div className="d-grid gap-6 btm-button-container">
-          <Link to="/login">
-            <button
-              type="button"
-              className="btn btn-primary btn-lg btm-buttons"
-            >
-              Log In
-            </button>
-          </Link>
-          <Link to="/signup">
-            <button
-              type="button"
-              className="btn btn-primary btn-lg btm-buttons"
-            >
-              Sign Up
-            </button>
-          </Link>
-        </div>
-      )}
-      <button
+        </Link>*/}
+             <button
         type="button"
         className="btn btn-secondary btn-lg top-buttons"
         data-toggle="modal"
@@ -88,6 +68,27 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
+      </div>
+      {isLoggedIn !== true && (
+        <div className="d-grid gap-6 btm-button-container">
+          <Link to="/login">
+            <button
+              type="button"
+              className="btn btn-primary btn-lg btm-buttons"
+            >
+              Log In
+            </button>
+          </Link>
+          <Link to="/signup">
+            <button
+              type="button"
+              className="btn btn-primary btn-lg btm-buttons"
+            >
+              Sign Up
+            </button>
+          </Link>
+        </div>
+      )}
     </div>
   );
 };

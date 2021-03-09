@@ -68,6 +68,12 @@ module.exports = {
         include: root("client"),
         loader: "babel-loader",
       },
+      // Dependency source map loader
+      {
+        test: /\.js$/,
+        enforce: 'pre',
+        use: ['source-map-loader'],
+      },
     ]
   },
 };
