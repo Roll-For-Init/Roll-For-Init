@@ -260,9 +260,13 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
               title={`Choose ${option.choose} ${option.header}`}
               items={option.options}
               width= "100%"
+              selectLimit={option.choose}
+              multiselect={option.choose > 1}
               selection={userChoices[`${option.header.toLowerCase().replace(' ','-')}-${index}`]}
               setSelection={setUserChoices}
+              classname="choice"
               stateKey={`${option.header.toLowerCase().replace(' ','-')}-${index}`}
+              key={index}
               />
             )
           })}
