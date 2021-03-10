@@ -19,14 +19,18 @@ const deleteCharacter = characterData => {
   return axios.delete(API_URL + 'characters/' + id + '/', characterData);
 };
 
-const getRaceList = () => {
-  return racePointerList;
+const getIndexedList = (type) => {
+    return axios.get(`${API_URL}${type}`).then((items) => {
+        return items.data.results;
+    });
 };
 
 //Leave out index to get all race objects
-const getRaceInfo = index => {
+const getRaceInfo = (race) => {
+    return apiCaller.propogateRacePointer(race);
+    /*
   if (index) {
-    const racePointer = racePointerList.find(
+    const racePointer = list.find(
       racePointer => racePointer.index === index
     );
     return apiCaller.propogateRacePointer(racePointer);
@@ -36,17 +40,21 @@ const getRaceInfo = index => {
       raceInfoList.push(apiCaller.propogateRacePointer(racePointer));
     }
     return raceInfoList;
-  }
+  }*/
+};
+const getRaceDetails = (race) => {
+    return apiCaller.getRaceMiscDescriptions(race);
+}
+
+const getClassInfo = (theClass) => {
+    return apiCaller.classCaller(theClass);
 };
 
-const getClassInfo = className => {
-  const query = className ? className : '';
-  return axios.get(API_URL + 'classes/' + query);
-};
-
-const getBackgroundInfo = backgroundName => {
-  const query = backgroundName ? backgroundName : '';
-  return axios.get(API_URL + 'backgrounds/' + query);
+const getClassDetails = (theClass) => {
+    return apiCaller.getClassDescriptions(theClass);
+}
+const getBackgroundInfo = background => {
+  return apiCaller.backgroundCaller(`${API_URL}backgrounds/${background.index}`);
 };
 
 const getAbilityScoreInfo = abilityScore => {
@@ -58,9 +66,11 @@ export default {
   createCharacter,
   updateCharacter,
   deleteCharacter,
-  getRaceList,
+  getIndexedList,
   getRaceInfo,
   getClassInfo,
   getBackgroundInfo,
   getAbilityScoreInfo,
+  getRaceDetails,
+  getClassDetails
 };
