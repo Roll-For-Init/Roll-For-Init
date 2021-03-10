@@ -1,4 +1,6 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
+import { useState } from 'react';
 const { jsPDF } = require("jspdf");
 
 
@@ -25,42 +27,57 @@ const { jsPDF } = require("jspdf");
       return payload;
 }*/
 
-const onClick = () => {
-    var x = [this.refs.Name.value, this.refs.Race.value, this.refs.Background.value, this.refs.Abilities.value, this.refs.Description.value, this.refs.Equipment.value];
-    const doc = new jsPDF();
-    doc.text(x, 10, 10);
-    doc.save("a4.pdf"); // will save the file in the current working directory
-} 
+
 
 export const PDFCreate = () => {
+    const [N, setN] = useState();
+    const [R, setR] = useState();
+    const [C, setC] = useState();
+    const [B, setB] = useState();
+    const [A, setA] = useState();
+    const [D, setD] = useState();
+    const [E, setE] = useState();
+
+    const onClick = () => {
+        const doc = new jsPDF();
+        doc.text("Name: "+ N, 10, 10);
+        doc.text("Race: "+ R, 10, 20);
+        doc.text("Class: "+ C, 10, 30);
+        doc.text("Background: "+ B, 10, 40);
+        doc.text("Abiltiies: "+ A, 10, 50);
+        doc.text("Description: "+ D, 10, 60);
+        doc.text("Equipment: "+ E, 10, 70);
+        doc.save("PDFTest.pdf"); // will save the file in the current working directory
+    } 
+
   return (
     <form>
     <div class="centered">
     <div>
         <label class="label">Name</label>
-        <input class="input" ref="Name" name="Name"  />
+        <input class="input" type="Name" name="Name" value={N}  onChange={e => setN(e.target.value)} />
     </div>
     <div>
         <label class="label">Race</label>
-        <input class="input" ref="Race" name="Race"  />
+        <input class="input" type="Race" name="Race" value={R} onChange={e => setR(e.target.value)} />
     </div>
     <div>
         <label class="label">Class</label>
-        <input class="input" ref="Class" name="Class"  />
+        <input class="input" type="Class" name="Class" value={C} onChange={e => setC(e.target.value)} />
     </div>
     <div>
     <label class="label">Background</label>
-        <input class="input" ref="Background" name="Background"  />
+        <input class="input" type="Background" name="Background" value={B} onChange={e => setB(e.target.value)} />
     </div>
     <label class="label">Abilities</label>
-        <input class="input" ref="Abilities" name="Abilities"  />
+        <input class="input" type="Abilities" name="Abilities" value={A} onChange={e => setA(e.target.value)}/>
     <div>
     <label class="label">Description</label>
-        <input class="input" ref="Description" name="Description"  />
+        <input class="input" type="Description" name="Description" value={D} onChange={e => setD(e.target.value)}  />
     </div>
     <div>
     <label class="label">Equipment</label>
-        <input class="input" ref="Equipment" name="Equipment"  />
+        <input class="input" type="Equipment" name="Equipment" value={E} onChange={e => setE(e.target.value)} />
     </div>
     <div>
     <button onClick={onClick}>
