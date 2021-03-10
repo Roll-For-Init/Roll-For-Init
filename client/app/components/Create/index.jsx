@@ -21,8 +21,8 @@ const buttonNames = [
   'race',
   'class',
   'background',
-  'abilities',
   'description',
+  'abilities',
   'equipment',
 ];
 
@@ -39,7 +39,7 @@ const PageViewer = ({ charID }) => {
     setPage({ name: page, index: index });
     window.scrollTo(0, 0);
   };
-/*FOR DEBUGGING ONLY 
+  /*FOR DEBUGGING ONLY 
 useEffect(() => {
   console.log("in useeffect");
   const fetchData = async () => {
@@ -56,21 +56,21 @@ useEffect(() => {
         pages = <Race setPage={setPage} page={page} charID={charID} />;
         break;
       case 'class':
-        pages = <Class setPage={setPage} page={page} charID = {charID}/>;
+        pages = <Class setPage={setPage} page={page} charID={charID} />;
         break;
       case 'background':
-        pages = <Background setPage={setPage} page={page} charID = {charID}/>;
-        break;
-      case 'abilities':
-        pages = <Abilities setPage={setPage} page={page} charID = {charID}/>;
+        pages = <Background setPage={setPage} page={page} charID={charID} />;
         break;
       case 'description':
-        pages = <Descriptions setPage={setPage} page={page} charID = {charID}/>;
+        pages = <Descriptions setPage={setPage} page={page} charID={charID} />;
+        break;
+      case 'abilities':
+        pages = <Abilities setPage={setPage} page={page} charID={charID} />;
         break;
       case 'equipment':
-        pages = <Equipment setPage={setPage} page={page} charID = {charID}/>;
+        pages = <Equipment setPage={setPage} page={page} charID={charID} />;
         break;
-        /*
+      /*
       case 'spells':
         pages = <Spells setPage={setPage} page={page} charID = {charID}/>;
       break;*/
@@ -101,9 +101,9 @@ useEffect(() => {
                 className={classname}
                 disabled={page.index < idx}
                 onClick={() => {
-                  page.index > idx &&
-                  onPageChange(name, idx);
-                }} >
+                  page.index > idx && onPageChange(name, idx);
+                }}
+              >
                 {name}
               </button>
             );
