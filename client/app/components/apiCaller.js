@@ -450,5 +450,5 @@ useEffect(() => {
 
 */
 
-module.exports = { classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions, getClassDescriptions};
+module.exports = { classCaller, backgroundCaller, propogateRacePointer, getRaceMiscDescriptions, getClassDescriptions};
 

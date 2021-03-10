@@ -8,6 +8,7 @@ import Options from './Options';
 import Descriptions from './Descriptions';
 import Equipment from './Equipment';
 import MobileMenu from './MobileMenu';
+import PDFCreate from './PDFCreate';
 
 import { startCharacter } from '../../redux/actions/';
 
@@ -23,6 +24,7 @@ const buttonNames = [
   'options',
   'description',
   'equipment',
+  'pdf create',
 ];
 
 const Loading = () => {
@@ -69,6 +71,9 @@ useEffect(() => {
       case 'equipment':
         pages = <Equipment setPage={setPage} page={page} charID = {charID}/>;
         break;
+      case 'pdf create':
+          pages = <PDFCreate setPage={setPage} page={page} charID = {charID}/>;
+          break;
         /*
       case 'spells':
         pages = <Spells setPage={setPage} page={page} charID = {charID}/>;
