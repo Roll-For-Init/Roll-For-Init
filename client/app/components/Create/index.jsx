@@ -7,6 +7,7 @@ import Abilities from './Abilities';
 import Options from './Options';
 import Descriptions from './Descriptions';
 import Equipment from './Equipment';
+import Spells from './Spells';
 import MobileMenu from './MobileMenu';
 
 import { startCharacter } from '../../redux/actions/';
@@ -20,10 +21,11 @@ import { Link } from 'react-router-dom';
 const buttonNames = [
   'race',
   'class',
+  'abilities',
   'background',
   'description',
-  'abilities',
   'equipment',
+  'spells',
 ];
 
 const Loading = () => {
@@ -58,22 +60,21 @@ useEffect(() => {
       case 'class':
         pages = <Class setPage={setPage} page={page} charID={charID} />;
         break;
+      case 'abilities':
+        pages = <Abilities setPage={setPage} page={page} charID={charID} />;
+        break;
       case 'background':
         pages = <Background setPage={setPage} page={page} charID={charID} />;
         break;
       case 'description':
         pages = <Descriptions setPage={setPage} page={page} charID={charID} />;
         break;
-      case 'abilities':
-        pages = <Abilities setPage={setPage} page={page} charID={charID} />;
-        break;
       case 'equipment':
         pages = <Equipment setPage={setPage} page={page} charID={charID} />;
         break;
-      /*
       case 'spells':
-        pages = <Spells setPage={setPage} page={page} charID = {charID}/>;
-      break;*/
+        pages = <Spells setPage={setPage} page={page} charID={charID} />;
+        break;
     }
   };
 
