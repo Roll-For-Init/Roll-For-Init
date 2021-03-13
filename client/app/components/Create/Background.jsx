@@ -20,8 +20,8 @@ export const Background = ({ charID, setPage }) => {
   const [musicalInstruments, setMusicalInstruments] = useState([]);
   const [kits, setKits] = useState([]);
   const [landVehicles, setLandVehicles] = useState([]);
-  const [mountsVehicles, setMountsVehicles] = useState([]);
-  const [drawnVehicles, setDrawnVehicles] = useState([]);
+  //const [mountsVehicles, setMountsVehicles] = useState([]);
+  //const [drawnVehicles, setDrawnVehicles] = useState([]);
   const [waterVehicles, setWaterVehicles] = useState([]);
 
   const selectBackground = background => {
@@ -101,16 +101,16 @@ export const Background = ({ charID, setPage }) => {
         setLandVehicles(list.equipment);
       }
     );
-    CharacterService.getSubList(
-      'equipment-categories/mounts-and-vehicles'
-    ).then(list => {
-      setMountsVehicles(list.equipment);
-    });
-    CharacterService.getSubList(
-      'equipment-categories/tack-harness-and-drawn-vehicles'
-    ).then(list => {
-      setDrawnVehicles(list.equipment);
-    });
+    // CharacterService.getSubList(
+    //   'equipment-categories/mounts-and-vehicles'
+    // ).then(list => {
+    //   setMountsVehicles(list.equipment);
+    // });
+    // CharacterService.getSubList(
+    //   'equipment-categories/tack-harness-and-drawn-vehicles'
+    // ).then(list => {
+    //   setDrawnVehicles(list.equipment);
+    // });
     CharacterService.getSubList(
       'equipment-categories/waterborne-vehicles'
     ).then(list => {
@@ -281,7 +281,6 @@ export const Background = ({ charID, setPage }) => {
                       ...otherTools,
                       ...kits,
                       ...landVehicles,
-                      ...drawnVehicles,
                       ...waterVehicles,
                     ]}
                     selection={selectionTlLg1}
