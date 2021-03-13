@@ -34,10 +34,7 @@
       @media (min-width: 768px) {
         width: 400px;
       }
-      background-color: $off-white;
       border: $maroon 3px solid !important;
-      // border-bottom: 0px !important;
-      color: $dark-blue;
       text-transform: capitalize;
       border-radius: 8px;
     }
@@ -107,13 +104,10 @@
 
 .title-card {
   background-color: $maroon;
-  border: 30px solid inherit;
-  border-image: url('../../../public/assets/imgs/border-off-white.png') 156.375 /
-    156.375 stretch;
+  border: 3px solid $maroon;
+  border-image: url('../../../public/assets/imgs/border-off-white.png') 156.375 / 156.375 stretch;
   font-variant: small-caps;
-  margin: 0px auto 1rem;
   width: 450px;
-  max-width: 450px;
 }
 
 .btn-back {
@@ -124,6 +118,7 @@
   font-size: 2rem;
   line-height: 1;
   flex: 0 0 60px;
+  padding: 0px;
 }
 
 .btn-back-spacer {
@@ -136,15 +131,6 @@
 .title-back-wrapper {
   display: flex;
   justify-content: center;
-
-  .title-card {
-    background-color: $maroon;
-    border: 3px solid $maroon;
-    border-image: url('../../../public/assets/imgs/border-off-white.png')
-      156.375 / 156.375 stretch;
-    font-variant: small-caps;
-    width: 450px;
-  }
 }
 
 .btn-back-sm {
@@ -259,6 +245,13 @@
   width: 100%;
   max-width: 620px;
   display: inline-block;
+
+  .card-subtitle {
+    text-align: center;
+    margin: 0px auto;
+    padding: 0px;
+  }
+
   p {
     margin: 0 auto;
   }
@@ -304,6 +297,11 @@
   font-family: 'IM Fell DW Pica';
   padding: 0px;
   margin: 0px;
+}
+
+.floating-label textarea {
+  margin-top: 5px;
+  color: $dark-blue;
 }
 
 .floating-label input:focus,
