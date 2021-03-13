@@ -1,4 +1,4 @@
-@import "client/app/variables";
+@import 'client/app/variables';
 
 .side-drawer {
   border-right: 1px solid black;
@@ -27,7 +27,8 @@
   h2 {
     background-color: $maroon;
   }
-  .race, .class {
+  .race,
+  .class {
     .options {
       width: 100%;
       @media (min-width: 768px) {
@@ -107,7 +108,8 @@
 .title-card {
   background-color: $maroon;
   border: 30px solid inherit;
-  border-image: url('../../../public/assets/imgs/border-off-white.png') 156.375 / 156.375 stretch;
+  border-image: url('../../../public/assets/imgs/border-off-white.png') 156.375 /
+    156.375 stretch;
   font-variant: small-caps;
   margin: 0px auto 1rem;
   width: 450px;
@@ -136,8 +138,12 @@
   justify-content: center;
 
   .title-card {
-    margin: 0;
-    flex: 0 1 450px;
+    background-color: $maroon;
+    border: 3px solid $maroon;
+    border-image: url('../../../public/assets/imgs/border-off-white.png')
+      156.375 / 156.375 stretch;
+    font-variant: small-caps;
+    width: 450px;
   }
 }
 
@@ -158,7 +164,7 @@
   margin: 5px auto;
   background: transparent;
   border: none;
-  border-radius: 8px; 
+  border-radius: 8px;
 }
 
 .content-card {
@@ -172,7 +178,7 @@
 
 .translucent-card {
   background-color: $light-maroon-translucent;
-  padding: 10px 20px;
+  padding: 20px;
   margin: 25px auto;
   max-width: 660px;
   border-radius: 8px;
@@ -189,6 +195,7 @@
   // margin: auto;
   font-variant: small-caps;
   display: inline-block;
+  margin-top: 0px;
 
   h4 {
     margin: 0;
@@ -204,18 +211,46 @@
 }
 
 .choice {
-  padding: 5px 10px;
+  padding: 5px;
   flex: 1;
-  margin-left: 5px;
-  margin-right: 5px;
-  max-width: 400px;
+  //   margin-left: 5px;
+  //   margin-right: 5px;
+  max-width: 500px;
 }
+// .choice:first-child {
+//   margin-left: 0px;
+// }
+// .choice:last-child {
+//   margin-right: 0px;
+// }
 
 .choice-container {
   @media (min-width: 768px) {
     display: flex;
     justify-content: center;
+    margin-bottom: 5px;
   }
+}
+
+.physical-card {
+  padding: 5px;
+  max-width: 150px;
+  margin-bottom: 5px;
+}
+
+.drag-drop-card {
+  max-width: 500px;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  outline: none;
+}
+
+.upload-buttons {
+  max-width: 100px;
+  max-height: 60px;
+  padding: 5px 0px;
+  margin: 0px;
 }
 
 .description-card {
@@ -236,6 +271,72 @@
   text-decoration: underline;
 }
 
+.error-msg {
+  color: $red;
+  padding-bottom: 0px;
+  margin: 5px 0px 0px 0px;
+}
+
+.upload-file-name {
+  top: 10px;
+  left: 115px;
+  position: absolute;
+}
+
+.floating-label {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  position: relative;
+  font-family: 'IM Fell DW Pica';
+  padding: 5px 0px;
+  margin: 0px;
+  color: $dark-blue-disabled;
+}
+
+.floating-label input,
+.floating-label textarea {
+  width: 100%;
+  border: none;
+  background-color: $off-white !important;
+  box-sizing: border-box;
+  border-radius: 3px;
+  font-family: 'IM Fell DW Pica';
+  padding: 0px;
+  margin: 0px;
+}
+
+.floating-label input:focus,
+.floating-label textarea:focus {
+  background-color: $medium-off-white !important;
+  outline: none;
+}
+
+.floating-label input:focus + span,
+.floating-label textarea:focus + span,
+.floating-label.floating span {
+  color: $dark-blue;
+  font-size: 0.625rem;
+  padding: 0px;
+}
+
+.floating-label input:focus:not(:focus-visible),
+.floating-label textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.floating-label span {
+  box-sizing: border-box;
+  font-size: 1rem;
+  left: 0;
+  padding: 10px 0px;
+  pointer-events: none;
+  position: absolute;
+  top: -5px;
+  transition: font-size 200ms, padding 200ms;
+  z-index: 1;
+}
+
 .shoop {
   width: 100%;
 }
@@ -243,8 +344,25 @@
 .btn-floating {
   position: sticky;
   bottom: 25px;
+  z-index: 10;
   margin: 0 25px 25px;
 }
+
+// .read-animate {
+//     animation: readAnimate 200ms ease-in-out forwards;
+// }
+
+// @keyframes readAnimate {
+//     0% {
+//         transform: scaleY(0);
+//     }
+//     95% {
+//         transform: scaleY(0.9);
+//     }
+//     100% {
+//         transform: scaleY(1);
+//     }
+// }
 
 .mobile-menu-wrapper {
   background-color: $maroon;

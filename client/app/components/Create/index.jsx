@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector, useDispatch, connect } from 'react-redux';
 import Race from './Race';
 import Class from './Class';
 import Background from './Background';
@@ -7,22 +7,25 @@ import Abilities from './Abilities';
 import Options from './Options';
 import Descriptions from './Descriptions';
 import Equipment from './Equipment';
+import Spells from './Spells';
 import MobileMenu from './MobileMenu';
 
 import { startCharacter } from '../../redux/actions/';
 
 import './styles.scss';
 import Header from '../shared/Header';
+import { Link } from 'react-router-dom';
+
 //import {backgroundCaller} from '../apiCaller';
 
 const buttonNames = [
   'race',
   'class',
-  'background',
   'abilities',
-  'options',
+  'background',
   'description',
   'equipment',
+  'spells',
 ];
 
 const Loading = () => {
@@ -38,7 +41,7 @@ const PageViewer = ({ charID }) => {
     setPage({ name: page, index: index });
     window.scrollTo(0, 0);
   };
-/*FOR DEBUGGING ONLY 
+  /*FOR DEBUGGING ONLY 
 useEffect(() => {
   console.log("in useeffect");
   const fetchData = async () => {
@@ -55,24 +58,23 @@ useEffect(() => {
         pages = <Race setPage={setPage} page={page} charID={charID} />;
         break;
       case 'class':
-        pages = <Class setPage={setPage} page={page} charID = {charID}/>;
-        break;
-      case 'background':
-        pages = <Background setPage={setPage} page={page} charID = {charID}/>;
+        pages = <Class setPage={setPage} page={page} charID={charID} />;
         break;
       case 'abilities':
-        pages = <Abilities setPage={setPage} page={page} charID = {charID}/>;
+        pages = <Abilities setPage={setPage} page={page} charID={charID} />;
+        break;
+      case 'background':
+        pages = <Background setPage={setPage} page={page} charID={charID} />;
         break;
       case 'description':
-        pages = <Descriptions setPage={setPage} page={page} charID = {charID}/>;
+        pages = <Descriptions setPage={setPage} page={page} charID={charID} />;
         break;
       case 'equipment':
-        pages = <Equipment setPage={setPage} page={page} charID = {charID}/>;
+        pages = <Equipment setPage={setPage} page={page} charID={charID} />;
         break;
-        /*
       case 'spells':
-        pages = <Spells setPage={setPage} page={page} charID = {charID}/>;
-      break;*/
+        pages = <Spells setPage={setPage} page={page} charID={charID} />;
+        break;
     }
   };
 
@@ -98,9 +100,9 @@ useEffect(() => {
                 key={name}
                 type="button"
                 className={classname}
-                //disabled={page.index < idx}
+                disabled={page.index < idx}
                 onClick={() => {
-                  page.index != idx && onPageChange(name, idx);
+                  page.index > idx && onPageChange(name, idx);
                 }}
               >
                 {name}

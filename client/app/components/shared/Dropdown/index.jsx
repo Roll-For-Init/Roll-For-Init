@@ -1,8 +1,9 @@
-import React, { useState } from "react";
-import onClickOutside from "react-onclickoutside";
-import "./styles.scss";
+import React, { useState } from 'react';
+import onClickOutside from 'react-onclickoutside';
+import './styles.scss';
 
 function Dropdown({
+  ddLabel,
   title,
   items,
   width,
@@ -11,7 +12,7 @@ function Dropdown({
   selection,
   setSelection,
   classname,
-  stateKey
+  stateKey,
 }) {
   const [open, setOpen] = useState(false);
   // const [selection, setSelection] = useState([items[0]]);
@@ -22,26 +23,23 @@ function Dropdown({
   //Dropdown.handleClickOutside = () => setOpen(false);
 
   function handleOnClick(item) {
-
     if (!selection.some(current => current.index === item.index)) {
       if (!multiSelect) {
-        if(stateKey!=undefined) {
+        if (stateKey != undefined) {
           let select = {};
           select[stateKey] = [item];
-          setSelection(select)
-        }
-        else setSelection([item]);
+          setSelection(select);
+        } else setSelection([item]);
         setTitle([item.name]);
         toggle(!open);
       } else if (multiSelect) {
         if (selection.length < selectLimit) {
-          if(stateKey!=undefined) {
+          if (stateKey != undefined) {
             let select = {};
-            select[stateKey] = [...selection, item]
-            setSelection(select)
-          }
-          else setSelection([...selection, item]);
-          console.log(selection, item)
+            select[stateKey] = [...selection, item];
+            setSelection(select);
+          } else setSelection([...selection, item]);
+          console.log(selection, item);
         }
       }
     } else {
@@ -50,12 +48,11 @@ function Dropdown({
         selectionAfterRemoval = selectionAfterRemoval.filter(
           current => current.index !== item.index
         );
-        if(stateKey!=undefined) {
+        if (stateKey != undefined) {
           let select = {};
           select[stateKey] = [...selectionAfterRemoval];
           setSelection(select);
-        }
-        else setSelection([...selectionAfterRemoval]);
+        } else setSelection([...selectionAfterRemoval]);
       } else {
         toggle(!open);
       }
@@ -71,28 +68,53 @@ function Dropdown({
 
   return (
     <div className="dd-wrapper" style={{ width: width }}>
+      <div className={classname ? 'dd-label ' + classname : 'dd-label'}>
+        {ddLabel}
+      </div>
       <div
         tabIndex={0}
-        className={classname ? "dd-header " + classname : "dd-header"}
+        className={classname ? 'dd-header ' + classname : 'dd-header'}
         role="button"
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
       >
         <div className="dd-header__title">
-          <span >{newTitle}</span>
+          <span>{newTitle}</span>
         </div>
         <div className="dd-header__action">
-          {open
-            ? <i className="bi bi-chevron-up"></i>
-            : <i className="bi bi-chevron-down"></i>}
+          {open ? (
+            <i className="bi bi-chevron-up"></i>
+          ) : (
+            <i className="bi bi-chevron-down"></i>
+          )}
         </div>
       </div>
       {open && (
-        <ul className="dd-list shadow-card">
+        <ul className="dd-list shadow-card scroll">
           {items.map(item => (
             <li className="dd-list-item" key={item.index}>
-              <button type="button" className={isItemInSelection(item) ? "selected" : multiSelect && selection.length >= selectLimit ? "unselectable" : ""} onClick={() => handleOnClick(item)}>
-                <span> {classname == "header" ? <h5>{item.name}</h5> : <>{item.name}</>}</span>
+              <button
+                type="button"
+                className={
+                  isItemInSelection(item)
+                    ? 'selected'
+                    : multiSelect && selection.length >= selectLimit
+                    ? 'unselectable'
+                    : ''
+                }
+                onClick={() => handleOnClick(item)}
+              >
+                <span>
+                  {' '}
+                  {classname == 'header' ? (
+                    <h5>{item.name}</h5>
+                  ) : (
+                    <>{item.name}</>
+                  )}
+                </span>
+                <span>
+                  {isItemInSelection(item) && <i className="bi bi-check"></i>}
+                </span>
               </button>
             </li>
           ))}
@@ -103,7 +125,7 @@ function Dropdown({
 }
 
 const clickOutsideConfig = {
-  handleClickOutside: () => Dropdown.handleClickOutside
+  handleClickOutside: () => Dropdown.handleClickOutside,
 };
 
 // TODO: fix this outside clicky boi

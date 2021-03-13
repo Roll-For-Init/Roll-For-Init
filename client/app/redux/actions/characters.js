@@ -12,6 +12,7 @@ import {
   SET_RACE,
   SET_CLASS,
   SET_BACKGROUND,
+  SET_DESCRIPTION,
   SET_ABILITIES
 } from './types';
 
@@ -119,6 +120,11 @@ export const setClass = (charID, theClass) => dispatch => {
 export const setBackground = (charID, background) => dispatch => {
     console.log('SET_BACKGROUND', charID, background);
     dispatch({type: SET_BACKGROUND, payload: {charID, background}});
+};
+
+export const setDescription = (charID, description) => dispatch => {
+    console.log('SET_DESCRIPTION', charID, description);
+    dispatch({type: SET_DESCRIPTION, payload: {charID, description}});
 };
 
 export const setAbilities = (charID, abilities) => dispatch => {
