@@ -45,9 +45,14 @@ const Login = () => {
     <div className="container login">
       <div className="filler-space"></div>
       <div className="row align-items-center">
-        <div className="col"></div>
-        <div className="col-6 logo"></div>
-        <div className="col"></div>
+        <div className="col-1 col-md"></div>
+        <div className="col col-md-6 mb-5">
+          <img
+              className="logo"
+              src={require('../../../public/assets/imgs/logo.png')}
+            />
+        </div>
+        <div className="col-1 col-md"></div>
       </div>
       <Form
         onSubmit={onSubmit}
