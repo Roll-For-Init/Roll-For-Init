@@ -185,6 +185,7 @@ export const Descriptions = ({ charID, setPage }) => {
             name="persTraits"
             placeholder="Personality Traits"
             type="text"
+            value={personality}
             onChange={e => setPersonality(e.target.value)}
           />
         </div>
@@ -195,6 +196,7 @@ export const Descriptions = ({ charID, setPage }) => {
             name="ideals"
             placeholder="Ideals"
             type="text"
+            value={ideals}
             onChange={e => setIdeals(e.target.value)}
           />
         </div>
@@ -205,6 +207,7 @@ export const Descriptions = ({ charID, setPage }) => {
             name="bonds"
             placeholder="Bonds"
             type="text"
+            value={bonds}
             onChange={e => setBonds(e.target.value)}
           />
         </div>
@@ -215,6 +218,7 @@ export const Descriptions = ({ charID, setPage }) => {
             name="flaws"
             placeholder="Flaws"
             type="text"
+            value={flaws}
             onChange={e => setFlaws(e.target.value)}
           />
         </div>
@@ -234,6 +238,7 @@ export const Descriptions = ({ charID, setPage }) => {
               name="height"
               placeholder="Height"
               type="text"
+              value={height}
               onChange={e => setHeight(e.target.value)}
             />
           </div>{' '}
@@ -244,6 +249,7 @@ export const Descriptions = ({ charID, setPage }) => {
               name="weight"
               placeholder="Weight"
               type="text"
+              value={weight}
               onChange={e => setWeight(e.target.value)}
             />
           </div>
@@ -265,6 +271,7 @@ export const Descriptions = ({ charID, setPage }) => {
             name="age"
             placeholder="Age"
             type="text"
+            value={age}
             onChange={e => setAge(e.target.value)}
           />
         </div>
@@ -275,6 +282,7 @@ export const Descriptions = ({ charID, setPage }) => {
               name="eyes"
               placeholder="Eyes"
               type="text"
+              value={eyes}
               onChange={e => setEyes(e.target.value)}
             />
           </div>{' '}
@@ -284,6 +292,7 @@ export const Descriptions = ({ charID, setPage }) => {
               name="skin"
               placeholder="Skin"
               type="text"
+              value={skin}
               onChange={e => setSkin(e.target.value)}
             />
           </div>{' '}
@@ -293,6 +302,7 @@ export const Descriptions = ({ charID, setPage }) => {
               name="hair"
               placeholder="Hair"
               type="text"
+              value={hair}
               onChange={e => setHair(e.target.value)}
             />
           </div>
@@ -344,6 +354,7 @@ export const Descriptions = ({ charID, setPage }) => {
             name="charBackstory"
             placeholder="Character Backstory"
             type="text"
+            value={backstory}
             onChange={e => setBackstory(e.target.value)}
           />
         </div>
@@ -354,6 +365,7 @@ export const Descriptions = ({ charID, setPage }) => {
             name="relationships"
             placeholder="Relationships"
             type="text"
+            value={relationships}
             onChange={e => setRelationships(e.target.value)}
           />
         </div>

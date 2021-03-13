@@ -179,6 +179,7 @@ export const Background = ({ charID, setPage }) => {
                   name="backgroundName"
                   placeholder="Background Name"
                   type="text"
+                  value={bgName}
                   onChange={e => setBgName(e.target.value)}
                 />
               </div>
@@ -191,6 +192,7 @@ export const Background = ({ charID, setPage }) => {
                   name="backgroundDesc"
                   placeholder="Background Description (optional)"
                   type="text"
+                  value={bgDesc}
                   onChange={e => setBgDesc(e.target.value)}
                 />
               ) : (
@@ -355,6 +357,7 @@ export const Background = ({ charID, setPage }) => {
                   name="featName"
                   placeholder="Feature Name"
                   type="text"
+                  value={featureName}
                   onChange={e => setFeatureName(e.target.value)}
                 />
               ) : (
@@ -369,6 +372,7 @@ export const Background = ({ charID, setPage }) => {
                   name="featDesc"
                   placeholder="Feature Description"
                   type="text"
+                  value={featureDesc}
                   onChange={e => setFeatureDesc(e.target.value)}
                 />
               ) : (
