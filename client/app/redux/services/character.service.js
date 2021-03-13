@@ -72,5 +72,5 @@ export default {
   getBackgroundInfo,
   getAbilityScoreInfo,
   getRaceDetails,
-  getClassDetails
+  getClassDetails,
 };
