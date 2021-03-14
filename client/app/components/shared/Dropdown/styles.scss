@@ -4,7 +4,7 @@
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  max-width: 400px;
+  max-width: 500px;
   width: 100%;
   margin: 5px auto;
   text-transform: capitalize;
@@ -25,6 +25,7 @@
     }
   }
   .dd-header {
+    transition: .15s;
     box-shadow: -1px 1px 2px rgba(0, 0%, 0%, 67%);
     display: flex;
     flex-direction: row;
@@ -48,10 +49,14 @@
       padding-left: 10px;
       color: $dark-blue;
     }
+    &:hover {
+      background-color: $medium-off-white;
+      color: black;
+    }
   }
 
+
   .dd-list {
-    animation: dropDown 200ms ease-in-out forwards;
     transform-origin: top center;
     padding: 0px;
     margin: 0px;
@@ -64,18 +69,6 @@
     max-height: 19.5rem;
     li {
       list-style-type: none;
-
-      &:first-of-type > button {
-        margin-top: 0px;
-        border-top: 1px solid #ccc;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-
-      &:last-of-type > button {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-      }
 
       button {
         color: $dark-blue;
@@ -108,30 +101,25 @@
 }
 
 .scroll {
-  overflow: overlay;
+  overflow: auto;
 }
 .scroll::-webkit-scrollbar {
-  width: 0.8em;
+  width: 10px;
 }
 .scroll::-webkit-scrollbar-track {
-  //   -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  //   border-radius: 10px;
-  background-color: none;
+  border-radius: 0px 5px 5px 0px;
+  background-color: $off-white;
 }
 .scroll::-webkit-scrollbar-thumb {
-  background-color: $dark-off-white;
-  border-radius: 10px;
-  //-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.5);
+  background-color: $dark-blue-disabled;
+  border-radius: 5px;
 }
 
-@keyframes dropDown {
-  0% {
-    transform: scaleY(0);
-  }
-  80% {
-    transform: scaleY(1.1);
-  }
-  100% {
-    transform: scaleY(1);
-  }
-}
+// @keyframes dropDown {
+//   0% {
+//     transform: scaleY(0);
+//   }
+//   100% {
+//     transform: scaleY(1);
+//   }
+// }

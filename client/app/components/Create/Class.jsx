@@ -34,7 +34,7 @@ const Class = ({ charID, setPage }) => {
               classes.map((theClass, idx) => (
                 <div className="w-100 h-auto" key={idx}>
                   <button
-                    className="btn btn-lg m-0 mb-3 options"
+                    className="btn btn-secondary btn-lg m-0 mb-3 options"
                     type="button"
                     onClick={() =>
                       selectClass({ index: theClass.name, url: theClass.url })

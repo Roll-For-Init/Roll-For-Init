@@ -23,8 +23,8 @@ const RaceButton = ({ race, setRace, idx }) => {
       <button
         className={
           hasSubraces
-            ? 'btn btn-lg m-0 mb-3 options dropdown-toggle'
-            : 'btn btn-lg m-0 mb-3 options'
+            ? 'btn btn-secondary btn-lg m-0 mb-3 options dropdown-toggle'
+            : 'btn btn-secondary btn-lg m-0 mb-3 options'
         }
         type="button"
         id={`dropdownMenuButton1${idx}`}
