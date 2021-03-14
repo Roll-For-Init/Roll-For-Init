@@ -7,6 +7,7 @@ import {
   SET_RACE,
   SET_CLASS,
   SET_BACKGROUND,
+  SET_DESCRIPTION,
   SET_ABILITIES
 } from '../actions/types';
 
@@ -56,6 +57,14 @@ const character = (state = initialCharacter, action, charID) => {
                 ? payload.background
                 : {...state.background, ...payload.background},
         }
+    case SET_DESCRIPTION:
+        return {
+            ...state,
+            description:
+                (payload.description.index && payload.description.index != state.description?.index)
+                ? payload.description
+                : {...state.description, ...payload.description},
+        }
     case SET_ABILITIES:
         return {
             ...state,
@@ -74,29 +83,29 @@ export default function(state = initialState, action) {
 
   switch (type) {
     case SUBMIT_CHARACTER_SUCCESS:
-      return {
-        ...state,
-        [payload.name]: payload,
-      };
+        return {
+            ...state,
+            [payload.name]: payload,
+        };
     case SUBMIT_CHARACTER_FAIL:
-      return {
-        ...state,
-      };
+        return {
+            ...state,
+        };
     case UPDATE_CHARACTER_SUCCESS:
-      return {
-        ...state,
-        [payload.name]: payload,
-      };
+        return {
+            ...state,
+            [payload.name]: payload,
+        };
     case UPDATE_CHARACTER_FAIL:
-      return {
-        ...state,
-      };
+        return {
+            ...state,
+        };
     case CREATE_CHARACTER:
     case SET_RACE:
-      return {
-        ...state,
-        [payload.charID]: character(state[payload.charID], action, payload),
-      };
+        return {
+            ...state,
+            [payload.charID]: character(state[payload.charID], action, payload),
+        };
     case SET_CLASS:
         return {
             ...state,
@@ -107,12 +116,17 @@ export default function(state = initialState, action) {
             ...state,
             [payload.charID]: character(state[payload.charID], action, payload),
         }
+    case SET_DESCRIPTION:
+        return {
+            ...state,
+            [payload.charID]: character(state[payload.charID], action, payload),
+        }
     case SET_ABILITIES:
-    return {
-        ...state,
-        [payload.charID]: character(state[payload.charID], action, payload),
-    }
+        return {
+            ...state,
+            [payload.charID]: character(state[payload.charID], action, payload),
+        }
     default:
-      return state;
+        return state;
   }
 }

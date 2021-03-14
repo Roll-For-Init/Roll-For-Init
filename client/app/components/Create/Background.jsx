@@ -6,12 +6,23 @@ import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 import { setBackground } from '../../redux/actions';
+import FloatingLabel from 'floating-label-react';
 
 export const Background = ({ charID, setPage }) => {
   const dispatch = useDispatch();
 
   const [backgrounds, setBackgrounds] = useState(null);
-  //const { backgrounds } = props.backgrounds;
+  const [skills, setSkills] = useState([]);
+  const [languages, setLanguages] = useState([]);
+  const [gamingSets, setGamingSets] = useState([]);
+  const [otherTools, setOtherTools] = useState([]);
+  const [artisansTools, setArtisansTools] = useState([]);
+  const [musicalInstruments, setMusicalInstruments] = useState([]);
+  const [kits, setKits] = useState([]);
+  const [landVehicles, setLandVehicles] = useState([]);
+  //const [mountsVehicles, setMountsVehicles] = useState([]);
+  //const [drawnVehicles, setDrawnVehicles] = useState([]);
+  const [waterVehicles, setWaterVehicles] = useState([]);
 
   const selectBackground = background => {
     dispatch(setBackground(charID, background[0]));
@@ -56,6 +67,55 @@ export const Background = ({ charID, setPage }) => {
       .then(custom => {
         setSelectionBg(custom);
       });
+    CharacterService.getIndexedList('skills').then(list => {
+      setSkills(list);
+    });
+    CharacterService.getIndexedList('languages').then(list => {
+      setLanguages(list);
+    });
+    CharacterService.getSubList('equipment-categories/artisans-tools').then(
+      list => {
+        setArtisansTools(list.equipment);
+      }
+    );
+    CharacterService.getSubList('equipment-categories/other-tools').then(
+      list => {
+        setOtherTools(list.equipment);
+      }
+    );
+    CharacterService.getSubList('equipment-categories/gaming-sets').then(
+      list => {
+        setGamingSets(list.equipment);
+      }
+    );
+    CharacterService.getSubList(
+      'equipment-categories/musical-instruments'
+    ).then(list => {
+      setMusicalInstruments(list.equipment);
+    });
+    CharacterService.getSubList('equipment-categories/kits').then(list => {
+      setKits(list.equipment);
+    });
+    CharacterService.getSubList('equipment-categories/land-vehicles').then(
+      list => {
+        setLandVehicles(list.equipment);
+      }
+    );
+    // CharacterService.getSubList(
+    //   'equipment-categories/mounts-and-vehicles'
+    // ).then(list => {
+    //   setMountsVehicles(list.equipment);
+    // });
+    // CharacterService.getSubList(
+    //   'equipment-categories/tack-harness-and-drawn-vehicles'
+    // ).then(list => {
+    //   setDrawnVehicles(list.equipment);
+    // });
+    CharacterService.getSubList(
+      'equipment-categories/waterborne-vehicles'
+    ).then(list => {
+      setWaterVehicles(list.equipment);
+    });
   }, []);
 
   const [selectionBg, setSelectionBg] = useState(null);
@@ -85,7 +145,7 @@ export const Background = ({ charID, setPage }) => {
       };
       dispatch(setBackground(charID, customBackground));
     }
-    setPage({ index: 3, name: 'description' });
+    setPage({ index: 4, name: 'description' });
     window.scrollTo(0, 0);
   };
 
@@ -104,6 +164,7 @@ export const Background = ({ charID, setPage }) => {
           </div>
           <div className="card translucent-card">
             <Dropdown
+              ddLabel="Background"
               title="Custom"
               items={[...backgrounds]}
               width="70%"
@@ -113,34 +174,27 @@ export const Background = ({ charID, setPage }) => {
             />
             {selectionBg[0].index === 'custom' && (
               <div className="card content-card card-subtitle">
-                <form style={{ padding: '0px 5px' }}>
-                  <input
-                    className="p-0 m-0"
-                    style={{ border: 'none', width: '100%' }}
-                    type="text"
-                    name="backgroundName"
-                    placeholder="Background Name"
-                    onChange={e => setBgName(e.target.value)}
-                  />
-                </form>
+                <FloatingLabel
+                  id="backgroundName"
+                  name="backgroundName"
+                  placeholder="Background Name"
+                  type="text"
+                  value={bgName}
+                  onChange={e => setBgName(e.target.value)}
+                />
               </div>
             )}
             <div className="card content-card description-card mb-0">
               {selectionBg[0].index === 'custom' ? (
-                <form>
-                  <textarea
-                    className="p-0 m-0"
-                    style={{
-                      background: '#f2e9d9',
-                      border: 'none',
-                      width: '100%',
-                    }}
-                    type="text"
-                    name="backgroundDesc"
-                    placeholder="Background Description (optional)"
-                    onChange={e => setBgDesc(e.target.value)}
-                  />
-                </form>
+                <FloatingLabel
+                  component="textarea"
+                  id="backgroundDesc"
+                  name="backgroundDesc"
+                  placeholder="Background Description (optional)"
+                  type="text"
+                  value={bgDesc}
+                  onChange={e => setBgDesc(e.target.value)}
+                />
               ) : (
                 <ReactReadMoreReadLess
                   charLimit={250}
@@ -163,7 +217,8 @@ export const Background = ({ charID, setPage }) => {
                 {selectionBg[0].options.map((option, index) => {
                   return (
                     <Dropdown
-                      title={`Choose ${option.choose}: ${option.header}`}
+                      ddLabel={`${option.header}`}
+                      title={`Choose ${option.choose}`}
                       items={option.options}
                       selectLimit={option.choose}
                       multiSelect={option.choose > 1}
@@ -186,56 +241,84 @@ export const Background = ({ charID, setPage }) => {
               </div>
             </div>
           )}
-
           <div className="card translucent-card">
             <div className="card content-card card-title">
               <h4>Proficiencies</h4>
             </div>
             {selectionBg[0].index === 'custom' && (
-              <div className="choice-container">
+              <div className="choice-container mb-0">
                 <>
                   <Dropdown
-                    title="Choose a Skill"
-                    items={[]}
+                    ddLabel="Extra Skills"
+                    title="Choose 2"
+                    items={[...skills]}
                     selection={selectionSk1}
+                    multiSelect
+                    selectLimit={2}
                     setSelection={setSelectionSk1}
-                    classname="choice"
+                    classname="choice mb-0"
                   />
-                  <Dropdown
-                    title="Choose a Skill"
-                    items={[]}
+                  {/* <Dropdown
+                    ddLabel="Extra Skill"
+                    title="Choose 1"
+                    items={[...skills]}
                     selection={selectionSk2}
                     setSelection={setSelectionSk2}
                     classname="choice"
-                  />
+                  /> */}
                 </>
               </div>
             )}
-            <div className="choice-container">
+            <div className="choice-container mb-0">
               {selectionBg[0].index == 'custom' && (
                 <>
                   <Dropdown
-                    title="Choose a Tool or Language"
-                    items={[]}
+                    ddLabel="Tools &#38; Languages"
+                    title="Choose 2"
+                    items={[
+                      ...languages,
+                      ...artisansTools,
+                      ...gamingSets,
+                      ...musicalInstruments,
+                      ...otherTools,
+                      ...kits,
+                      ...landVehicles,
+                      ...waterVehicles,
+                    ]}
                     selection={selectionTlLg1}
+                    multiSelect
+                    selectLimit={2}
                     setSelection={setSelectionTlLg1}
                     classname="choice"
                   />
-                  <Dropdown
-                    title="Choose a Tool or Language"
-                    items={[]}
+                  {/* <Dropdown
+                    ddLabel="Tool or Language"
+                    title="Choose 1"
+                    items={[
+                      ...languages,
+                      ...artisansTools,
+                      ...gamingSets,
+                      ...musicalInstruments,
+                      ...otherTools,
+                      ...kits,
+                      ...landVehicles,
+                      ...mountsVehicles,
+                      ...drawnVehicles,
+                      ...waterVehicles,
+                    ]}
                     selection={selectionTlLg2}
                     setSelection={setSelectionTlLg2}
                     classname="choice"
-                  />
+                  /> */}
                 </>
               )}
               {selectionBg[0].index != 'custom' && (
-                <div className="card content-card description-card">
+                <div className="card content-card description-card mb-0">
                   {Object.keys(selectionBg[0].proficiencies).map(key => {
                     return (
                       <p className="text-capitalize">
-                        <strong className="small-caps">{key}</strong> -{' '}
+                        <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
+                        -{' '}
                         {selectionBg[0].proficiencies[key].map(
                           (prof, index) => {
                             if (
@@ -269,35 +352,29 @@ export const Background = ({ charID, setPage }) => {
             )}
             <div className="card content-card card-subtitle">
               {selectionBg[0].index === 'custom' ? (
-                <form style={{ padding: '0px 5px' }}>
-                  <input
-                    className="p-0 m-0"
-                    style={{ border: 'none', width: '100%' }}
-                    type="text"
-                    name="featName"
-                    placeholder="Feature Name"
-                    onChange={e => setFeatureName(e.target.value)}
-                  />
-                </form>
+                <FloatingLabel
+                  id="featName"
+                  name="featName"
+                  placeholder="Feature Name"
+                  type="text"
+                  value={featureName}
+                  onChange={e => setFeatureName(e.target.value)}
+                />
               ) : (
                 selectionBg[0].feature.name
               )}
             </div>
             <div className="card content-card description-card mb-0">
               {selectionBg[0].index === 'custom' ? (
-                <form>
-                  <textarea
-                    style={{
-                      background: '#f2e9d9',
-                      border: 'none',
-                      width: '100%',
-                    }}
-                    type="text"
-                    name="featDesc"
-                    placeholder="Feature Description"
-                    onChange={e => setFeatureDesc(e.target.value)}
-                  />
-                </form>
+                <FloatingLabel
+                  component="textarea"
+                  id="featDesc"
+                  name="featDesc"
+                  placeholder="Feature Description"
+                  type="text"
+                  value={featureDesc}
+                  onChange={e => setFeatureDesc(e.target.value)}
+                />
               ) : (
                 <ReactReadMoreReadLess
                   charLimit={240}
@@ -323,6 +400,7 @@ export const Background = ({ charID, setPage }) => {
   );
 };
 
+/*
 const mapStateToProps = state => ({
   backgrounds: state.createCharacter,
 });
@@ -332,3 +410,5 @@ const mapDispatchToProps = dispatch => ({
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Background);
+*/
+export default Background;

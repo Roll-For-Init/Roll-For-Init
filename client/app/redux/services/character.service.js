@@ -25,6 +25,12 @@ const getIndexedList = (type) => {
     });
 };
 
+const getSubList = (url) => {
+    return axios.get(`${API_URL}${url}`).then((items) => {
+        return items.data;
+    })
+}
+
 //Leave out index to get all race objects
 const getRaceInfo = (race) => {
     return apiCaller.propogateRacePointer(race);
@@ -67,6 +73,7 @@ export default {
   updateCharacter,
   deleteCharacter,
   getIndexedList,
+  getSubList,
   getRaceInfo,
   getClassInfo,
   getBackgroundInfo,
