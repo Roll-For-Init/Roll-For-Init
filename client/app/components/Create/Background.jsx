@@ -256,7 +256,7 @@ export const Background = ({ charID, setPage }) => {
                     multiSelect
                     selectLimit={2}
                     setSelection={setSelectionSk1}
-                    classname="choice mb-0"
+                    classname="dd-choice mb-0"
                   />
                   {/* <Dropdown
                     ddLabel="Extra Skill"
@@ -289,7 +289,7 @@ export const Background = ({ charID, setPage }) => {
                     multiSelect
                     selectLimit={2}
                     setSelection={setSelectionTlLg1}
-                    classname="choice"
+                    classname="dd-choice"
                   />
                   {/* <Dropdown
                     ddLabel="Tool or Language"
