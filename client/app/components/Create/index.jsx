@@ -35,7 +35,7 @@ const Loading = () => {
 const PageViewer = ({ charID }) => {
   let pages;
 
-  const [page, setPage] = useState({ name: 'race', index: 0 });
+  const [page, setPage] = useState({ name: 'abilities', index: 2 });
 
   const onPageChange = (page, index) => {
     setPage({ name: page, index: index });

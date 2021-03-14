@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { connect } from 'react-redux';
-import { getBackgroundInfo } from '../../redux/actions';
+import getBackgroundInfo from '../../redux/services/character.service';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
@@ -402,11 +402,11 @@ export const Background = ({ charID, setPage }) => {
 
 /*
 const mapStateToProps = state => ({
-    backgrounds: state.createCharacter,
+  backgrounds: state.createCharacter,
 });
 
 const mapDispatchToProps = dispatch => ({
-    selectBackground: background => dispatch(getBackgroundInfo(background)),
+  selectBackground: background => dispatch(getBackgroundInfo(background)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Background);

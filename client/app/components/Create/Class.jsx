@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useReducer } from 'react';
-import { connect } from 'react-redux';
+// import { connect } from 'react-redux';
 import { useSelector, useDispatch } from 'react-redux';
 import CharacterService from '../../redux/services/character.service';
-import { clearSelectedInfo, getClassInfo } from '../../redux/actions';
+// import { clearSelectedInfo, getClassInfo } from '../../redux/actions';
 import Dropdown from '../shared/Dropdown';
 import { setClass } from '../../redux/actions';
 
@@ -67,7 +67,8 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
 
   const theClass = useSelector(state => state.characters[charID].class);
 
-  const [userChoices, setUserChoices] = useReducer(reducer, {}); //See background for an example! Make sure to include a key in the dropdown
+  //See background for an example! Make sure to include a key in the dropdown
+  const [userChoices, setUserChoices] = useReducer(reducer, {});
   const [classInfo, setClassInfo] = useState(undefined);
   const [selection1, setSelection1] = useState([]);
   const [selection2, setSelection2] = useState([]);
@@ -76,8 +77,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
     CharacterService.getClassInfo(theClass)
       .then(
         theClass => {
-          console.log(theClass);
-          setClassInfo(theClass); //TODO: or subrace
+          setClassInfo(theClass);
           return theClass;
         }
         /*error => {
@@ -93,98 +93,160 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
       });
   }, []);
+  console.log('class', classInfo);
 
   const onNext = () => {
     setPage({ index: 2, name: 'abilities' });
     clearClass();
     window.scrollTo(0, 0);
   };
-
-  return (
-    <>
-      <div className="d-none d-md-flex title-back-wrapper">
+  if (classInfo) {
+    const { main, features, options, proficiencies } = classInfo;
+    return (
+      <>
+        <div className="d-none d-md-flex title-back-wrapper">
+          <button
+            onClick={clearClass}
+            className="m-0 mr-3 btn-secondary btn-back"
+          >
+            <i className="bi bi-chevron-left"></i>
+          </button>
+          <h2 className="title-card p-4">Class</h2>
+          <div className="btn-back-spacer ml-3"></div>
+        </div>
+        <div className="d-md-none">
+          <button
+            onClick={clearClass}
+            className="btn btn-secondary btn-back-sm"
+          >
+            <i className="bi bi-chevron-left"></i>
+            <span>Back</span>
+          </button>
+        </div>
+        <div className="card translucent-card">
+          <div className="card content-card card-title">
+            <h4>{main.name}</h4>
+          </div>
+          <div>
+            <div className="w-auto d-inline-block card content-card floating-card">
+              Hit Die - {main.hit_die}
+            </div>
+            <div className="w-auto d-inline-block card content-card floating-card">
+              SAVING THROWS -{' '}
+              {main.saving_throws.map((throws, idx) => (
+                <small key={idx}>
+                  {throws.name}
+                  {idx < main.saving_throws.length - 1 && ', '}
+                </small>
+              ))}
+            </div>
+          </div>
+        </div>
+        {options.length > 0 && (
+          <div className="card translucent-card">
+            <h4 className="card content-card card-title">Class Options</h4>
+            <div>
+              {options.map((option, index) => {
+                return (
+                  <Dropdown
+                    ddLabel={option.header}
+                    title={`Choose ${option.choose}`}
+                    items={option.options}
+                    width="100%"
+                    selectLimit={option.choose}
+                    multiselect={option.choose > 1}
+                    selection={
+                      userChoices[
+                        `${option.header
+                          .toLowerCase()
+                          .replace(' ', '-')}-${index}`
+                      ]
+                    }
+                    setSelection={setUserChoices}
+                    classname="choice"
+                    stateKey={`${option.header
+                      .toLowerCase()
+                      .replace(' ', '-')}-${index}`}
+                    key={index}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        )}
+        <div className="card translucent-card">
+          <h4 className="card content-card card-title">
+            Starting Proficiencies
+          </h4>
+          <div className="card content-card description-card">
+            {Object.entries(proficiencies).map(prof => (
+              <p className="text-capitalize" key={prof[0]}>
+                <strong className="small-caps">{prof[0]}</strong> –{' '}
+                {prof[1].map((item, idx) => (
+                  <React.Fragment key={idx}>
+                    {item}
+                    {idx < prof[1].length - 1 && ', '}
+                  </React.Fragment>
+                ))}
+              </p>
+            ))}
+          </div>
+        </div>
+        {features.length > 0 && (
+          <div className="card translucent-card">
+            <h4 className="card content-card card-title">Level 1 Features</h4>
+            {features.map(feature => (
+              <div
+                className="card content-card description-card"
+                key={feature.index}
+              >
+                <h5 className="text-center">{feature.name}</h5>
+                {feature.desc.map(desc => (
+                  <p key={desc}>{desc}</p>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
+        {main.spellcasting && (
+          <div className="card translucent-card">
+            <h4 className="card content-card card-title">SPELL CASTING</h4>
+            {main.spellcasting.info.map(spell => (
+              <div
+                className="card content-card description-card"
+                key={spell.name}
+              >
+                <h5 className="text-center">{spell.name}</h5>
+                {spell.desc.map(desc => (
+                  <p key={desc}>{desc}</p>
+                ))}
+              </div>
+            ))}
+          </div>
+        )}
         <button
-          onClick={clearClass}
-          className="m-0 mr-3 btn-secondary btn-back"
+          className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+          onClick={onNext}
         >
-          <i className="bi bi-chevron-left"></i>
+          OK
         </button>
-        <h2 className="title-card p-4">Class</h2>
-        <div className="btn-back-spacer ml-3"></div>
-      </div>
-      <div className="d-md-none">
-        <button onClick={clearClass} className="btn btn-secondary btn-back-sm">
-          <i className="bi bi-chevron-left"></i>
-          <span>Back</span>
-        </button>
-      </div>
-      <div className="card translucent-card">
-        <div className="card content-card card-title">
-          <h4>name</h4>
-        </div>
-        <div>
-          <div className="w-auto d-inline-block card content-card floating-card">
-            Test
-          </div>
-          <div className="w-auto d-inline-block card content-card floating-card">
-            Test1
-          </div>
-        </div>
-      </div>
-      <div className="card translucent-card">
-        <h5 className="card content-card card-title">Class Options</h5>
-        <div>
-          <Dropdown
-            title="Choose 1 High Elf Cantrip"
-            items={[{ index: 'hello', name: 'Hello' }]}
-            width="100%"
-            selection={selection1}
-            setSelection={setSelection1}
-          />
-          <Dropdown
-            title="Choose 1 High Elf Cantrip"
-            items={[{ index: 'hello', name: 'Hello' }]}
-            width="100%"
-            selection={selection1}
-            setSelection={setSelection1}
-          />
-        </div>
-      </div>
-      <div className="card translucent-card">
-        <h4 className="card content-card card-title">Starting Proficiencies</h4>
-        <div className="card content-card description-card">
-          <p className="text-capitalize">
-            <strong className="small-caps">Weapons</strong> – longswords,
-            shortswords, shortbows, longbows
-          </p>
-          <p className="text-capitalize">
-            <strong className="small-caps">Skills</strong> – perception
-          </p>
-          <p className="text-capitalize">
-            <strong className="small-caps">Languages</strong> – Common, Elvish
-          </p>
-        </div>
-      </div>
-      <button
-        className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-        onClick={onNext}
-      >
-        OK
-      </button>
-    </>
-  );
+      </>
+    );
+  } else {
+    return <>Loading</>;
+  }
 };
 
 export default Class;
 /*
 
 const mapStateToProps = state => ({
-  classes: state.createCharacter
+  classes: state.createCharacter,
 });
 
 const mapDispatchToProps = dispatch => ({
   selectClass: name => dispatch(getClassInfo(name)),
-  clearSelectedInfo: () => dispatch(clearSelectedInfo())
+  clearSelectedInfo: () => dispatch(clearSelectedInfo()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Class);

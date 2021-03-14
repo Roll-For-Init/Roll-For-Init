@@ -59,10 +59,6 @@ button {
       background-color: $dark-blue !important;
     }
   }
-  &[disabled] {
-    background-color: $blue-disabled !important;
-    color: hsla(0, 0, 100, 50%);
-  }
 }
 
 .btn-secondary {
@@ -74,14 +70,10 @@ button {
       background-color: $medium-off-white;
       color: black;
     }
-    &:active {
-      background-color: $dark-off-white !important;
-      color: white;
+    &[disabled] {
+      background-color: $off-white-disabled !important;
+      color: $white-disabled;
     }
-  }
-  &[disabled] {
-    background-color: $off-white-disabled !important;
-    color: $white-disabled;
   }
 }
 
