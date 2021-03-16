@@ -35,7 +35,7 @@ const Loading = () => {
 const PageViewer = ({ charID }) => {
   let pages;
 
-  const [page, setPage] = useState({ name: 'abilities', index: 2 });
+  const [page, setPage] = useState({ name: 'race', index: 0 });
 
   const onPageChange = (page, index) => {
     setPage({ name: page, index: index });
@@ -100,9 +100,9 @@ useEffect(() => {
                 key={name}
                 type="button"
                 className={classname}
-                disabled={page.index < idx}
+                //disabled={page.index < idx}
                 onClick={() => {
-                  page.index > idx && onPageChange(name, idx);
+                  /*page.index > idx && */onPageChange(name, idx);
                 }}
               >
                 {name}

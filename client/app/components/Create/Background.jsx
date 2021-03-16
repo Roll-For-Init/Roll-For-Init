@@ -38,6 +38,7 @@ export const Background = ({ charID, setPage }) => {
         .then(bg => {
           let equipment = { equipment: bg.starting_equipment };
           dispatch(setBackground(charID, equipment));
+          dispatch(setBackground(charID, { equipment_options: bg.equipment_options }));
           dispatch(setBackground(charID, { proficiencies: bg.proficiencies }));
           let personality = {
             traits: bg.personality_traits,

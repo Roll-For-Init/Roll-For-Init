@@ -78,6 +78,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
       .then(
         theClass => {
           setClassInfo(theClass);
+          console.log(theClass);
           return theClass;
         }
         /*error => {
@@ -90,10 +91,10 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         });
         let equipment = { equipment: theClass.main.starting_equipment };
         dispatch(setClass(charID, equipment));
+        dispatch(setClass(charID, { equipment_options: theClass.equipment_options }));
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
       });
   }, []);
-  console.log('class', classInfo);
 
   const onNext = () => {
     setPage({ index: 2, name: 'abilities' });
@@ -149,26 +150,25 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
               {options.map((option, index) => {
                 return (
                   <Dropdown
-                    ddLabel={option.header}
-                    title={`Choose ${option.choose}`}
-                    items={option.options}
-                    width="100%"
-                    selectLimit={option.choose}
-                    multiselect={option.choose > 1}
-                    selection={
-                      userChoices[
-                        `${option.header
-                          .toLowerCase()
-                          .replace(' ', '-')}-${index}`
-                      ]
-                    }
-                    setSelection={setUserChoices}
-                    classname="choice"
-                    stateKey={`${option.header
-                      .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
-                    key={index}
-                  />
+                      ddLabel={`${option.header}`}
+                      title={`Choose ${option.choose}`}
+                      items={option.options}
+                      selectLimit={option.choose}
+                      multiSelect={option.choose > 1}
+                      selection={
+                        userChoices[
+                          `${option.header
+                            .toLowerCase()
+                            .replace(' ', '-')}-${index}`
+                        ]
+                      }
+                      setSelection={setUserChoices}
+                      classname="choice"
+                      stateKey={`${option.header
+                        .toLowerCase()
+                        .replace(' ', '-')}-${index}`}
+                      key={index}
+                    />
                 );
               })}
             </div>
