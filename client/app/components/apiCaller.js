@@ -364,7 +364,8 @@ const classCaller = async (classPointer) => {
     main: {
 
     },
-    equipment_options: []
+    equipment_options: [],
+    spellcasting: null
   };
     const theClass = (await axios.get(classPointer.url)).data; //fetch class
     Object.keys(theClass).forEach(key => {
@@ -389,6 +390,11 @@ const classCaller = async (classPointer) => {
             ).then());
         }
     });
+    if(theClass.spellcasting != undefined) {
+        classContainer.spellcasting = {};
+        classContainer.spellcasting.level = theClass.spellcasting.level
+    }
+
     let featureURL = `${theClass.class_levels}/1`;
     promises.push(axios.get(featureURL)
     .then((details) => {
@@ -407,7 +413,13 @@ const classCaller = async (classPointer) => {
                 });
             }
         }
-        else {
+        if(classContainer.spellcasting?.level <= 1) {
+            for (key in details.spellcasting) {
+                if(details.spellcasting[key] == 0) break;
+                classContainer.spellcasting[key] = details.spellcasting[key];
+            }
+        }
+        if(details.features.length > 0) {
             classContainer.features = details.features;
             morePromises.push(descriptionAdder(classContainer, 'features').then());
         }
@@ -555,6 +567,68 @@ const equipmentDetails = async (equipment) => {
         return result;
     })
 }
+
+const getSpellCards = async (levels, url) => {
+    const promises = [];
+    const lists = [];
+    const spells = {}
+    for(let level of levels) {
+        promises.push(axios.get(`${url}${level}/spells`).then((spellList) => {
+            spellList = spellList.data.results;
+            const morePromises = [];
+            for(let spell of spellList) {
+                morePromises.push(axios.get(spell.url).then((spellDetails) => {
+                    spellDetails = spellDetails.data;
+                    if(level == 0) {
+                        if(spells.cantrips == undefined) spells.cantrips = [];
+                        spells.cantrips.push(spellDetails);
+                    }
+                    else {
+                        if(spells[`level${level}`] == undefined) spells[`level${level}`] = [];
+                        spells[`level${level}`].push(spellDetails);
+                    }
+                }))            
+            }
+            return Promise.all(morePromises);
+        }))
+    }
+    return Promise.all(promises).then(() => {
+        return spells;
+    })
+    /*somehow even slower: 
+    for(let level of levels) {
+        levelObj = {level: level};
+        lists.push(axios.get(`${url}${level}/spells`).then((list) => {
+            let data = {
+                list: list.data.results,
+                level: level
+            }
+            return (data)
+        }));
+    }
+    return Promise.all(lists).then((lists) => {
+        console.log(lists);
+        for(let list of lists) {
+            for(let spell of list.list) {
+                console.log(spell);
+                promises.push(axios.get(spell.url).then((spellDetails) => {
+                    spellDetails = spellDetails.data;
+                    if(list.level == 0) {
+                        if(spells.cantrips == undefined) spells.cantrips = [];
+                        spells.cantrips.push(spellDetails);
+                    }
+                    else {
+                        if(spells[`level${list.level}`] == undefined) spells[`level${list.level}`] = [];
+                        spells[`level${list.level}`].push(spellDetails);
+                    }
+                }))                
+            }
+        }
+        return Promise.all(promises).then(()=> {
+            return spells;
+        })
+    })*/
+}
 //for background to work, need to array within _options until you get to the "type" key
 
 /*
@@ -577,5 +651,5 @@ useEffect(() => {
 
 */
 
-module.exports = { classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions, getClassDescriptions, equipmentDetails};
+module.exports = { classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions, getClassDescriptions, equipmentDetails, getSpellCards};
 

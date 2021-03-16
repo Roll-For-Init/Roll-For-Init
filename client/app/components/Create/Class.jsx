@@ -78,7 +78,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
       .then(
         theClass => {
           setClassInfo(theClass);
-          console.log(theClass);
+          console.log("CLASS", theClass);
           return theClass;
         }
         /*error => {
@@ -93,6 +93,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         dispatch(setClass(charID, equipment));
         dispatch(setClass(charID, { equipment_options: theClass.equipment_options }));
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
+        dispatch(setClass(charID, {spellcasting: theClass.spellcasting}))
       });
   }, []);
 

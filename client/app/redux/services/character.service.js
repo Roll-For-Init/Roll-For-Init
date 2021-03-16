@@ -71,6 +71,10 @@ const getAbilityScoreInfo = abilityScore => {
 const getEquipmentDetails = equipment => {
   return apiCaller.equipmentDetails(equipment);
 }
+const getSpells = (theClass, levels) => {
+    let url = `${API_URL}classes/${theClass}/levels/`;
+    return apiCaller.getSpellCards(levels,  url);
+}
 
 export default {
   createCharacter,
@@ -84,5 +88,6 @@ export default {
   getAbilityScoreInfo,
   getRaceDetails,
   getClassDetails,
-  getEquipmentDetails
+  getEquipmentDetails,
+  getSpells
 };
