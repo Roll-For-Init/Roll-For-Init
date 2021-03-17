@@ -28,6 +28,8 @@ export const Background = ({ charID, setPage }) => {
     dispatch(setBackground(charID, background[0]));
     if (background[0].index == 'custom') {
       setSelectionBg(background);
+      dispatch(setBackground(charID, {equipment: []}));
+      dispatch(setBackground(charID, {equipment_options: []}));
     } else {
       CharacterService.getBackgroundInfo(background[0])
         .then(bg => {
@@ -63,6 +65,8 @@ export const Background = ({ charID, setPage }) => {
         const custom = [{ name: 'Custom', index: 'custom' }];
         setBackgrounds(custom.concat(list));
         dispatch(setBackground(charID, custom[0]));
+        dispatch(setBackground(charID, {equipment: []}));  
+        dispatch(setBackground(charID, {equipment_options: []}));
         return custom;
       })
       .then(custom => {
