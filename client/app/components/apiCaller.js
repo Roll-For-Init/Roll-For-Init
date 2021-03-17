@@ -13,22 +13,79 @@ const fullAbScore = {
     CON: "Constitution"
 }
 
+const makeEquipmentDesc = async (item, itemDetails) => {
+    let desc;
+    if(itemDetails.gear_category && itemDetails.gear_category.index=="equipment-packs") {
+        desc = 
+        {
+            cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+            contents: itemDetails.contents
+        }
+    }
+    else if (itemDetails.equipment_category.index=="weapon") {
+        desc = 
+        {
+            category: `${itemDetails.category_range} Weapon`,
+            damage: `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`,
+            cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+            weight: itemDetails.weight,
+            desc: itemDetails.properties.map(prop=>prop.name).join(', ')
+        }
+        
+    }
+    else if (itemDetails.equipment_category.index=="armor") {
+        let armorClassDeets = itemDetails.armor_class;
+        let ac = armorClassDeets.dex_bonus ? `${armorClassDeets.base} + Dex. modifier` : `${armorClassDeets.base}`
+        desc = 
+        {
+            category: `${itemDetails.equipment_category} Armor`,
+            ac: ac,
+            cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+        }
+        if(itemDetails.str_minimum > 0) desc.strength = itemDetails.str_minimum;
+        if(itemDetails.stealth_disadvantage) desc.desc = 'stealth disadvantage'
+    }
+    else {
+        desc = {}
+        let keys = Object.keys(itemDetails);
+        for(key in keys) {
+            if(key.includes("category") && !key.includes("equipment")) {
+                desc.category = typeof itemDetails[key] == 'string' ? itemDetails[key] : itemDetails[key].name;
+                break;
+            }
+        }
+        if(itemDetails.quantity != undefined) desc.quantity = itemDetails.quantity;
+        if (itemDetails.cost != undefined) desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
+        if (itemDetails.weight != undefined) desc.weight = itemDetails.weight;
+        if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
+    }
+    return desc;
+}
 const equipmentOptions = async (container, options, key) => {
+    const promises = [];
     let equipmentSet = {
         header: '',
-        options: [],
+        from: [],
         choose: 0
     }
     equipmentSet.choose = options.choose;
     equipmentSet.header = options.type.replace('_', " ");
     for(let option of options.from) {
         if (option.equipment_option != undefined) {
-            let optionObject = option.equipment_option.from.equipment_category;
-            equipmentSet.options.push(optionObject);
+            let optionObject = option.equipment_option;
+            if(optionObject.from.equipment_category != undefined) {
+                optionObject.header=optionObject.from.equipment_category.name;
+            }
+
+            equipmentSet.from.push(optionObject);
         } else if (option.equipment_category != undefined) {
-            let optionObject = option.equipment_category;
-            equipmentSet.options.push(optionObject);
-        } else {
+            //console.log(option);
+            let optionObject = option;
+            equipmentSet.header=optionObject.equipment_category.name;
+            promises.push(axios.get(optionObject.equipment_category.url).then((cat) => {
+                equipmentSet.from = cat.data.equipment;
+            }));
+                    } else {
         //console.log(option);
         if (option['0']) {
             let options=[];
@@ -39,12 +96,12 @@ const equipmentOptions = async (container, options, key) => {
                     optionObject = option[i].equipment;
                     optionObject.quantity = option[i].quantity;
                 } else{
-                    optionObject = option[i].equipment_option.from.equipment_category;
-                    optionObject.quantity = option[i].equipment_option.choose;
+                    optionObject = option[i].equipment_option;
+                    optionObject.header=optionObject.from.equipment_category.name;
                 }
                 options.push(optionObject)
             }
-            equipmentSet.options.push(options);
+            equipmentSet.from.push(options);
         } else {
             let optionObject = {
                 name: option.name ? option.name : option.equipment.name,
@@ -52,12 +109,13 @@ const equipmentOptions = async (container, options, key) => {
                 index: option.index ? option.index : option.equipment.index,
                 quantity: option.quantity
             }
-            equipmentSet.options.push(optionObject);
+            equipmentSet.from.push(optionObject);
         }
         }
     }   
-    return ({equipment: equipmentSet})
+    return Promise.all(promises).then(() => { return ({equipment: equipmentSet})});
 }
+
 const optionsHelper = async (container, options, key) => {
     let optionSet = {
         header: '',
@@ -117,7 +175,9 @@ const optionsExtractor = async (container, key) => {
         promises.push(result);
         result.then((res) => {
             if(res.options) allOptions.push(res.options);
-            else allEquipment.push(res.equipment);
+            else {
+                allEquipment.push(res.equipment);
+            }
         })
       }
   }
@@ -304,7 +364,8 @@ const classCaller = async (classPointer) => {
     main: {
 
     },
-    equipment_options: []
+    equipment_options: [],
+    spellcasting: null
   };
     const theClass = (await axios.get(classPointer.url)).data; //fetch class
     Object.keys(theClass).forEach(key => {
@@ -329,6 +390,11 @@ const classCaller = async (classPointer) => {
             ).then());
         }
     });
+    if(theClass.spellcasting != undefined) {
+        classContainer.spellcasting = {};
+        classContainer.spellcasting.level = theClass.spellcasting.level
+    }
+
     let featureURL = `${theClass.class_levels}/1`;
     promises.push(axios.get(featureURL)
     .then((details) => {
@@ -347,7 +413,13 @@ const classCaller = async (classPointer) => {
                 });
             }
         }
-        else {
+        if(classContainer.spellcasting?.level <= 1) {
+            for (key in details.spellcasting) {
+                if(details.spellcasting[key] == 0) break;
+                classContainer.spellcasting[key] = details.spellcasting[key];
+            }
+        }
+        if(details.features.length > 0) {
             classContainer.features = details.features;
             morePromises.push(descriptionAdder(classContainer, 'features').then());
         }
@@ -428,6 +500,135 @@ const backgroundCaller = async (url) => {
 const getAlignments = async () => {
     axios.get('/api/alignments').then((alignments) => {return alignments.data.results});
 }
+
+const equipmentDetails = async (equipment) => {
+    const promises = [];
+    let result;
+    if(equipment[0].equipment) {
+        result = equipment.map((theItem) => {
+            let item = theItem.equipment;
+            if(item.hasOwnProperty('url')) {
+                promises.push(axios.get(item.url)
+                .then(itemDetails => {
+                    itemDetails = itemDetails.data;
+                    makeEquipmentDesc(item, itemDetails).then((desc) => {
+                        item.desc = desc;
+                    });
+                    return item;
+                }));
+            }
+            else {
+                console.error("equipment details caller hasn't caught something in", item)
+            }
+            return item;
+        })
+    }
+    else {
+        result = equipment.map((theItem) => {
+            theItem.from = theItem.from.map((item) => {
+                if(item.hasOwnProperty('url')) {
+                    promises.push(axios.get(item.url)
+                     .then(itemDetails => {
+                        itemDetails = itemDetails.data;
+                        makeEquipmentDesc(item, itemDetails).then((desc) => {
+                            item.desc = desc;
+                        });                        
+                        return item;
+                    }));
+                }
+                else if(item.hasOwnProperty('choose')) {
+                    let option = item.from.equipment_category;
+                    promises.push(axios.get(option.url).then((cat) => {
+                        item.from = cat.data.equipment;
+                        return item.from;
+                    }).then((options) => {
+                        options = options.map((the) => {
+                            promises.push(axios.get(the.url)
+                            .then(itemDetails => {
+                               itemDetails = itemDetails.data;
+                               makeEquipmentDesc(the, itemDetails).then((desc) => {
+                                    the.desc = desc;
+                                });                               
+                                return the;
+                           }));
+                        })
+                        return options;
+                    }));
+                }
+                else {
+                    console.error("equipment details caller hasn't caught something in", item)
+                }
+                return item;
+            })
+            return theItem;
+        })
+    }
+    return Promise.all(promises).then(() => {
+        return result;
+    })
+}
+
+const getSpellCards = async (levels, url) => {
+    const promises = [];
+    const lists = [];
+    const spells = {}
+    for(let level of levels) {
+        promises.push(axios.get(`${url}${level}/spells`).then((spellList) => {
+            spellList = spellList.data.results;
+            const morePromises = [];
+            for(let spell of spellList) {
+                morePromises.push(axios.get(spell.url).then((spellDetails) => {
+                    spellDetails = spellDetails.data;
+                    if(level == 0) {
+                        if(spells.cantrips == undefined) spells.cantrips = [];
+                        spells.cantrips.push(spellDetails);
+                    }
+                    else {
+                        if(spells[`level${level}`] == undefined) spells[`level${level}`] = [];
+                        spells[`level${level}`].push(spellDetails);
+                    }
+                }))            
+            }
+            return Promise.all(morePromises);
+        }))
+    }
+    return Promise.all(promises).then(() => {
+        return spells;
+    })
+    /*somehow even slower: 
+    for(let level of levels) {
+        levelObj = {level: level};
+        lists.push(axios.get(`${url}${level}/spells`).then((list) => {
+            let data = {
+                list: list.data.results,
+                level: level
+            }
+            return (data)
+        }));
+    }
+    return Promise.all(lists).then((lists) => {
+        console.log(lists);
+        for(let list of lists) {
+            for(let spell of list.list) {
+                console.log(spell);
+                promises.push(axios.get(spell.url).then((spellDetails) => {
+                    spellDetails = spellDetails.data;
+                    if(list.level == 0) {
+                        if(spells.cantrips == undefined) spells.cantrips = [];
+                        spells.cantrips.push(spellDetails);
+                    }
+                    else {
+                        if(spells[`level${list.level}`] == undefined) spells[`level${list.level}`] = [];
+                        spells[`level${list.level}`].push(spellDetails);
+                    }
+                }))                
+            }
+        }
+        return Promise.all(promises).then(()=> {
+            return spells;
+        })
+    })*/
+}
 //for background to work, need to array within _options until you get to the "type" key
 
 /*
@@ -450,5 +651,5 @@ useEffect(() => {
 
 */
 
-module.exports = { classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions, getClassDescriptions};
+module.exports = { classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions, getClassDescriptions, equipmentDetails, getSpellCards};
 

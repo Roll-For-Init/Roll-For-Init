@@ -68,6 +68,14 @@ const getAbilityScoreInfo = abilityScore => {
   return axios.get(API_URL + 'ability-scores/' + query);
 };
 
+const getEquipmentDetails = equipment => {
+  return apiCaller.equipmentDetails(equipment);
+}
+const getSpells = (theClass, levels) => {
+    let url = `${API_URL}classes/${theClass}/levels/`;
+    return apiCaller.getSpellCards(levels,  url);
+}
+
 export default {
   createCharacter,
   updateCharacter,
@@ -80,4 +88,6 @@ export default {
   getAbilityScoreInfo,
   getRaceDetails,
   getClassDetails,
+  getEquipmentDetails,
+  getSpells
 };

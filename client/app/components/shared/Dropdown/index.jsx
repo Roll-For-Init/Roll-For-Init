@@ -39,7 +39,6 @@ function Dropdown({
             select[stateKey] = [...selection, item];
             setSelection(select);
           } else setSelection([...selection, item]);
-          console.log(selection, item);
         }
       }
     } else {
