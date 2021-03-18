@@ -38,7 +38,7 @@ const makeEquipmentDesc = async (item, itemDetails) => {
         let ac = armorClassDeets.dex_bonus ? `${armorClassDeets.base} + Dex. modifier` : `${armorClassDeets.base}`
         desc = 
         {
-            category: `${itemDetails.equipment_category} Armor`,
+            category: `${itemDetails.armor_category} Armor`,
             ac: ac,
             cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
             weight: itemDetails.weight
