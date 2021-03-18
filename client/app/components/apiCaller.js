@@ -26,7 +26,7 @@ const makeEquipmentDesc = async (item, itemDetails) => {
         desc = 
         {
             category: `${itemDetails.category_range} Weapon`,
-            damage: `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`,
+            damage: `${itemDetails.damage ? itemDetails.damage.damage_dice : itemDetails.special.join(' ')} ${itemDetails.damage ? itemDetails.damage.damage_type.name : null}`,
             cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
             weight: itemDetails.weight,
             desc: itemDetails.properties.map(prop=>prop.name).join(', ')
@@ -41,12 +41,19 @@ const makeEquipmentDesc = async (item, itemDetails) => {
             category: `${itemDetails.equipment_category} Armor`,
             ac: ac,
             cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+            weight: itemDetails.weight
         }
         if(itemDetails.str_minimum > 0) desc.strength = itemDetails.str_minimum;
         if(itemDetails.stealth_disadvantage) desc.desc = 'stealth disadvantage'
     }
     else {
-        desc = {}
+        desc = {
+            category: null,
+            quantity: null,
+            cost: null,
+            weight: null,
+            desc: null
+        }
         let keys = Object.keys(itemDetails);
         for(key in keys) {
             if(key.includes("category") && !key.includes("equipment")) {
@@ -517,6 +524,18 @@ const equipmentDetails = async (equipment) => {
                     return item;
                 }));
             }
+            else if (Array.isArray(item)) {
+                item.map((i) => {
+                    promises.push(axios.get(i.url)
+                    .then(itemDetails => {
+                        itemDetails = itemDetails.data;
+                        makeEquipmentDesc(i, itemDetails).then((desc) => {
+                            i.desc = desc;
+                    });
+                    return i;
+                    }));
+                })
+            }
             else {
                 console.error("equipment details caller hasn't caught something in", item)
             }
@@ -554,6 +573,39 @@ const equipmentDetails = async (equipment) => {
                         })
                         return options;
                     }));
+                }
+                else if (Array.isArray(item)) {
+                    item.map((item) => {
+                        if(item.hasOwnProperty('url')) {
+                            promises.push(axios.get(item.url)
+                             .then(itemDetails => {
+                                itemDetails = itemDetails.data;
+                                makeEquipmentDesc(item, itemDetails).then((desc) => {
+                                    item.desc = desc;
+                                });                        
+                                return item;
+                            }));
+                        }
+                        else if(item.hasOwnProperty('choose')) {
+                            let option = item.from.equipment_category;
+                            promises.push(axios.get(option.url).then((cat) => {
+                                item.from = cat.data.equipment;
+                                return item.from;
+                            }).then((options) => {
+                                options = options.map((the) => {
+                                    promises.push(axios.get(the.url)
+                                    .then(itemDetails => {
+                                       itemDetails = itemDetails.data;
+                                       makeEquipmentDesc(the, itemDetails).then((desc) => {
+                                            the.desc = desc;
+                                        });                               
+                                        return the;
+                                   }));
+                                })
+                                return options;
+                            }));
+                        }
+                    })
                 }
                 else {
                     console.error("equipment details caller hasn't caught something in", item)
