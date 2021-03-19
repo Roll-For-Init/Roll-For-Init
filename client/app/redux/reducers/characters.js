@@ -14,7 +14,15 @@ import {
 
 const initialCharacter = {
   race: null, //.ability_bonuses, .proficiencies, .choices{equipment: , proficiencies,  etc...}, .description {summary, physical, age}
-  class: null, //.choices{equipment: ,proficiencies:,  etc...}, .equipment, .proficiencies
+  class: {
+    //.choices{equipment: ,proficiencies:,  etc...}, .equipment, .proficiencies
+    spellcasting: {
+      cantrips_known: 0,
+      spells_known: 0,
+    },
+    index: null,
+  },
+
   background: null, //.equipment, .choices{}, .proficiencies, .personality{traits, ideals, bonds, flaws}
   abilities: null,
   options: null,

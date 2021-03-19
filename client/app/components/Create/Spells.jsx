@@ -1,8 +1,14 @@
-import React, { useState, useEffect, useReducer } from 'react';
+import React, { useState, useEffect } from 'react';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSpells } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
+import ReactReadMoreReadLess from 'react-read-more-read-less';
+
+/**
+ * FOR DEACTIVATING SELECT BUTTONS: you will have to target all spell card children that are NOT selected,
+ * disable their onclick, and change their class from btn-outline-success to btn-inactive
+ */
 
 const spellSchoolPropType = PropTypes.shape({
   name: PropTypes.string,
@@ -25,44 +31,61 @@ const spellPropType = PropTypes.shape({
 });
 
 const SpellCard = ({ spell, selected, toggleSelected }) => {
-  const select = () => {
-    toggleSelected();
-    console.log('SELECT');
-  };
-
   return (
-    <div className="w-auto card content-card description-card text-black">
-      <div className="d-inline text-black">{spell.name}</div>
-      <button className="menu-button d-inline" onClick={select}>
-        {selected ? 'Selected' : 'Select'}
-      </button>
-      <hr className="solid" />
-      <div className="">
-        {spell.level === 0 ? 'cantrip' : `level ${spell.level}`}
-      </div>
-      {spell.ritual === true && <h6>(ritual)</h6>}
-      <div>{spell.school.name.toLowerCase()}</div>
-      <div className="">
-        <h6>Casting Time: {spell.casting_time}</h6>
-      </div>
-      <div className="">
-        <h6>Range: {spell.range}</h6>
-      </div>
-      <div className="">
-        <h6>Components: {spell.components.join()}</h6>
-      </div>
-      <div className="">
-        <h6>Duration: </h6>
-        <h6>{spell.duration}</h6>
+    <div className="card content-card spell-card">
+      <div id={spell.index} className="container-fluid">
+        <div className="row">
+          <div className="spell-title col-sm">{spell.name}</div>
+          <button
+            onClick={toggleSelected}
+            className={`btn ${
+              selected ? `btn-clicked` : `btn-outline-success`
+            } d-inline col-sm`}
+          >
+            {selected ? 'Selected' : 'Select'}
+          </button>
+        </div>
       </div>
       <hr className="solid" />
-      <div className="">
+      <div className="spell-desc">
+        <p>
+          {spell.level === 0
+            ? 'cantrip'
+            : `level ${spell.level} ${spell.ritual ? `ritual` : ``}`}
+          <span>
+            <em>{spell.school.name.toLowerCase()}</em>
+          </span>
+        </p>
+        <p>
+          Casting Time: <em>{spell.casting_time}</em>
+        </p>
+        <p>
+          Range: <em>{spell.range}</em>
+        </p>
+        <p>
+          Components: <em>{spell.components.join(', ')}</em>
+        </p>
+        <p>
+          Duration:{' '}
+          <em>
+            {spell.concentration
+              ? `Concentration, ${spell.duration}`
+              : spell.duration}
+          </em>
+        </p>
+      </div>
+      <hr className="solid" />
+      <div className="spell-desc">
         {spell.desc !== undefined && (
-          <p>
-            {spell.desc.map(string => {
-              return string;
-            })}
-          </p>
+          <ReactReadMoreReadLess
+            charLimit={250}
+            readMoreText="Show more"
+            readLessText="Show less"
+            readMoreClassName="read-more-less--more"
+            readLessClassName="read-more-less--less"
+          >
+            {spell.desc.join('\n')}
+          </ReactReadMoreReadLess>
         )}
       </div>
     </div>
@@ -76,7 +99,7 @@ SpellCard.propTypes = {
 
 const SpellList = ({ spells, known, level, limit, toggleSelected }) => {
   const isSelected = spell => {
-    if (known === null) return false;
+    if (!known) return false;
     return known.includes(spell.index);
   };
 
@@ -88,18 +111,24 @@ const SpellList = ({ spells, known, level, limit, toggleSelected }) => {
           Choose {limit}
         </h6>
       </div>
-      {spells !== undefined &&
-        spells.map((spell, idx) => {
-          console.log('Spell ' + idx + ': ' + spell);
-          return (
-            <SpellCard
-              selected={isSelected(spell)}
-              spell={spell}
-              key={idx}
-              toggleSelected={() => toggleSelected(spell.index)}
-            />
-          );
-        })}
+      {spells !== undefined && (
+        <div className="spell-custom-container">
+          <div className="container">
+            <div className="card-columns">
+              {spells.map((spell, idx) => {
+                return (
+                  <SpellCard
+                    selected={isSelected(spell)}
+                    spell={spell}
+                    key={idx}
+                    toggleSelected={() => toggleSelected(spell.index)}
+                  />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
@@ -108,7 +137,7 @@ SpellList.propTypes = {
   level: PropTypes.number,
   toggleSelected: PropTypes.func,
   limit: PropTypes.number,
-  known: PropTypes.arrayOf(PropTypes.string),
+  known: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
 
 export const Spells = ({ charID, setPage }) => {
@@ -127,31 +156,39 @@ export const Spells = ({ charID, setPage }) => {
   };
 
   const getKnownSpells = level => {
-    return character.spells !== null ? character.spells[level] : null;
+    const knownSpells = character.spells
+      ? character.spells[level]
+        ? character.spells[level]
+        : null
+      : null;
+    return knownSpells;
   };
 
   const toggleSelected = (level, index) => {
     var known = getKnownSpells(level);
+    var payload = null;
     if (!known) {
-      dispatch(setSpells({ [level]: [index] }));
+      payload = { [level]: [index] };
     } else if (known.includes(index)) {
-      dispatch(setSpells({ [level]: [known.filter(spell => spell != index)] }));
-    } else if (known.length() < limit[level]) {
-      dispatch(setSpells({ [level]: [...known, index] }));
+      payload = { [level]: [...known.filter(spell => spell != index)] };
+      dispatch(setSpells(payload));
+    } else if (known.length < limit[level]) {
+      payload = { [level]: [...known, index] };
     }
+    if (!payload) return;
+    dispatch(setSpells(charID, payload));
   };
 
   useEffect(() => {
-    if (character.class === undefined) return;
+    if (!character.class.index) return;
     CharacterService.getSpells(character.class.index.toLowerCase(), [
       0,
       1,
     ]).then(cards => {
-      console.log('SPELLS', cards);
       setSpellChoices(cards);
     });
     console.log(character);
-  }, [character]);
+  }, []);
 
   return (
     <div className="background">
@@ -163,20 +200,13 @@ export const Spells = ({ charID, setPage }) => {
           {[0, 1].map(level => {
             const currentKey = Object.keys(spellChoices)[level];
             const list = spellChoices[currentKey];
-            console.log(currentKey, list);
             return (
               <SpellList
                 key={level}
                 level={level}
                 limit={limit[level]}
                 spells={list}
-                known={
-                  character.spells
-                    ? character.spells[level]
-                      ? character.spells[level]
-                      : null
-                    : null
-                }
+                known={getKnownSpells(level)}
                 toggleSelected={index => toggleSelected(level, index)}
               />
             );
