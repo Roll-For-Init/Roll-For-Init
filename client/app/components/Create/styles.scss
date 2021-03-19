@@ -295,57 +295,60 @@
     padding: 8px;
     height: auto;
 
-    &>.container-fluid>.row {
-        margin-right: auto;
-        margin-left: auto;
-        &>.spell-title {
-            font-size: 24px;
-            display: inline-block;
-            color: $dark-blue;
-            padding: 0;
-            text-align: left;
-        }
-        &>.btn-outline-success {
-            border: {
-                style: solid !important;
-                color: $green !important;
-                width: 3px !important;
-                radius: 8px;
+    &>.container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+        &>.row {
+            margin-right: auto;
+            margin-left: auto;
+            &>.spell-title {
+                font-size: 24px;
+                display: inline-block;
+                color: $dark-blue;
+                padding: 0;
+                text-align: left;
             }
-            color: $dark-blue;
-            box-shadow: none;
-            margin: 0px;
-            float: right;
-            font-size: 18px;
-            padding: .025em .05em;
-            min-width: 78px;
-            max-height: 30px;
-            flex-grow: 0;
-            right: 0;
-    
-            &:hover, &:active {
+            &>.btn-outline-success {
+                border: {
+                    style: solid !important;
+                    color: $green !important;
+                    width: 3px !important;
+                    radius: 8px;
+                }
+                color: $dark-blue;
+                box-shadow: none;
+                margin: 0px;
+                float: right;
+                font-size: 18px;
+                padding: .025em .05em;
+                min-width: 78px;
+                max-height: 30px;
+                flex-grow: 0;
+                right: 0;
+        
+                &:hover, &:active {
+                    background-color: $green;
+                    color: $off-white;
+                }
+            }
+            &>.btn-clicked {
+                @extend .btn-outline-success;
                 background-color: $green;
                 color: $off-white;
-            }
-        }
-        &>.btn-clicked {
-            @extend .btn-outline-success;
-            background-color: $green;
-            color: $off-white;
 
-            //how to make it go back to default immediately on click?
-            
-        }
-        &>.btn-inactive {
-            @extend .btn-outline-success;
-            background-color: $medium-off-white;
-            color: $dark-blue-disabled;
-            &:hover {
+                //how to make it go back to default immediately on click?
+                
+            }
+            &>.btn-inactive {
+                @extend .btn-outline-success;
                 background-color: $medium-off-white;
                 color: $dark-blue-disabled;
+                &:hover {
+                    background-color: $medium-off-white;
+                    color: $dark-blue-disabled;
+                }
             }
         }
-
     }
 
     hr {
