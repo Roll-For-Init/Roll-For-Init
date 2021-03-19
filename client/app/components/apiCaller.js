@@ -441,6 +441,7 @@ const classCaller = async (classPointer) => {
                     .then(choiceSet => {
                         classContainer.options = classContainer.options.concat(choiceSet.options);
                     }))
+                    classContainer.features = classContainer.features.concat(choice.data);
                 });
             }
         }
