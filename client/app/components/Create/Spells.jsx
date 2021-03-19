@@ -6,7 +6,8 @@ import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 
 /**
- * FOR SELECT BUTTON CHANGE ON SELECT: target the classname with javascript and remove btn-outline-success and replace with btn-clicked and vice versa
+ * FOR DEACTIVATING SELECT BUTTONS: you will have to target all spell card children that are NOT selected, 
+ * disable their onclick, and change their class from btn-outline-success to btn-inactive
  */
 const SpellBookDetails = ({
   cantripsKnown,
@@ -60,12 +61,18 @@ const spellPropType = PropTypes.shape({
 });
 
 const SpellCard = ({ spell }) => {
+  const handleClick = () => {
+    setSelected(!selected);
+    console.log('toggle!')
+  }
+
+  const [selected, setSelected] = useState(false);
   return (
     <div className="card content-card spell-card"> 
       <div id={spell.index} className="container-fluid">
         <div className="row">
           <div className="spell-title col-sm">{spell.name}</div>
-          <button className="btn btn-outline-success d-inline col-sm">Select</button>
+          <button onClick={() => handleClick()} className={`btn ${selected === false ? `btn-outline-success` : `btn-clicked`} d-inline col-sm`}>Select</button>
         </div>
       </div>
       <hr className="solid" />
@@ -113,10 +120,17 @@ const SpellList = ({ spells }) => {
   return (
     <div className="card translucent-card">
       {spellList !== undefined &&
-        spellList.map((spell, idx) => {
-          console.log('Spell ' + idx + ': ' + spell);
-          return <SpellCard spell={spell} key={idx} />;
-        })}
+        <div className='spell-custom-container'>
+          <div className='container'>
+            <div className='card-columns'>
+          {spellList.map((spell, idx) => {
+            console.log('Spell ' + idx + ': ' + spell);
+            return <SpellCard spell={spell} key={idx} />;
+          })}
+            </div>
+          </div>
+        </div>
+      }
     </div>
   );
 };

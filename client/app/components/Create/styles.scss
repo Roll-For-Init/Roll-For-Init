@@ -275,11 +275,29 @@
   }
 }
 
+.spell-custom-container {
+    &>.container {
+        height: auto;
+        padding-left: 0;
+        padding-right: 0;
+        &>.card-columns {
+            column-count: 2;
+            widows: 2;
+            column-gap: 0;
+            .card {
+                width: 302.5px;
+                margin-bottom: .3rem;
+            }
+        }
+    }
+}
 .spell-card {
-    width: 302.5px;
     padding: 8px;
+    height: auto;
 
     &>.container-fluid>.row {
+        margin-right: auto;
+        margin-left: auto;
         &>.spell-title {
             font-size: 24px;
             display: inline-block;
@@ -305,7 +323,7 @@
             flex-grow: 0;
             right: 0;
     
-            &:hover {
+            &:hover, &:active {
                 background-color: $green;
                 color: $off-white;
             }
@@ -315,9 +333,16 @@
             background-color: $green;
             color: $off-white;
 
+            //how to make it go back to default immediately on click?
+            
+        }
+        &>.btn-inactive {
+            @extend .btn-outline-success;
+            background-color: $medium-off-white;
+            color: $dark-blue-disabled;
             &:hover {
-                background-color: none;
-                color: $dark-blue;
+                background-color: $medium-off-white;
+                color: $dark-blue-disabled;
             }
         }
 
