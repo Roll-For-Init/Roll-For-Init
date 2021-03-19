@@ -275,6 +275,87 @@
   }
 }
 
+.spell-card {
+    width: 302.5px;
+    padding: 8px;
+
+    &>.container-fluid>.row {
+        &>.spell-title {
+            font-size: 24px;
+            display: inline-block;
+            color: $dark-blue;
+            padding: 0;
+            text-align: left;
+        }
+        &>.btn-outline-success {
+            border: {
+                style: solid !important;
+                color: $green !important;
+                width: 3px !important;
+                radius: 8px;
+            }
+            color: $dark-blue;
+            box-shadow: none;
+            margin: 0px;
+            float: right;
+            font-size: 18px;
+            padding: .025em .05em;
+            min-width: 78px;
+            max-height: 30px;
+            flex-grow: 0;
+            right: 0;
+    
+            &:hover {
+                background-color: $green;
+                color: $off-white;
+            }
+        }
+        &>.btn-clicked {
+            @extend .btn-outline-success;
+            background-color: $green;
+            color: $off-white;
+
+            &:hover {
+                background-color: none;
+                color: $dark-blue;
+            }
+        }
+
+    }
+
+    hr {
+        margin: {
+            top: 4px;
+            bottom: 4px;
+            right: -4px;
+            left: -4px;
+        }
+        border: {
+            width: 2px;
+            color: $dark-blue;
+        }
+    }
+
+    .spell-desc {
+        text-align: left;
+        line-height: normal;
+        color: $dark-blue !important;
+
+        &>div {
+            color: $dark-blue !important;
+        }
+        &>p {
+            color: $dark-blue !important;
+            margin-bottom: 0;
+            &>span {
+                float: right;
+                color: $dark-blue !important;
+            }
+        }
+        
+    }
+}
+
 .read-more-less--more,
 .read-more-less--less {
   color: $blue;

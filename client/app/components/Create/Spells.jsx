@@ -3,7 +3,11 @@ import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 import { PropTypes } from 'prop-types';
+import ReactReadMoreReadLess from 'react-read-more-read-less';
 
+/**
+ * FOR SELECT BUTTON CHANGE ON SELECT: target the classname with javascript and remove btn-outline-success and replace with btn-clicked and vice versa
+ */
 const SpellBookDetails = ({
   cantripsKnown,
   cantripLimit,
@@ -57,36 +61,44 @@ const spellPropType = PropTypes.shape({
 
 const SpellCard = ({ spell }) => {
   return (
-    <div className="w-auto card content-card description-card text-black">
-      <div className="d-inline text-black">{spell.name}</div>
-      <button className="menu-button d-inline">Select</button>
-      <hr className="solid" />
-      <div className="">
-        {spell.level === 0 ? 'cantrip' : `level ${spell.level}`}
-      </div>
-      {spell.ritual === true && <h6>(ritual)</h6>}
-      <div>{spell.school.name.toLowerCase()}</div>
-      <div className="">
-        <h6>Casting Time: {spell.casting_time}</h6>
-      </div>
-      <div className="">
-        <h6>Range: {spell.range}</h6>
-      </div>
-      <div className="">
-        <h6>Components: {spell.components.join()}</h6>
-      </div>
-      <div className="">
-        <h6>Duration: </h6>
-        <h6>{spell.duration}</h6>
+    <div className="card content-card spell-card"> 
+      <div className="container-fluid">
+        <div className="row">
+          <div className="spell-title col-sm">{spell.name}</div>
+          <button className="btn btn-outline-success d-inline col-sm">Select</button>
+        </div>
       </div>
       <hr className="solid" />
-      <div className="">
-        {spell.desc !== undefined && (
+      <div className="spell-desc">
           <p>
-            {spell.desc.map(string => {
-              return string;
-            })}
+            {spell.level === 0 ? 'cantrip' : `level ${spell.level} ${spell.ritual ? `ritual` : ``}`}
+            <span><em>{spell.school.name.toLowerCase()}</em></span>
           </p>
+        <p>
+          Casting Time: <em>{spell.casting_time}</em>
+        </p>
+        <p>
+          Range: <em>{spell.range}</em>
+        </p>
+        <p>
+          Components: <em>{spell.components.join(', ')}</em>
+        </p>
+        <p>
+          Duration: <em>{spell.concentration ? `Concentration, ${spell.duration}` : spell.duration}</em>
+        </p>
+      </div>
+      <hr className="solid" />
+      <div className="spell-desc">
+        {spell.desc !== undefined && (
+          <ReactReadMoreReadLess
+          charLimit={250}
+          readMoreText="Show more"
+          readLessText="Show less"
+          readMoreClassName="read-more-less--more"
+          readLessClassName="read-more-less--less"
+        >
+            {spell.desc.join('\n')}
+          </ReactReadMoreReadLess>
         )}
       </div>
     </div>
