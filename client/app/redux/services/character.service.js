@@ -72,8 +72,9 @@ const getEquipmentDetails = equipment => {
   return apiCaller.equipmentDetails(equipment);
 }
 const getSpells = (theClass, levels) => {
-    let url = `${API_URL}classes/${theClass}/levels/`;
-    return apiCaller.getSpellCards(levels,  url);
+    let url = `${API_URL}classes/${theClass.index.toLowerCase()}/levels/`;
+    let subclassSpells = theClass.subclass.subclass_spells;
+    return apiCaller.getSpellCards(levels, url, subclassSpells);
 }
 
 export default {

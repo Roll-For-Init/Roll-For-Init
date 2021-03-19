@@ -22,11 +22,11 @@ const makeEquipmentDesc = async (item, itemDetails) => {
             contents: itemDetails.contents
         }
     }
-    else if (itemDetails.equipment_category.index=="weapon") {
+    else if (itemDetails.equipment_category.index=="weapon" && itemDetails.special == undefined) {
         desc = 
         {
             category: `${itemDetails.category_range} Weapon`,
-            damage: `${itemDetails.damage ? itemDetails.damage.damage_dice : itemDetails.special.join(' ')} ${itemDetails.damage ? itemDetails.damage.damage_type.name : null}`,
+            damage: `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`,
             cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
             weight: itemDetails.weight,
             desc: itemDetails.properties.map(prop=>prop.name).join(', ')
@@ -65,6 +65,7 @@ const makeEquipmentDesc = async (item, itemDetails) => {
         if (itemDetails.cost != undefined) desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
         if (itemDetails.weight != undefined) desc.weight = itemDetails.weight;
         if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
+        if (itemDetails.special != undefined) desc.desc = itemDetails.special.join(' ');
     }
     return desc;
 }
@@ -124,49 +125,68 @@ const equipmentOptions = async (container, options, key) => {
 }
 
 const optionsHelper = async (container, options, key) => {
+    const promises = [];
     let optionSet = {
         header: '',
         options: [],
         choose: 0,
       }  
-      let equipmentSet = {
-          header: '',
-          options: [],
-          choose: 0
-      }
     optionSet.choose = options.choose;
     if(options.type.toLowerCase().includes("feature")) {
       optionSet.header = container.name;
       optionSet.desc = container.desc;
-    } else if (options.type.toLowerCase().includes('language'))
+    } 
+    else if (options.type.toLowerCase().includes('language'))
       optionSet.header = `extra ${options.type}`;
     else optionSet.header = options.type.replace('_', " ");
-    if (key.toLowerCase().includes('ability_bonus')) {
-        optionSet.header = `+${options.from[0].bonus} Ability Bonus`
-      for (let option of options.from) {
-        option.ability_score.full_name = fullAbScore[option.ability_score.name];
-        optionSet.options.push(option.ability_score);
-      }
-    } else if (
-      !options.type.toLowerCase().includes('equipment') &&
-      options.from[0].index.toLowerCase().includes('skill')
-    ) {
-      for (let option of options.from) {
-        let optionName = option.name.substring(option.name.indexOf(':') + 2);
-        option.name = optionName;
-        let optionObject = option;
-        optionSet.options.push(optionObject);
-      }
-    } else {
-        for (let option of options.from) {
+    for (let option of options.from) {
+        let key = Object.keys(option)[0];
+        if (key.toLowerCase().includes('ability_bonus')) {
+            optionSet.header = `+${options.from[0].bonus} Ability Bonus`
+            option.ability_score.full_name = fullAbScore[option.ability_score.name];
+            optionSet.options.push(option.ability_score);
+        }
+        else if (key.includes("category")) {
+            let optionObject = option[key];
+            optionSet.header=optionObject.name;
+            promises.push(axios.get(optionObject.url).then((cat) => {
+                optionSet.options = cat.data.results;
+            }));
+        }
+        else if (key.includes("option")) {
+            key = Object.keys(option)[0]; //WEIRDEST async error I cannot solve this. why is this overwritten to be undefined?
+            let optionObject = option[key];
+            let key = Object.keys(optionObject.from[0])[0];
+            if(key.includes("category")) {
+                optionObject.header=optionObject.from[key].name;
+            }
+            optionSet.options.push(optionObject);
+        }
+        else if (option['0']) {
+            let options=[];
+            for (let i = 0; option[i] != undefined; i++) {
+                let optionObject;
+                optionObject = option[i];
+                options.push(optionObject)
+            }
+            optionSet.options.push(options);
+        } 
+        else if (
+          option.index.toLowerCase().includes('skill')
+        ) 
+        {
+            let optionName = option.name.substring(option.name.indexOf(':') + 2);
+            option.name = optionName;
+            let optionObject = option;
+            optionSet.options.push(optionObject);
+        } 
+        else {
             let optionObject = option;
             optionSet.options.push(optionObject);
         }
-      }
-    
-    if(equipmentSet.header=='') equipmentSet = null;
+    }
     if(optionSet.header=='') optionSet = null;
-    return {options: optionSet}
+    return Promise.all(promises).then(() => {return {options: optionSet}}); 
 }
 const optionsExtractor = async (container, key) => {
   let promises = [];
@@ -214,6 +234,7 @@ const descriptionAdder = async (container, key) => {
           deets = details.desc;
         } else deets = placeholderDescription;
         item.desc = deets;
+        if (details.table) item.table = details.table;
         return
       })
       .catch(err => console.error(err)));
@@ -372,7 +393,8 @@ const classCaller = async (classPointer) => {
 
     },
     equipment_options: [],
-    spellcasting: null
+    spellcasting: null,
+    subclass: null
   };
     const theClass = (await axios.get(classPointer.url)).data; //fetch class
     Object.keys(theClass).forEach(key => {
@@ -398,14 +420,66 @@ const classCaller = async (classPointer) => {
         }
     });
     if(theClass.spellcasting != undefined) {
-        classContainer.spellcasting = {};
+        if(classContainer.spellcasting == null) classContainer.spellcasting = {};
         classContainer.spellcasting.level = theClass.spellcasting.level
+    }
+    if(theClass.subclasses[0].level <= 1) {
+        if(classContainer.subclass== null) classContainer.subclass = {};
+        for (let subclass of theClass.subclasses[0].subclass_options ) {
+            classContainer.subclass.name = subclass.name;
+            classContainer.subclass.flavor = subclass.subclass_flavor;
+            if(!classContainer.subclass.subclass_spells) classContainer.subclass.subclass_spells = [];
+            if(!classContainer.subclass.subclass_options) classContainer.subclass.subclass_options = [];
+            if(!classContainer.subclass.subclass_features) classContainer.subclass.subclass_features = [];
+
+            promises.push(axios.get(subclass.url).then((deets) => {
+                let details = deets.data;
+                if (details.spells != undefined) {
+                    if(classContainer.spellcasting == null) classContainer.spellcasting = {};
+                    for (let spell of details.spells) {
+                        console.log(spell, spell.prerequisites);
+                        if(spell.prerequisites[0].index.includes('1')) classContainer.subclass.subclass_spells.push(spell.spell);
+                    }
+                }
+                const morePromises = [];
+                morePromises.push(axios.get(`${details.subclass_levels}/1`).then((deets) => {
+                    const moremorepromises = [];
+                    let details = deets.data;
+                    if(details.feature_choices.length >0) {
+                        if(!classContainer.subclass.subclass_options) classContainer.subclass.subclass_options = [];
+                        for (let set of details.feature_choices) {
+                            //console.log(set);
+                            moremorepromises.push(axios.get(set.url)
+                            .then((choice) => {
+                                //console.log(choice.data);
+                                moremorepromises.push(optionsExtractor(choice.data, 'choice')
+                                .then(choiceSet => {
+                                    classContainer.subclass.subclass_options = classContainer.subclass.subclass_options.concat(choiceSet.options);
+                                }))
+                                classContainer.subclass.subclass_features = classContainer.subclass.subclass_features.concat(choice.data);
+                            }));
+                        }
+                    }
+                    if(details.features.length > 0) {
+                        for(let feature of details.features) {
+                            moremorepromises.push(axios.get(feature.url).then((feet) => {
+                                classContainer.subclass.subclass_features.push(feet.data);
+                            })
+
+                            )
+                        }
+                    }
+                    return Promise.all(moremorepromises)
+                }))
+                return Promise.all(morePromises)
+            }))
+        }
     }
 
     let featureURL = `${theClass.class_levels}/1`;
     promises.push(axios.get(featureURL)
     .then((details) => {
-        let morePromises = [];
+        const morePromises = [];
         details = details.data;
         if(details.feature_choices.length >0) {
             for (let set of details.feature_choices) {
@@ -417,6 +491,7 @@ const classCaller = async (classPointer) => {
                     .then(choiceSet => {
                         classContainer.options = classContainer.options.concat(choiceSet.options);
                     }))
+                    classContainer.features = classContainer.features.concat(choice.data);
                 });
             }
         }
@@ -620,13 +695,13 @@ const equipmentDetails = async (equipment) => {
     })
 }
 
-const getSpellCards = async (levels, url) => {
+const getSpellCards = async (levels, url, subclassSpells) => {
     const promises = [];
     const lists = [];
     const spells = {}
     for(let level of levels) {
         promises.push(axios.get(`${url}${level}/spells`).then((spellList) => {
-            spellList = spellList.data.results;
+            spellList = spellList.data.results.concat(subclassSpells);
             const morePromises = [];
             for(let spell of spellList) {
                 morePromises.push(axios.get(spell.url).then((spellDetails) => {

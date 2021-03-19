@@ -1,5 +1,10 @@
 @import 'client/app/variables';
 
+table {
+    margin: auto;
+    border-collapse: separate;
+    border-spacing: 10px 0;
+}
 .side-drawer {
   border-right: 1px solid black;
   padding: 0px;
