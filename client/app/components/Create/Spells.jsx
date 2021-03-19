@@ -1,39 +1,8 @@
 import React, { useState, useEffect, useReducer } from 'react';
-import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
+import { setSpells } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
-
-const SpellBookDetails = ({
-  cantripsKnown,
-  cantripLimit,
-  spellsKnown,
-  spellLimit,
-}) => {
-  return (
-    <div className="card translucent-card">
-      <div className="card content-card card-title">
-        <h4>Spell Book Details</h4>
-      </div>
-      <div>
-        <h6>
-          Cantrips Known: {cantripsKnown || 0}/{cantripLimit}
-        </h6>
-      </div>
-      <div>
-        <h6>
-          Spells Known: {spellsKnown || 0}/{spellLimit}
-        </h6>
-      </div>
-    </div>
-  );
-};
-SpellBookDetails.propTypes = {
-  cantripsKnown: PropTypes.number,
-  cantripLimit: PropTypes.number,
-  spellsKnown: PropTypes.number,
-  spellLimit: PropTypes.number,
-};
 
 const spellSchoolPropType = PropTypes.shape({
   name: PropTypes.string,
@@ -55,11 +24,18 @@ const spellPropType = PropTypes.shape({
   school: spellSchoolPropType,
 });
 
-const SpellCard = ({ spell }) => {
+const SpellCard = ({ spell, selected, toggleSelected }) => {
+  const select = () => {
+    toggleSelected();
+    console.log('SELECT');
+  };
+
   return (
     <div className="w-auto card content-card description-card text-black">
       <div className="d-inline text-black">{spell.name}</div>
-      <button className="menu-button d-inline">Select</button>
+      <button className="menu-button d-inline" onClick={select}>
+        {selected ? 'Selected' : 'Select'}
+      </button>
       <hr className="solid" />
       <div className="">
         {spell.level === 0 ? 'cantrip' : `level ${spell.level}`}
@@ -94,22 +70,45 @@ const SpellCard = ({ spell }) => {
 };
 SpellCard.propTypes = {
   spell: spellPropType,
+  selected: PropTypes.boolean,
+  toggleSelected: PropTypes.func,
 };
 
-const SpellList = ({ spells }) => {
-  const spellList = [].concat.apply([], Object.values(spells));
+const SpellList = ({ spells, known, level, limit, toggleSelected }) => {
+  const isSelected = spell => {
+    if (known === null) return false;
+    return known.includes(spell.index);
+  };
+
   return (
     <div className="card translucent-card">
-      {spellList !== undefined &&
-        spellList.map((spell, idx) => {
+      <div className="card content-card card-title">
+        <h6>
+          {level == 0 ? 'Cantrips' : level == 1 ? 'Level 1 Spells' : 'Spells'} -
+          Choose {limit}
+        </h6>
+      </div>
+      {spells !== undefined &&
+        spells.map((spell, idx) => {
           console.log('Spell ' + idx + ': ' + spell);
-          return <SpellCard spell={spell} key={idx} />;
+          return (
+            <SpellCard
+              selected={isSelected(spell)}
+              spell={spell}
+              key={idx}
+              toggleSelected={() => toggleSelected(spell.index)}
+            />
+          );
         })}
     </div>
   );
 };
 SpellList.propTypes = {
   spells: PropTypes.arrayOf(spellPropType),
+  level: PropTypes.number,
+  toggleSelected: PropTypes.func,
+  limit: PropTypes.number,
+  known: PropTypes.arrayOf(PropTypes.string),
 };
 
 export const Spells = ({ charID, setPage }) => {
@@ -117,18 +116,29 @@ export const Spells = ({ charID, setPage }) => {
     setPage({ index: 5, name: 'spells' });
     window.scrollTo(0, 0);
   };
-  const character = useSelector(state => state.characters[charID]);
-  const [spells, setSpells] = useState(null);
-  const [knownSpells, setKnownSpells] = useState(null);
-  // const [spellLimit, setSpellLimit] = useState(0);
-  // const [cantripLimit, setCantripLimit] = useState(0);
 
-  const learnSpell = index => {
-    setKnownSpells(...knownSpells, index);
+  const character = useSelector(state => state.characters[charID]);
+  const [spellChoices, setSpellChoices] = useState(null);
+  const dispatch = useDispatch();
+
+  const limit = {
+    0: character.class.spellcasting.cantrips_known,
+    1: character.class.spellcasting.spells_known,
   };
 
-  const unlearnSpell = index => {
-    setKnownSpells(knownSpells.filter(spell => spell.index != index));
+  const getKnownSpells = level => {
+    return character.spells !== null ? character.spells[level] : null;
+  };
+
+  const toggleSelected = (level, index) => {
+    var known = getKnownSpells(level);
+    if (!known) {
+      dispatch(setSpells({ [level]: [index] }));
+    } else if (known.includes(index)) {
+      dispatch(setSpells({ [level]: [known.filter(spell => spell != index)] }));
+    } else if (known.length() < limit[level]) {
+      dispatch(setSpells({ [level]: [...known, index] }));
+    }
   };
 
   useEffect(() => {
@@ -138,9 +148,7 @@ export const Spells = ({ charID, setPage }) => {
       1,
     ]).then(cards => {
       console.log('SPELLS', cards);
-      setSpells(cards);
-      // setSpellLimit(character.class.spellcasting.spells_known);
-      // setCantripLimit(character.class.spellcasting.cantrips_known);
+      setSpellChoices(cards);
     });
     console.log(character);
   }, [character]);
@@ -150,21 +158,44 @@ export const Spells = ({ charID, setPage }) => {
       <div className="mx-auto d-none d-md-flex title-back-wrapper">
         <h2 className="title-card p-4">Spells</h2>
       </div>
-      {spells != null && spells != undefined && (
+      {spellChoices != null && spellChoices != undefined && (
         <>
-          <SpellList
-            spells={spells}
-            learnSpell={learnSpell}
-            unlearnSpell={unlearnSpell}
-          />
+          {[0, 1].map(level => {
+            const currentKey = Object.keys(spellChoices)[level];
+            const list = spellChoices[currentKey];
+            console.log(currentKey, list);
+            return (
+              <SpellList
+                key={level}
+                level={level}
+                limit={limit[level]}
+                spells={list}
+                known={
+                  character.spells
+                    ? character.spells[level]
+                      ? character.spells[level]
+                      : null
+                    : null
+                }
+                toggleSelected={index => toggleSelected(level, index)}
+              />
+            );
+          })}
         </>
       )}
+
+      <button
+        className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+        onClick={onNext}
+      >
+        Finish
+      </button>
     </div>
   );
 };
 Spells.propTypes = {
   charID: PropTypes.string,
-  setPage: PropTypes.function,
+  setPage: PropTypes.func,
 };
 
 export default Spells;
