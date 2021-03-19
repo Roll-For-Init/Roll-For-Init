@@ -99,9 +99,9 @@ useEffect(() => {
                 key={name}
                 type="button"
                 className={classname}
-                //disabled={page.index < idx}
+                disabled={page.index < idx}
                 onClick={() => {
-                  /*page.index > idx && */onPageChange(name, idx);
+                  page.index > idx && onPageChange(name, idx);
                 }}
               >
                 {name}
