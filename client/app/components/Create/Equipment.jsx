@@ -18,7 +18,9 @@ export const Equipment = ({ charID, setPage }) => {
     window.scrollTo(0, 0);
   };
   useEffect(() => {
+    console.log(character);
     const promises = [];
+    console.log(equipment, equipmentOptions);
     promises.push(CharacterService.getEquipmentDetails(equipment).then((equipmentWDetails) => {
       setEquipment(equipmentWDetails)
       console.log("equipment", equipmentWDetails)
