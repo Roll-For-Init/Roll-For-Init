@@ -3,6 +3,8 @@ import React, { useState, useEffect, useReducer } from 'react';
 import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
+import { Link } from 'react-router-dom';
+
 // import { setEquipment } from '../../redux/actions';
 
 export const Equipment = ({ charID, setPage }) => {
@@ -70,12 +72,18 @@ export const Equipment = ({ charID, setPage }) => {
           <h4>Choose 1</h4>
         </div>
       </div>
+      {character.class?.spellcasting ? 
       <button
         className="text-uppercase btn-primary btn-lg px-5 btn-floating"
         onClick={onNext}
       >
         OK
       </button>
+      : <Link to="/dashboard"><button type="button" className="text-uppercase btn-primary btn-lg px-5 btn-floating">
+            Submit Character
+        </button></Link>
+
+      }
       </>
       )}
     </div>

@@ -4,12 +4,9 @@ import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 // import { setEquipment } from '../../redux/actions';
+import { Link } from 'react-router-dom';
 
 export const Spells = ({ charID, setPage }) => {
-  // const onNext = () => {
-  //   setPage({ index: 5, name: 'spells' });
-  //   window.scrollTo(0, 0);
-  // };
   const character = useSelector(state => state.characters[charID]);
   const [spells, setSpells] = useState(null);
   const [spellLimit, setSpellLimit] = useState(0);
@@ -36,13 +33,9 @@ export const Spells = ({ charID, setPage }) => {
           <h4>Cantrip Choose 2</h4>
         </div>
       </div>
-      
-      {/* <button
-        className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-        onClick={onNext}
-      >
-        OK
-      </button> */}
+      <Link to="/dashboard"><button type="button" className="text-uppercase btn-primary btn-lg px-5 btn-floating">
+            Submit Character
+      </button></Link>      
       </>
       )}
 
