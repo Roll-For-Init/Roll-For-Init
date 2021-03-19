@@ -156,9 +156,7 @@ const optionsHelper = async (container, options, key) => {
         else if (key.includes("option")) {
             key = Object.keys(option)[0]; //WEIRDEST async error I cannot solve this. why is this overwritten to be undefined?
             let optionObject = option[key];
-            console.log(optionObject);
             let key = Object.keys(optionObject.from[0])[0];
-            console.log(key);
             if(key.includes("category")) {
                 optionObject.header=optionObject.from[key].name;
             }
@@ -323,7 +321,6 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
 const getRaceMiscDescriptions = async race => {
     let promises = [];
     for (optionSet of race.options) {
-        console.log(optionSet);
         optionSet.options.forEach(option => {
             if(!option.hasOwnProperty('url')) {return;}
             promises.push(axios.get(option.url)
@@ -396,7 +393,8 @@ const classCaller = async (classPointer) => {
 
     },
     equipment_options: [],
-    spellcasting: null
+    spellcasting: null,
+    subclass: null
   };
     const theClass = (await axios.get(classPointer.url)).data; //fetch class
     Object.keys(theClass).forEach(key => {
@@ -422,8 +420,60 @@ const classCaller = async (classPointer) => {
         }
     });
     if(theClass.spellcasting != undefined) {
-        classContainer.spellcasting = {};
+        if(classContainer.spellcasting == null) classContainer.spellcasting = {};
         classContainer.spellcasting.level = theClass.spellcasting.level
+    }
+    if(theClass.subclasses[0].level <= 1) {
+        if(classContainer.subclass== null) classContainer.subclass = {};
+        for (let subclass of theClass.subclasses[0].subclass_options ) {
+            classContainer.subclass.name = subclass.name;
+            classContainer.subclass.flavor = subclass.subclass_flavor;
+            if(!classContainer.subclass.subclass_spells) classContainer.subclass.subclass_spells = [];
+            if(!classContainer.subclass.subclass_options) classContainer.subclass.subclass_options = [];
+            if(!classContainer.subclass.subclass_features) classContainer.subclass.subclass_features = [];
+
+            promises.push(axios.get(subclass.url).then((deets) => {
+                let details = deets.data;
+                if (details.spells != undefined) {
+                    if(classContainer.spellcasting == null) classContainer.spellcasting = {};
+                    for (let spell of details.spells) {
+                        console.log(spell, spell.prerequisites);
+                        if(spell.prerequisites[0].index.includes('1')) classContainer.subclass.subclass_spells.push(spell.spell);
+                    }
+                }
+                const morePromises = [];
+                morePromises.push(axios.get(`${details.subclass_levels}/1`).then((deets) => {
+                    const moremorepromises = [];
+                    let details = deets.data;
+                    if(details.feature_choices.length >0) {
+                        if(!classContainer.subclass.subclass_options) classContainer.subclass.subclass_options = [];
+                        for (let set of details.feature_choices) {
+                            //console.log(set);
+                            moremorepromises.push(axios.get(set.url)
+                            .then((choice) => {
+                                //console.log(choice.data);
+                                moremorepromises.push(optionsExtractor(choice.data, 'choice')
+                                .then(choiceSet => {
+                                    classContainer.subclass.subclass_options = classContainer.subclass.subclass_options.concat(choiceSet.options);
+                                }))
+                                classContainer.subclass.subclass_features = classContainer.subclass.subclass_features.concat(choice.data);
+                            }));
+                        }
+                    }
+                    if(details.features.length > 0) {
+                        for(let feature of details.features) {
+                            moremorepromises.push(axios.get(feature.url).then((feet) => {
+                                classContainer.subclass.subclass_features.push(feet.data);
+                            })
+
+                            )
+                        }
+                    }
+                    return Promise.all(moremorepromises)
+                }))
+                return Promise.all(morePromises)
+            }))
+        }
     }
 
     let featureURL = `${theClass.class_levels}/1`;
@@ -645,13 +695,13 @@ const equipmentDetails = async (equipment) => {
     })
 }
 
-const getSpellCards = async (levels, url) => {
+const getSpellCards = async (levels, url, subclassSpells) => {
     const promises = [];
     const lists = [];
     const spells = {}
     for(let level of levels) {
         promises.push(axios.get(`${url}${level}/spells`).then((spellList) => {
-            spellList = spellList.data.results;
+            spellList = spellList.data.results.concat(subclassSpells);
             const morePromises = [];
             for(let spell of spellList) {
                 morePromises.push(axios.get(spell.url).then((spellDetails) => {

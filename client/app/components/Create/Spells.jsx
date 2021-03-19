@@ -15,7 +15,7 @@ export const Spells = ({ charID, setPage }) => {
   const [spellLimit, setSpellLimit] = useState(0);
   const [cantripLimit, setCantripLimit] = useState(0);
   useEffect(() => {
-    CharacterService.getSpells(character.class.index.toLowerCase(), [0,1]).then((cards) => {
+    CharacterService.getSpells(character.class, [0,1]).then((cards) => {
       console.log("SPELLS", cards);
       setSpells(cards);
       setSpellLimit(character.class.spellcasting.spells_known);

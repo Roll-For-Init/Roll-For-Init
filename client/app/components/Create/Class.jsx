@@ -94,6 +94,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         dispatch(setClass(charID, { equipment_options: theClass.equipment_options }));
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
         dispatch(setClass(charID, {spellcasting: theClass.spellcasting}))
+        dispatch(setClass(charID, {subclass: theClass.subclass}))
       });
   }, []);
 
@@ -103,7 +104,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
     window.scrollTo(0, 0);
   };
   if (classInfo) {
-    const { main, features, options, proficiencies } = classInfo;
+    const { main, features, options, proficiencies, subclass } = classInfo;
     return (
       <>
         <div className="d-none d-md-flex title-back-wrapper">
@@ -172,6 +173,30 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                     />
                 );
               })}
+              {subclass?.subclass_options?.map((option, index) => {
+                return (
+                  <Dropdown
+                      ddLabel={`${option.header} (${subclass.name})`}
+                      title={`Choose ${option.choose}`}
+                      items={option.options}
+                      selectLimit={option.choose}
+                      multiSelect={option.choose > 1}
+                      selection={
+                        userChoices[
+                          `${option.header
+                            .toLowerCase()
+                            .replace(' ', '-')}-${index}`
+                        ]
+                      }
+                      setSelection={setUserChoices}
+                      classname="choice"
+                      stateKey={`${option.header
+                        .toLowerCase()
+                        .replace(' ', '-')}-${index}`}
+                      key={index}
+                    />
+                );
+              })}
             </div>
           </div>
         )}
@@ -196,7 +221,8 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         {features.length > 0 && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Level 1 Features</h4>
-            {features.map(feature => (
+            {features.map(feature => {
+              return (
               <div
                 className="card content-card description-card"
                 key={feature.index}
@@ -206,7 +232,20 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                   <p key={desc}>{desc}</p>
                 ))}
               </div>
-            ))}
+            )})}
+            {subclass?.subclass_features?.map((feature, index) => {
+              return (
+                <div
+                  className="card content-card description-card"
+                  key={feature.index}
+                >
+                  <h5 className="text-center">{`${feature.name} (${subclass.name})`} </h5>
+                  {feature.desc.map(desc => (
+                    <p key={desc}>{desc}</p>
+                  ))}
+                  <p key={`subclass-${index}`}>{`Note: Only the ${main.name} subclass ${subclass.name} is available in this app.`} </p>
+                </div>
+            )})}
           </div>
         )}
         {main.spellcasting && (
