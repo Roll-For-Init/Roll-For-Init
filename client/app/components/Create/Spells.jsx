@@ -62,7 +62,7 @@ const spellPropType = PropTypes.shape({
 const SpellCard = ({ spell }) => {
   return (
     <div className="card content-card spell-card"> 
-      <div className="container-fluid">
+      <div id={spell.index} className="container-fluid">
         <div className="row">
           <div className="spell-title col-sm">{spell.name}</div>
           <button className="btn btn-outline-success d-inline col-sm">Select</button>
