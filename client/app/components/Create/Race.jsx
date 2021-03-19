@@ -335,6 +335,24 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
               <div className="card content-card description-card">
                 <h3 className="card-subtitle small-caps">{trait.name}</h3>
                 <p>{trait.desc}</p>
+                {trait.table && (
+                  <table>
+                    <tr>
+                      {trait.table.header.map(item => {
+                        return (<th>{item}</th>)
+                      })}
+                    </tr>
+                    {trait.table.rows.map(row => {
+                      return (
+                        <tr>
+                          {row.map(item => {
+                            return (<td>{item}</td>)
+                          })}
+                        </tr>
+                      )
+                    })}
+                  </table>
+                )}
               </div>
             );
           })}
