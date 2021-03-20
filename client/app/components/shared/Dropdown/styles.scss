@@ -25,7 +25,7 @@
     }
   }
   .dd-header {
-    transition: .15s;
+    transition: 0.15s;
     box-shadow: -1px 1px 2px rgba(0, 0%, 0%, 67%);
     display: flex;
     flex-direction: row;
@@ -41,6 +41,10 @@
     &.header {
       font-size: 1.25rem;
     }
+    &.eq-card {
+      box-shadow: none;
+      border: 2px solid $maroon;
+    }
     &__title {
       flex: 1;
       color: $dark-blue;
@@ -54,7 +58,6 @@
       color: black;
     }
   }
-
 
   .dd-list {
     transform-origin: top center;
