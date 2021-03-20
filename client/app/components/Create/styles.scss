@@ -275,18 +275,27 @@
   }
 }
 
+@media (min-width: 992px) {
+    .card-columns {
+        column-count: 1;
+    }
+}
+
 .spell-custom-container {
     &>.container {
         height: auto;
         padding-left: 0;
         padding-right: 0;
         &>.card-columns {
-            column-count: 2;
+            column-count: 1;
             widows: 2;
             column-gap: 0;
             .card {
                 width: 302.5px;
                 margin-bottom: .3rem;
+            }
+            @media (min-width: 992px) {
+                column-count: 2;
             }
         }
     }
