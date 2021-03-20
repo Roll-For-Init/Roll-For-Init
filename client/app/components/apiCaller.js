@@ -778,4 +778,3 @@ useEffect(() => {
 */
 
 module.exports = { classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions, getClassDescriptions, equipmentDetails, getSpellCards};
-

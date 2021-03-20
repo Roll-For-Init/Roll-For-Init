@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
+// import { getEquipmentInfo } from '../../redux/actions';
+import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 import { setSpells } from '../../redux/actions/characters';
@@ -144,116 +146,44 @@ SpellList.propTypes = {
   limit: PropTypes.number,
   known: PropTypes.arrayOf(PropTypes.string).isRequired,
 };
+// import { setEquipment } from '../../redux/actions';
+import { Link } from 'react-router-dom';
 
 export const Spells = ({ charID, setPage }) => {
-  const onNext = () => {
-    setPage({ index: 5, name: 'spells' });
-    window.scrollTo(0, 0);
-  };
-
   const character = useSelector(state => state.characters[charID]);
-  console.log(character);
-  const [spellChoices, setSpellChoices] = useState(null);
-  const dispatch = useDispatch();
-
-  const limit = {
-    0: character.class.spellcasting.cantrips_known,
-    1: character.class.spellcasting.spells_known,
-  };
-
-  const getKnownSpells = level => {
-    const knownSpells = character.spells
-      ? character.spells[level]
-        ? character.spells[level]
-        : null
-      : null;
-    return knownSpells;
-  };
-
-  const toggleSelected = (level, index) => {
-    var known = getKnownSpells(level);
-    var payload = null;
-    if (known?.length >= limit[level]-1) {
-      let unselected = document.getElementsByName(level);
-      for (let i = 0; i < unselected.length; i++) {
-        if(unselected[i].className.includes('btn-outline-success')) {
-          unselected[i].className = unselected[i].className.replace('btn-outline-success', 'btn-inactive');
-        }
-      }
-    }
-    if (!known) {
-      payload = { [level]: [index] };
-    } else if (known.includes(index)) {
-      payload = { [level]: [...known.filter(spell => spell != index)] };
-      dispatch(setSpells(payload));
-      if(known.length === limit[level]) {
-        let unselected = document.getElementsByName(level);
-        for (let i = 0; i < unselected.length; i++) {
-          if(unselected[i].className.includes('btn-inactive')) {
-            unselected[i].className = unselected[i].className.replace('btn-inactive', 'btn-outline-success');
-          }
-        }
-     }
-    } else if (known.length < limit[level]) {
-      payload = { [level]: [...known, index] };
-    }
-    else {
-      return;
-    }
-    dispatch(setSpells(charID, payload));
-  };
-
+  const [spells, setSpells] = useState(null);
+  const [spellLimit, setSpellLimit] = useState(0);
+  const [cantripLimit, setCantripLimit] = useState(0);
   useEffect(() => {
-    if (!character.class.index) return;
-    CharacterService.getSpells(character.class, [
-      0,
-      1,
-    ]).then(cards => {
-      setSpellChoices(cards);
-    });
-    console.log(character);
+    CharacterService.getSpells(character.class, [0,1]).then((cards) => {
+      console.log("SPELLS", cards);
+      setSpells(cards);
+      setSpellLimit(character.class.spellcasting.spells_known);
+      setCantripLimit(character.class.spellcasting.cantrips_known);
+    })
   }, []);
 
   return (
     <div className="background">
-      {(spellChoices != null && spellChoices != undefined) ? (
+      {spells!=null && (
         <>
       <div className="mx-auto d-none d-md-flex title-back-wrapper">
         <h2 className="title-card p-4">Spells</h2>
       </div>
-        <>
-          {[0, 1].map(level => {
-            const currentKey = Object.keys(spellChoices)[level];
-            const list = spellChoices[currentKey];
-            return (
-              <SpellList
-                key={level}
-                level={level}
-                limit={limit[level]}
-                spells={list}
-                known={getKnownSpells(level)}
-                toggleSelected={index => toggleSelected(level, index)}
-              />
-            );
-          })}
-        </>
-      <Link to="/dashboard">
-      <button
-        className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-      >
-        Finish
-      </button>
-      </Link>
+      <div className="card translucent-card">
+        {' '}
+        <div className="card content-card card-title">
+          <h4>Cantrip Choose 2</h4>
+        </div>
+      </div>
+      <Link to="/dashboard"><button type="button" className="text-uppercase btn-primary btn-lg px-5 btn-floating">
+            Submit Character
+      </button></Link>      
       </>
-      ):
-      <>Loading</>}
+      )}
 
     </div>
   );
-};
-Spells.propTypes = {
-  charID: PropTypes.string,
-  setPage: PropTypes.func,
 };
 
 export default Spells;
