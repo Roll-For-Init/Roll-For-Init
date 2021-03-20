@@ -29,6 +29,7 @@ export const SET_CLASS = 'SET_CLASS';
 export const SET_BACKGROUND = 'SET_BACKGROUND';
 export const SET_DESCRIPTION = 'SET_DESCRIPTION';
 export const SET_ABILITIES = 'SET_ABILITIES';
+export const SET_SPELLS = 'SET_SPELLS';
 
 
 // ---------------------------  Game --------------------------- //

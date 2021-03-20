@@ -280,6 +280,130 @@ table {
   }
 }
 
+@media (min-width: 992px) {
+    .card-columns {
+        column-count: 1;
+    }
+}
+
+.spell-custom-container {
+    &>.container {
+        height: auto;
+        padding-left: 0;
+        padding-right: 0;
+        &>.card-columns {
+            column-count: 1;
+            widows: 2;
+            column-gap: 0;
+            .card {
+                width: 302.5px;
+                margin-bottom: .3rem;
+            }
+            @media (min-width: 992px) {
+                column-count: 2;
+            }
+        }
+    }
+}
+.spell-card {
+    padding: 8px;
+    height: auto;
+
+    &>.container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+        &>.row {
+            margin-right: auto;
+            margin-left: auto;
+            &>.spell-title {
+                font-size: 1.25rem;
+                display: inline-block;
+                color: $dark-blue;
+                padding: 0;
+                text-align: left;
+            }
+            &>.btn-outline-success {
+                border: {
+                    style: solid !important;
+                    color: $green !important;
+                    width: 3px !important;
+                    radius: 8px;
+                }
+                color: $dark-blue;
+                box-shadow: none;
+                float: right;
+                font-size: 1rem;
+                padding: 2px 5px;
+                max-height: 1.67rem;
+                line-height: 1;
+                flex-grow: 0;
+                margin: auto 0px;
+        
+                &:hover, &:active {
+                    background-color: $medium-off-white;
+                }
+            }
+            &>.btn-clicked {
+                @extend .btn-outline-success;
+                background-color: $green;
+                color: $off-white;
+
+                &:hover {
+                    background-color: $medium-green;
+                    border-color: $medium-green !important;
+                }
+                &:active {
+                    background-color: $dark-green;
+                }
+                //how to make it go back to default immediately on click?
+                
+            }
+            &>.btn-inactive {
+                @extend .btn-outline-success;
+                background-color: $medium-off-white;
+                color: $dark-blue-disabled;
+                &:hover {
+                    background-color: $medium-off-white;
+                    color: $dark-blue-disabled;
+                }
+            }
+        }
+    }
+
+    hr {
+        margin: {
+            top: 4px;
+            bottom: 4px;
+            right: -4px;
+            left: -4px;
+        }
+        border: {
+            width: 2px;
+            color: $dark-blue;
+            radius: 1px;
+        }
+    }
+
+    .spell-desc {
+        text-align: left;
+        line-height: normal;
+        color: $dark-blue !important;
+
+        &>div {
+            color: $dark-blue !important;
+        }
+        &>p {
+            color: $dark-blue !important;
+            margin-bottom: 0;
+            &>span {
+                float: right;
+                color: $dark-blue !important;
+            }
+        }
+        
+    }
+}
+
 .read-more-less--more,
 .read-more-less--less {
   color: $blue;

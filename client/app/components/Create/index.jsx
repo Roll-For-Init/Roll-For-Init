@@ -108,14 +108,14 @@ useEffect(() => {
               </button>
             );
           })}
-          {character.class?.spellcasting && (
+          {(character.class?.spellcasting) && (
               <button
                 key='spells'
                 type="button"
                 className={page.name === 'spells' ? 'btn btn-lg btn-primary menu-button active' : 'btn btn-lg btn-secondary menu-button'}
-                //disabled={page.index < idx}
+                disabled={page.index < 6}
                 onClick={() => {
-                  /*page.index > idx && */onPageChange('spells', 6);
+                  page.index > 6 && onPageChange('spells', 6);
                 }}
               >
                 spells

@@ -13,7 +13,8 @@ import {
   SET_CLASS,
   SET_BACKGROUND,
   SET_DESCRIPTION,
-  SET_ABILITIES
+  SET_ABILITIES,
+  SET_SPELLS,
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -123,11 +124,16 @@ export const setBackground = (charID, background) => dispatch => {
 };
 
 export const setDescription = (charID, description) => dispatch => {
-    console.log('SET_DESCRIPTION', charID, description);
-    dispatch({type: SET_DESCRIPTION, payload: {charID, description}});
+  console.log('SET_DESCRIPTION', charID, description);
+  dispatch({ type: SET_DESCRIPTION, payload: { charID, description } });
 };
 
 export const setAbilities = (charID, abilities) => dispatch => {
   console.log('SET_ABILITIES', charID, abilities);
   dispatch({ type: SET_ABILITIES, payload: { charID, abilities } });
+};
+
+export const setSpells = (charID, spells) => dispatch => {
+  console.log('SET_SPELLS', charID, spells);
+  dispatch({ type: SET_SPELLS, payload: { charID, spells } });
 };
