@@ -145,17 +145,18 @@ const optionsHelper = async (container, options, key) => {
             option.ability_score.full_name = fullAbScore[option.ability_score.name];
             optionSet.options.push(option.ability_score);
         }
-        else if (key.includes("category")) {
-            let optionObject = option[key];
+        else if (Object.keys(option)[0].includes("category")) { //if it try to not do this multiple times there are race conditions
+            let optionObject = option[Object.keys(option)[0]];
             optionSet.header=optionObject.name;
             promises.push(axios.get(optionObject.url).then((cat) => {
                 optionSet.options = cat.data.results;
             }));
         }
-        else if (key.includes("option")) {
-            let optionObject = option[key];
+        else if (Object.keys(option)[0].includes("option")) {
+            let thekey = Object.keys(option)[0];
+            let optionObject = option[thekey];
             if(key.includes("category")) {
-                optionObject.header=optionObject.from[key].name;
+                optionObject.header=optionObject.from[thekey].name;
             }
             optionSet.options.push(optionObject);
         }
@@ -317,7 +318,9 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
 
 const getRaceMiscDescriptions = async race => {
     let promises = [];
+    //console.log(race.options);
     for (optionSet of race.options) {
+        //console.log(optionSet);
         optionSet.options.forEach(option => {
             if(!option.hasOwnProperty('url')) {return;}
             promises.push(axios.get(option.url)
@@ -434,7 +437,6 @@ const classCaller = async (classPointer) => {
                 if (details.spells != undefined) {
                     if(classContainer.spellcasting == null) classContainer.spellcasting = {};
                     for (let spell of details.spells) {
-                        console.log(spell, spell.prerequisites);
                         if(spell.prerequisites[0].index.includes('1')) classContainer.subclass.subclass_spells.push(spell.spell);
                     }
                 }
@@ -776,4 +778,3 @@ useEffect(() => {
 */
 
 module.exports = { classCaller, backgroundCaller, propogateRacePointer,getRaceMiscDescriptions, getClassDescriptions, equipmentDetails, getSpellCards};
-

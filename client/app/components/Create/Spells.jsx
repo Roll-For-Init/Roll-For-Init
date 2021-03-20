@@ -4,6 +4,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setSpells } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
+import { Link } from 'react-router-dom';
+
 
 /**
  * FOR DEACTIVATING SELECT BUTTONS: you will have to target all spell card children that are NOT selected,

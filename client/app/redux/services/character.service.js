@@ -73,7 +73,7 @@ const getEquipmentDetails = equipment => {
 }
 const getSpells = (theClass, levels) => {
     let url = `${API_URL}classes/${theClass.index.toLowerCase()}/levels/`;
-    let subclassSpells = theClass.subclass.subclass_spells;
+    let subclassSpells = theClass.subclass && theClass.subclass_spells ? theClass.subclass.subclass_spells : [];
     return apiCaller.getSpellCards(levels, url, subclassSpells);
 }
 
