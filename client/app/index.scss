@@ -11,7 +11,7 @@ body {
 
 body::-webkit-scrollbar {
   overflow: overlay;
-  width: 0.5em;
+  width: .5em;
 }
 
 body::-webkit-scrollbar-track {
@@ -54,15 +54,13 @@ button {
       background-color: $medium-blue !important;
       color: white;
     }
+    &:active,
     &.active {
       background-color: $dark-blue !important;
     }
   }
-  &[disabled] {
-    background-color: $blue-disabled !important;
-    color: $white-disabled;
-  }
 }
+
 .btn-secondary {
   background-color: $off-white;
   color: $dark-blue;
@@ -72,14 +70,10 @@ button {
       background-color: $medium-off-white;
       color: black;
     }
-    &:active {
-      background-color: $dark-off-white !important;
-      color: white;
+    &[disabled] {
+      background-color: $off-white-disabled !important;
+      color: $white-disabled;
     }
-  }
-  &[disabled] {
-    background-color: $off-white-disabled !important;
-    color: $white-disabled;
   }
 }
 

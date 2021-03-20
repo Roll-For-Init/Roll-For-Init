@@ -140,6 +140,7 @@ const optionsHelper = async (container, options, key) => {
       optionSet.header = `extra ${options.type}`;
     else optionSet.header = options.type.replace('_', " ");
     for (let option of options.from) {
+        let key = Object.keys(option)[0];
         if (key.toLowerCase().includes('ability_bonus')) {
             optionSet.header = `+${options.from[0].bonus} Ability Bonus`
             option.ability_score.full_name = fullAbScore[option.ability_score.name];
@@ -153,7 +154,9 @@ const optionsHelper = async (container, options, key) => {
             }));
         }
         else if (key.includes("option")) {
+            key = Object.keys(option)[0]; //WEIRDEST async error I cannot solve this. why is this overwritten to be undefined?
             let optionObject = option[key];
+            let key = Object.keys(optionObject.from[0])[0];
             if(key.includes("category")) {
                 optionObject.header=optionObject.from[key].name;
             }
