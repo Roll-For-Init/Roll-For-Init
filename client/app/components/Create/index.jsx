@@ -99,23 +99,23 @@ useEffect(() => {
                 key={name}
                 type="button"
                 className={classname}
-                disabled={page.index < idx}
+                //disabled={page.index < idx}
                 onClick={() => {
-                  page.index > idx && onPageChange(name, idx);
+                  /*page.index > idx && */onPageChange(name, idx);
                 }}
               >
                 {name}
               </button>
             );
           })}
-          {(character.class?.spellcasting) && (
+          {character.class?.spellcasting && (
               <button
                 key='spells'
                 type="button"
                 className={page.name === 'spells' ? 'btn btn-lg btn-primary menu-button active' : 'btn btn-lg btn-secondary menu-button'}
-                disabled={page.index < 6}
+                //disabled={page.index < idx}
                 onClick={() => {
-                  page.index > 6 && onPageChange('spells', 6);
+                  /*page.index > idx && */onPageChange('spells', 6);
                 }}
               >
                 spells
