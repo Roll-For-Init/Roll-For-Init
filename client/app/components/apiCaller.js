@@ -131,8 +131,6 @@ const optionsHelper = async (container, options, key) => {
         options: [],
         choose: 0,
       }  
-      console.log(options);
-      console.log(key);
     optionSet.choose = options.choose;
     if(options.type.toLowerCase().includes("feature")) {
       optionSet.header = container.name;
@@ -142,7 +140,6 @@ const optionsHelper = async (container, options, key) => {
       optionSet.header = `extra ${options.type}`;
     else optionSet.header = options.type.replace('_', " ");
     for (let option of options.from) {
-        console.log(option);
         if (key.toLowerCase().includes('ability_bonus')) {
             optionSet.header = `+${options.from[0].bonus} Ability Bonus`
             option.ability_score.full_name = fullAbScore[option.ability_score.name];
@@ -182,7 +179,6 @@ const optionsHelper = async (container, options, key) => {
             optionSet.options.push(optionObject);
         } 
         else {
-            console.log(optionObject);
             let optionObject = option;
             optionSet.options.push(optionObject);
         }
@@ -323,15 +319,12 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
 const getRaceMiscDescriptions = async race => {
     let promises = [];
     //console.log(race.options);
-    console.log(race);
     for (optionSet of race.options) {
         //console.log(optionSet);
         optionSet.options.forEach(option => {
-            console.log(option);
             if(!option.hasOwnProperty('url')) {return;}
             promises.push(axios.get(option.url)
             .then(optionDetails => {
-                console.log(optionDetails);
                 optionDetails = optionDetails.data;
                 if(optionDetails.desc) option.desc = optionDetails.desc;
                 else option.desc = placeholderDescription;
@@ -444,7 +437,6 @@ const classCaller = async (classPointer) => {
                 if (details.spells != undefined) {
                     if(classContainer.spellcasting == null) classContainer.spellcasting = {};
                     for (let spell of details.spells) {
-                        console.log(spell, spell.prerequisites);
                         if(spell.prerequisites[0].index.includes('1')) classContainer.subclass.subclass_spells.push(spell.spell);
                     }
                 }
