@@ -131,6 +131,8 @@ const optionsHelper = async (container, options, key) => {
         options: [],
         choose: 0,
       }  
+      console.log(options);
+      console.log(key);
     optionSet.choose = options.choose;
     if(options.type.toLowerCase().includes("feature")) {
       optionSet.header = container.name;
@@ -140,22 +142,24 @@ const optionsHelper = async (container, options, key) => {
       optionSet.header = `extra ${options.type}`;
     else optionSet.header = options.type.replace('_', " ");
     for (let option of options.from) {
+        console.log(option);
         if (key.toLowerCase().includes('ability_bonus')) {
             optionSet.header = `+${options.from[0].bonus} Ability Bonus`
             option.ability_score.full_name = fullAbScore[option.ability_score.name];
             optionSet.options.push(option.ability_score);
         }
-        else if (key.includes("category")) {
-            let optionObject = option[key];
+        else if (Object.keys(option)[0].includes("category")) { //if it try to not do this multiple times there are race conditions
+            let optionObject = option[Object.keys(option)[0]];
             optionSet.header=optionObject.name;
             promises.push(axios.get(optionObject.url).then((cat) => {
                 optionSet.options = cat.data.results;
             }));
         }
-        else if (key.includes("option")) {
-            let optionObject = option[key];
+        else if (Object.keys(option)[0].includes("option")) {
+            let thekey = Object.keys(option)[0];
+            let optionObject = option[thekey];
             if(key.includes("category")) {
-                optionObject.header=optionObject.from[key].name;
+                optionObject.header=optionObject.from[thekey].name;
             }
             optionSet.options.push(optionObject);
         }
@@ -178,6 +182,7 @@ const optionsHelper = async (container, options, key) => {
             optionSet.options.push(optionObject);
         } 
         else {
+            console.log(optionObject);
             let optionObject = option;
             optionSet.options.push(optionObject);
         }
@@ -317,11 +322,16 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
 
 const getRaceMiscDescriptions = async race => {
     let promises = [];
+    //console.log(race.options);
+    console.log(race);
     for (optionSet of race.options) {
+        //console.log(optionSet);
         optionSet.options.forEach(option => {
+            console.log(option);
             if(!option.hasOwnProperty('url')) {return;}
             promises.push(axios.get(option.url)
             .then(optionDetails => {
+                console.log(optionDetails);
                 optionDetails = optionDetails.data;
                 if(optionDetails.desc) option.desc = optionDetails.desc;
                 else option.desc = placeholderDescription;
