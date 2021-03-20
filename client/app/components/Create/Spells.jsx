@@ -213,10 +213,11 @@ export const Spells = ({ charID, setPage }) => {
 
   return (
     <div className="background">
+      {(spellChoices != null && spellChoices != undefined) ? (
+        <>
       <div className="mx-auto d-none d-md-flex title-back-wrapper">
         <h2 className="title-card p-4">Spells</h2>
       </div>
-      {spellChoices != null && spellChoices != undefined && (
         <>
           {[0, 1].map(level => {
             const currentKey = Object.keys(spellChoices)[level];
@@ -233,14 +234,16 @@ export const Spells = ({ charID, setPage }) => {
             );
           })}
         </>
-      )}
-
       <button
         className="text-uppercase btn-primary btn-lg px-5 btn-floating"
         onClick={onNext}
       >
         Finish
       </button>
+      </>
+      ):
+      <>Loading</>}
+
     </div>
   );
 };
