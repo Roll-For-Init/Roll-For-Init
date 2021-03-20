@@ -28,8 +28,8 @@ export const Background = ({ charID, setPage }) => {
     dispatch(setBackground(charID, background[0]));
     if (background[0].index == 'custom') {
       setSelectionBg(background);
-      dispatch(setBackground(charID, {equipment: []}));
-      dispatch(setBackground(charID, {equipment_options: []}));
+      dispatch(setBackground(charID, { equipment: [] }));
+      dispatch(setBackground(charID, { equipment_options: [] }));
     } else {
       CharacterService.getBackgroundInfo(background[0])
         .then(bg => {
@@ -40,7 +40,9 @@ export const Background = ({ charID, setPage }) => {
         .then(bg => {
           let equipment = { equipment: bg.starting_equipment };
           dispatch(setBackground(charID, equipment));
-          dispatch(setBackground(charID, { equipment_options: bg.equipment_options }));
+          dispatch(
+            setBackground(charID, { equipment_options: bg.equipment_options })
+          );
           dispatch(setBackground(charID, { proficiencies: bg.proficiencies }));
           let personality = {
             traits: bg.personality_traits,
@@ -62,11 +64,11 @@ export const Background = ({ charID, setPage }) => {
   useEffect(() => {
     CharacterService.getIndexedList('backgrounds')
       .then(list => {
-        const custom = [{ name: 'Custom', index: 'custom' }];
+        const custom = [{ name: 'Custom', index: 'custom', equipment: [] }];
         setBackgrounds(custom.concat(list));
         dispatch(setBackground(charID, custom[0]));
-        dispatch(setBackground(charID, {equipment: []}));  
-        dispatch(setBackground(charID, {equipment_options: []}));
+        dispatch(setBackground(charID, { equipment: [] }));
+        dispatch(setBackground(charID, { equipment_options: [] }));
         return custom;
       })
       .then(custom => {
@@ -235,7 +237,7 @@ export const Background = ({ charID, setPage }) => {
                         ]
                       }
                       setSelection={setUserChoices}
-                      classname="choice"
+                      classname="dd-choice"
                       stateKey={`${option.header
                         .toLowerCase()
                         .replace(' ', '-')}-${index}`}
@@ -275,7 +277,7 @@ export const Background = ({ charID, setPage }) => {
               </div>
             )}
             <div className="choice-container mb-0">
-              {selectionBg[0].index == 'custom' && (
+              {selectionBg[0].index === 'custom' && (
                 <>
                   <Dropdown
                     ddLabel="Tools &#38; Languages"
@@ -317,11 +319,11 @@ export const Background = ({ charID, setPage }) => {
                   /> */}
                 </>
               )}
-              {selectionBg[0].index != 'custom' && (
+              {selectionBg[0].index !== 'custom' && (
                 <div className="card content-card description-card mb-0">
                   {Object.keys(selectionBg[0].proficiencies).map(key => {
                     return (
-                      <p className="text-capitalize">
+                      <p className="text-capitalize" key={key}>
                         <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
                         -{' '}
                         {selectionBg[0].proficiencies[key].map(
