@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Dropdown from '../shared/Dropdown';
 
-export const Abilities = () => {
+export const Abilities = ({ charID, setPage }) => {
   const [selection1, setSelection1] = useState([
     { index: 'Standard Array', name: 'Standard Array' },
   ]);
 
   const onNext = () => {
+    console.log("in here");
     setPage({ index: 3, name: 'background' });
     window.scrollTo(0, 0);
   };

@@ -150,6 +150,7 @@ export const Spells = ({ charID, setPage }) => {
   };
 
   const character = useSelector(state => state.characters[charID]);
+  console.log(character);
   const [spellChoices, setSpellChoices] = useState(null);
   const dispatch = useDispatch();
 
@@ -202,7 +203,7 @@ export const Spells = ({ charID, setPage }) => {
 
   useEffect(() => {
     if (!character.class.index) return;
-    CharacterService.getSpells(character.class.index.toLowerCase(), [
+    CharacterService.getSpells(character.class, [
       0,
       1,
     ]).then(cards => {
@@ -234,12 +235,13 @@ export const Spells = ({ charID, setPage }) => {
             );
           })}
         </>
+      <Link to="/dashboard">
       <button
         className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-        onClick={onNext}
       >
         Finish
       </button>
+      </Link>
       </>
       ):
       <>Loading</>}
