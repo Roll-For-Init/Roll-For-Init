@@ -302,7 +302,7 @@
             margin-right: auto;
             margin-left: auto;
             &>.spell-title {
-                font-size: 24px;
+                font-size: 1.25rem;
                 display: inline-block;
                 color: $dark-blue;
                 padding: 0;
@@ -317,18 +317,16 @@
                 }
                 color: $dark-blue;
                 box-shadow: none;
-                margin: 0px;
                 float: right;
-                font-size: 18px;
-                padding: .025em .05em;
-                min-width: 78px;
-                max-height: 30px;
+                font-size: 1rem;
+                padding: 2px 5px;
+                max-height: 1.67rem;
+                line-height: 1;
                 flex-grow: 0;
-                right: 0;
+                margin: auto 0px;
         
                 &:hover, &:active {
-                    background-color: $green;
-                    color: $off-white;
+                    background-color: $medium-off-white;
                 }
             }
             &>.btn-clicked {
@@ -336,6 +334,13 @@
                 background-color: $green;
                 color: $off-white;
 
+                &:hover, &:focus {
+                    background-color: $medium-green;
+                    border-color: $medium-green !important;
+                }
+                &:active {
+                    background-color: $dark-green;
+                }
                 //how to make it go back to default immediately on click?
                 
             }
@@ -361,6 +366,7 @@
         border: {
             width: 2px;
             color: $dark-blue;
+            radius: 1px;
         }
     }
 

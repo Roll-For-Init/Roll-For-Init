@@ -33,7 +33,7 @@ const spellPropType = PropTypes.shape({
 const SpellCard = ({ spell, selected, toggleSelected }) => {
   return (
     <div className="card content-card spell-card">
-      <div id={spell.index} className="container-fluid">
+      <div id={spell.index} className="container-fluid px-0">
         <div className="row">
           <div className="spell-title col-sm">{spell.name}</div>
           <button
@@ -51,7 +51,7 @@ const SpellCard = ({ spell, selected, toggleSelected }) => {
         <p>
           {spell.level === 0
             ? 'cantrip'
-            : `level ${spell.level} ${spell.ritual ? `ritual` : ``}`}
+            : `level ${spell.level} ${spell.ritual ? <em>(ritual)</em> : ``}`}
           <span>
             <em>{spell.school.name.toLowerCase()}</em>
           </span>
@@ -63,7 +63,7 @@ const SpellCard = ({ spell, selected, toggleSelected }) => {
           Range: <em>{spell.range}</em>
         </p>
         <p>
-          Components: <em>{spell.components.join(', ')}</em>
+          Components: <em>{`${spell.components.join(', ')} ${spell.material ? `(${spell.material})` : ``}`}</em>
         </p>
         <p>
           Duration:{' '}
