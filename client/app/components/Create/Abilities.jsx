@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAbilities } from '../../redux/actions';
-import CharacterService from '../../redux/services/character.service';
+// import CharacterService from '../../redux/services/character.service';
 
 export const Abilities = ({ charID, setPage }) => {
   const dispatch = useDispatch();
@@ -10,13 +10,14 @@ export const Abilities = ({ charID, setPage }) => {
   const [diceTotals, setDiceTotals] = useState(null);
 
   const charInfo = useSelector(state => state.characters[charID]);
-
+  console.log(charInfo);
   useEffect(() => {
     if (charInfo.race) {
       setAbilityCards(
         charInfo.race.ability_bonuses.map(ability => {
           return {
             name: ability.ability_score.full_name,
+            short_name: ability.ability_score.index,
             points: 10,
             bonus: ability.bonus || 0,
             modifier: 0,
@@ -24,7 +25,6 @@ export const Abilities = ({ charID, setPage }) => {
           };
         })
       );
-      dispatch(setAbilities(charID, charInfo.race.ability_bonuses));
     }
   }, [charInfo.race]);
 
@@ -53,6 +53,7 @@ export const Abilities = ({ charID, setPage }) => {
 
   const onNext = () => {
     // setSelectedAbilities({ index: race.name, url: race.url });
+    dispatch(setAbilities(charID, abilityCards));
     setPage({ index: 3, name: 'background' });
     window.scrollTo(0, 0);
   };
@@ -96,6 +97,7 @@ export const Abilities = ({ charID, setPage }) => {
                   <div className="col" key={idx}>
                     <PointBuyCard
                       title={ability.name}
+                      short_name={ability.short_name}
                       points={ability.points}
                       bonus={ability.bonus}
                       finalScore={ability.finalScore}
@@ -173,6 +175,7 @@ const DiceRoll = ({ onDiceRoll, diceTotals }) => {
 
 const PointBuyCard = ({
   title,
+  short_name,
   points,
   bonus,
   finalScore,
@@ -188,6 +191,7 @@ const PointBuyCard = ({
         if (ability.name === title && ability.points > 8) {
           return {
             name: title,
+            short_name,
             points: points - 1,
             bonus,
             modifier: Math.floor((ability.points - 11) / 2),
@@ -210,6 +214,7 @@ const PointBuyCard = ({
         ) {
           return {
             name: title,
+            short_name,
             points: points + 1,
             bonus,
             modifier: Math.floor((ability.points - 9) / 2),
@@ -228,6 +233,7 @@ const PointBuyCard = ({
         if (ability.name === title && totalPointsUsed > 0) {
           return {
             name: title,
+            short_name,
             points: choices,
             bonus,
             modifier: Math.floor((choices - 10) / 2),
