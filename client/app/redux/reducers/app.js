@@ -1,6 +1,6 @@
-import { LOADING_ON, LOADING_OFF } from '../actions/types';
+import { LOADING_ON, LOADING_OFF, CACHE_URL } from '../actions/types';
 
-const initialState = { isAppLoading: true, awaiting: ['app'] };
+const initialState = { isAppLoading: true, awaiting: ['app'], urls: null };
 
 export default function(state = initialState, action) {
   const { type, payload } = action;
@@ -21,7 +21,14 @@ export default function(state = initialState, action) {
           awaiting: temp,
         };
       };
-
+    case CACHE_URL:
+      return {
+        ...state,
+        urls: {
+          ...state.urls,
+          ...payload,
+        },
+      };
     default:
       return state;
   }

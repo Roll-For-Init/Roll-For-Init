@@ -10,6 +10,7 @@ export const LOGOUT = 'LOGOUT';
 // ---------------------------  Application --------------------------- //
 export const LOADING_ON = 'LOADING_ON';
 export const LOADING_OFF = 'LOADING_OFF';
+export const CACHE_URL = 'CACHE_URL';
 
 // ---------------------------  Character --------------------------- //
 export const CREATE_CHARACTER = 'CREATE_CHARACTER';
@@ -30,7 +31,6 @@ export const SET_BACKGROUND = 'SET_BACKGROUND';
 export const SET_DESCRIPTION = 'SET_DESCRIPTION';
 export const SET_ABILITIES = 'SET_ABILITIES';
 export const SET_SPELLS = 'SET_SPELLS';
-
 
 // ---------------------------  Game --------------------------- //
 export const CREATE_GAME_SUCCESS = 'CREATE_GAME_SUCCESS';
