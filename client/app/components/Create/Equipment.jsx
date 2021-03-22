@@ -8,8 +8,9 @@ import ReactReadMoreReadLess from 'react-read-more-read-less';
 
 const EquipmentCard = ({ equipment, clickable = false, dropdown = false }) => {
   const handleClick = () => {
-    // setSelected(!selected);
+    setSelected(!selected);
     console.log('toggle!');
+    console.log(selected);
   };
 
   const [selected, setSelected] = useState(false);
@@ -33,10 +34,10 @@ const EquipmentCard = ({ equipment, clickable = false, dropdown = false }) => {
           <button
             onClick={() => handleClick()}
             className={`btn ${
-              selected === false ? `btn-outline-success` : `btn-clicked`
+              !selected ? `btn-outline-success` : `btn-clicked`
             } btn-card`}
           >
-            Select
+            {selected ? 'Selected' : 'Select'}
           </button>
         )}
       </div>
