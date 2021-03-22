@@ -8,23 +8,80 @@ export const Abilities = ({ charID, setPage }) => {
   const [abilityCards, setAbilityCards] = useState(null);
   const [totalPointsUsed, setTotalPointsUsed] = useState(27);
   const [diceTotals, setDiceTotals] = useState(null);
+  /**
+   *  str dex con int wis cha
+   */
 
   const charInfo = useSelector(state => state.characters[charID]);
-  console.log(charInfo);
   useEffect(() => {
     if (charInfo.race) {
-      setAbilityCards(
-        charInfo.race.ability_bonuses.map(ability => {
+      let temp = [
+        {
+          name: 'Strength',
+          short_name: 'str',
+          points: 10,
+          bonus: 0,
+          modifier: 0,
+          finalScore: 10,
+        },
+        {
+          name: 'Dexterity',
+          short_name: 'dex',
+          points: 10,
+          bonus: 0,
+          modifier: 0,
+          finalScore: 10,
+        },
+        {
+          name: 'Construction',
+          short_name: 'con',
+          points: 10,
+          bonus: 0,
+          modifier: 0,
+          finalScore: 10,
+        },
+        {
+          name: 'Intelligence',
+          short_name: 'int',
+          points: 10,
+          bonus: 0,
+          modifier: 0,
+          finalScore: 10,
+        },
+        {
+          name: 'Wisdom',
+          short_name: 'wis',
+          points: 10,
+          bonus: 0,
+          modifier: 0,
+          finalScore: 10,
+        },
+        {
+          name: 'Charisma',
+          short_name: 'cha',
+          points: 10,
+          bonus: 0,
+          modifier: 0,
+          finalScore: 10,
+        },
+      ].map(item => {
+        const ability = charInfo.race.ability_bonuses.find(
+          abil => abil.ability_score.index === item.short_name
+        );
+        if (ability) {
           return {
             name: ability.ability_score.full_name,
             short_name: ability.ability_score.index,
             points: 10,
-            bonus: ability.bonus || 0,
+            bonus: ability.bonus,
             modifier: 0,
-            finalScore: 10 + (ability.bonus || 0),
+            finalScore: 10 + ability.bonus,
           };
-        })
-      );
+        } else {
+          return item;
+        }
+      });
+      setAbilityCards(temp);
     }
   }, [charInfo.race]);
 
@@ -280,7 +337,7 @@ const PointBuyCard = ({
           </button>
         </h1>
       </div>
-      {bonus && (
+      {bonus > 0 && (
         <div className="card content-card description-card text-center">
           <p className="text-capitalize">Racial Bonus: +{bonus}</p>
         </div>
