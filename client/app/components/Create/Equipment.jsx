@@ -6,104 +6,188 @@ import { useSelector, useDispatch } from 'react-redux';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 // import { setEquipment } from '../../redux/actions';
 
-const EquipmentCard = ({ equipment, clickable = false }) => {
+const EquipmentCard = ({ equipment, clickable = false, dropdown = false }) => {
   const handleClick = () => {
     // setSelected(!selected);
     console.log('toggle!');
   };
 
   const [selected, setSelected] = useState(false);
+  const [selectionEq, setSelectionEq] = useState([]);
+
   return (
     <>
-      {/* {clickable ? (
-        <div id={equipment.index} className="container-fluid">
-          <div className="row">
-            <div className="equipment-card-title col-sm">{equipment.name}</div>
-            <button
-              onClick={() => handleClick()}
-              className={`btn ${
-                selected === false ? `btn-outline-success` : `btn-clicked`
-              } d-inline col-sm`}
-            >
-              Select
-            </button>
-          </div>
-        </div>
-      ) : ( */}
-      <div className="equipment-card-title">
-        {equipment.quantity > 1 ? (
-          <h5>{`${equipment.name} (${equipment.quantity})`}</h5>
+      <div className="equipment-card-title same-line">
+        {dropdown ? (
+          <h5>{equipment.header}</h5>
         ) : (
-          <h5>{equipment.name}</h5>
+          <>
+            {equipment.quantity > 1 ? (
+              <h5>{`${equipment.name} (${equipment.quantity})`}</h5>
+            ) : (
+              <h5>{equipment.name}</h5>
+            )}
+          </>
+        )}
+        {clickable && (
+          <button
+            onClick={() => handleClick()}
+            className={`btn ${
+              selected === false ? `btn-outline-success` : `btn-clicked`
+            } btn-card`}
+          >
+            Select
+          </button>
         )}
       </div>
-
-      <hr className="mb-0 mt-0" />
-      <div className="equipment-card-body">
-        {equipment.desc.category && (
-          <i className="equipment-item-info">{equipment.desc.category}</i>
-        )}
-        {equipment.desc.damage && (
-          <p className="equipment-item mb-0">
-            Damage:&nbsp;
-            <i className="equipment-item-info">{equipment.desc.damage}</i>
-          </p>
-        )}
-        {equipment.desc.cost && (
-          <>
-            {equipment.desc.weight ? (
-              <div className="same-line mb-0">
-                <span className="equipment-item">
-                  Cost:&nbsp;
-                  <i className="equipment-item-info">{equipment.desc.cost}</i>
-                </span>
-                <span className="equipment-item">
-                  Weight:&nbsp;
-                  <i className="equipment-item-info">{equipment.desc.weight}</i>
-                </span>
-              </div>
-            ) : (
+      {dropdown ? (
+        <Dropdown
+          ddLabel=""
+          hideLabel
+          title={`Choose ${equipment.choose}`}
+          items={[...equipment.from]}
+          width="100%"
+          multiSelect={equipment.choose > 1}
+          selection={selectionEq}
+          setSelection={setSelectionEq}
+          // classname="eq-card"
+        />
+      ) : (
+        <>
+          <hr className="mb-0 mt-0" />
+          <div className="equipment-card-body">
+            {equipment.desc.category && (
+              <i className="equipment-item-info">{equipment.desc.category}</i>
+            )}
+            {equipment.desc.damage && (
               <p className="equipment-item mb-0">
-                Cost:&nbsp;
-                <i className="equipment-item-info">{equipment.desc.cost}</i>
+                Damage:&nbsp;
+                <i className="equipment-item-info">{equipment.desc.damage}</i>
               </p>
             )}
-          </>
-        )}
-        {Array.isArray(equipment.desc.contents) && (
-          <>
-            Contents:&nbsp;
-            {Object.keys(equipment.desc.contents)
-              .map(function(k) {
-                return equipment.desc.contents[k].item.name;
-              })
-              .join(', ')}
-          </>
-        )}
-        {equipment.desc.desc && (
-          <>
-            {Array.isArray(equipment.desc.desc) ? (
+            {equipment.desc.cost && (
               <>
-                <hr className="mb-0 mt-0" />
-                <p className="mb-0">
-                  <ReactReadMoreReadLess
-                    charLimit={250}
-                    readMoreText="Show more"
-                    readLessText="Show less"
-                    readMoreClassName="read-more-less--more"
-                    readLessClassName="read-more-less--less"
-                  >
-                    {equipment.desc.desc.join('\n')}
-                  </ReactReadMoreReadLess>
-                </p>
+                {equipment.desc.weight ? (
+                  <p className="same-line mb-0">
+                    <span className="equipment-item">
+                      Cost:&nbsp;
+                      <i className="equipment-item-info">
+                        {equipment.desc.cost}
+                      </i>
+                    </span>
+                    <span className="equipment-item">
+                      Weight:&nbsp;
+                      <i className="equipment-item-info">
+                        {equipment.desc.weight}
+                      </i>
+                    </span>
+                  </p>
+                ) : (
+                  <p className="equipment-item mb-0">
+                    Cost:&nbsp;
+                    <i className="equipment-item-info">{equipment.desc.cost}</i>
+                  </p>
+                )}
               </>
-            ) : (
-              <i className="equipment-item-info">{equipment.desc.desc}</i>
             )}
-          </>
-        )}
-      </div>
+            {Array.isArray(equipment.desc.contents) && (
+              <>
+                Contents:&nbsp;
+                {Object.keys(equipment.desc.contents)
+                  .map(function(k) {
+                    return equipment.desc.contents[k].item.name;
+                  })
+                  .join(', ')}
+              </>
+            )}
+            {equipment.desc.desc && (
+              <>
+                {Array.isArray(equipment.desc.desc) ? (
+                  <>
+                    <hr className="mb-0 mt-0" />
+                    <p className="mb-0">
+                      <ReactReadMoreReadLess
+                        charLimit={250}
+                        readMoreText="Show more"
+                        readLessText="Show less"
+                        readMoreClassName="read-more-less--more"
+                        readLessClassName="read-more-less--less"
+                      >
+                        {equipment.desc.desc.join('\n')}
+                      </ReactReadMoreReadLess>
+                    </p>
+                  </>
+                ) : (
+                  <i className="equipment-item-info">{equipment.desc.desc}</i>
+                )}
+              </>
+            )}
+          </div>
+        </>
+      )}
     </>
+  );
+};
+
+const EquipmentList = ({ equipmentOption }) => {
+  //const equipmentList = [].concat.apply([], Object.values(equipmentItems));
+  //console.log(equipmentList);
+  return (
+    <div className="card translucent-card">
+      <div className="card content-card card-title">
+        <h4>{`Choose ${equipmentOption.choose}`}</h4>
+      </div>
+      <EquipmentList equipment={equipmentOption} />
+      <div className="spell-custom-container">
+        <div className="container">
+          <div className="card-columns">
+            {Array.from(equipmentOption.from).map((equipmentItem, idx) => {
+              return (
+                <div className="card content-card equipment-card" key={idx}>
+                  {equipmentItem.type ? (
+                    <>
+                      {Array.isArray(equipmentItem.from) && (
+                        <EquipmentCard
+                          equipment={equipmentItem}
+                          clickable
+                          dropdown
+                        />
+                      )}
+                    </>
+                  ) : (
+                    <>
+                      {Array.isArray(equipmentItem) ? (
+                        <>
+                          {equipmentItem.map(
+                            (multiEquipmentOption, idx, arr) => {
+                              return (
+                                <div key={idx}>
+                                  <EquipmentCard
+                                    equipment={multiEquipmentOption}
+                                    clickable
+                                  />
+                                  {idx !== arr.length - 1 && (
+                                    <div className="separator">
+                                      <i className="amp">&amp;</i>
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            }
+                          )}
+                        </>
+                      ) : (
+                        <EquipmentCard equipment={equipmentItem} clickable />
+                      )}
+                    </>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 };
 
@@ -118,7 +202,19 @@ export const Equipment = ({ charID, setPage }) => {
     )
   );
   const [equipmentLoaded, setEquipmentLoaded] = useState(false);
-  const [selectionEq, setSelectionEq] = useState([]);
+
+  // const [selectionEq, setSelectionEq] = useState([]);
+  const [addedEquipment, setAddedEquipment] = useState([]);
+
+  const addEquipment = idx => {
+    setAddedEquipment(...addedEquipment, idx);
+  };
+
+  const removeEquipment = idx => {
+    setAddedEquipment(
+      addedEquipment.filter(equipment => equipment.index != idx)
+    );
+  };
 
   const onNext = () => {
     setPage({ index: 6, name: 'spells' });
@@ -156,7 +252,6 @@ export const Equipment = ({ charID, setPage }) => {
             <h2 className="title-card p-4">Equipment</h2>
           </div>
           <div className="card translucent-card">
-            {' '}
             <div className="card content-card card-title">
               <h4>Starting Equipment</h4>
             </div>
@@ -196,22 +291,11 @@ export const Equipment = ({ charID, setPage }) => {
                               {equipmentItem.type ? (
                                 <>
                                   {Array.isArray(equipmentItem.from) && (
-                                    <>
-                                      <div className="equipment-card-title">
-                                        <h5>{equipmentItem.header}</h5>
-                                      </div>
-                                      <Dropdown
-                                        ddLabel=""
-                                        hideLabel
-                                        title={`Choose ${equipmentItem.choose}`}
-                                        items={[...equipmentItem.from]}
-                                        width="100%"
-                                        multiSelect={equipmentItem.choose > 1}
-                                        selection={selectionEq}
-                                        setSelection={setSelectionEq}
-                                        // classname="eq-card"
-                                      />
-                                    </>
+                                    <EquipmentCard
+                                      equipment={equipmentItem}
+                                      clickable
+                                      dropdown
+                                    />
                                   )}
                                 </>
                               ) : (
@@ -222,57 +306,14 @@ export const Equipment = ({ charID, setPage }) => {
                                         (multiEquipmentOption, idx, arr) => {
                                           return (
                                             <div key={idx}>
-                                              {multiEquipmentOption.type ? (
-                                                <>
-                                                  {Array.isArray(
-                                                    multiEquipmentOption.from
-                                                  ) && (
-                                                    <>
-                                                      <div className="equipment-card-title">
-                                                        <h5>
-                                                          {
-                                                            multiEquipmentOption.header
-                                                          }
-                                                        </h5>
-                                                      </div>
-                                                      <Dropdown
-                                                        ddLabel=""
-                                                        hideLabel
-                                                        title={`Choose ${multiEquipmentOption.choose}`}
-                                                        items={[
-                                                          ...multiEquipmentOption.from,
-                                                        ]}
-                                                        width="100%"
-                                                        border="2px"
-                                                        multiSelect={
-                                                          multiEquipmentOption.choose >
-                                                          1
-                                                        }
-                                                        selection={selectionEq}
-                                                        setSelection={
-                                                          setSelectionEq
-                                                        }
-                                                        // classname="eq-card"
-                                                      />
-                                                    </>
-                                                  )}
-                                                </>
-                                              ) : (
-                                                <>
-                                                  <EquipmentCard
-                                                    equipment={
-                                                      multiEquipmentOption
-                                                    }
-                                                    clickable
-                                                  />
-                                                  {idx !== arr.length - 1 && (
-                                                    <div className="separator">
-                                                      <i className="amp">
-                                                        &amp;
-                                                      </i>
-                                                    </div>
-                                                  )}
-                                                </>
+                                              <EquipmentCard
+                                                equipment={multiEquipmentOption}
+                                                clickable
+                                              />
+                                              {idx !== arr.length - 1 && (
+                                                <div className="separator">
+                                                  <i className="amp">&amp;</i>
+                                                </div>
                                               )}
                                             </div>
                                           );
@@ -280,12 +321,10 @@ export const Equipment = ({ charID, setPage }) => {
                                       )}
                                     </>
                                   ) : (
-                                    <div>
-                                      <EquipmentCard
-                                        equipment={equipmentItem}
-                                        clickable
-                                      />
-                                    </div>
+                                    <EquipmentCard
+                                      equipment={equipmentItem}
+                                      clickable
+                                    />
                                   )}
                                 </>
                               )}
@@ -297,6 +336,7 @@ export const Equipment = ({ charID, setPage }) => {
                   </div>
                 </div>
               </div>
+              //<EquipmentList equipmentOption={equipmentOption} key={idx} />
             );
           })}
           <button

@@ -283,7 +283,6 @@
   align-items: center;
   text-align: center;
 }
-
 .separator::before,
 .separator::after {
   content: '';
@@ -291,11 +290,9 @@
   border-bottom: 1.5px solid $dark-blue-disabled;
   border-radius: 0.75px;
 }
-
 .separator:not(:empty)::before {
   margin-left: 15px;
 }
-
 .separator:not(:empty)::after {
   margin-right: 15px;
 }
@@ -312,7 +309,7 @@ hr {
   height: 2px;
   border: 0;
   border-top: 1.5px solid $dark-blue;
-  border-radius: 0.75px;
+  border-radius: 1px;
   margin: 5px auto;
   padding: 0;
 }
@@ -539,6 +536,26 @@ hr {
   bottom: 25px;
   z-index: 10;
   margin: 0 25px 25px;
+}
+
+.btn-card {
+  color: $medium-green;
+  font-size: 1rem;
+  max-width: 70px;
+  margin: 0 0px 10px 0px;
+  padding: 5px;
+  box-shadow: none;
+  line-height: 1;
+  max-height: 1.67rem;
+}
+.btn-outline-success {
+  &:hover {
+    background-color: $medium-green;
+  }
+  &:focus {
+    color: $off-white;
+    background-color: $dark-green;
+  }
 }
 
 // .read-animate {
