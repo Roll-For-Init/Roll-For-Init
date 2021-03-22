@@ -241,7 +241,7 @@ const PointBuyCard = ({
   }, [choices]);
 
   const handleChange = event => {
-    setChoices(event.target.value);
+    setChoices(parseInt(event.target.value));
   };
 
   return (
@@ -257,10 +257,12 @@ const PointBuyCard = ({
           >
             -
           </button>
-          <select value={choices} onChange={handleChange}>
+          <select value={points} onChange={handleChange}>
             {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map(
               choice => (
-                <option value={choice}>{choice}</option>
+                <option value={choice} key={choice}>
+                  {choice}
+                </option>
               )
             )}
           </select>
