@@ -34,7 +34,7 @@ const Class = ({ charID, setPage }) => {
               classes.map((theClass, idx) => (
                 <div className="w-100 h-auto" key={idx}>
                   <button
-                    className="btn btn-lg m-0 mb-3 options"
+                    className="btn btn-secondary btn-lg m-0 mb-3 options"
                     type="button"
                     onClick={() =>
                       selectClass({ index: theClass.name, url: theClass.url })
@@ -78,6 +78,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
       .then(
         theClass => {
           setClassInfo(theClass);
+          console.log("CLASS", theClass);
           return theClass;
         }
         /*error => {
@@ -90,10 +91,12 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         });
         let equipment = { equipment: theClass.main.starting_equipment };
         dispatch(setClass(charID, equipment));
+        dispatch(setClass(charID, { equipment_options: theClass.equipment_options }));
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
+        dispatch(setClass(charID, {spellcasting: theClass.spellcasting}))
+        dispatch(setClass(charID, {subclass: theClass.subclass}))
       });
   }, []);
-  console.log('class', classInfo);
 
   const onNext = () => {
     setPage({ index: 2, name: 'abilities' });
@@ -101,7 +104,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
     window.scrollTo(0, 0);
   };
   if (classInfo) {
-    const { main, features, options, proficiencies } = classInfo;
+    const { main, features, options, proficiencies, subclass } = classInfo;
     return (
       <>
         <div className="d-none d-md-flex title-back-wrapper">
@@ -149,26 +152,49 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
               {options.map((option, index) => {
                 return (
                   <Dropdown
-                    ddLabel={option.header}
-                    title={`Choose ${option.choose}`}
-                    items={option.options}
-                    width="100%"
-                    selectLimit={option.choose}
-                    multiselect={option.choose > 1}
-                    selection={
-                      userChoices[
-                        `${option.header
-                          .toLowerCase()
-                          .replace(' ', '-')}-${index}`
-                      ]
-                    }
-                    setSelection={setUserChoices}
-                    classname="choice"
-                    stateKey={`${option.header
-                      .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
-                    key={index}
-                  />
+                      ddLabel={`${option.header}`}
+                      title={`Choose ${option.choose}`}
+                      items={option.options}
+                      selectLimit={option.choose}
+                      multiSelect={option.choose > 1}
+                      selection={
+                        userChoices[
+                          `${option.header
+                            .toLowerCase()
+                            .replace(' ', '-')}-${index}`
+                        ]
+                      }
+                      setSelection={setUserChoices}
+                      classname="choice"
+                      stateKey={`${option.header
+                        .toLowerCase()
+                        .replace(' ', '-')}-${index}`}
+                      key={index}
+                    />
+                );
+              })}
+              {subclass?.subclass_options?.map((option, index) => {
+                return (
+                  <Dropdown
+                      ddLabel={`${option.header} (${subclass.name})`}
+                      title={`Choose ${option.choose}`}
+                      items={option.options}
+                      selectLimit={option.choose}
+                      multiSelect={option.choose > 1}
+                      selection={
+                        userChoices[
+                          `${option.header
+                            .toLowerCase()
+                            .replace(' ', '-')}-${index}`
+                        ]
+                      }
+                      setSelection={setUserChoices}
+                      classname="choice"
+                      stateKey={`${option.header
+                        .toLowerCase()
+                        .replace(' ', '-')}-${index}`}
+                      key={index}
+                    />
                 );
               })}
             </div>
@@ -195,7 +221,8 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         {features.length > 0 && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Level 1 Features</h4>
-            {features.map(feature => (
+            {features.map(feature => {
+              return (
               <div
                 className="card content-card description-card"
                 key={feature.index}
@@ -205,7 +232,20 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                   <p key={desc}>{desc}</p>
                 ))}
               </div>
-            ))}
+            )})}
+            {subclass?.subclass_features?.map((feature, index) => {
+              return (
+                <div
+                  className="card content-card description-card"
+                  key={feature.index}
+                >
+                  <h5 className="text-center">{`${feature.name} (${subclass.name})`} </h5>
+                  {feature.desc.map(desc => (
+                    <p key={desc}>{desc}</p>
+                  ))}
+                  <p key={`subclass-${index}`}>{`Note: Only the ${main.name} subclass ${subclass.name} is available in this app.`} </p>
+                </div>
+            )})}
           </div>
         )}
         {main.spellcasting && (

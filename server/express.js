@@ -18,7 +18,7 @@ module.exports.init = async () => {
     await mongoose.connect(mongoDB, mongoOptions);
     console.log('Successfully connected to mongoose database.');
   } catch (err) {
-    console.log('MongoDB Connection Error:', error);
+    console.log('MongoDB Connection Error:', err);
   }
 
   let api = config.proxy.api;

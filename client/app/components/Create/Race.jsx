@@ -23,8 +23,8 @@ const RaceButton = ({ race, setRace, idx }) => {
       <button
         className={
           hasSubraces
-            ? 'btn btn-lg m-0 mb-3 options dropdown-toggle'
-            : 'btn btn-lg m-0 mb-3 options'
+            ? 'btn btn-secondary btn-lg m-0 mb-3 options dropdown-toggle'
+            : 'btn btn-secondary btn-lg m-0 mb-3 options'
         }
         type="button"
         id={`dropdownMenuButton1${idx}`}
@@ -335,6 +335,24 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
               <div className="card content-card description-card">
                 <h3 className="card-subtitle small-caps">{trait.name}</h3>
                 <p>{trait.desc}</p>
+                {trait.table && (
+                  <table>
+                    <tr>
+                      {trait.table.header.map(item => {
+                        return (<th>{item}</th>)
+                      })}
+                    </tr>
+                    {trait.table.rows.map(row => {
+                      return (
+                        <tr>
+                          {row.map(item => {
+                            return (<td>{item}</td>)
+                          })}
+                        </tr>
+                      )
+                    })}
+                  </table>
+                )}
               </div>
             );
           })}

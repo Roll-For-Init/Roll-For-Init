@@ -25,7 +25,6 @@ const buttonNames = [
   'background',
   'description',
   'equipment',
-  'spells',
 ];
 
 const Loading = () => {
@@ -34,7 +33,7 @@ const Loading = () => {
 
 const PageViewer = ({ charID }) => {
   let pages;
-
+  const character = useSelector(state => state.characters[charID]);
   const [page, setPage] = useState({ name: 'race', index: 0 });
 
   const onPageChange = (page, index) => {
@@ -109,6 +108,19 @@ useEffect(() => {
               </button>
             );
           })}
+          {(character.class?.spellcasting) && (
+              <button
+                key='spells'
+                type="button"
+                className={page.name === 'spells' ? 'btn btn-lg btn-primary menu-button active' : 'btn btn-lg btn-secondary menu-button'}
+                disabled={page.index < 6}
+                onClick={() => {
+                  page.index > 6 && onPageChange('spells', 6);
+                }}
+              >
+                spells
+              </button>
+          )}
         </div>
       </div>
       <MobileMenu

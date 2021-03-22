@@ -4,6 +4,7 @@ import './styles.scss';
 
 function Dropdown({
   ddLabel,
+  hideLabel = false,
   title,
   items,
   width,
@@ -12,6 +13,7 @@ function Dropdown({
   selection,
   setSelection,
   classname,
+  border = '3px',
   stateKey,
 }) {
   const [open, setOpen] = useState(false);
@@ -39,7 +41,6 @@ function Dropdown({
             select[stateKey] = [...selection, item];
             setSelection(select);
           } else setSelection([...selection, item]);
-          console.log(selection, item);
         }
       }
     } else {
@@ -68,12 +69,15 @@ function Dropdown({
 
   return (
     <div className="dd-wrapper" style={{ width: width }}>
-      <div className={classname ? 'dd-label ' + classname : 'dd-label'}>
-        {ddLabel}
-      </div>
+      {!hideLabel && (
+        <div className={classname ? 'dd-label ' + classname : 'dd-label'}>
+          {ddLabel}
+        </div>
+      )}
       <div
         tabIndex={0}
         className={classname ? 'dd-header ' + classname : 'dd-header'}
+        style={{ border: `${border} solid $maroon` }}
         role="button"
         onKeyPress={() => toggle(!open)}
         onClick={() => toggle(!open)}
