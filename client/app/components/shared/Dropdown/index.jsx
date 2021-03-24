@@ -58,6 +58,21 @@ function Dropdown({
         toggle(!open);
       }
     }
+
+    // this is the version that uses state to update the title
+    if (multiSelect) {
+      let updatedTitle;
+      if (Object.keys(selection).length !== 0) {
+        updatedTitle = Object.keys(selection)
+          .map(function(k) {
+            return selection[k].name;
+          })
+          .join(', ');
+      } else {
+        updatedTitle = `Choose ${selectLimit}`;
+      }
+      setTitle(updatedTitle);
+    }
   }
 
   function isItemInSelection(item) {

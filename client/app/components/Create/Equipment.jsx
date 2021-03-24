@@ -4,6 +4,7 @@ import Dropdown from '../shared/Dropdown';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
+import Masonry from 'react-masonry-css';
 // import { setEquipment } from '../../redux/actions';
 
 const EquipmentItem = ({
@@ -148,12 +149,25 @@ const EquipmentCard = ({
       {equipmentItem.type ? (
         <>
           {Array.isArray(equipmentItem.from) && (
-            <EquipmentItem
-              equipment={equipmentItem}
-              selectionEq={selectionEq}
-              setSelectionEq={setSelectionEq}
-              dropdown
-            />
+            <>
+              <EquipmentItem
+                equipment={equipmentItem}
+                selectionEq={selectionEq}
+                setSelectionEq={setSelectionEq}
+                dropdown
+              />
+              {Object.keys(selectionEq).length !== 0 && (
+                <>
+                  {selectionEq.map((dropdownItem, idx) => {
+                    return (
+                      <div key={idx} style={{ marginTop: '5px' }}>
+                        <EquipmentItem equipment={dropdownItem} />
+                      </div>
+                    );
+                  })}
+                </>
+              )}
+            </>
           )}
         </>
       ) : (
@@ -163,11 +177,39 @@ const EquipmentCard = ({
               {equipmentItem.map((multiEquipmentOption, idx, arr) => {
                 return (
                   <div key={idx}>
-                    <EquipmentItem equipment={multiEquipmentOption} />
-                    {idx !== arr.length - 1 && (
-                      <div className="separator">
-                        <i className="amp">&amp;</i>
-                      </div>
+                    {multiEquipmentOption.type ? (
+                      <>
+                        {Array.isArray(multiEquipmentOption.from) && (
+                          <>
+                            <EquipmentItem
+                              equipment={multiEquipmentOption}
+                              selectionEq={selectionEq}
+                              setSelectionEq={setSelectionEq}
+                              dropdown
+                            />
+                            {Object.keys(selectionEq).length !== 0 && (
+                              <>
+                                {selectionEq.map((dropdownItem, idx) => {
+                                  return (
+                                    <div key={idx} style={{ marginTop: '5px' }}>
+                                      <EquipmentItem equipment={dropdownItem} />
+                                    </div>
+                                  );
+                                })}
+                              </>
+                            )}
+                          </>
+                        )}
+                      </>
+                    ) : (
+                      <>
+                        <EquipmentItem equipment={multiEquipmentOption} />
+                        {idx !== arr.length - 1 && (
+                          <div className="separator">
+                            <i className="amp">&amp;</i>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 );
@@ -186,19 +228,24 @@ const EquipmentList = ({ equipmentOption }) => {
   //const equipmentList = [].concat.apply([], Object.values(equipmentItems));
   //console.log(equipmentList);
   const [selectedCard, setSelectedCard] = useState(null);
+
+  const breakpointColumnsObj = {
+    default: 2,
+    767: 1,
+  };
+
   return (
     <div className="card translucent-card">
       <div className="card content-card card-title">
         <h4>{`Choose ${equipmentOption.choose}`}</h4>
       </div>
-      {/* <div className="spell-custom-container">
-        <div className="container">
-          <div className="card-columns"> */}
-      <div className="grid">
-        {/* <div className="masonry"> */}
+      <Masonry
+        breakpointCols={breakpointColumnsObj}
+        className="my-masonry-grid"
+        columnClassName="my-masonry-grid_column"
+      >
         {Array.from(equipmentOption.from).map((equipmentItem, idx) => {
           return (
-            // <div className="item">
             <EquipmentCard
               equipmentItem={equipmentItem}
               key={idx}
@@ -207,11 +254,9 @@ const EquipmentList = ({ equipmentOption }) => {
               selectedCard={selectedCard}
               setSelectedCard={setSelectedCard}
             />
-            // </div>
           );
         })}
-        {/* </div> */}
-      </div>
+      </Masonry>
     </div>
   );
 };
@@ -269,6 +314,11 @@ export const Equipment = ({ charID, setPage }) => {
     });
   }, []);
 
+  const breakpointColumnsObj = {
+    default: 2,
+    767: 1,
+  };
+
   return (
     <div className="background">
       {equipmentLoaded && (
@@ -280,22 +330,19 @@ export const Equipment = ({ charID, setPage }) => {
             <div className="card content-card card-title">
               <h4>Starting Equipment</h4>
             </div>
-            <div className="spell-custom-container">
-              <div className="container">
-                <div className="card-columns">
-                  {equipment.map((equipmentItem, idx) => {
-                    return (
-                      <div
-                        className="card content-card equipment-card"
-                        key={idx}
-                      >
-                        <EquipmentItem equipment={equipmentItem} />
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
+            <Masonry
+              breakpointCols={breakpointColumnsObj}
+              className="my-masonry-grid"
+              columnClassName="my-masonry-grid_column"
+            >
+              {equipment.map((equipmentItem, idx) => {
+                return (
+                  <div className="card content-card equipment-card" key={idx}>
+                    <EquipmentItem equipment={equipmentItem} />
+                  </div>
+                );
+              })}
+            </Masonry>
           </div>
           {equipmentOptions.map((equipmentOption, idx) => {
             return (

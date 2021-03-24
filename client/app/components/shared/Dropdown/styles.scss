@@ -48,6 +48,7 @@
     &__title {
       flex: 1;
       color: $dark-blue;
+      text-overflow: ellipsis;
     }
     &__action {
       padding-left: 10px;
