@@ -6,7 +6,7 @@ import { setAbilities } from '../../redux/actions';
 export const Abilities = ({ charID, setPage }) => {
   const dispatch = useDispatch();
   const [abilityCards, setAbilityCards] = useState(null);
-  const [totalPointsUsed, setTotalPointsUsed] = useState(27);
+  const [pointsRemaining, setPointsRemaining] = useState(27);
   const [diceTotals, setDiceTotals] = useState(null);
   /**
    *  str dex con int wis cha
@@ -104,8 +104,11 @@ export const Abilities = ({ charID, setPage }) => {
           }
         }
       });
+      if (abilityCards.some(ab => { return (ab.points < 8 || ab.points > 15); })) {
+        tempTotal = Infinity;
+      }
     }
-    setTotalPointsUsed(tempTotal);
+    setPointsRemaining(tempTotal);
   }, [abilityCards]);
 
   const onNext = () => {
@@ -118,16 +121,21 @@ export const Abilities = ({ charID, setPage }) => {
   const onDiceRoll = () => {
     let allTotals = [];
     for (let i = 0; i < abilityCards.length; i++) {
-      let total = [
+      let dice = [
         Math.floor(Math.random() * 6) + 1,
         Math.floor(Math.random() * 6) + 1,
         Math.floor(Math.random() * 6) + 1,
         Math.floor(Math.random() * 6) + 1,
       ];
-      total.sort().splice(0, 1);
-      let temp = 0;
-      total.map(t => (temp += t));
-      allTotals.push(temp);
+      var total = 0;
+      dice.map(t => (total += t));
+      let min = Math.min(...dice);
+      total -= min;
+      allTotals.push({
+        dice: dice,
+        total: total,
+        droppedIndex: dice.indexOf(min)
+      })
     }
     setDiceTotals(allTotals);
   };
@@ -161,14 +169,14 @@ export const Abilities = ({ charID, setPage }) => {
                       modifier={ability.modifier}
                       abilityCards={abilityCards}
                       setAbilityCards={setAbilityCards}
-                      totalPointsUsed={totalPointsUsed}
+                      pointsRemaining={pointsRemaining}
                     />
                   </div>
                 );
               })}
           </div>
         </div>
-        <PointsRemainingCard totalPointsUsed={totalPointsUsed} />
+        <PointsRemainingCard pointsRemaining={pointsRemaining} />
       </div>
       <button
         className="text-uppercase btn-primary btn-lg px-5 btn-floating"
@@ -200,7 +208,7 @@ const DiceRoll = ({ onDiceRoll, diceTotals }) => {
       <div className="row">
         <div className="col">
           <button
-            className="btn-primary btn-lg px-5 btn-floating"
+            className="btn-primary btn-lg mt-0 px-5"
             onClick={onDiceRoll}
           >
             Roll Scores
@@ -209,14 +217,19 @@ const DiceRoll = ({ onDiceRoll, diceTotals }) => {
       </div>
       {diceTotals && (
         <div className="row">
-          <div className="card translucent-card w-75">
+          <div className="card translucent-card dice-roll-card">
             <div className="container-fluid">
               <div className="row row-cols-3">
-                {diceTotals.map(total => {
+                {diceTotals.map(dice => {
                   return (
                     <div className="col px-1">
                       <div className="d-inline-block card content-card floating-card w-100 mx-0 px-0">
-                        <h4>{total}</h4>
+                        <div className="dice">
+                          {dice.dice.map((d, idx) => {
+                            return <div className={(idx === dice.droppedIndex ? "dropped" : "")}>{d}</div>
+                          })}
+                        </div>
+                        <h4> = {dice.total}</h4>
                       </div>
                     </div>
                   );
@@ -239,13 +252,13 @@ const PointBuyCard = ({
   modifier,
   abilityCards,
   setAbilityCards,
-  totalPointsUsed,
+  pointsRemaining,
 }) => {
   const [choices, setChoices] = useState(points);
   const onDecrease = () => {
     setAbilityCards(
       abilityCards.map(ability => {
-        if (ability.name === title && ability.points > 8) {
+        if (ability.name === title && ability.points > 3) {
           return {
             name: title,
             short_name,
@@ -266,8 +279,8 @@ const PointBuyCard = ({
       abilityCards.map(ability => {
         if (
           ability.name === title &&
-          totalPointsUsed > 0 &&
-          ability.points < 15
+          // totalPointsUsed > 0 &&
+          ability.points < 20
         ) {
           return {
             name: title,
@@ -287,7 +300,7 @@ const PointBuyCard = ({
   useEffect(() => {
     setAbilityCards(
       abilityCards.map(ability => {
-        if (ability.name === title && totalPointsUsed > 0) {
+        if (ability.name === title && pointsRemaining > 0) {
           return {
             name: title,
             short_name,
@@ -354,77 +367,94 @@ const PointBuyCard = ({
   );
 };
 
-const PointsRemainingCard = ({ totalPointsUsed }) => {
+const PointsRemainingCard = ({ pointsRemaining, }) => {
   return (
-    <div className="card translucent-card w-50">
-      <div>
-        <div className="card content-card card-title mx-0 px-0 w-75">
-          <h4>Points Remaining</h4>
-        </div>
-        <div className="card content-card card-title mx-0 px-0 w-25">
-          <h4>{totalPointsUsed}/27</h4>
-        </div>
-      </div>
-      <div>
-        <div className="w-50 d-inline-block card content-card floating-card float-start m-0 p-0">
-          <div className="container-fluid py-1">
-            <div className="row">
-              <div className="col table">Score</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">Cost</div>
+    <div className="card translucent-card w-fit-content">
+      { (pointsRemaining === Infinity)
+        ?
+          <div className="d-flex">
+            <div className="card content-card warning-card">
+              <i className="bi bi-exclamation-triangle-fill text-warning icon"></i>
+              <h4 className="text">
+                You have scores above 15 or below 8, which is not allowed using point buy.
+              </h4>
             </div>
-            <div className="row">
-              <div className="col table">8</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">0</div>
+          </div>
+        :
+        <div>
+          <div>
+            <div className="card content-card card-title mr-3">
+              <h4>Points Remaining</h4>
             </div>
-            <div className="row">
-              <div className="col table">9</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">1</div>
+            <div className="card content-card card-title points-remaining-card mb-2">
+              { pointsRemaining < 0 && (
+                <i className="bi bi-exclamation-triangle-fill text-warning icon"></i>
+              )}
+              <h4>{pointsRemaining}/27</h4>
             </div>
-            <div className="row">
-              <div className="col table">10</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">2</div>
+          </div>
+          <div className="table">
+            <div className="card content-card m-0 mr-3 p-0">
+              <div className="container-fluid py-1">
+                <div className="row">
+                  <div className="col table-data">Score</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">Cost</div>
+                </div>
+                <div className="row">
+                  <div className="col table-data">8</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">0</div>
+                </div>
+                <div className="row">
+                  <div className="col table-data">9</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">1</div>
+                </div>
+                <div className="row">
+                  <div className="col table-data">10</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">2</div>
+                </div>
+                <div className="row">
+                  <div className="col table-data">11</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">3</div>
+                </div>
+              </div>
             </div>
-            <div className="row">
-              <div className="col table">11</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">3</div>
+            <div className="card content-card m-0 p-0">
+              <div className="container-fluid py-1">
+                <div className="row">
+                  <div className="col table-data">Score</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">Cost</div>
+                </div>
+                <div className="row">
+                  <div className="col table-data">12</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">4</div>
+                </div>
+                <div className="row">
+                  <div className="col table-data">13</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">5</div>
+                </div>
+                <div className="row">
+                  <div className="col table-data">14</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">7</div>
+                </div>
+                <div className="row">
+                  <div className="col table-data">15</div>
+                  <div className="vertical-divider"></div>
+                  <div className="col table-data">9</div>
+                </div>
+              </div>
             </div>
           </div>
         </div>
-        <div className="w-50 d-inline-block card content-card floating-card float-end m-0 p-0">
-          <div className="container-fluid py-1">
-            <div className="row">
-              <div className="col table">Score</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">Cost</div>
-            </div>
-            <div className="row">
-              <div className="col table">12</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">4</div>
-            </div>
-            <div className="row">
-              <div className="col table">13</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">5</div>
-            </div>
-            <div className="row">
-              <div className="col table">14</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">7</div>
-            </div>
-            <div className="row">
-              <div className="col table">15</div>
-              <div className="vertical-divider"></div>
-              <div className="col table">9</div>
-            </div>
-          </div>
-        </div>
-      </div>
+      }
     </div>
   );
 };

@@ -36,6 +36,18 @@ div {
   color: white;
 }
 
+.text-success {
+  color: $green !important;
+}
+
+.text-warning {
+  color: #d4af37 !important;
+}
+
+.text-danger {
+  color: $red !important;
+}
+
 button {
   font-family: 'IM Fell DW Pica';
   font-size: 1.4rem;
@@ -57,14 +69,16 @@ button {
   &:not([disabled]) {
     &:focus {
       background-color: $blue;
-      color: white;
+      color: white !important;
     }
     &:hover {
       background-color: $medium-blue !important;
-      color: white;
+      color: white !important;
     }
+    &:active,
     &.active {
       background-color: $dark-blue !important;
+      color: white !important;
     }
   }
   &[disabled] {
@@ -116,5 +130,9 @@ input {
 }
 
 .small-caps {
-  font-variant: small-caps;
+  font-variant: small-caps !important;
+}
+
+.w-fit-content {
+  width: fit-content !important;
 }

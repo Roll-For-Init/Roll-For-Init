@@ -64,6 +64,40 @@
       margin-top: 20px;
     }
 
+    .dice-roll-card {
+      width: fit-content;
+      padding: 1rem;
+      margin-top: 0;
+
+      .dice {
+        display: inline-block;
+        padding-bottom: .1rem;
+        vertical-align: middle;
+        margin-right: .4rem;
+        div {
+          display: inline-block;
+          color: $off-white;
+          width: 1.4rem;
+          height: 1.4rem;
+          padding: .1rem;
+          margin: 0 2px;
+          line-height: 1;
+          background-color: $maroon;
+          border-radius: .2rem;
+          vertical-align: middle;
+        }
+        .dropped {
+          background-color: $maroon-translucent;
+        }
+      }
+      h4 {
+        display: inline-block;
+        margin: auto;
+        line-height: 1;
+        vertical-align: middle;
+      }
+    }
+
     .point-card {
       background-color: $light-maroon-translucent;
       padding: 10px;
@@ -72,13 +106,25 @@
       margin-left: auto;
     }
 
-    select {
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      border-radius: 8px;
-      border: 0px;
-      background: $off-white;
+    .points-remaining-card {
+      min-width: 7rem;
+
+      i {
+        padding-right: .5rem;
+        display: inline-block;
+      }
+      h4 {
+        display: inline-block;
+      }
     }
+
+    // select {
+    //   -webkit-appearance: none;
+    //   -moz-appearance: none;
+    //   border-radius: 8px;
+    //   border: 0px;
+    //   background: $off-white;
+    // }
 
     .points-header {
       border-radius: 8px;
@@ -103,6 +149,17 @@
     }
 
     .table {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0;
+
+      > div {
+        flex: 1;
+        max-width: 10rem;
+      }
+    }
+
+    .table-data {
       color: $dark-blue;
       padding-left: 5px;
       padding-right: 5px;
@@ -227,6 +284,28 @@
   padding: 10px;
   margin-right: 5px;
   margin-left: 5px;
+}
+
+.warning-card {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 15px;
+  max-width: 400px;
+
+  .icon {
+    flex: 0 1 2rem;
+    font-size: 2rem;
+    margin: auto 1rem auto 0;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .text {
+    flex: 1;
+    color: $dark-blue;
+    text-align: left;
+    font-size: 1rem;
+    margin: auto;
+  }
 }
 
 .card-title {

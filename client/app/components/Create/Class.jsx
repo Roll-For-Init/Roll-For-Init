@@ -250,7 +250,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         )}
         {main.spellcasting && (
           <div className="card translucent-card">
-            <h4 className="card content-card card-title">SPELL CASTING</h4>
+            <h4 className="card content-card card-title">Spellcasting</h4>
             {main.spellcasting.info.map(spell => (
               <div
                 className="card content-card description-card"
