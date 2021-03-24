@@ -2,6 +2,11 @@
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css');
 @import 'client/app/variables';
 
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: none !important;
+}
+
 body {
   background-image: url('../public/assets/imgs/background.jpeg');
   background-color: #121212;
@@ -46,11 +51,15 @@ button {
 }
 
 .btn-primary {
+  transition: .15s;
   background-color: $blue;
   color: white;
   &:not([disabled]) {
-    &:hover,
     &:focus {
+      background-color: $blue;
+      color: white;
+    }
+    &:hover {
       background-color: $medium-blue !important;
       color: white;
     }
@@ -64,17 +73,21 @@ button {
   }
 }
 .btn-secondary {
+  transition: .15s;
   background-color: $off-white;
   color: $dark-blue;
   &:not([disabled]) {
-    &:hover,
     &:focus {
+      background-color: $off-white;
+      color: $dark-blue;
+    }
+    &:hover {
       background-color: $medium-off-white;
-      color: black;
+      color: $very-dark-blue;
     }
     &:active {
       background-color: $dark-off-white !important;
-      color: white;
+      color: black !important;
     }
   }
   &[disabled] {

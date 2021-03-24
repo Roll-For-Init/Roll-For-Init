@@ -33,7 +33,7 @@ export const Abilities = ({ charID, setPage }) => {
           finalScore: 10,
         },
         {
-          name: 'Construction',
+          name: 'Constitution',
           short_name: 'con',
           points: 10,
           bonus: 0,
@@ -315,12 +315,13 @@ const PointBuyCard = ({
       <div>
         <h1 className="points-header">
           <button
-            className="my-0 mx-3 shadow-none point-button"
+            className="btn btn-secondary point-button"
             onClick={() => onDecrease()}
           >
             -
           </button>
-          <select value={points} onChange={handleChange}>
+          {points}
+          {/* <select value={points} onChange={handleChange} className="btn-secondary">
             {[3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18].map(
               choice => (
                 <option value={choice} key={choice}>
@@ -328,9 +329,9 @@ const PointBuyCard = ({
                 </option>
               )
             )}
-          </select>
+          </select> */}
           <button
-            className="my-0 mx-3 shadow-none point-button"
+            className="btn btn-secondary point-button"
             onClick={() => onIncrease()}
           >
             +
@@ -338,15 +339,15 @@ const PointBuyCard = ({
         </h1>
       </div>
       {bonus > 0 && (
-        <div className="card content-card description-card text-center">
+        <div className="p-1 card content-card description-card text-center">
           <p className="text-capitalize">Racial Bonus: +{bonus}</p>
         </div>
       )}
-      <div className="card content-card description-card text-center">
+      <div className="card content-card description-card fancy-card text-center">
         <p className="text-capitalize">Final Score: </p>
-        <h4 className="text-capitalize">
-          {finalScore} {modifier >= 0 && '+'}
-          {modifier}
+        <h4 className="mb-0 text-capitalize">
+          {finalScore} ({modifier >= 0 && '+'}
+          {modifier})
         </h4>
       </div>
     </div>
@@ -366,7 +367,7 @@ const PointsRemainingCard = ({ totalPointsUsed }) => {
       </div>
       <div>
         <div className="w-50 d-inline-block card content-card floating-card float-start m-0 p-0">
-          <div className="container-fluid">
+          <div className="container-fluid py-1">
             <div className="row">
               <div className="col table">Score</div>
               <div className="vertical-divider"></div>
@@ -395,7 +396,7 @@ const PointsRemainingCard = ({ totalPointsUsed }) => {
           </div>
         </div>
         <div className="w-50 d-inline-block card content-card floating-card float-end m-0 p-0">
-          <div className="container-fluid">
+          <div className="container-fluid py-1">
             <div className="row">
               <div className="col table">Score</div>
               <div className="vertical-divider"></div>
