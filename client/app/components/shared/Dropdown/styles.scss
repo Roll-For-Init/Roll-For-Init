@@ -70,6 +70,10 @@
     border: 3px solid $maroon;
     border-radius: 8px;
     max-height: 19.5rem;
+    &.eq-card {
+      box-shadow: none;
+      border: 1px solid $maroon;
+    }
     li {
       list-style-type: none;
 

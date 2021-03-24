@@ -6,16 +6,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 // import { setEquipment } from '../../redux/actions';
 
-const EquipmentCard = ({ equipment, clickable = false, dropdown = false }) => {
-  const handleClick = () => {
-    setSelected(!selected);
-    console.log('toggle!');
-    console.log(selected);
-  };
-
-  const [selected, setSelected] = useState(false);
-  const [selectionEq, setSelectionEq] = useState([]);
-
+const EquipmentItem = ({
+  equipment,
+  selectionEq,
+  setSelectionEq,
+  dropdown = false,
+}) => {
   return (
     <>
       <div className="equipment-card-title same-line">
@@ -30,16 +26,6 @@ const EquipmentCard = ({ equipment, clickable = false, dropdown = false }) => {
             )}
           </>
         )}
-        {clickable && (
-          <button
-            onClick={() => handleClick()}
-            className={`btn ${
-              !selected ? `btn-outline-success` : `btn-clicked`
-            } btn-card`}
-          >
-            {selected ? 'Selected' : 'Select'}
-          </button>
-        )}
       </div>
       {dropdown ? (
         <Dropdown
@@ -51,7 +37,7 @@ const EquipmentCard = ({ equipment, clickable = false, dropdown = false }) => {
           multiSelect={equipment.choose > 1}
           selection={selectionEq}
           setSelection={setSelectionEq}
-          // classname="eq-card"
+          classname="eq-card"
         />
       ) : (
         <>
@@ -130,63 +116,101 @@ const EquipmentCard = ({ equipment, clickable = false, dropdown = false }) => {
   );
 };
 
+const EquipmentCard = ({
+  equipmentItem,
+  cardKey,
+  clickable = false,
+  selectedCard,
+  setSelectedCard,
+}) => {
+  const handleClick = () => {
+    if (selectedCard === cardKey) setSelectedCard(null);
+    else setSelectedCard(cardKey);
+    console.log(selectedCard);
+  };
+
+  const [selectionEq, setSelectionEq] = useState([]);
+  return (
+    <div
+      className={`card content-card equipment-card ${selectedCard === cardKey &&
+        `selected-card`}`}
+    >
+      {clickable && (
+        <button
+          onClick={() => handleClick()}
+          className={`btn ${
+            selectedCard === cardKey ? `btn-clicked` : `btn-outline-success`
+          } btn-card`}
+        >
+          {selectedCard === cardKey ? 'Selected' : 'Select'}
+        </button>
+      )}
+      {equipmentItem.type ? (
+        <>
+          {Array.isArray(equipmentItem.from) && (
+            <EquipmentItem
+              equipment={equipmentItem}
+              selectionEq={selectionEq}
+              setSelectionEq={setSelectionEq}
+              dropdown
+            />
+          )}
+        </>
+      ) : (
+        <>
+          {Array.isArray(equipmentItem) ? (
+            <>
+              {equipmentItem.map((multiEquipmentOption, idx, arr) => {
+                return (
+                  <div key={idx}>
+                    <EquipmentItem equipment={multiEquipmentOption} />
+                    {idx !== arr.length - 1 && (
+                      <div className="separator">
+                        <i className="amp">&amp;</i>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </>
+          ) : (
+            <EquipmentItem equipment={equipmentItem} clickable />
+          )}
+        </>
+      )}
+    </div>
+  );
+};
+
 const EquipmentList = ({ equipmentOption }) => {
   //const equipmentList = [].concat.apply([], Object.values(equipmentItems));
   //console.log(equipmentList);
+  const [selectedCard, setSelectedCard] = useState(null);
   return (
     <div className="card translucent-card">
       <div className="card content-card card-title">
         <h4>{`Choose ${equipmentOption.choose}`}</h4>
       </div>
-      <EquipmentList equipment={equipmentOption} />
-      <div className="spell-custom-container">
+      {/* <div className="spell-custom-container">
         <div className="container">
-          <div className="card-columns">
-            {Array.from(equipmentOption.from).map((equipmentItem, idx) => {
-              return (
-                <div className="card content-card equipment-card" key={idx}>
-                  {equipmentItem.type ? (
-                    <>
-                      {Array.isArray(equipmentItem.from) && (
-                        <EquipmentCard
-                          equipment={equipmentItem}
-                          clickable
-                          dropdown
-                        />
-                      )}
-                    </>
-                  ) : (
-                    <>
-                      {Array.isArray(equipmentItem) ? (
-                        <>
-                          {equipmentItem.map(
-                            (multiEquipmentOption, idx, arr) => {
-                              return (
-                                <div key={idx}>
-                                  <EquipmentCard
-                                    equipment={multiEquipmentOption}
-                                    clickable
-                                  />
-                                  {idx !== arr.length - 1 && (
-                                    <div className="separator">
-                                      <i className="amp">&amp;</i>
-                                    </div>
-                                  )}
-                                </div>
-                              );
-                            }
-                          )}
-                        </>
-                      ) : (
-                        <EquipmentCard equipment={equipmentItem} clickable />
-                      )}
-                    </>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </div>
+          <div className="card-columns"> */}
+      <div className="grid">
+        {/* <div className="masonry"> */}
+        {Array.from(equipmentOption.from).map((equipmentItem, idx) => {
+          return (
+            // <div className="item">
+            <EquipmentCard
+              equipmentItem={equipmentItem}
+              key={idx}
+              cardKey={idx}
+              clickable
+              selectedCard={selectedCard}
+              setSelectedCard={setSelectedCard}
+            />
+            // </div>
+          );
+        })}
+        {/* </div> */}
       </div>
     </div>
   );
@@ -204,7 +228,7 @@ export const Equipment = ({ charID, setPage }) => {
   );
   const [equipmentLoaded, setEquipmentLoaded] = useState(false);
 
-  // const [selectionEq, setSelectionEq] = useState([]);
+  const [selectionEq, setSelectionEq] = useState([]);
   const [addedEquipment, setAddedEquipment] = useState([]);
 
   const addEquipment = idx => {
@@ -265,7 +289,7 @@ export const Equipment = ({ charID, setPage }) => {
                         className="card content-card equipment-card"
                         key={idx}
                       >
-                        <EquipmentCard equipment={equipmentItem} />
+                        <EquipmentItem equipment={equipmentItem} />
                       </div>
                     );
                   })}
@@ -275,69 +299,7 @@ export const Equipment = ({ charID, setPage }) => {
           </div>
           {equipmentOptions.map((equipmentOption, idx) => {
             return (
-              <div className="card translucent-card" key={idx}>
-                <div className="card content-card card-title">
-                  <h4>{`Choose ${equipmentOption.choose}`}</h4>
-                </div>
-                <div className="spell-custom-container">
-                  <div className="container">
-                    <div className="card-columns">
-                      {Array.from(equipmentOption.from).map(
-                        (equipmentItem, idx) => {
-                          return (
-                            <div
-                              className="card content-card equipment-card"
-                              key={idx}
-                            >
-                              {equipmentItem.type ? (
-                                <>
-                                  {Array.isArray(equipmentItem.from) && (
-                                    <EquipmentCard
-                                      equipment={equipmentItem}
-                                      clickable
-                                      dropdown
-                                    />
-                                  )}
-                                </>
-                              ) : (
-                                <>
-                                  {Array.isArray(equipmentItem) ? (
-                                    <>
-                                      {equipmentItem.map(
-                                        (multiEquipmentOption, idx, arr) => {
-                                          return (
-                                            <div key={idx}>
-                                              <EquipmentCard
-                                                equipment={multiEquipmentOption}
-                                                clickable
-                                              />
-                                              {idx !== arr.length - 1 && (
-                                                <div className="separator">
-                                                  <i className="amp">&amp;</i>
-                                                </div>
-                                              )}
-                                            </div>
-                                          );
-                                        }
-                                      )}
-                                    </>
-                                  ) : (
-                                    <EquipmentCard
-                                      equipment={equipmentItem}
-                                      clickable
-                                    />
-                                  )}
-                                </>
-                              )}
-                            </div>
-                          );
-                        }
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              //<EquipmentList equipmentOption={equipmentOption} key={idx} />
+              <EquipmentList equipmentOption={equipmentOption} key={idx} />
             );
           })}
           <button

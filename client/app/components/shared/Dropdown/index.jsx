@@ -94,7 +94,8 @@ function Dropdown({
         </div>
       </div>
       {open && (
-        <ul className="dd-list shadow-card scroll">
+        // <ul className="dd-list shadow-card scroll">
+        <ul className={`dd-list ${classname && classname} shadow-card scroll`}>
           {items.map(item => (
             <li className="dd-list-item" key={item.index}>
               <button
