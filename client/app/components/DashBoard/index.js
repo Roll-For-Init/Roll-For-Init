@@ -24,7 +24,7 @@ export const DashBoard = () => {
         </Link>
       </h1>
       {Object.keys(character).map((key) => {
-            return (<p>{character[key].race.index + " " + character[key].class?.index}</p>)
+            return (<p>{character[key].race?.index + " " + character[key].class?.index}</p>)
         })}
     </div>
   );

@@ -39,6 +39,7 @@
       text-transform: capitalize;
       border-radius: 8px;
     }
+
     .dropdown-menu {
       min-width: 250px;
       width: 400px;
@@ -47,30 +48,126 @@
       border: $maroon 3px solid !important;
       border-top: 0px !important;
     }
+
     .dropdown-toggle::after {
       float: right;
       margin-top: 12px;
     }
+
     .options-dropdown {
       color: $dark-blue;
       background-color: $medium-off-white;
     }
+
     .abilities-dropdown {
       font-size: 24px;
       margin-top: 20px;
     }
+
+    .dice-roll-card {
+      width: fit-content;
+      padding: 1rem;
+      margin-top: 0;
+
+      .dice {
+        display: inline-block;
+        padding-bottom: .1rem;
+        vertical-align: middle;
+        margin-right: .4rem;
+        div {
+          display: inline-block;
+          color: $off-white;
+          width: 1.4rem;
+          height: 1.4rem;
+          padding: .1rem;
+          margin: 0 2px;
+          line-height: 1;
+          background-color: $maroon;
+          border-radius: .2rem;
+          vertical-align: middle;
+        }
+        .dropped {
+          background-color: $maroon-translucent;
+        }
+      }
+      h4 {
+        display: inline-block;
+        margin: auto;
+        line-height: 1;
+        vertical-align: middle;
+      }
+    }
+
     .point-card {
       background-color: $light-maroon-translucent;
       padding: 10px;
       min-height: 250px;
-      margin-right: 15px;
-      margin-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .points-remaining-card {
+      min-width: 7rem;
+
+      i {
+        padding-right: .5rem;
+        display: inline-block;
+      }
+      h4 {
+        display: inline-block;
+      }
+    }
+
+    // select {
+    //   -webkit-appearance: none;
+    //   -moz-appearance: none;
+    //   border-radius: 8px;
+    //   border: 0px;
+    //   background: $off-white;
+    // }
+
+    .points-header {
+      border-radius: 8px;
+      margin: 5px auto;
+      padding: 5px;
+      background-color: $off-white;
+      color: $dark-blue;
+      width: fit-content;
+    }
+
+    .point-button {
+      margin: 0px 5px !important;
+      box-shadow: none !important;
+      width: auto;
+      padding: 10px;
     }
 
     .text-background {
       background-color: $medium-off-white;
       border: $maroon 3px solid !important;
       color: $dark-blue;
+    }
+
+    .table {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0;
+
+      > div {
+        flex: 1;
+        max-width: 10rem;
+      }
+    }
+
+    .table-data {
+      color: $dark-blue;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin: 0;
+    }
+
+    .vertical-divider {
+      border-right: 1.5px solid $maroon;
     }
 
     .dd-wrapper {
@@ -187,6 +284,28 @@
   padding: 10px;
   margin-right: 5px;
   margin-left: 5px;
+}
+
+.warning-card {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 15px;
+  max-width: 400px;
+
+  .icon {
+    flex: 0 1 2rem;
+    font-size: 2rem;
+    margin: auto 1rem auto 0;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .text {
+    flex: 1;
+    color: $dark-blue;
+    text-align: left;
+    font-size: 1rem;
+    margin: auto;
+  }
 }
 
 .card-title {
@@ -346,114 +465,135 @@ hr {
   }
 }
 
-.spell-custom-container {
-  & > .container {
-    height: auto;
-    padding-left: 0;
-    padding-right: 0;
-    & > .card-columns {
-      column-count: 2;
-      widows: 1;
-      column-gap: 15px;
-      .card {
-        width: 302.5px;
-        margin-bottom: 0.3rem;
-      }
+.fancy-card {
+  border-image: url('../../../public/assets/imgs/border-maroon.png') 156.375 / 156.375 stretch;
+  padding: 10px 30px;
+  width: auto;
+}
+
+@media (min-width: 992px) {
+    .card-columns {
+        column-count: 1;
     }
-  }
+}
+
+.spell-custom-container {
+    &>.container {
+        height: auto;
+        padding-left: 0;
+        padding-right: 0;
+        &>.card-columns {
+            column-count: 1;
+            widows: 2;
+            column-gap: 0;
+            .card {
+                width: 302.5px;
+                margin-bottom: .3rem;
+            }
+            @media (min-width: 992px) {
+                column-count: 2;
+            }
+        }
+    }
 }
 .spell-card {
-  padding: 8px;
-  height: auto;
-  margin-left: 0px;
-  margin-right: 0px;
+    padding: 8px;
+    height: auto;
+    margin-left: 0px;
+    margin-right: 0px;
+    &>.container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+        &>.row {
+            margin-right: auto;
+            margin-left: auto;
+            &>.spell-title {
+                font-size: 1.25rem;
+                display: inline-block;
+                color: $dark-blue;
+                padding: 0;
+                text-align: left;
+            }
+            &>.btn-outline-success {
+                border: {
+                    style: solid !important;
+                    color: $green !important;
+                    width: 3px !important;
+                    radius: 8px;
+                }
+                color: $dark-blue;
+                box-shadow: none;
+                float: right;
+                font-size: 1rem;
+                padding: 2px 5px;
+                max-height: 1.67rem;
+                line-height: 1;
+                flex-grow: 0;
+                margin: auto 0px;
+        
+                &:hover, &:active {
+                    background-color: $medium-off-white;
+                }
+            }
+            &>.btn-clicked {
+                @extend .btn-outline-success;
+                background-color: $green;
+                color: $off-white;
 
-  & > .container-fluid {
-    padding-left: 0;
-    padding-right: 0;
-    & > .row {
-      margin-right: auto;
-      margin-left: auto;
-      & > .spell-title {
-        font-size: 24px;
-        display: inline-block;
-        color: $dark-blue;
-        padding: 0;
-        text-align: left;
-      }
-      & > .btn-outline-success {
+                &:hover {
+                    background-color: $medium-green;
+                    border-color: $medium-green !important;
+                }
+                &:active {
+                    background-color: $dark-green;
+                }
+                //how to make it go back to default immediately on click?
+                
+            }
+            &>.btn-inactive {
+                @extend .btn-outline-success;
+                background-color: $medium-off-white;
+                color: $dark-blue-disabled;
+                &:hover {
+                    background-color: $medium-off-white;
+                    color: $dark-blue-disabled;
+                }
+            }
+        }
+    }
+
+    hr {
+        margin: {
+            top: 4px;
+            bottom: 4px;
+            right: -4px;
+            left: -4px;
+        }
         border: {
-          style: solid !important;
-          color: $green !important;
-          width: 3px !important;
-          radius: 8px;
+            width: 2px;
+            color: $dark-blue;
+            radius: 1px;
         }
-        color: $dark-blue;
-        box-shadow: none;
-        margin: 0px;
-        float: right;
-        font-size: 18px;
-        padding: 0.025em 0.05em;
-        min-width: 78px;
-        max-height: 30px;
-        flex-grow: 0;
-        right: 0;
-
-        &:hover,
-        &:active {
-          background-color: $green;
-          color: $off-white;
-        }
-      }
-      & > .btn-clicked {
-        @extend .btn-outline-success;
-        background-color: $green;
-        color: $off-white;
-
-        //how to make it go back to default immediately on click?
-      }
-      & > .btn-inactive {
-        @extend .btn-outline-success;
-        background-color: $medium-off-white;
-        color: $dark-blue-disabled;
-        &:hover {
-          background-color: $medium-off-white;
-          color: $dark-blue-disabled;
-        }
-      }
     }
-  }
 
-  hr {
-    margin: {
-      top: 4px;
-      bottom: 4px;
-      right: -4px;
-      left: -4px;
-    }
-    border: {
-      width: 2px;
-      color: $dark-blue;
-    }
-  }
-
-  .spell-desc {
-    text-align: left;
-    line-height: normal;
-    color: $dark-blue !important;
-
-    & > div {
-      color: $dark-blue !important;
-    }
-    & > p {
-      color: $dark-blue !important;
-      margin-bottom: 0;
-      & > span {
-        float: right;
+    .spell-desc {
+        text-align: left;
+        line-height: normal;
         color: $dark-blue !important;
-      }
+
+        &>div {
+            color: $dark-blue !important;
+        }
+        &>p {
+            color: $dark-blue !important;
+            margin-bottom: 0;
+            &>span {
+                float: right;
+                color: $dark-blue !important;
+            }
+        }
+        
     }
-  }
 }
 
 .my-masonry-grid {
@@ -569,6 +709,7 @@ hr {
 }
 
 .btn-floating {
+  position: -webkit-sticky;
   position: sticky;
   bottom: 25px;
   z-index: 10;

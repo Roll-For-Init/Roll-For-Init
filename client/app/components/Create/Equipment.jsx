@@ -321,7 +321,7 @@ export const Equipment = ({ charID, setPage }) => {
 
   return (
     <div className="background">
-      {equipmentLoaded && (
+      {equipmentLoaded ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Equipment</h2>
@@ -356,7 +356,8 @@ export const Equipment = ({ charID, setPage }) => {
             OK
           </button>
         </>
-      )}
+      ):
+      <>Loading</>}
     </div>
   );
 };
