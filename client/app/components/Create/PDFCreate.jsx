@@ -1,6 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { useState } from 'react';
+import axios from 'axios';
 const { jsPDF } = require("jspdf");
 
 
@@ -39,6 +40,9 @@ export const PDFCreate = () => {
     const [E, setE] = useState();
 
     const onClick = () => {
+        axios.post('api/pdfGen', {
+            test: 'hello'
+        });
         const doc = new jsPDF();
         doc.text("Name: "+ N, 10, 10);
         doc.text("Race: "+ R, 10, 20);
