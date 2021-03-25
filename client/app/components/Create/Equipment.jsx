@@ -88,6 +88,28 @@ const EquipmentItem = ({
                   .join(', ')}
               </>
             )}
+            {equipment.desc.special && (
+              <>
+              {Array.isArray(equipment.desc.special) ? (
+                <>
+                  <hr className="mb-0 mt-0" />
+                  <p className="mb-0">
+                    <ReactReadMoreReadLess
+                      charLimit={250}
+                      readMoreText="Show more"
+                      readLessText="Show less"
+                      readMoreClassName="read-more-less--more"
+                      readLessClassName="read-more-less--less"
+                    >
+                      {equipment.desc.special.join('\n')}
+                    </ReactReadMoreReadLess>
+                  </p>
+                </>
+              ) : (
+                <>{`${equipment.desc.special}`}{equipment.desc.desc && <br/>}</>
+              )}
+            </>
+            )}
             {equipment.desc.desc && (
               <>
                 {Array.isArray(equipment.desc.desc) ? (
