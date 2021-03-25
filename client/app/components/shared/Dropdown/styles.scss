@@ -43,11 +43,12 @@
     }
     &.eq-card {
       box-shadow: none;
-      border: 2px solid $maroon;
+      border: 1px solid $maroon;
     }
     &__title {
       flex: 1;
       color: $dark-blue;
+      text-overflow: ellipsis;
     }
     &__action {
       padding-left: 10px;
@@ -70,6 +71,10 @@
     border: 3px solid $maroon;
     border-radius: 8px;
     max-height: 19.5rem;
+    &.eq-card {
+      box-shadow: none;
+      border: 1px solid $maroon;
+    }
     li {
       list-style-type: none;
 

@@ -61,11 +61,14 @@ const makeEquipmentDesc = async (item, itemDetails) => {
                 break;
             }
         }
+        if(itemDetails.weapon_category != undefined) desc.category = `${itemDetails.category_range} Weapon`;
+        if(itemDetails.damage != undefined) desc.damage = `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`;
         if(itemDetails.quantity != undefined) desc.quantity = itemDetails.quantity;
         if (itemDetails.cost != undefined) desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
         if (itemDetails.weight != undefined) desc.weight = itemDetails.weight;
+        if (itemDetails.special != undefined) desc.special = itemDetails.special.join(' ');
         if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
-        if (itemDetails.special != undefined) desc.desc = itemDetails.special.join(' ');
+        else if(itemDetails.properties != undefined) desc.desc = itemDetails.properties.map(prop=>prop.name).join(', ');
     }
     return desc;
 }

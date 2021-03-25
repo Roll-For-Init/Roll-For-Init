@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import onClickOutside from 'react-onclickoutside';
 import './styles.scss';
 
@@ -41,6 +41,9 @@ function Dropdown({
             select[stateKey] = [...selection, item];
             setSelection(select);
           } else setSelection([...selection, item]);
+        if(selection.length +1 == selectLimit) {
+          toggle(!open);
+        }
         }
       }
     } else {
@@ -54,11 +57,26 @@ function Dropdown({
           select[stateKey] = [...selectionAfterRemoval];
           setSelection(select);
         } else setSelection([...selectionAfterRemoval]);
+        if(selectionAfterRemoval.length >= selectLimit) toggle(!open);
       } else {
         toggle(!open);
       }
     }
   }
+
+  useEffect(() => {
+    let updatedTitle;
+    if (Object.keys(selection).length !== 0) {
+      updatedTitle = Object.keys(selection)
+        .map(function(k) {
+          return selection[k].name;
+        })
+        .join(', ');
+    } else {
+      updatedTitle = `Choose ${selectLimit}`;
+    }
+    setTitle(updatedTitle);
+  },[selection])
 
   function isItemInSelection(item) {
     if (selection.some(current => current.index === item.index)) {
@@ -94,7 +112,8 @@ function Dropdown({
         </div>
       </div>
       {open && (
-        <ul className="dd-list shadow-card scroll">
+        // <ul className="dd-list shadow-card scroll">
+        <ul className={`dd-list ${classname && classname} shadow-card scroll`}>
           {items.map(item => (
             <li className="dd-list-item" key={item.index}>
               <button
