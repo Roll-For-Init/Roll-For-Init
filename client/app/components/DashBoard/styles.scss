@@ -1,0 +1,36 @@
+@import 'client/app/variables';
+
+.translucent-card {
+  width: 300px;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  margin: 10px;
+}
+
+.description-card {
+  width: fit-content;
+  ul {
+    margin-bottom: 0px;
+  }
+}
+
+.card-title {
+  color: $off-white;
+  font-size: 16px;
+  margin: 0px;
+  padding: 0px;
+}
+
+p {
+  color: $dark-maroon !important;
+  div {
+    color: $dark-maroon !important;
+    display: inline-block;
+    padding-right: 3px;
+  }
+}
+
+.container {
+  position: absolute;
+  top: 45px;
+}
