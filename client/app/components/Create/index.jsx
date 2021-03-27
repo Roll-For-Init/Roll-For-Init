@@ -92,7 +92,7 @@ useEffect(() => {
     return images;
   }
 
-  const raceIcons = importAll(
+  const raceIconsMedBlue = importAll(
     require.context(
       '../../../public/assets/imgs/icons/medium-blue/race',
       false,
@@ -100,9 +100,25 @@ useEffect(() => {
     )
   );
 
-  const classIcons = importAll(
+  const classIconsMedBlue = importAll(
     require.context(
       '../../../public/assets/imgs/icons/medium-blue/class',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const raceIconsOffWite = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/off-white/race',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const classIconsOffWhite = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/off-white/class',
       false,
       /\.(png)$/
     )
@@ -139,11 +155,14 @@ useEffect(() => {
                 {charRace !== null && (
                   <img
                     className="side-bar-icon"
-                    src={raceIcons['dragonborn.png']}
+                    src={raceIconsMedBlue['dragonborn.png']}
                   />
                 )}
                 {charClass !== null && (
-                  <img className="side-bar-icon" src={classIcons['bard.png']} />
+                  <img
+                    className="side-bar-icon"
+                    src={classIconsMedBlue['bard.png']}
+                  />
                 )}
               </div>
             </div>
@@ -166,6 +185,36 @@ useEffect(() => {
                 }}
               >
                 {name}
+                {name === 'race' && charRace !== null && (
+                  <>
+                    {page.name === name ? (
+                      <img
+                        className="side-bar-icon2"
+                        src={raceIconsOffWite['half-orc.png']}
+                      />
+                    ) : (
+                      <img
+                        className="side-bar-icon2"
+                        src={raceIconsMedBlue['half-orc.png']}
+                      />
+                    )}
+                  </>
+                )}
+                {name === 'class' && charClass !== null && (
+                  <>
+                    {page.name === name ? (
+                      <img
+                        className="side-bar-icon2"
+                        src={classIconsOffWhite['bard.png']}
+                      />
+                    ) : (
+                      <img
+                        className="side-bar-icon2"
+                        src={classIconsMedBlue['bard.png']}
+                      />
+                    )}
+                  </>
+                )}
               </button>
             );
           })}

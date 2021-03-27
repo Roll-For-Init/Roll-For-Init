@@ -572,6 +572,16 @@ hr {
   }
 }
 
+.side-bar-icon2 {
+  position: absolute;
+  right: 10px;
+  max-width: 80px;
+  max-height: 30px;
+  margin: auto;
+  width: auto;
+  height: auto;
+}
+
 .spell-custom-container {
   & > .container {
     height: auto;

@@ -31,7 +31,7 @@ const Class = ({ charID, setPage }) => {
     return images;
   }
 
-  const classIcons = importAll(
+  const classIconsOffWhite = importAll(
     require.context(
       '../../../public/assets/imgs/icons/off-white/class',
       false,
@@ -59,7 +59,7 @@ const Class = ({ charID, setPage }) => {
                     >
                       <img
                         className="card-icon"
-                        src={classIcons[`${theClass.index}.png`]}
+                        src={classIconsOffWhite[`${theClass.index}.png`]}
                       />
                     </div>
                     <p>{theClass.name}</p>
@@ -189,7 +189,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                       ]
                     }
                     setSelection={setUserChoices}
-                    classname="choice"
+                    classname="dd-choice"
                     stateKey={`${option.header
                       .toLowerCase()
                       .replace(' ', '-')}-${index}`}
