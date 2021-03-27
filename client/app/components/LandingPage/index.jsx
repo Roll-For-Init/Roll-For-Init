@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { useSelector } from 'react-redux';
-import { Link } from 'react-router-dom';
-import Upload from '../Upload';
+import { Link, useHistory } from 'react-router-dom';
 import Dropzone from 'react-dropzone';
-
+import charPlaceholder from '../../../public/assets/imgs/char-placeholder.png';
 import './styles.scss';
 
 const LandingPage = () => {
@@ -80,7 +79,65 @@ const LandingPage = () => {
     }
   };
 
-  const { isLoggedIn } = useSelector(state => state.auth);
+  const history = useHistory();
+
+  function handleClick() {
+    history.push('/dashboard');
+  }
+
+  function importAll(r) {
+    let images = {};
+    r.keys().map((item, index) => {
+      images[item.replace('./', '')] = r(item);
+    });
+    return images;
+  }
+
+  const raceIcons = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/medium-blue/race',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const classIcons = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/medium-blue/class',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const characters = [
+    {
+      firstname: 'Glorbin',
+      lastname: 'Shmoo',
+      race: 'elf',
+      class: 'barbarian',
+      level: '2',
+      portraitsrc: charPlaceholder,
+    },
+    {
+      firstname: 'Xorglum',
+      lastname: 'Lightbeard',
+      race: 'gnome',
+      class: 'cleric',
+      level: '4',
+      portraitsrc: charPlaceholder,
+    },
+    {
+      firstname: 'Rooaar',
+      lastname: 'Graaagggh',
+      race: 'half-orc',
+      class: 'rogue',
+      level: '8',
+      portraitsrc: charPlaceholder,
+    },
+  ];
+
+  //const { isLoggedIn } = useSelector(state => state.auth);
+  const isLoggedIn = true;
   return (
     <div className="container landing">
       <div className="filler-space"></div>
@@ -138,7 +195,6 @@ const LandingPage = () => {
               <div className="modal-sect">
                 <p>Please upload your Roll For Init PDF character sheet.</p>
               </div>
-              {/* <Upload /> */}
               <Dropzone
                 onDrop={handleOnDrop}
                 accept="application/pdf"
@@ -165,7 +221,7 @@ const LandingPage = () => {
           </div>
         </div>
       </div>
-      {isLoggedIn !== true && (
+      {isLoggedIn !== true ? (
         <div className="d-grid gap-6 btm-button-container">
           <Link to="/login">
             <button
@@ -183,6 +239,47 @@ const LandingPage = () => {
               Sign Up
             </button>
           </Link>
+        </div>
+      ) : (
+        <div className="character-container">
+          <div className="card translucent-card mt-0">
+            {characters.map((character, idx) => {
+              return (
+                <div
+                  className="card content-card character-card"
+                  key={idx}
+                  onClick={handleClick}
+                >
+                  <div className="same-line mb-0">
+                    <span className="same-line mb-0">
+                      <img
+                        className="portrait-icon"
+                        src={character.portraitsrc}
+                        width="70"
+                        height="70"
+                      />
+                      <div className="info-container">
+                        <p className="character-name">{`${character.firstname}`}</p>
+                        <p className="character-info">{`${character.race} ${character.class} ${character.level}`}</p>
+                      </div>
+                    </span>
+                    <span className="same-line mb-0">
+                      <div className="icon-container">
+                        <img
+                          className="character-icon"
+                          src={raceIcons[`${character.race}.png`]}
+                        />
+                        <img
+                          className="character-icon"
+                          src={classIcons[`${character.class}.png`]}
+                        />
+                      </div>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

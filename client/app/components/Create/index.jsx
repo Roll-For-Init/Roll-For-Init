@@ -9,7 +9,6 @@ import Descriptions from './Descriptions';
 import Equipment from './Equipment';
 import Spells from './Spells';
 import MobileMenu from './MobileMenu';
-
 import { startCharacter } from '../../redux/actions/';
 
 import './styles.scss';
@@ -85,9 +84,71 @@ useEffect(() => {
     setCurrentPage(nextPage);
   }, [page]);
 
+  function importAll(r) {
+    let images = {};
+    r.keys().map((item, index) => {
+      images[item.replace('./', '')] = r(item);
+    });
+    return images;
+  }
+
+  const raceIcons = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/medium-blue/race',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const classIcons = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/medium-blue/class',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const charRace = useSelector(state => state.characters[charID].race);
+  const charClass = useSelector(state => state.characters[charID].class);
+
   return (
     <div className="row position-relative" style={{ top: '45px' }}>
       <div className="col-3 d-none d-md-block side-bar overflow-auto">
+        {/* <div className="side-bar-icon-container">
+          <div className="same-line">
+            <div className="card content-card side-bar-icon-card">
+              {charRace !== null && (
+                <img
+                  className="side-bar-icon"
+                  src={raceIcons['dragonborn.png']}
+                />
+              )}
+            </div>
+
+            <div className="card content-card side-bar-icon-card">
+              {charClass !== null && (
+                <img className="side-bar-icon" src={classIcons['bard.png']} />
+              )}
+            </div>
+          </div>
+        </div> */}
+        <div className="side-bar-icon-container">
+          {charRace !== null && (
+            <div className="card content-card side-bar-icon-card">
+              <div className="same-line">
+                {charRace !== null && (
+                  <img
+                    className="side-bar-icon"
+                    src={raceIcons['dragonborn.png']}
+                  />
+                )}
+                {charClass !== null && (
+                  <img className="side-bar-icon" src={classIcons['bard.png']} />
+                )}
+              </div>
+            </div>
+          )}
+        </div>
         <div className="btn-group-vertical w-100" role="group">
           {buttonNames.map((name, idx) => {
             let classname = 'btn btn-lg btn-secondary menu-button';
@@ -108,18 +169,22 @@ useEffect(() => {
               </button>
             );
           })}
-          {(character.class?.spellcasting) && (
-              <button
-                key='spells'
-                type="button"
-                className={page.name === 'spells' ? 'btn btn-lg btn-primary menu-button active' : 'btn btn-lg btn-secondary menu-button'}
-                disabled={page.index < 6}
-                onClick={() => {
-                  page.index > 6 && onPageChange('spells', 6);
-                }}
-              >
-                spells
-              </button>
+          {character.class?.spellcasting && (
+            <button
+              key="spells"
+              type="button"
+              className={
+                page.name === 'spells'
+                  ? 'btn btn-lg btn-primary menu-button active'
+                  : 'btn btn-lg btn-secondary menu-button'
+              }
+              disabled={page.index < 6}
+              onClick={() => {
+                page.index > 6 && onPageChange('spells', 6);
+              }}
+            >
+              spells
+            </button>
           )}
         </div>
       </div>
