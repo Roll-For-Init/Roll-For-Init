@@ -113,7 +113,6 @@ const Race = ({ charID, setPage }) => {
         ? a.name.localeCompare(b.subraces[0].name)
         : a.name.localeCompare(b.name)
     );
-    console.log(sortedRaces);
 
     return sortedRaces;
   }

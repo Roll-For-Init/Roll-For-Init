@@ -10,7 +10,6 @@ import Equipment from './Equipment';
 import Spells from './Spells';
 import MobileMenu from './MobileMenu';
 import { startCharacter } from '../../redux/actions/';
-
 import './styles.scss';
 import Header from '../shared/Header';
 import { Link } from 'react-router-dom';
@@ -108,7 +107,7 @@ useEffect(() => {
     )
   );
 
-  const raceIconsOffWite = importAll(
+  const raceIconsOffWhite = importAll(
     require.context(
       '../../../public/assets/imgs/icons/off-white/race',
       false,
@@ -124,30 +123,85 @@ useEffect(() => {
     )
   );
 
+  const raceSilhouettes = importAll(
+    require.context(
+      '../../../public/assets/imgs/silhouettes/race',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const classSilhouettesSlimShort = importAll(
+    require.context(
+      '../../../public/assets/imgs/silhouettes/class/slim-short',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const classSilhouettesSlimTall = importAll(
+    require.context(
+      '../../../public/assets/imgs/silhouettes/class/slim-tall',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const classSilhouettesWideShort = importAll(
+    require.context(
+      '../../../public/assets/imgs/silhouettes/class/wide-short',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const classSilhouettesWideTall = importAll(
+    require.context(
+      '../../../public/assets/imgs/silhouettes/class/wide-tall',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const buildDictionary = [
+    { name: 'dragonborn', build: 'wide-tall' },
+    { name: 'dwarf', build: 'wide-short' },
+    { name: 'elf', build: 'slim-tall' },
+    { name: 'gnome', build: 'slim-short' },
+    { name: 'half-elf', build: 'slim-tall' },
+    { name: 'half-orc', build: 'wide-tall' },
+    { name: 'halfling', build: 'slim-short' },
+    { name: 'human', build: 'slim-tall' },
+    { name: 'tiefling', build: 'slim-tall' },
+  ];
+
+  const findBuild = raceName => {
+    return buildDictionary.find(dictEntry => dictEntry.name === raceName).build;
+  };
+
+  function getBuildImage(raceName, className) {
+    let buildImage;
+    const build = findBuild(raceName);
+
+    if (build === 'slim-tall') {
+      buildImage = classSilhouettesSlimTall[`${className}.png`];
+    } else if (build === 'slim-short') {
+      buildImage = classSilhouettesSlimShort[`${className}.png`];
+    } else if (build === 'wide-tall') {
+      buildImage = classSilhouettesWideTall[`${className}.png`];
+    } else if (build === 'wide-short') {
+      buildImage = classSilhouettesWideShort[`${className}.png`];
+    }
+
+    return buildImage;
+  }
+
   const charRace = useSelector(state => state.characters[charID].race);
   const charClass = useSelector(state => state.characters[charID].class);
 
   return (
     <div className="row position-relative" style={{ top: '45px' }}>
       <div className="col-3 d-none d-md-block side-bar overflow-auto">
-        {/* <div className="side-bar-icon-container">
-          <div className="same-line">
-            <div className="card content-card side-bar-icon-card">
-              {charRace !== null && (
-                <img
-                  className="side-bar-icon"
-                  src={raceIcons['dragonborn.png']}
-                />
-              )}
-            </div>
-
-            <div className="card content-card side-bar-icon-card">
-              {charClass !== null && (
-                <img className="side-bar-icon" src={classIcons['bard.png']} />
-              )}
-            </div>
-          </div>
-        </div> */}
         {/* <div className="side-bar-icon-container">
           {charRace !== null && (
             <div className="card content-card side-bar-icon-card">
@@ -187,32 +241,34 @@ useEffect(() => {
                 {name}
                 {name === 'race' && charRace !== null && (
                   <div className="button-icon-container">
-                    {page.name === name ? (
-                      <img
-                        className="button-icon"
-                        src={raceIconsOffWite['half-orc.png']}
-                      />
-                    ) : (
-                      <img
-                        className="button-icon"
-                        src={raceIconsMedBlue['half-orc.png']}
-                      />
-                    )}
+                    <img
+                      className="button-icon"
+                      src={
+                        page.name === name
+                          ? raceIconsOffWhite[
+                              `${charRace.index.toLowerCase()}.png`
+                            ]
+                          : raceIconsMedBlue[
+                              `${charRace.index.toLowerCase()}.png`
+                            ]
+                      }
+                    />
                   </div>
                 )}
                 {name === 'class' && charClass !== null && (
                   <div className="button-icon-container">
-                    {page.name === name ? (
-                      <img
-                        className="button-icon"
-                        src={classIconsOffWhite['bard.png']}
-                      />
-                    ) : (
-                      <img
-                        className="button-icon"
-                        src={classIconsMedBlue['bard.png']}
-                      />
-                    )}
+                    <img
+                      className="button-icon"
+                      src={
+                        page.name === name
+                          ? classIconsOffWhite[
+                              `${charClass.index.toLowerCase()}.png`
+                            ]
+                          : classIconsMedBlue[
+                              `${charClass.index.toLowerCase()}.png`
+                            ]
+                      }
+                    />
                   </div>
                 )}
               </button>
@@ -237,6 +293,23 @@ useEffect(() => {
           )}
         </div>
       </div>
+
+      <div className="col-3 offset-md-9 d-none d-md-block side-bar overflow-auto">
+        <div className="race-silhouette-container">
+          {charRace !== null && (
+            <img src={raceSilhouettes[`${charRace.index.toLowerCase()}.png`]} />
+          )}
+          {charClass !== null && (
+            <img
+              src={getBuildImage(
+                charRace.index.toLowerCase(),
+                charClass.index.toLowerCase()
+              )}
+            />
+          )}
+        </div>
+      </div>
+
       <MobileMenu
         buttonNames={buttonNames}
         page={page}
@@ -244,7 +317,7 @@ useEffect(() => {
         setPage={setPage}
         charID={charID}
       />
-      <div className="col-md-9 offset-md-3 pb-0 pt-md-3 container">
+      <div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">
         {charID ? pages : <Loading />}
       </div>
       {/* <div className="col-3 p-4 container overflow-auto">

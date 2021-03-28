@@ -588,6 +588,26 @@ hr {
   bottom: 0;
 }
 
+.race-silhouette-container {
+  display: flex;
+  flex-direction: column;
+  img {
+    position: absolute;
+    //justify-content: space-between;
+    justify-content: center;
+    justify-self: center;
+    align-items: center;
+    align-self: center;
+    justify-items: center;
+    margin: auto;
+    z-index: 1;
+    width: auto;
+    height: auto;
+    max-width: 350px;
+    max-height: 700px;
+  }
+}
+
 .spell-custom-container {
   & > .container {
     height: auto;
