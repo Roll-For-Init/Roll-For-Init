@@ -4,6 +4,7 @@ const { attachUserInfo } = require('../controllers/user.controller');
 
 // Validates that a character follows the rules when being altered
 const validateCharacter = (req, res, next) => {
+    console.log("hello??");
     return next()
 }
 

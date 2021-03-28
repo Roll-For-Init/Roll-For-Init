@@ -23,6 +23,15 @@ const CharacterSchema = new Schema({
     }
   ],
   features: [
+      {
+          name: String,
+          description: String,
+          charges: {
+              current: Number,
+              max: Number
+          }
+      }
+      /*
     {
       ribon: [
         {
@@ -71,9 +80,18 @@ const CharacterSchema = new Schema({
           }
         }
       ]
-    }
+    }*/
   ],
   traits: [
+      {
+          name: String,
+          description: String,
+          charges: {
+              current: Number,
+              max: Number
+          }
+      }
+      /*
     {
       ribon: [
         {
@@ -122,7 +140,7 @@ const CharacterSchema = new Schema({
           }
         }
       ]
-    }
+    }*/
   ],
   background: {
     name: String,
@@ -373,6 +391,25 @@ const CharacterSchema = new Schema({
     },
     casting_ability: String,
     advantage: Number,
+    cards: [
+        {
+            name: String,
+            description: String,    // e.g. "ranged" 
+            spell_type: String,
+            school: String,
+            casting_time: String,   // in terms of actions?, e.g. "instantaneous"
+            components: [String], //v, c, etc
+            material: String,
+            duration: String,
+            damage_type: String,    // acid, necrotic, etc.
+            dc: {
+            name: String,         // optional field for attribute (WIS, PER, etc.)
+            success: Number       // percentage, half damage?? 
+            },
+            level: String           // "4d4", etc.
+        }
+    ]
+    /*
     combat: [
       {
         name: String,
@@ -400,7 +437,7 @@ const CharacterSchema = new Schema({
         name: String,
         description: String    // need anything else? no charges, but what's missing?
       }
-    ]
+    ]*/
   },
   defenses: {
     advantage: Number, // if advantage is -1, 0, or 1
@@ -428,6 +465,7 @@ const CharacterSchema = new Schema({
         amount: Number,
         denomination: String        // e.g. "gp", "sp", etc.
       },
+      /*
       mechanics: [
         {
           skill: String,
@@ -437,7 +475,7 @@ const CharacterSchema = new Schema({
             default: false
           }
         }
-      ]
+      ]*/
     }
   ],
   treasure: {

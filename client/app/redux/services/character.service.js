@@ -6,6 +6,7 @@ import apiCaller from '../../components/apiCaller';
 const API_URL = '/api/';
 
 const createCharacter = characterData => {
+    console.log("hello????")
   return axios.post(API_URL + 'characters/create', characterData);
 };
 

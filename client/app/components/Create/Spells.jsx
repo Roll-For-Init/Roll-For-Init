@@ -5,6 +5,7 @@ import { setSpells } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 
 /**
@@ -203,6 +204,11 @@ export const Spells = ({ charID, setPage }) => {
     dispatch(setSpells(charID, payload));
   };
 
+  const validateAndStore = () => {
+    console.log(character);
+    CharacterService.createCharacter(character);
+  }
+
   useEffect(() => {
     if (!character.class.index) return;
     CharacterService.getSpells(character.class, [
@@ -237,7 +243,7 @@ export const Spells = ({ charID, setPage }) => {
             );
           })}
         </>
-      <Link to="/dashboard">
+      <Link to="/dashboard" onClick={validateAndStore}>
       <button
         className="text-uppercase btn-primary btn-lg px-5 btn-floating"
       >

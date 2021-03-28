@@ -15,6 +15,7 @@ import {
   SET_DESCRIPTION,
   SET_ABILITIES,
   SET_SPELLS,
+  SET_EQUIPMENT
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -137,3 +138,8 @@ export const setSpells = (charID, spells) => dispatch => {
   console.log('SET_SPELLS', charID, spells);
   dispatch({ type: SET_SPELLS, payload: { charID, spells } });
 };
+
+export const setEquipment = (charID, equipment) => dispatch => {
+    console.log('SET_EQUIPMENT', charID, equipment);
+    dispatch({type: SET_EQUIPMENT, payload: {charID, equipment}})
+}
