@@ -24,7 +24,7 @@ const CharacterSchema = new Schema({
   ],
   features: [
     {
-      ribon: [
+      ribbon: [
         {
           name: String,
           description: String
@@ -75,7 +75,7 @@ const CharacterSchema = new Schema({
   ],
   traits: [
     {
-      ribon: [
+      ribbon: [
         {
           name: String,
           description: String
@@ -301,7 +301,7 @@ const CharacterSchema = new Schema({
     {
       name: String,
       description: String,
-      type: String,        // e.g. light, medium, heavy
+      armor_type: String,        // e.g. light, medium, heavy
       base_ac: Number,
       modifier: String,    // modifier is max +2 bonus?
       mechanics: [
@@ -324,7 +324,7 @@ const CharacterSchema = new Schema({
   hit_dice: {
     current: Number,
     max: Number,
-    type: String            // '4d4", etc.
+    die_type: Number            // 8 for 2d8, etc.
   },
   initiative_bonus: Number,
   attacks: {
@@ -376,6 +376,7 @@ const CharacterSchema = new Schema({
     combat: [
       {
         name: String,
+        level: Number,
         description: String,    // e.g. "ranged" 
         spell_type: String,
         school: String,
@@ -392,7 +393,7 @@ const CharacterSchema = new Schema({
           name: String,         // optional field for attribute (WIS, PER, etc.)
           success: Number       // percentage, half damage?? 
         },
-        level: String           // "4d4", etc.
+        damage: String           // "4d4", etc.
       }
     ],
     utility: [
