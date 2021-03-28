@@ -268,7 +268,7 @@ const EquipmentList = ({ equipmentOption }) => {
   };
 
   return (
-    <div className="card translucent-card">
+    <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
       <div className="card content-card card-title">
         <h4>{`Choose ${equipmentOption.choose}`}</h4>
       </div>
@@ -359,7 +359,10 @@ export const Equipment = ({ charID, setPage }) => {
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Equipment</h2>
           </div>
-          <div className="card translucent-card">
+          <div
+            className="card translucent-card"
+            style={{ paddingBottom: '10px' }}
+          >
             <div className="card content-card card-title">
               <h4>Starting Equipment</h4>
             </div>

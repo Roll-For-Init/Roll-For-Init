@@ -114,7 +114,7 @@ const SpellList = ({ spells, known, level, limit, toggleSelected }) => {
   };
 
   return (
-    <div className="card translucent-card">
+    <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
       <div className="card content-card card-title">
         <h6>
           {level == 0 ? 'Cantrips' : level == 1 ? 'Level 1 Spells' : 'Spells'} -

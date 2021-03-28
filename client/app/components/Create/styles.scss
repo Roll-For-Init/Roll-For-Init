@@ -202,7 +202,7 @@
 }
 
 .menu-button {
-  margin: 0 0 20px 0;
+  //margin: 0 0 20px 0;
   border-radius: 8px !important;
   min-width: 150px;
   max-width: 80%;
@@ -501,18 +501,18 @@ hr {
 .icon-card-label {
   margin: 0;
   background-color: $off-white;
-  color: white;
   cursor: pointer;
-  height: 170px;
+  height: 150px;
   & > p {
-    font-size: 1.3em;
+    font-size: 1.2em;
     margin: 5px auto;
     color: $dark-blue;
   }
 }
 
 .icon-grid {
-  max-width: 550px;
+  max-width: 500px;
+  padding-bottom: 25px;
   margin: 20px auto;
   display: grid;
   grid-gap: 20px;
@@ -520,8 +520,8 @@ hr {
 
 .card-icon {
   margin: auto;
-  max-width: 120px;
-  max-height: 100px;
+  max-width: 115px;
+  max-height: 85px;
   width: auto;
   height: auto;
 }
@@ -572,14 +572,20 @@ hr {
   }
 }
 
-.side-bar-icon2 {
-  position: absolute;
-  right: 10px;
-  max-width: 80px;
-  max-height: 30px;
+.button-icon {
+  max-width: 40px;
+  max-height: 22px;
   margin: auto;
   width: auto;
   height: auto;
+}
+
+.button-icon-container {
+  display: flex;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
 }
 
 .spell-custom-container {

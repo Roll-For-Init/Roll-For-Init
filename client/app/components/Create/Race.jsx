@@ -91,12 +91,28 @@ const Race = ({ charID, setPage }) => {
     )
   );
 
+  // function sortRaces(races) {
+  //   races = races || [];
+
+  //   const sortedRaces = races
+  //     .map(race => (race.subraces.length > 0 ? race.subraces[0] : race))
+  //     .sort((a, b) => a.name.localeCompare(b.name));
+  //   console.log(sortedRaces);
+
+  //   return sortedRaces;
+  // }
   function sortRaces(races) {
     races = races || [];
 
-    const sortedRaces = races
-      .map(race => (race.subraces.length > 0 ? race.subraces[0] : race))
-      .sort((a, b) => a.name.localeCompare(b.name));
+    const sortedRaces = races.sort((a, b) =>
+      a.subraces.length > 0
+        ? b.subraces.length > 0
+          ? a.subraces[0].name.localeCompare(b.subraces[0].name)
+          : a.subraces[0].name.localeCompare(b.name)
+        : b.subraces.length > 0
+        ? a.name.localeCompare(b.subraces[0].name)
+        : a.name.localeCompare(b.name)
+    );
     console.log(sortedRaces);
 
     return sortedRaces;
@@ -111,7 +127,7 @@ const Race = ({ charID, setPage }) => {
           </div>
           <div className="icon-grid">
             {races &&
-              races.map((race, idx) => {
+              sortRaces(races).map((race, idx) => {
                 if (race && race.subraces.length > 0)
                   return (
                     <>

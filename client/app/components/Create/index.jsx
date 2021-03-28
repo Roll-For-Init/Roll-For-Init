@@ -148,7 +148,7 @@ useEffect(() => {
             </div>
           </div>
         </div> */}
-        <div className="side-bar-icon-container">
+        {/* <div className="side-bar-icon-container">
           {charRace !== null && (
             <div className="card content-card side-bar-icon-card">
               <div className="same-line">
@@ -167,7 +167,7 @@ useEffect(() => {
               </div>
             </div>
           )}
-        </div>
+        </div> */}
         <div className="btn-group-vertical w-100" role="group">
           {buttonNames.map((name, idx) => {
             let classname = 'btn btn-lg btn-secondary menu-button';
@@ -186,34 +186,34 @@ useEffect(() => {
               >
                 {name}
                 {name === 'race' && charRace !== null && (
-                  <>
+                  <div className="button-icon-container">
                     {page.name === name ? (
                       <img
-                        className="side-bar-icon2"
+                        className="button-icon"
                         src={raceIconsOffWite['half-orc.png']}
                       />
                     ) : (
                       <img
-                        className="side-bar-icon2"
+                        className="button-icon"
                         src={raceIconsMedBlue['half-orc.png']}
                       />
                     )}
-                  </>
+                  </div>
                 )}
                 {name === 'class' && charClass !== null && (
-                  <>
+                  <div className="button-icon-container">
                     {page.name === name ? (
                       <img
-                        className="side-bar-icon2"
+                        className="button-icon"
                         src={classIconsOffWhite['bard.png']}
                       />
                     ) : (
                       <img
-                        className="side-bar-icon2"
+                        className="button-icon"
                         src={classIconsMedBlue['bard.png']}
                       />
                     )}
-                  </>
+                  </div>
                 )}
               </button>
             );
@@ -242,6 +242,7 @@ useEffect(() => {
         page={page}
         pages={pages}
         setPage={setPage}
+        charID={charID}
       />
       <div className="col-md-9 offset-md-3 pb-0 pt-md-3 container">
         {charID ? pages : <Loading />}
