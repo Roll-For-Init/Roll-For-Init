@@ -39,10 +39,13 @@ export const PDFCreate = () => {
     const [D, setD] = useState();
     const [E, setE] = useState();
 
-    const onClick = () => {
-        axios.post('api/pdfGen', {
+    const onClick = async() => {
+        await axios.post('api/pdf/pdfGen', {
             test: 'hello'
+        }).then((response) => {
+            console.log('test')
         });
+
         const doc = new jsPDF();
         doc.text("Name: "+ N, 10, 10);
         doc.text("Race: "+ R, 10, 20);
