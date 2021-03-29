@@ -1,4 +1,4 @@
-@import "client/app/variables";
+@import 'client/app/variables';
 
 
 .label {
@@ -48,19 +48,19 @@
   h2 {
     background-color: $maroon;
   }
-  .race, .class {
+  .race,
+  .class,
+  .abilities {
     .options {
       width: 100%;
       @media (min-width: 768px) {
         width: 400px;
       }
-      background-color: $off-white;
       border: $maroon 3px solid !important;
-      // border-bottom: 0px !important;
-      color: $dark-blue;
       text-transform: capitalize;
       border-radius: 8px;
     }
+
     .dropdown-menu {
       min-width: 250px;
       width: 400px;
@@ -69,19 +69,126 @@
       border: $maroon 3px solid !important;
       border-top: 0px !important;
     }
+
     .dropdown-toggle::after {
       float: right;
       margin-top: 12px;
     }
+
     .options-dropdown {
       color: $dark-blue;
       background-color: $medium-off-white;
+    }
+
+    .abilities-dropdown {
+      font-size: 24px;
+      margin-top: 20px;
+    }
+
+    .dice-roll-card {
+      width: fit-content;
+      padding: 1rem;
+      margin-top: 0;
+
+      .dice {
+        display: inline-block;
+        padding-bottom: .1rem;
+        vertical-align: middle;
+        margin-right: .4rem;
+        div {
+          display: inline-block;
+          color: $off-white;
+          width: 1.4rem;
+          height: 1.4rem;
+          padding: .1rem;
+          margin: 0 2px;
+          line-height: 1;
+          background-color: $maroon;
+          border-radius: .2rem;
+          vertical-align: middle;
+        }
+        .dropped {
+          background-color: $maroon-translucent;
+        }
+      }
+      h4 {
+        display: inline-block;
+        margin: auto;
+        line-height: 1;
+        vertical-align: middle;
+      }
+    }
+
+    .point-card {
+      background-color: $light-maroon-translucent;
+      padding: 10px;
+      min-height: 250px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .points-remaining-card {
+      min-width: 7rem;
+
+      i {
+        padding-right: .5rem;
+        display: inline-block;
+      }
+      h4 {
+        display: inline-block;
+      }
+    }
+
+    // select {
+    //   -webkit-appearance: none;
+    //   -moz-appearance: none;
+    //   border-radius: 8px;
+    //   border: 0px;
+    //   background: $off-white;
+    // }
+
+    .points-header {
+      border-radius: 8px;
+      margin: 5px auto;
+      padding: 5px;
+      background-color: $off-white;
+      color: $dark-blue;
+      width: fit-content;
+    }
+
+    .point-button {
+      margin: 0px 5px !important;
+      box-shadow: none !important;
+      width: auto;
+      padding: 10px;
     }
 
     .text-background {
       background-color: $medium-off-white;
       border: $maroon 3px solid !important;
       color: $dark-blue;
+    }
+
+    .table {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0;
+
+      > div {
+        flex: 1;
+        max-width: 10rem;
+      }
+    }
+
+    .table-data {
+      color: $dark-blue;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin: 0;
+    }
+
+    .vertical-divider {
+      border-right: 1.5px solid $maroon;
     }
 
     .dd-wrapper {
@@ -127,12 +234,11 @@
 
 .title-card {
   background-color: $maroon;
-  border: 30px solid inherit;
-  border-image: url('../../../public/assets/imgs/border-off-white.png') 156.375 / 156.375 stretch;
+  border: 3px solid $maroon;
+  border-image: url('../../../public/assets/imgs/border-off-white.png') 156.375 /
+    156.375 stretch;
   font-variant: small-caps;
-  margin: 0px auto 1rem;
   width: 450px;
-  max-width: 450px;
 }
 
 .btn-back {
@@ -143,6 +249,7 @@
   font-size: 2rem;
   line-height: 1;
   flex: 0 0 60px;
+  padding: 0px;
 }
 
 .btn-back-spacer {
@@ -155,11 +262,6 @@
 .title-back-wrapper {
   display: flex;
   justify-content: center;
-
-  .title-card {
-    margin: 0;
-    flex: 0 1 450px;
-  }
 }
 
 .btn-back-sm {
@@ -179,7 +281,7 @@
   margin: 5px auto;
   background: transparent;
   border: none;
-  border-radius: 8px; 
+  border-radius: 8px;
 }
 
 .content-card {
@@ -193,7 +295,7 @@
 
 .translucent-card {
   background-color: $light-maroon-translucent;
-  padding: 10px 20px;
+  padding: 20px;
   margin: 25px auto;
   max-width: 660px;
   border-radius: 8px;
@@ -205,11 +307,34 @@
   margin-left: 5px;
 }
 
+.warning-card {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 15px;
+  max-width: 400px;
+
+  .icon {
+    flex: 0 1 2rem;
+    font-size: 2rem;
+    margin: auto 1rem auto 0;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .text {
+    flex: 1;
+    color: $dark-blue;
+    text-align: left;
+    font-size: 1rem;
+    margin: auto;
+  }
+}
+
 .card-title {
   padding: 10px 20px;
   // margin: auto;
   font-variant: small-caps;
   display: inline-block;
+  margin-top: 0px;
 
   h4 {
     margin: 0;
@@ -225,18 +350,122 @@
 }
 
 .choice {
-  padding: 5px 10px;
+  padding: 5px;
   flex: 1;
   margin-left: 5px;
   margin-right: 5px;
-  max-width: 400px;
+  max-width: 500px;
 }
+.dd-choice {
+  padding: 5px;
+  flex: 1;
+  max-width: 500px;
+}
+// .choice:first-child {
+//   margin-left: 0px;
+// }
+// .choice:last-child {
+//   margin-right: 0px;
+// }
 
 .choice-container {
   @media (min-width: 768px) {
     display: flex;
     justify-content: center;
+    margin-bottom: 5px;
   }
+}
+
+.physical-card {
+  padding: 5px;
+  max-width: 150px;
+  margin-bottom: 5px;
+}
+
+.drag-drop-card {
+  max-width: 500px;
+  padding: 5px;
+  display: flex;
+  flex-direction: row;
+  outline: none;
+}
+
+.equipment-card {
+  margin: 0;
+  padding: 10px;
+  text-align: left;
+  color: $dark-blue;
+}
+.selected-card {
+  border: 3px solid $green;
+  -webkit-box-shadow: 0 0 5px 1px $green;
+  -moz-box-shadow: 0 0 5px 1px $green;
+  box-shadow: 0 0 5px 1px $green;
+}
+
+.equipment-card-title {
+  color: $dark-blue;
+}
+
+.equipment-card-body {
+  color: $dark-blue;
+}
+
+.equipment-item {
+  color: $dark-blue;
+}
+.equipment-item-info {
+  text-transform: lowercase;
+}
+
+.same-line {
+  margin: 0;
+  color: $dark-blue;
+  display: flex;
+  justify-content: space-between;
+}
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1.5px solid $dark-blue-disabled;
+  border-radius: 0.75px;
+}
+.separator:not(:empty)::before {
+  margin-left: 15px;
+}
+.separator:not(:empty)::after {
+  margin-right: 15px;
+}
+
+.amp {
+  font-family: 'IM Fell English';
+  color: $dark-blue;
+  font-size: 2rem;
+  padding: 0 5px;
+}
+
+hr {
+  display: block;
+  height: 2px;
+  border: 0;
+  border-top: 1.5px solid $dark-blue;
+  border-radius: 1px;
+  margin: 5px auto;
+  padding: 0;
+}
+
+.upload-buttons {
+  max-width: 100px;
+  max-height: 60px;
+  padding: 5px 0px;
+  margin: 0px;
 }
 
 .description-card {
@@ -245,10 +474,178 @@
   width: 100%;
   max-width: 620px;
   display: inline-block;
+
+  .card-subtitle {
+    text-align: center;
+    margin: 0px auto;
+    padding: 0px;
+  }
+
   p {
     margin: 0 auto;
   }
 }
+
+.fancy-card {
+  border-image: url('../../../public/assets/imgs/border-maroon.png') 156.375 / 156.375 stretch;
+  padding: 10px 30px;
+  width: auto;
+}
+
+@media (min-width: 992px) {
+    .card-columns {
+        column-count: 1;
+    }
+}
+
+.spell-custom-container {
+    &>.container {
+        height: auto;
+        padding-left: 0;
+        padding-right: 0;
+        &>.card-columns {
+            column-count: 1;
+            widows: 2;
+            column-gap: 0;
+            .card {
+                width: 302.5px;
+                margin-bottom: .3rem;
+            }
+            @media (min-width: 992px) {
+                column-count: 2;
+            }
+        }
+    }
+}
+.spell-card {
+    padding: 8px;
+    height: auto;
+    margin-left: 0px;
+    margin-right: 0px;
+    &>.container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+        &>.row {
+            margin-right: auto;
+            margin-left: auto;
+            &>.spell-title {
+                font-size: 1.25rem;
+                display: inline-block;
+                color: $dark-blue;
+                padding: 0;
+                text-align: left;
+            }
+            &>.btn-outline-success {
+                border: {
+                    style: solid !important;
+                    color: $green !important;
+                    width: 3px !important;
+                    radius: 8px;
+                }
+                color: $dark-blue;
+                box-shadow: none;
+                float: right;
+                font-size: 1rem;
+                padding: 2px 5px;
+                max-height: 1.67rem;
+                line-height: 1;
+                flex-grow: 0;
+                margin: auto 0px;
+        
+                &:hover, &:active {
+                    background-color: $medium-off-white;
+                }
+            }
+            &>.btn-clicked {
+                @extend .btn-outline-success;
+                background-color: $green;
+                color: $off-white;
+
+                &:hover {
+                    background-color: $medium-green;
+                    border-color: $medium-green !important;
+                }
+                &:active {
+                    background-color: $dark-green;
+                }
+                //how to make it go back to default immediately on click?
+                
+            }
+            &>.btn-inactive {
+                @extend .btn-outline-success;
+                background-color: $medium-off-white;
+                color: $dark-blue-disabled;
+                &:hover {
+                    background-color: $medium-off-white;
+                    color: $dark-blue-disabled;
+                }
+            }
+        }
+    }
+
+    hr {
+        margin: {
+            top: 4px;
+            bottom: 4px;
+            right: -4px;
+            left: -4px;
+        }
+        border: {
+            width: 2px;
+            color: $dark-blue;
+            radius: 1px;
+        }
+    }
+
+    .spell-desc {
+        text-align: left;
+        line-height: normal;
+        color: $dark-blue !important;
+
+        &>div {
+            color: $dark-blue !important;
+        }
+        &>p {
+            color: $dark-blue !important;
+            margin-bottom: 0;
+            &>span {
+                float: right;
+                color: $dark-blue !important;
+            }
+        }
+        
+    }
+}
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -10px; /* gutter size offset */
+  width: auto;
+  margin-top: 5px;
+}
+.my-masonry-grid_column {
+  padding-left: 10px; /* gutter size */
+  background-clip: padding-box;
+}
+.my-masonry-grid_column > div {
+  margin-bottom: 10px; /* space between items */
+  margin-top: 0px;
+}
+
+// /* Optional, different gutter size on mobile */
+// @media (max-width: 700px) {
+//   .my-masonry-grid {
+//     margin-left: -15px; /* gutter size offset */
+//   }
+//   .my-masonry-grid_column {
+//     padding-left: 15px; /* gutter size offset */
+//   }
+//   .my-masonry-grid_column > div {
+//     margin-bottom: 15px; /* space between items */
+//   }
+// }
 
 .read-more-less--more,
 .read-more-less--less {
@@ -257,15 +654,137 @@
   text-decoration: underline;
 }
 
+.error-msg {
+  color: $red;
+  padding-bottom: 0px;
+  margin: 5px 0px 0px 0px;
+}
+
+.upload-file-name {
+  top: 10px;
+  left: 115px;
+  position: absolute;
+}
+
+.floating-label {
+  box-sizing: border-box;
+  display: block;
+  width: 100%;
+  position: relative;
+  font-family: 'IM Fell DW Pica';
+  padding: 5px 0px;
+  margin: 0px;
+  color: $dark-blue-disabled;
+}
+
+.floating-label input,
+.floating-label textarea {
+  width: 100%;
+  border: none;
+  background-color: $off-white !important;
+  box-sizing: border-box;
+  border-radius: 3px;
+  font-family: 'IM Fell DW Pica';
+  padding: 0px;
+  margin: 0px;
+}
+
+.floating-label textarea {
+  margin-top: 5px;
+  color: $dark-blue;
+}
+
+.floating-label input:focus,
+.floating-label textarea:focus {
+  background-color: $medium-off-white !important;
+  outline: none;
+}
+
+.floating-label input:focus + span,
+.floating-label textarea:focus + span,
+.floating-label.floating span {
+  color: $dark-blue;
+  font-size: 0.625rem;
+  padding: 0px;
+}
+
+.floating-label input:focus:not(:focus-visible),
+.floating-label textarea:focus:not(:focus-visible) {
+  outline: none;
+}
+
+.floating-label span {
+  box-sizing: border-box;
+  font-size: 1rem;
+  left: 0;
+  padding: 10px 0px;
+  pointer-events: none;
+  position: absolute;
+  top: -5px;
+  transition: font-size 200ms, padding 200ms;
+  z-index: 1;
+}
+
 .shoop {
   width: 100%;
 }
 
 .btn-floating {
+  position: -webkit-sticky;
   position: sticky;
   bottom: 25px;
+  z-index: 10;
   margin: 0 25px 25px;
 }
+
+.btn-card {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: $medium-green;
+  font-size: 1rem;
+  max-width: 70px;
+  margin: 0 0px 10px 0px;
+  padding: 5px;
+  box-shadow: none;
+  line-height: 1;
+  max-height: 1.67rem;
+}
+.btn-outline-success {
+  &:hover {
+    background-color: $medium-green;
+  }
+  &:focus {
+    color: $off-white;
+    background-color: $dark-green;
+  }
+}
+.btn-clicked {
+  color: $off-white;
+  background-color: $medium-green;
+  &:hover {
+    color: $off-white;
+  }
+  &:focus {
+    color: $off-white;
+  }
+}
+
+// .read-animate {
+//     animation: readAnimate 200ms ease-in-out forwards;
+// }
+
+// @keyframes readAnimate {
+//     0% {
+//         transform: scaleY(0);
+//     }
+//     95% {
+//         transform: scaleY(0.9);
+//     }
+//     100% {
+//         transform: scaleY(1);
+//     }
+// }
 
 .mobile-menu-wrapper {
   background-color: $maroon;

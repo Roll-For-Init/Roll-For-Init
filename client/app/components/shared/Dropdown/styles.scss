@@ -1,36 +1,67 @@
-@import "client/app/variables";
+@import 'client/app/variables';
 
 .dd-wrapper {
   display: flex;
-  flex-wrap: wrap;
-  max-width: 400px;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  max-width: 500px;
   width: 100%;
   margin: 5px auto;
   text-transform: capitalize;
   position: relative;
-
-  .dd-header {
+  .dd-label {
     display: flex;
+    flex-direction: row;
+    max-width: fit-content;
+    margin-right: -15px;
+    padding: 5px 20px 5px 10px;
+    border-radius: 8px;
+    background-color: $medium-off-white;
+    border: 3px solid $maroon;
+    color: $dark-blue;
+    &.header {
+      padding: 5px 20px 5px 10px;
+      font-size: 1.25rem;
+    }
+  }
+  .dd-header {
+    transition: 0.15s;
+    box-shadow: -1px 1px 2px rgba(0, 0%, 0%, 67%);
+    display: flex;
+    flex-direction: row;
+    z-index: 1;
     cursor: pointer;
     width: 100%;
     padding: 5px 10px;
     border-radius: 8px;
     background-color: $off-white;
     border: 3px solid $maroon;
+    text-align: left;
+    outline: none;
     &.header {
       font-size: 1.25rem;
+    }
+    &.eq-card {
+      box-shadow: none;
+      border: 1px solid $maroon;
     }
     &__title {
       flex: 1;
       color: $dark-blue;
+      text-overflow: ellipsis;
     }
     &__action {
       padding-left: 10px;
       color: $dark-blue;
     }
+    &:hover {
+      background-color: $medium-off-white;
+      color: black;
+    }
   }
 
   .dd-list {
+    transform-origin: top center;
     padding: 0px;
     margin: 0px;
     width: 100%;
@@ -39,21 +70,13 @@
     z-index: 10;
     border: 3px solid $maroon;
     border-radius: 8px;
-    max-height: 500px;
+    max-height: 19.5rem;
+    &.eq-card {
+      box-shadow: none;
+      border: 1px solid $maroon;
+    }
     li {
       list-style-type: none;
-
-      &:first-of-type > button {
-        margin-top: 0px;
-        border-top: 1px solid #ccc;
-        border-top-left-radius: 5px;
-        border-top-right-radius: 5px;
-      }
-
-      &:last-of-type > button {
-        border-bottom-left-radius: 5px;
-        border-bottom-right-radius: 5px;
-      }
 
       button {
         color: $dark-blue;
@@ -61,14 +84,14 @@
         justify-content: space-between;
         background-color: $off-white;
         font-size: 16px;
-        padding: 5px 15px;
+        padding: 5px 10px;
         border-radius: 0;
         border-bottom: 1px solid rgb(0, 0, 0);
         width: 100%;
         text-align: left;
         margin: 0 auto;
         text-transform: none;
-        
+
         &.selected {
           background-color: $medium-off-white;
         }
@@ -84,3 +107,27 @@
     }
   }
 }
+
+.scroll {
+  overflow: auto;
+}
+.scroll::-webkit-scrollbar {
+  width: 10px;
+}
+.scroll::-webkit-scrollbar-track {
+  border-radius: 0px 5px 5px 0px;
+  background-color: $off-white;
+}
+.scroll::-webkit-scrollbar-thumb {
+  background-color: $dark-blue-disabled;
+  border-radius: 5px;
+}
+
+// @keyframes dropDown {
+//   0% {
+//     transform: scaleY(0);
+//   }
+//   100% {
+//     transform: scaleY(1);
+//   }
+// }

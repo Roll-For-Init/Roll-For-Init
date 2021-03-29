@@ -1,12 +1,31 @@
-@import url("https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica&display=swap");
-@import url("https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css");
-@import "client/app/variables";
+@import url('https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:ital@0;1&family=IM+Fell+English:ital@1&display=swap');
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css');
+@import 'client/app/variables';
+
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: none !important;
+}
 
 body {
-  background-image: url("../public/assets/imgs/background.jpeg");
+  background-image: url('../public/assets/imgs/background.jpeg');
   background-color: #121212;
   background-size: cover;
-  font-family: "IM Fell DW Pica";
+  font-family: 'IM Fell DW Pica';
+}
+
+body::-webkit-scrollbar {
+  overflow: overlay;
+  width: 0.5em;
+}
+
+body::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+}
+
+body::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background-color: darkgrey;
 }
 
 .title {
@@ -17,8 +36,20 @@ div {
   color: white;
 }
 
+.text-success {
+  color: $green !important;
+}
+
+.text-warning {
+  color: #d4af37 !important;
+}
+
+.text-danger {
+  color: $red !important;
+}
+
 button {
-  font-family: "IM Fell DW Pica";
+  font-family: 'IM Fell DW Pica';
   font-size: 1.4rem;
   margin: 25px;
   padding: 10px;
@@ -32,34 +63,45 @@ button {
 }
 
 .btn-primary {
+  transition: .15s;
   background-color: $blue;
   color: white;
   &:not([disabled]) {
-    &:hover, &:focus {
-      background-color: $medium-blue !important;
-      color: white;
+    &:focus {
+      background-color: $blue;
+      color: white !important;
     }
-    &:active, &.active {
+    &:hover {
+      background-color: $medium-blue !important;
+      color: white !important;
+    }
+    &:active,
+    &.active {
       background-color: $dark-blue !important;
+      color: white !important;
     }
   }
   &[disabled] {
     background-color: $blue-disabled !important;
-    color: hsla(0, 0, 100, 50%);
+    color: $white-disabled;
   }
 }
-
 .btn-secondary {
+  transition: .15s;
   background-color: $off-white;
   color: $dark-blue;
   &:not([disabled]) {
-    &:hover, &:focus {
+    &:focus {
+      background-color: $off-white;
+      color: $dark-blue;
+    }
+    &:hover {
       background-color: $medium-off-white;
-      color: black;
+      color: $very-dark-blue;
     }
     &:active {
       background-color: $dark-off-white !important;
-      color: white;
+      color: black !important;
     }
   }
   &[disabled] {
@@ -71,7 +113,7 @@ button {
 input {
   background-color: #f0e6d3 !important;
   color: $dark-blue !important;
-  font-family: "IM Fell DW Pica" !important;
+  font-family: 'IM Fell DW Pica' !important;
   font-size: 1rem !important;
   border-radius: 8px !important;
   border-width: 3px !important;
@@ -88,5 +130,9 @@ input {
 }
 
 .small-caps {
-  font-variant: small-caps;
+  font-variant: small-caps !important;
+}
+
+.w-fit-content {
+  width: fit-content !important;
 }

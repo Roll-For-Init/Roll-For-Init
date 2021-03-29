@@ -25,6 +25,12 @@ const getIndexedList = (type) => {
     });
 };
 
+const getSubList = (url) => {
+    return axios.get(`${API_URL}${url}`).then((items) => {
+        return items.data;
+    })
+}
+
 //Leave out index to get all race objects
 const getRaceInfo = (race) => {
     return apiCaller.propogateRacePointer(race);
@@ -62,15 +68,27 @@ const getAbilityScoreInfo = abilityScore => {
   return axios.get(API_URL + 'ability-scores/' + query);
 };
 
+const getEquipmentDetails = equipment => {
+  return apiCaller.equipmentDetails(equipment);
+}
+const getSpells = (theClass, levels) => {
+    let url = `${API_URL}classes/${theClass.index.toLowerCase()}/levels/`;
+    let subclassSpells = theClass.subclass && theClass.subclass_spells ? theClass.subclass.subclass_spells : [];
+    return apiCaller.getSpellCards(levels, url, subclassSpells);
+}
+
 export default {
   createCharacter,
   updateCharacter,
   deleteCharacter,
   getIndexedList,
+  getSubList,
   getRaceInfo,
   getClassInfo,
   getBackgroundInfo,
   getAbilityScoreInfo,
   getRaceDetails,
-  getClassDetails
+  getClassDetails,
+  getEquipmentDetails,
+  getSpells
 };
