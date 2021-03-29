@@ -136,8 +136,8 @@ const LandingPage = () => {
     },
   ];
 
-  //const { isLoggedIn } = useSelector(state => state.auth);
-  const isLoggedIn = true;
+  const { isLoggedIn } = useSelector(state => state.auth);
+  // const isLoggedIn = true;
   return (
     <div className="container landing">
       <div className="filler-space"></div>
