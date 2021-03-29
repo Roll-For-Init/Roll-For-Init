@@ -395,6 +395,7 @@ const classCaller = async (classPointer) => {
     main: {
 
     },
+    levels: [],
     equipment_options: [],
     spellcasting: null,
     subclass: null
@@ -444,9 +445,11 @@ const classCaller = async (classPointer) => {
                     }
                 }
                 const morePromises = [];
-                morePromises.push(axios.get(`${details.subclass_levels}/1`).then((deets) => {
+                morePromises.push(axios.get(`${details.subclass_levels}`).then((deets) => {
                     const moremorepromises = [];
-                    let details = deets.data;
+                    classContainer.subclass.levels = deets.data;
+                    //console.log(deets.data);
+                    let details = deets.data[0]; //level 1
                     if(details.feature_choices.length >0) {
                         if(!classContainer.subclass.subclass_options) classContainer.subclass.subclass_options = [];
                         for (let set of details.feature_choices) {
@@ -478,11 +481,13 @@ const classCaller = async (classPointer) => {
         }
     }
 
-    let featureURL = `${theClass.class_levels}/1`;
+    let featureURL = `${theClass.class_levels}`;
     promises.push(axios.get(featureURL)
     .then((details) => {
         const morePromises = [];
-        details = details.data;
+        //console.log(details.data);
+        classContainer.levels = details.data;
+        details = details.data[0];
         if(details.feature_choices.length >0) {
             for (let set of details.feature_choices) {
                 //console.log(set);
@@ -504,7 +509,8 @@ const classCaller = async (classPointer) => {
             }
         }
         if(details.features.length > 0) {
-            classContainer.features = details.features;
+            classContainer.features = classContainer.features.concat(details.features);
+            //console.log(details.features);
             morePromises.push(descriptionAdder(classContainer, 'features').then());
         }
         return Promise.all(morePromises);

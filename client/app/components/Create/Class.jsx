@@ -95,6 +95,10 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
         dispatch(setClass(charID, {spellcasting: theClass.spellcasting}))
         dispatch(setClass(charID, {subclass: theClass.subclass}))
+        dispatch(setClass(charID, {features: theClass.features}))
+        dispatch(setClass(charID, {saving_throws: theClass.main.saving_throws}))
+        dispatch(setClass(charID, {hit_die: theClass.main.hit_die}))
+        dispatch(setClass(charID, {level: 1}))
       });
   }, []);
 

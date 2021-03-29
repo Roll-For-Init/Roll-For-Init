@@ -14,7 +14,11 @@ const CharacterSchema = new Schema({
   },
   race: {
     name: String,
-    description: String
+    description: {
+        age: String,
+        size: String,
+        summary: [String]
+    }
   },
   class: [
     {
@@ -26,10 +30,11 @@ const CharacterSchema = new Schema({
       {
           name: String,
           description: String,
+          /*
           charges: {
               current: Number,
               max: Number
-          }
+          }*/
       }
       /*
     {
@@ -152,7 +157,7 @@ const CharacterSchema = new Schema({
     ]
   },
   misc_proficiencies: {
-    armor: [ {name: String} ],
+    armor: [ {name: String} ], //and desc?
     weapons: [ {name: String} ],
     tools: [ {name: String} ],
     languages: [ {name: String} ]
@@ -225,7 +230,7 @@ const CharacterSchema = new Schema({
     acrobatics: {
       proficiency: Boolean,
       // i.e., should each skill have an ability field (like DEX for acrobatics)
-      modifier: Number,     // NOT base ability score modifier
+      modifier: Number,     // NOT base ability score modifier that is accessed through the abscore object. this is for stuff like expertise
       advantage: Number
     },
     animal_handling: {
@@ -322,7 +327,7 @@ const CharacterSchema = new Schema({
       type: String,        // e.g. light, medium, heavy
       base_ac: Number,
       modifier: String,    // modifier is max +2 bonus?
-      mechanics: [
+      /*mechanics: [
         {
           skill: String,
           stat: Number,
@@ -331,7 +336,7 @@ const CharacterSchema = new Schema({
             default: false
           }
         }
-      ],
+      ],*/
     }
   ],
   health: {
@@ -370,7 +375,7 @@ const CharacterSchema = new Schema({
         ammunition: {
           current: Number,
           max: Number
-        },
+        }/*,
         mechanics: [
           {
             skill: String,
@@ -380,7 +385,7 @@ const CharacterSchema = new Schema({
               default: false
             }  
           }
-        ]
+        ]*/
       }
     ]
   },
@@ -514,12 +519,12 @@ const CharacterSchema = new Schema({
   },
   portrait: {
       // image, stored on server?
-  },
+  },/*
   character_gallery: [
     {
       // array of images
     }
-  ],
+  ],*/
   /*public: {
     type: Boolean,
     default: false,

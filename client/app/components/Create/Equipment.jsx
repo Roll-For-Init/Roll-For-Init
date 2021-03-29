@@ -6,6 +6,8 @@ import { useSelector, useDispatch } from 'react-redux';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
 import { setEquipment } from '../../redux/actions';
+import { Link } from 'react-router-dom';
+
 
 const EquipmentItem = ({
   equipment,
@@ -157,8 +159,6 @@ const EquipmentCard = ({
     else setSelectedCard({cardKey: cardKey, equipment: equipmentItem});
   };
   const reducer = (state, newProp) => {
-    console.log("REDUCER", state);
-    console.log("REDUCER", newProp);
     let newState = { ...state, ...newProp };
     if(selectedCard?.cardKey === cardKey) {
       setSelectedCard({...selectedCard, selection: newState})
@@ -167,17 +167,6 @@ const EquipmentCard = ({
   };
 
   //make selectedcard {index: , equipment: }
-
-  useEffect(() => {
-    console.log("CARD SELECTED CARD", selectedCard);
-    //console.log("EQUIPMENT ITEM", equipmentItem);
-  }, [selectedCard])
-
-  useEffect(() => {
-    console.log("SELECTION EQ", selectionEq);
-    //if this is the selected card -> setSelectedCard({cardKey: selectedCard.cardKey, equipment: equipmentItem, selection: selectionEq})
-    //console.log("EQUIPMENT ITEM", equipmentItem);
-  }, [selectionEq])
 
   const [selectionEq, setSelectionEq] = useReducer(reducer, {});
 
@@ -218,7 +207,6 @@ const EquipmentCard = ({
                   {selectionEq[`${equipmentItem.header
                     .toLowerCase()
                     .replace(' ', '-')}`].map((dropdownItem, idx) => {
-                      console.log(selectionEq, dropdownItem);
 
                     return (
                       <div key={idx} style={{ marginTop: '5px' }}>
@@ -260,7 +248,6 @@ const EquipmentCard = ({
                                 {selectionEq[`${multiEquipmentOption.header
                                   .toLowerCase()
                                   .replace(' ', '-')}-${idx}`].map((dropdownItem, idx) => {
-                                  console.log(selectionEq, dropdownItem);
                                   return (
                                     <div key={idx} style={{ marginTop: '5px' }}>
                                       <EquipmentItem equipment={dropdownItem} />
@@ -305,8 +292,6 @@ const EquipmentList = ({ equipmentOption, charID, theKey, setEquipmentSelection,
     767: 1,
   };
   useEffect(() => {
-    console.log("LIST SELECTED CARD", selectedCard);
-    console.log(theKey);
     setEquipmentSelection({[theKey]: selectedCard});
     //console.log("EQUIPMENT ITEM", equipmentItem);
   }, [selectedCard])
@@ -351,8 +336,6 @@ export const Equipment = ({ charID, setPage }) => {
     )
   );
   const reducer = (state, newProp) => {
-    console.log("REDUCER", state);
-    console.log("REDUCER", newProp);
     let newState = { ...state, ...newProp };
     return newState;
   };
@@ -371,13 +354,26 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
+  const finalizeEquipment = () => new Promise((resolve, reject) => {
+    console.log('in finalize equipment');
+    dispatch(setEquipment(charID, {
+      choices: equipmentSelection,
+      set: equipmentList
+    }));
+    resolve();
+  })
+
+  const validateAndStore = () => {
+    finalizeEquipment.then(() => {console.log("VALANDSTORE", character);
+    CharacterService.createCharacter(character)})
+  }
+
   const onNext = () => {
     console.log(equipmentSelection, equipmentList);
     dispatch(setEquipment(charID, {
       choices: equipmentSelection,
       set: equipmentList
     }))
-    console.log(equipmentSelection, equipmentList);
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
@@ -440,12 +436,22 @@ export const Equipment = ({ charID, setPage }) => {
               <EquipmentList equipmentOption={equipmentOption} charID={charID} theKey={idx} setEquipmentSelection={setEquipmentSelection} equipmentSelection={equipmentSelection}/>
             );
           })}
-          <button
-            className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-            onClick={onNext}
-          >
-            OK
-          </button>
+          {character.class?.spellcasting ? (
+            <button
+              className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+              onClick={onNext}
+            >
+              OK
+            </button>)
+          : (
+            <Link to="/dashboard" onClick={validateAndStore}>
+            <button
+              className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+            >
+              Finish
+            </button>
+            </Link>
+          )}
         </>
       ):
       <>Loading</>}

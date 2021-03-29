@@ -76,7 +76,6 @@ function Dropdown({
       updatedTitle = `Choose ${selectLimit}`;
     }
     setTitle(updatedTitle);
-    console.log(selection);
   },[selection])
 
   function isItemInSelection(item) {

@@ -8,8 +8,8 @@ router.use(function (req, res, next) {
 
 router.use('/users', require('./users.js'));
 
-// Auth required to access API beyond designated routes in /users above
-router.use(authenticateUser);
+// Auth required to access API beyond designated routes in /users above - REEVALUATE
+//router.use(authenticateUser);
 
 router.use('/characters', require('./characters.js'));
 

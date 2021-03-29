@@ -181,6 +181,13 @@ AbilityBonuses.propTypes = {
 */
 const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
   const reducer = (state, newProp) => {
+    let key = Object.keys(newProp)[0];
+    if(key.includes("ability")) {
+      let bonus = parseInt(key.charAt(1));
+      for(let item of newProp[key]) {
+        item.bonus = bonus;
+      }
+    }
     let newState = { ...state, ...newProp };
     dispatch(setRace(charID, { choices: newState }));
     return newState;
@@ -222,6 +229,8 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
           size: race.main.size_description,
         };
         dispatch(setRace(charID, { description: description }));
+        dispatch(setRace(charID, { size: race.main.size }));
+        dispatch(setRace(charID, { speed: race.main.speed }));
       });
   }, []);
 
