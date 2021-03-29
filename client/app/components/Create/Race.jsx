@@ -376,12 +376,12 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
             {raceInfo.options.map((option, index) => {
               return (
                 <Dropdown
-                  ddLabel={option.header}
+                  ddLabel={`${option.header}`}
                   title={`Choose ${option.choose}`}
                   items={option.options}
                   width="100%"
                   selectLimit={option.choose}
-                  multiselect={option.choose > 1}
+                  multiSelect={option.choose > 1}
                   selection={
                     userChoices[
                       `${option.header
