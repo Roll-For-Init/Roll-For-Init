@@ -16,8 +16,16 @@ const exampleData = {
 const testMessage = async (req, res) => {
     const anvilClient = new Anvil({ apiKey })
     const { statusCode, data } = await anvilClient.fillPDF(pdfTemplateID, exampleData)
+    fs.writeFileSync('sample.pdf', data, { encoding: null })
+    const src = fs.createReadStream('sample.pdf');
+
+    res.writeHead(200, {
+        'Content-Type': 'application/pdf',
+        'Content-Disposition': 'attachment; filename= sample.pdf',
+        'Content-Transfer-Encoding': 'Binary'
+      });
     console.log(statusCode) // => 200
-    return res.status(200).write(data)
+    src.pipe(res);
 }
 
 module.exports = { testMessage }

@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import { useState } from 'react';
 import axios from 'axios';
-const { jsPDF } = require("jspdf");
+//const { jsPDF } = require("jspdf");
+import FileSaver from 'file-saver';
 
 
 
@@ -40,13 +41,23 @@ export const PDFCreate = () => {
     const [E, setE] = useState();
 
     const onClick = async() => {
-        await axios.post('api/pdf/pdfGen', {
-            test: 'hello'
-        }).then((response) => {
-            console.log('test')
-        });
+         await axios.get('api/pdf/pdfGen', {
+            responseType: "blob"
+          }).then(response => {
+            //Create a Blob from the PDF Stream
+            const file = new Blob([response.data], {
+              type: "application/pdf"
+            });
+            //Build a URL from the file
+            const fileURL = URL.createObjectURL(file);
+            //Open the URL on new Window
+            window.open(fileURL);
+          })
+          .catch(error => {
+            console.log(error);
+          });
 
-        const doc = new jsPDF();
+        /*const doc = new jsPDF();
         doc.text("Name: "+ N, 10, 10);
         doc.text("Race: "+ R, 10, 20);
         doc.text("Class: "+ C, 10, 30);
@@ -54,7 +65,8 @@ export const PDFCreate = () => {
         doc.text("Abiltiies: "+ A, 10, 50);
         doc.text("Description: "+ D, 10, 60);
         doc.text("Equipment: "+ E, 10, 70);
-        doc.save("PDFTest.pdf"); // will save the file in the current working directory
+        doc.save("PDFTest.pdf"); // will save the file in the current working directory*/
+        return false;
     } 
 
   return (
@@ -87,7 +99,7 @@ export const PDFCreate = () => {
         <input class="input" type="Equipment" name="Equipment" value={E} onChange={e => setE(e.target.value)} />
     </div>
     <div>
-    <button onClick={onClick}>
+    <button type="button" onClick={onClick}>
         Submit
     </button>
     </div>
