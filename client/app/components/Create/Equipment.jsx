@@ -90,25 +90,28 @@ const EquipmentItem = ({
             )}
             {equipment.desc.special && (
               <>
-              {Array.isArray(equipment.desc.special) ? (
-                <>
-                  <hr className="mb-0 mt-0" />
-                  <p className="mb-0">
-                    <ReactReadMoreReadLess
-                      charLimit={250}
-                      readMoreText="Show more"
-                      readLessText="Show less"
-                      readMoreClassName="read-more-less--more"
-                      readLessClassName="read-more-less--less"
-                    >
-                      {equipment.desc.special.join('\n')}
-                    </ReactReadMoreReadLess>
-                  </p>
-                </>
-              ) : (
-                <>{`${equipment.desc.special}`}{equipment.desc.desc && <br/>}</>
-              )}
-            </>
+                {Array.isArray(equipment.desc.special) ? (
+                  <>
+                    <hr className="mb-0 mt-0" />
+                    <p className="mb-0">
+                      <ReactReadMoreReadLess
+                        charLimit={250}
+                        readMoreText="Show more"
+                        readLessText="Show less"
+                        readMoreClassName="read-more-less--more"
+                        readLessClassName="read-more-less--less"
+                      >
+                        {equipment.desc.special.join('\n')}
+                      </ReactReadMoreReadLess>
+                    </p>
+                  </>
+                ) : (
+                  <>
+                    {`${equipment.desc.special}`}
+                    {equipment.desc.desc && <br />}
+                  </>
+                )}
+              </>
             )}
             {equipment.desc.desc && (
               <>
@@ -153,6 +156,7 @@ const EquipmentCard = ({
   };
 
   const [selectionEq, setSelectionEq] = useState([]);
+
   return (
     <div
       className={`card content-card equipment-card ${selectedCard === cardKey &&
@@ -247,6 +251,13 @@ const EquipmentCard = ({
 };
 
 const EquipmentList = ({ equipmentOption }) => {
+  // either store the equipment list here, and then select from that list
+  // based on the key of the selected card (+1 since the first index is just the header)
+  // or do it in equipment card, where each card stores all of its own equipment
+  // doing it in equipmentlist is probably better, but im not sure
+  // either way, they would have to be concatenated in the main equipment component,
+  // but it would probably be best to wait until the user goes to the next page, so
+  // it doesn't have to be updated every time they change their selection?
   //const equipmentList = [].concat.apply([], Object.values(equipmentItems));
   //console.log(equipmentList);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -257,7 +268,7 @@ const EquipmentList = ({ equipmentOption }) => {
   };
 
   return (
-    <div className="card translucent-card">
+    <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
       <div className="card content-card card-title">
         <h4>{`Choose ${equipmentOption.choose}`}</h4>
       </div>
@@ -348,7 +359,10 @@ export const Equipment = ({ charID, setPage }) => {
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Equipment</h2>
           </div>
-          <div className="card translucent-card">
+          <div
+            className="card translucent-card"
+            style={{ paddingBottom: '10px' }}
+          >
             <div className="card content-card card-title">
               <h4>Starting Equipment</h4>
             </div>
@@ -378,8 +392,9 @@ export const Equipment = ({ charID, setPage }) => {
             OK
           </button>
         </>
-      ):
-      <>Loading</>}
+      ) : (
+        <>Loading</>
+      )}
     </div>
   );
 };
