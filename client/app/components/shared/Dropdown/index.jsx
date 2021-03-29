@@ -9,7 +9,7 @@ function Dropdown({
   items,
   width,
   multiSelect = false,
-  selectLimit = 2,
+  selectLimit = 1,
   selection,
   setSelection,
   classname,
@@ -41,9 +41,9 @@ function Dropdown({
             select[stateKey] = [...selection, item];
             setSelection(select);
           } else setSelection([...selection, item]);
-        if(selection.length +1 == selectLimit) {
-          toggle(!open);
-        }
+          if (selection.length + 1 == selectLimit) {
+            toggle(!open);
+          }
         }
       }
     } else {
@@ -57,7 +57,7 @@ function Dropdown({
           select[stateKey] = [...selectionAfterRemoval];
           setSelection(select);
         } else setSelection([...selectionAfterRemoval]);
-        if(selectionAfterRemoval.length >= selectLimit) toggle(!open);
+        if (selectionAfterRemoval.length >= selectLimit) toggle(!open);
       } else {
         toggle(!open);
       }
@@ -76,7 +76,7 @@ function Dropdown({
       updatedTitle = `Choose ${selectLimit}`;
     }
     setTitle(updatedTitle);
-  },[selection])
+  }, [selection]);
 
   function isItemInSelection(item) {
     if (selection.some(current => current.index === item.index)) {

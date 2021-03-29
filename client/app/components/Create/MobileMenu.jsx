@@ -1,11 +1,7 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
+import useSelector from 'react-redux';
 
-function MobileMenu({
-  buttonNames,
-  page,
-  pages,
-  setPage
-}) {
+function MobileMenu({ buttonNames, page, pages, setPage }) {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen(!open);
 
@@ -27,31 +23,33 @@ function MobileMenu({
           <span>{page.name}</span>
         </div>
         <div className="mobile-menu-header__action">
-          {open
-            ? <i className="bi bi-chevron-up"></i>
-            : <i className="bi bi-chevron-down"></i>}
+          {open ? (
+            <i className="bi bi-chevron-up"></i>
+          ) : (
+            <i className="bi bi-chevron-down"></i>
+          )}
         </div>
       </div>
       {open && (
         <ul className="mobile-menu-list">
           {buttonNames.map((name, idx) => {
-            let classname = "btn btn-lg btn-secondary menu-button";
+            let classname = 'btn btn-lg btn-secondary menu-button';
             if (page.name === name) {
-              classname = "btn btn-lg btn-primary menu-button active";
+              classname = 'btn btn-lg btn-primary menu-button active';
             }
             return (
               <li className="mobile-menu-list-item" key={name}>
                 <button
-                      key={name}
-                      type="button"
-                      className={classname}
-                      disabled={page.index < idx}
-                      onClick={() => {
-                        page.index >= idx && onPageChange(name, idx);
-                      }}
-                    >
-                      {name}
-                    </button>
+                  key={name}
+                  type="button"
+                  className={classname}
+                  disabled={page.index < idx}
+                  onClick={() => {
+                    page.index >= idx && onPageChange(name, idx);
+                  }}
+                >
+                  {name}
+                </button>
               </li>
             );
           })}
