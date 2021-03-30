@@ -69,7 +69,7 @@ const TEMP_DATA = {
   },
   saving_throws: {
     Strength: {
-      proficiency: 1,
+      proficiency: 0,
       modifier: 0,
       advantage: -1,
     },
@@ -122,7 +122,7 @@ const TEMP_DATA = {
       advantage: -1,
     },
     deception: {
-      proficiency: false,
+      proficiency: true,
       modifier: 0,
       advantage: 4,
     },
@@ -142,7 +142,7 @@ const TEMP_DATA = {
       advantage: 4,
     },
     investigation: {
-      proficiency: false,
+      proficiency: true,
       modifier: 0,
       advantage: -3,
     },
@@ -162,7 +162,7 @@ const TEMP_DATA = {
       advantage: 2,
     },
     performance: {
-      proficiency: false,
+      proficiency: true,
       modifier: 0,
       advantage: 2,
     },
@@ -213,29 +213,102 @@ export const DashBoard = () => {
 
   return (
     <div className="dashboard">
-      <Header />
-      <div className="container">
-        <h1 className="display-1 text-center text-light title">
-          Dashboard
-          <Link to="/logout">
-            <button
-              type="button"
-              className="btn btn-outline-danger log-out-button"
-            >
-              Log Out
-            </button>
-          </Link>
-        </h1>
+      <div className="toolbar">
+        <div className="header">
+          <Header />
+        </div>
+        <div className="subheader">
+          <h2 className="small-caps">Liir Thropp</h2>
+          <h5 className="text-uppercase">Rogue</h5>
+          <h5 className="text-uppercase">Halfling</h5>
+          <h5 className="text-uppercase">Level 2</h5>
+        </div>
+      </div>
+      {/* <div>
         {Object.keys(character).map(key => {
           return (
             <p>
               {character[key].race?.index + ' ' + character[key].class?.index}
             </p>
           );
-        })}
-        <SavingThrowsCard saving_throws={saving_throws} />
-        <SkillsCard skills={skills} />
-        <ProficieniesCard misc_proficiencies={misc_proficiencies} />
+        })} */}
+      <div className="container-fluid mx-5">
+        {/* first column */}
+        <div className="row">
+          <div className="col-auto px-0">
+            <div className="container-fluid px-0">
+              <div className="row">
+                <div className="col-auto px-4">
+                  <AbilitiesCard ability_scores={ability_scores} />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-auto">
+                  <SavingThrowsCard saving_throws={saving_throws} />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-auto">
+                  <ProficienciesCard misc_proficiencies={misc_proficiencies} />
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* second column */}
+          <div className="col-auto px-0">
+            <div className="container-fluid px-0">
+              <div className="row">
+                <div className="col-auto">
+                  <SkillsCard skills={skills} />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-auto">
+                  <SensesCard />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      {/* </div> */}
+    </div>
+  );
+};
+
+const AbilitiesCard = ({ ability_scores }) => {
+  console.log(ability_scores);
+
+  return (
+    <div className="card translucent-card px-0 mx-0">
+      <h5 className="card-title">Abilities</h5>
+      <div className="container-fluid p-0">
+        <div className="row ml-3">
+          {Object.entries(ability_scores).map(ability => {
+            return (
+              <div
+                className="col-3 p-0 m-2 card content-card description-card"
+                key={ability[0]}
+              >
+                <div>
+                  <h6 className="text-uppercase text-center mt-2 mb-0">
+                    {ability[0]}
+                  </h6>
+                  <h2 className="text-center">
+                    {ability[1].advantage >= 0 && '+'}
+                    {ability[1].advantage}
+                  </h2>
+                </div>
+                <div
+                  className="card content-card description-card"
+                  key={ability[0]}
+                >
+                  {ability[1].score}
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </div>
   );
@@ -246,18 +319,24 @@ const SavingThrowsCard = ({ saving_throws }) => {
     <div className="card translucent-card">
       <h5 className="card-title">Saving Throws</h5>
       <div className="card content-card description-card">
-        <ul>
-          {Object.entries(saving_throws).map(saving_throw => {
-            return (
-              <li key={saving_throw[0]}>
-                <p>
+        {Object.entries(saving_throws).map(saving_throw => {
+          return (
+            <div key={saving_throw[0]}>
+              <input
+                type="radio"
+                checked={saving_throw[1].proficiency > 0}
+                readOnly
+              />
+              <label>
+                <div className="list-item skills-points">
                   {saving_throw[1].advantage >= 0 && '+'}
-                  {saving_throw[1].advantage} {saving_throw[0]}
-                </p>
-              </li>
-            );
-          })}
-        </ul>
+                  {saving_throw[1].advantage}{' '}
+                </div>
+                <div className="list-item">{saving_throw[0]}</div>
+              </label>
+            </div>
+          );
+        })}
       </div>
     </div>
   );
@@ -265,46 +344,70 @@ const SavingThrowsCard = ({ saving_throws }) => {
 
 const SkillsCard = ({ skills }) => {
   return (
-    <div className="card translucent-card">
-      <h5 className="card-title">Skills</h5>
-      <div className="card content-card description-card">
-        <ul>
+    <div>
+      <h4 className="translucent-card proficiency-title text-uppercase">
+        Proficiency bonus: +2
+      </h4>
+      <div className="card translucent-card">
+        <h5 className="card-title">Skills</h5>
+        <div className="card content-card description-card">
           {Object.entries(skills).map(skill => {
             return (
-              <li key={skill[0]}>
-                <p>
-                  {skill[1].advantage >= 0 && '+'}
-                  {skill[1].advantage} {skill[0]}
-                </p>
-              </li>
+              <div key={skill[0]}>
+                <input type="radio" checked={skill[1].proficiency} readOnly />
+                <label>
+                  <div className="list-item skills-points">
+                    {skill[1].advantage >= 0 && '+'}
+                    {skill[1].advantage}{' '}
+                  </div>
+                  <div className="list-item text-capitalize skills-name">
+                    {skill[0]}
+                  </div>
+                  <div className="list-item">WIS</div>
+                </label>
+              </div>
             );
           })}
-        </ul>
+        </div>
       </div>
     </div>
   );
 };
 
-const ProficieniesCard = ({ misc_proficiencies }) => {
-  console.log(misc_proficiencies);
+const ProficienciesCard = ({ misc_proficiencies }) => {
   return (
     <div className="card translucent-card">
       <h5 className="card-title">Proficiencies</h5>
       <div className="card content-card description-card">
         {Object.entries(misc_proficiencies).map(misc_proficiency => {
           return (
-            <p key={misc_proficiency[0]}>
-              <div className="text-uppercase w-auto">{misc_proficiency[0]}</div>
-              -{' '}
+            <div key={misc_proficiency[0]}>
+              <div className="small-caps w-auto list-item">
+                {misc_proficiency[0]}
+              </div>
+              —{' '}
               {misc_proficiency[1].map((items, idx) => (
-                <div key={idx}>
+                <div key={idx} className="list-item">
                   {items.name}
-                  {idx !== 0 && idx < misc_proficiency[1].length && ', '}
+                  {idx < misc_proficiency[1].length - 1 && ', '}
                 </div>
               ))}
-            </p>
+            </div>
           );
         })}
+      </div>
+    </div>
+  );
+};
+
+const SensesCard = () => {
+  return (
+    <div className="card translucent-card">
+      <h5 className="card-title">Senses</h5>
+      <div className="card content-card description-card">
+        <div>Passive Perception (WIS): 12</div>
+        <div>Passive Insight (WIS): 10</div>
+        <div>Passive Investigation (INT): 7</div>
       </div>
     </div>
   );
