@@ -16,6 +16,16 @@ const EquipmentItem = ({
   dropdown = false,
   className,
 }) => {
+  const mapObj = { ', monk': '', monk: '' };
+
+  function replaceAll(str, mapObj) {
+    var re = new RegExp(Object.keys(mapObj).join('|'), 'gi');
+
+    return str.replace(re, function(matched) {
+      return mapObj[matched.toLowerCase()];
+    });
+  }
+
   return (
     <>
       <div className="equipment-card-title same-line">
@@ -115,10 +125,7 @@ const EquipmentItem = ({
                     {`${equipment.desc.special}`}
                     {className !== undefined &&
                     className.toLowerCase() !== 'monk'
-                      ? equipment.desc.desc.replaceAll(
-                          new RegExp(', monk', 'gi'),
-                          ''
-                        )
+                      ? replaceAll(equipment.desc.desc, mapObj)
                       : equipment.desc.desc && <br />}
                   </>
                 )}
@@ -143,10 +150,7 @@ const EquipmentItem = ({
                   <i className="equipment-item-info">
                     {className !== undefined &&
                     className.toLowerCase() !== 'monk'
-                      ? equipment.desc.desc.replaceAll(
-                          new RegExp(', monk', 'gi'),
-                          ''
-                        )
+                      ? replaceAll(equipment.desc.desc, mapObj)
                       : equipment.desc.desc}
                   </i>
                 )}
@@ -275,7 +279,7 @@ const EquipmentCard = ({
   );
 };
 
-const EquipmentList = ({ equipmentOption }) => {
+const EquipmentList = ({ equipmentOption, className }) => {
   // either store the equipment list here, and then select from that list
   // based on the key of the selected card (+1 since the first index is just the header)
   // or do it in equipment card, where each card stores all of its own equipment
@@ -311,6 +315,7 @@ const EquipmentList = ({ equipmentOption }) => {
               clickable
               selectedCard={selectedCard}
               setSelectedCard={setSelectedCard}
+              className={className}
             />
           );
         })}
@@ -420,7 +425,11 @@ export const Equipment = ({ charID, setPage }) => {
           </div>
           {equipmentOptions.map((equipmentOption, idx) => {
             return (
-              <EquipmentList equipmentOption={equipmentOption} key={idx} />
+              <EquipmentList
+                equipmentOption={equipmentOption}
+                key={idx}
+                className={className}
+              />
             );
           })}
           {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}

@@ -293,22 +293,59 @@ useEffect(() => {
           )}
         </div>
       </div>
-      <div className="col-3 offset-md-9 d-none d-md-block side-bar overflow-auto">
-        <div className="race-silhouette-container">
+      <div className="col-3 offset-md-9 d-none d-md-block side-bar overflow-auto p-0">
+        <div className="right-side-bar-container">
           {charRace !== null && (
-            <img src={raceSilhouettes[`${charRace.index.toLowerCase()}.png`]} />
+            <div className="card content-card card-title">
+              <h5>
+                {charRace !== null && `${charRace.index} `}
+                {charClass !== null && `${charClass.index}`}
+              </h5>
+            </div>
           )}
-          {charClass !== null && (
-            <img
-              src={getBuildImage(
-                charRace.index.toLowerCase(),
-                charClass.index.toLowerCase()
-              )}
-            />
-          )}
+          <div className="race-silhouette-container">
+            {charRace !== null && (
+              <img
+                src={raceSilhouettes[`${charRace.index.toLowerCase()}.png`]}
+              />
+            )}
+            {charClass !== null && (
+              <img
+                src={getBuildImage(
+                  charRace.index.toLowerCase(),
+                  charClass.index.toLowerCase()
+                )}
+              />
+            )}
+          </div>
+          <div className="card content-card side-bar-card">
+            {page.name === 'race' && charRace !== null && (
+              <p className="mb-0">
+                Half-Orcs are use their great Strength to excel as Barbarians or
+                Paladins. Many see them as brutish, but their incredible
+                Constitution also lends well to healing in the midst of battle.
+              </p>
+            )}
+            {page.name === 'class' &&
+              (charClass !== null ? (
+                <p className="mb-0">
+                  Clerics are known for their great Wisdom and close connection
+                  to their deity, through which they can cast powerful healing
+                  magic and offensive spells. Their sheer versatility is both
+                  daunting to their enemies and widely sought-after by future
+                  allies.
+                </p>
+              ) : (
+                <p className="mb-0">
+                  Half-Orcs are use their great Strength to excel as Barbarians
+                  or Paladins. Many see them as brutish, but their incredible
+                  Constitution also lends well to healing in the midst of
+                  battle.
+                </p>
+              ))}
+          </div>
         </div>
       </div>
-
       <MobileMenu
         buttonNames={buttonNames}
         page={page}

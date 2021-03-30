@@ -230,15 +230,19 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           </h4>
           <div className="card content-card description-card">
             {Object.entries(proficiencies).map(prof => (
-              <p className="text-capitalize" key={prof[0]}>
-                <strong className="small-caps">{prof[0]}</strong> –{' '}
-                {prof[1].map((item, idx) => (
-                  <React.Fragment key={idx}>
-                    {item}
-                    {idx < prof[1].length - 1 && ', '}
-                  </React.Fragment>
-                ))}
-              </p>
+              <>
+                {prof[0].toLowerCase() !== 'throws' && (
+                  <p className="text-capitalize" key={prof[0]}>
+                    <strong className="small-caps">{prof[0]}</strong> –{' '}
+                    {prof[1].map((item, idx) => (
+                      <React.Fragment key={idx}>
+                        {item}
+                        {idx < prof[1].length - 1 && ', '}
+                      </React.Fragment>
+                    ))}
+                  </p>
+                )}
+              </>
             ))}
           </div>
         </div>
