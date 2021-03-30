@@ -1,5 +1,30 @@
 @import 'client/app/variables';
 
+/******* header *******/
+
+.toolbar {
+  height: 105px;
+  width: calc(100vw - 6px);
+  margin-bottom: 10px;
+  .header {
+    height: 45px;
+  }
+  .subheader {
+    height: 60px;
+    background-color: $maroon;
+    h2,
+    h5 {
+      color: white;
+      width: fit-content;
+      display: inline-block;
+      margin: 10px;
+      margin-right: 45px;
+    }
+  }
+}
+
+/******* cards *******/
+
 .translucent-card {
   width: 300px;
   padding-top: 10px;
@@ -9,28 +34,75 @@
 
 .description-card {
   width: fit-content;
-  ul {
-    margin-bottom: 0px;
-  }
+  border: 0px;
 }
+
+/******* titles *******/
 
 .card-title {
-  color: $off-white;
-  font-size: 16px;
+  color: white;
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08rem;
   margin: 0px;
   padding: 0px;
+  text-align: center;
 }
 
-p {
-  color: $dark-maroon !important;
-  div {
-    color: $dark-maroon !important;
-    display: inline-block;
-    padding-right: 3px;
-  }
+.proficiency-title {
+  background-color: white;
+  width: fit-content;
+  background-color: $off-white;
+  font-size: 16px;
+  margin: 15px auto;
 }
 
-.container {
-  position: absolute;
-  top: 45px;
+/******* radio buttons *******/
+
+.list-item {
+  display: inline-block;
+}
+
+label {
+  margin: 0px;
+}
+
+.skills-points {
+  width: 2rem;
+  text-align: center;
+}
+
+.skills-name {
+  width: 8rem;
+}
+
+input[type='radio']:after {
+  width: 13px;
+  height: 13px;
+  border-radius: 15px;
+  top: -4px;
+  left: 0px;
+  position: relative;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+  background-color: inherit;
+  border: 1px solid gray;
+}
+
+input[type='radio']:checked:after {
+  width: 13px;
+  height: 13px;
+  border-radius: 15px;
+  top: -4px;
+  left: 0px;
+  position: relative;
+  background-color: #000;
+  content: '';
+  display: inline-block;
+  visibility: visible;
+}
+
+div {
+  color: $dark-blue !important;
 }
