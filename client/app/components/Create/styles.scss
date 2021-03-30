@@ -375,6 +375,20 @@
   margin-bottom: 5px;
 }
 
+.name-card {
+  padding: 5px;
+  max-width: 200px;
+  margin: 0 auto;
+  box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
+}
+
+.modal-button {
+  font-size: 1.25rem;
+  max-width: 300px;
+  padding: 10px 20px;
+  margin: 20px auto 0 auto;
+}
+
 .drag-drop-card {
   max-width: 500px;
   padding: 5px;
@@ -388,27 +402,64 @@
   padding: 10px;
   text-align: left;
   color: $dark-blue;
+  &.selected-card {
+    border: 3px solid $green;
+    -webkit-box-shadow: 0 0 5px 1px $green;
+    -moz-box-shadow: 0 0 5px 1px $green;
+    box-shadow: 0 0 5px 1px $green;
+  }
+  .equipment-card-title {
+    line-height: 1;
+    color: $dark-blue;
+    h5 {
+      margin-bottom: 6px;
+    }
+  }
+  .equipment-card-body {
+    margin: 0;
+    line-height: normal;
+    color: $dark-blue;
+    .equipment-item {
+      margin: 0;
+      color: $dark-blue;
+    }
+    .equipment-item-info {
+      margin: 0;
+      text-transform: lowercase;
+    }
+  }
+  .separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1.5px solid $dark-blue-disabled;
+      border-radius: 0.75px;
+    }
+    &:not(:empty)::before {
+      margin-left: 15px;
+    }
+    &:not(:empty)::after {
+      margin-right: 15px;
+    }
+    .amp {
+      font-family: 'IM Fell English';
+      color: $dark-blue;
+      font-size: 2rem;
+      padding: 0 5px;
+    }
+  }
 }
-.selected-card {
-  border: 3px solid $green;
-  -webkit-box-shadow: 0 0 5px 1px $green;
-  -moz-box-shadow: 0 0 5px 1px $green;
-  box-shadow: 0 0 5px 1px $green;
-}
-
-.equipment-card-title {
-  color: $dark-blue;
-}
-
-.equipment-card-body {
-  color: $dark-blue;
-}
-
-.equipment-item {
-  color: $dark-blue;
-}
-.equipment-item-info {
-  text-transform: lowercase;
+hr {
+  display: block;
+  //height: 2px;
+  border-top: 1.5px solid $dark-blue;
+  border-radius: 1px;
+  margin: 4px auto;
+  padding: 0px;
 }
 
 .same-line {
@@ -416,42 +467,6 @@
   color: $dark-blue;
   display: flex;
   justify-content: space-between;
-}
-
-.separator {
-  display: flex;
-  align-items: center;
-  text-align: center;
-}
-.separator::before,
-.separator::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1.5px solid $dark-blue-disabled;
-  border-radius: 0.75px;
-}
-.separator:not(:empty)::before {
-  margin-left: 15px;
-}
-.separator:not(:empty)::after {
-  margin-right: 15px;
-}
-
-.amp {
-  font-family: 'IM Fell English';
-  color: $dark-blue;
-  font-size: 2rem;
-  padding: 0 5px;
-}
-
-hr {
-  display: block;
-  height: 2px;
-  border: 0;
-  border-top: 1.5px solid $dark-blue;
-  border-radius: 1px;
-  margin: 5px auto;
-  padding: 0;
 }
 
 .upload-buttons {
@@ -608,25 +623,25 @@ hr {
   }
 }
 
-.spell-custom-container {
-  & > .container {
-    height: auto;
-    padding-left: 0;
-    padding-right: 0;
-    & > .card-columns {
-      column-count: 1;
-      widows: 2;
-      column-gap: 0;
-      .card {
-        width: 302.5px;
-        margin-bottom: 0.3rem;
-      }
-      @media (min-width: 992px) {
-        column-count: 2;
-      }
-    }
-  }
-}
+// .spell-custom-container {
+//   & > .container {
+//     height: auto;
+//     padding-left: 0;
+//     padding-right: 0;
+//     & > .card-columns {
+//       column-count: 1;
+//       widows: 2;
+//       column-gap: 0;
+//       .card {
+//         width: 302.5px;
+//         margin-bottom: 0.3rem;
+//       }
+//       @media (min-width: 992px) {
+//         column-count: 2;
+//       }
+//     }
+//   }
+// }
 .spell-card {
   padding: 8px;
   height: auto;
@@ -701,7 +716,7 @@ hr {
       left: -4px;
     }
     border: {
-      width: 2px;
+      width: 1.5px;
       color: $dark-blue;
       radius: 1px;
     }

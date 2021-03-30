@@ -4,6 +4,7 @@ import Dropdown from '../shared/Dropdown';
 import { setRace } from '../../redux/actions';
 import CharacterService from '../../redux/services/character.service';
 import { PropTypes } from 'prop-types';
+import ReactReadMoreReadLess from 'react-read-more-read-less';
 
 const RaceButton = ({ race, setRace, idx }) => {
   const hasSubraces = race.subraces.length > 0;
@@ -428,11 +429,19 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
           <div className="card content-card card-title">
             <h4>{`${raceInfo.main.name} Traits`}</h4>
           </div>
-          {raceInfo.main.traits.map(trait => {
+          {raceInfo.main.traits.map((trait, idx) => {
             return (
-              <div className="card content-card description-card">
+              <div className="card content-card description-card" key={idx}>
                 <h3 className="card-subtitle small-caps">{trait.name}</h3>
-                <p>{trait.desc}</p>
+                <ReactReadMoreReadLess
+                  charLimit={250}
+                  readMoreText="Show more"
+                  readLessText="Show less"
+                  readMoreClassName="read-more-less--more"
+                  readLessClassName="read-more-less--less"
+                >
+                  {trait.desc.join('\n')}
+                </ReactReadMoreReadLess>
                 {trait.table && (
                   <table>
                     <tr>
@@ -461,11 +470,19 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
           <div className="card content-card card-title">
             <h4>{`${raceInfo.sub.name} Traits`}</h4>
           </div>
-          {raceInfo.sub.racial_traits.map(trait => {
+          {raceInfo.sub.racial_traits.map((trait, idx) => {
             return (
-              <div className="card content-card description-card">
+              <div className="card content-card description-card" key={idx}>
                 <h3 className="card-subtitle small-caps">{trait.name}</h3>
-                <p>{trait.desc}</p>
+                <ReactReadMoreReadLess
+                  charLimit={250}
+                  readMoreText="Show more"
+                  readLessText="Show less"
+                  readMoreClassName="read-more-less--more"
+                  readLessClassName="read-more-less--less"
+                >
+                  {trait.desc.join('\n')}
+                </ReactReadMoreReadLess>
               </div>
             );
           })}

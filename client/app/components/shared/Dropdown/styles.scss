@@ -70,7 +70,6 @@
     z-index: 10;
     border: 3px solid $maroon;
     border-radius: 8px;
-    max-height: 19.5rem;
     &.eq-card {
       box-shadow: none;
       border: 1px solid $maroon;
@@ -81,7 +80,10 @@
       button {
         color: $dark-blue;
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+        margin: auto;
         background-color: $off-white;
         font-size: 16px;
         padding: 5px 10px;
@@ -89,8 +91,11 @@
         border-bottom: 1px solid rgb(0, 0, 0);
         width: 100%;
         text-align: left;
-        margin: 0 auto;
         text-transform: none;
+
+        h5 {
+          margin: 4px auto;
+        }
 
         &.selected {
           background-color: $medium-off-white;
@@ -115,7 +120,7 @@
   width: 10px;
 }
 .scroll::-webkit-scrollbar-track {
-  margin: 1px 0;
+  //margin: 1px 0;
   border-radius: 0px 5px 5px 0px;
   background-color: $off-white;
 }

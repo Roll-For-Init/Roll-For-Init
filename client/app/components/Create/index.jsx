@@ -293,7 +293,6 @@ useEffect(() => {
           )}
         </div>
       </div>
-
       <div className="col-3 offset-md-9 d-none d-md-block side-bar overflow-auto">
         <div className="race-silhouette-container">
           {charRace !== null && (

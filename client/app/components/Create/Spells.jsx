@@ -5,7 +5,8 @@ import { setSpells } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
-import { Link } from 'react-router-dom';
+import FloatingLabel from 'floating-label-react';
+import { useHistory } from 'react-router-dom';
 
 /**
  * FOR DEACTIVATING SELECT BUTTONS: you will have to target all spell card children that are NOT selected,
@@ -116,10 +117,10 @@ const SpellList = ({ spells, known, level, limit, toggleSelected }) => {
   return (
     <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
       <div className="card content-card card-title">
-        <h6>
+        <h5 className="mb-0">
           {level == 0 ? 'Cantrips' : level == 1 ? 'Level 1 Spells' : 'Spells'} -
           Choose {limit}
-        </h6>
+        </h5>
       </div>
       {spells !== undefined && (
         <Masonry
@@ -157,10 +158,19 @@ export const Spells = ({ charID, setPage }) => {
     window.scrollTo(0, 0);
   };
 
+  const history = useHistory();
+
+  const onFinish = () => {
+    console.log('hi');
+    history.push('/dashboard');
+  };
+
   const character = useSelector(state => state.characters[charID]);
   console.log(character);
   const [spellChoices, setSpellChoices] = useState(null);
   const dispatch = useDispatch();
+
+  const [name, setName] = useState('');
 
   const limit = {
     0: character.class.spellcasting.cantrips_known,
@@ -245,11 +255,53 @@ export const Spells = ({ charID, setPage }) => {
               );
             })}
           </>
-          <Link to="/dashboard">
-            <button className="text-uppercase btn-primary btn-lg px-5 btn-floating">
-              Finish
-            </button>
-          </Link>
+          <button
+            className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+            data-toggle={'modal'}
+            data-target={'#nameModalSp'}
+          >
+            OK
+          </button>
+          <div
+            className="modal fade"
+            id="nameModalSp"
+            role="dialog"
+            aria-labelledby="chooseName"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <i className="bi bi-x"></i>
+                </button>
+                <div className="modal-sect pb-0">
+                  <h5>Name Your Character</h5>
+                </div>
+                <div className="card content-card name-card">
+                  <FloatingLabel
+                    id="name"
+                    name="name"
+                    placeholder="Name"
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
+                </div>
+                <button
+                  className="text-uppercase btn-primary modal-button"
+                  onClick={onFinish}
+                  data-dismiss="modal"
+                >
+                  FINISH
+                </button>
+              </div>
+            </div>
+          </div>
         </>
       ) : (
         <>Loading</>
