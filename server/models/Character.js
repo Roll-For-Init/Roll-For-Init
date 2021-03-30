@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
 
-const CharacterSchema = new Schema({
+const CharacterSchema = new Schema({ //Add class specific slots
   charID: String,
   name: String,
   level: {
@@ -39,7 +39,7 @@ const CharacterSchema = new Schema({
       }
       /*
     {
-      ribon: [
+      ribbon: [
         {
           name: String,
           description: String
@@ -99,7 +99,7 @@ const CharacterSchema = new Schema({
       }
       /*
     {
-      ribon: [
+      ribbon: [
         {
           name: String,
           description: String
@@ -327,7 +327,7 @@ const CharacterSchema = new Schema({
     {
       name: String,
       description: String,
-      type: String,        // e.g. light, medium, heavy
+      armor_type: String,        // e.g. light, medium, heavy
       base_ac: Number,
       modifier: String,    // modifier is max +2 bonus?
       /*mechanics: [
@@ -351,7 +351,7 @@ const CharacterSchema = new Schema({
     {
         current: Number,
         max: Number,
-        type: String     
+        die_type: Number
     }       // '4d4", etc.
   ],
   initiative_bonus: Number,
@@ -404,25 +404,29 @@ const CharacterSchema = new Schema({
     cards: [
         {
             name: String,
-            description: String,    // e.g. "ranged" 
+            level: Number,
+            desc: String,    // e.g. "ranged" 
             spell_type: String,
-            school: String,
+            school: {},
             casting_time: String,   // in terms of actions?, e.g. "instantaneous"
             components: [String], //v, c, etc
             material: String,
             duration: String,
-            damage_type: String,    // acid, necrotic, etc.
             dc: {
             name: String,         // optional field for attribute (WIS, PER, etc.)
             success: Number       // percentage, half damage?? 
             },
-            level: String           // "4d4", etc.
+            damage: {
+                damage_type: String, 
+                damage_at_slot_level: {}
+            }      
         }
     ]
     /*
     combat: [
       {
         name: String,
+        level: Number,
         description: String,    // e.g. "ranged" 
         spell_type: String,
         school: String,
@@ -439,7 +443,7 @@ const CharacterSchema = new Schema({
           name: String,         // optional field for attribute (WIS, PER, etc.)
           success: Number       // percentage, half damage?? 
         },
-        level: String           // "4d4", etc.
+        damage: String           // "4d4", etc.
       }
     ],
     utility: [

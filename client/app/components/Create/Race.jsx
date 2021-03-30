@@ -70,10 +70,52 @@ const Race = ({ charID, setPage }) => {
 
   //pass in an object of the fields to edit i.e. {index: INDEX} or {choiceA: CHOICE}
   //access with character.race.choiceA
-  const setSelectedRace = race => {
+  const selectRace = race => {
     dispatch(setRace(charID, race));
     setViewRace(true);
   };
+
+  function importAll(r) {
+    let images = {};
+    r.keys().map((item, index) => {
+      images[item.replace('./', '')] = r(item);
+    });
+    return images;
+  }
+
+  const raceIconsOffWhite = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/off-white/race',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  // function sortRaces(races) {
+  //   races = races || [];
+
+  //   const sortedRaces = races
+  //     .map(race => (race.subraces.length > 0 ? race.subraces[0] : race))
+  //     .sort((a, b) => a.name.localeCompare(b.name));
+  //   console.log(sortedRaces);
+
+  //   return sortedRaces;
+  // }
+  function sortRaces(races) {
+    races = races || [];
+
+    const sortedRaces = races.sort((a, b) =>
+      a.subraces.length > 0
+        ? b.subraces.length > 0
+          ? a.subraces[0].name.localeCompare(b.subraces[0].name)
+          : a.subraces[0].name.localeCompare(b.name)
+        : b.subraces.length > 0
+        ? a.name.localeCompare(b.subraces[0].name)
+        : a.name.localeCompare(b.name)
+    );
+
+    return sortedRaces;
+  }
 
   return (
     <div className="race position-relative">
@@ -82,28 +124,84 @@ const Race = ({ charID, setPage }) => {
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Race</h2>
           </div>
-          <div className="dropdown btn-group-vertical w-100 mt-3">
+          <div className="icon-grid">
             {races &&
-              races.map((race, idx) => {
-                if (race)
+              sortRaces(races).map((race, idx) => {
+                if (race && race.subraces.length > 0)
                   return (
-                    <RaceButton
-                      race={race}
-                      setRace={subrace =>
-                        subrace
-                          ? setSelectedRace({
+                    <>
+                      {race.subraces.map((subrace, idx) => (
+                        <>
+                          {subrace && (
+                            <div className="icon-card-container" key={idx}>
+                              <div className="card icon-card-label">
+                                <div
+                                  className="card icon-card"
+                                  onClick={() =>
+                                    selectRace({
+                                      index: race.name,
+                                      url: race.url,
+                                      subrace: {
+                                        index: subrace.name,
+                                        url: subrace.url,
+                                      },
+                                    })
+                                  }
+                                >
+                                  <img
+                                    className="card-icon"
+                                    src={raceIconsOffWhite[`${race.index}.png`]}
+                                  />
+                                </div>
+                                <p>{subrace.name}</p>
+                              </div>
+                            </div>
+                          )}
+                        </>
+                      ))}
+                    </>
+                    // <RaceButton
+                    //   race={race}
+                    //   setRace={subrace =>
+                    //     subrace
+                    //       ? selectRace({
+                    //           index: race.name,
+                    //           url: race.url,
+                    //           subrace: {
+                    //             index: subrace.name,
+                    //             url: subrace.url,
+                    //           },
+                    //         })
+                    //       : selectRace({
+                    //           index: race.name,
+                    //           url: race.url,
+                    //         })
+                    //   }
+                    //   key={idx}
+                    //   idx={idx}
+                    // />
+                  );
+                else if (race)
+                  return (
+                    <div className="icon-card-container" key={idx}>
+                      <div className="card icon-card-label">
+                        <div
+                          className="card icon-card"
+                          onClick={() =>
+                            selectRace({
                               index: race.name,
                               url: race.url,
-                              subrace: {
-                                index: subrace.name,
-                                url: subrace.url,
-                              },
                             })
-                          : setSelectedRace({ index: race.name, url: race.url })
-                      }
-                      key={idx}
-                      idx={idx}
-                    />
+                          }
+                        >
+                          <img
+                            className="card-icon"
+                            src={raceIconsOffWhite[`${race.index}.png`]}
+                          />
+                        </div>
+                        <p>{race.name}</p>
+                      </div>
+                    </div>
                   );
               })}
           </div>
@@ -291,12 +389,12 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
             {raceInfo.options.map((option, index) => {
               return (
                 <Dropdown
-                  ddLabel={option.header}
+                  ddLabel={`${option.header}`}
                   title={`Choose ${option.choose}`}
                   items={option.options}
                   width="100%"
                   selectLimit={option.choose}
-                  multiselect={option.choose > 1}
+                  multiSelect={option.choose > 1}
                   selection={
                     userChoices[
                       `${option.header
@@ -305,7 +403,7 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
                     ]
                   }
                   setSelection={setUserChoices}
-                  classname="choice"
+                  classname="dd-choice"
                   stateKey={`${option.header
                     .toLowerCase()
                     .replace(' ', '-')}-${option.type}-${index}`}
@@ -352,17 +450,17 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
                   <table>
                     <tr>
                       {trait.table.header.map(item => {
-                        return (<th>{item}</th>)
+                        return <th>{item}</th>;
                       })}
                     </tr>
                     {trait.table.rows.map(row => {
                       return (
                         <tr>
                           {row.map(item => {
-                            return (<td>{item}</td>)
+                            return <td>{item}</td>;
                           })}
                         </tr>
-                      )
+                      );
                     })}
                   </table>
                 )}

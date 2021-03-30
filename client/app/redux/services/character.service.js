@@ -10,6 +10,7 @@ const validateCharacter = characterData => {
     let equipment = parseEquipment(characterData.equipment);
     let validatedCharacter = fillModel(equipment, characterData);
     console.log(validatedCharacter);
+    
     return validatedCharacter;
 }
 const createCharacter = characterData => {

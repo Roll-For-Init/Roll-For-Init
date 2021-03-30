@@ -115,6 +115,7 @@
   width: 10px;
 }
 .scroll::-webkit-scrollbar-track {
+  margin: 1px 0;
   border-radius: 0px 5px 5px 0px;
   background-color: $off-white;
 }

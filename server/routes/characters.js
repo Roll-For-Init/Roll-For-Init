@@ -26,7 +26,7 @@ const requireOwnership = (req, res, next) => {
 }
 
 // Requires the user information - TO REEVALUATE
-router.use(attachUserInfo);
+//router.use(attachUserInfo);
 
 //  @route POST /characters/create
 //  @desc Create character
@@ -36,24 +36,24 @@ router.post("/create", character_controller.create_character);
 //  @route GET /character/
 //  @desc Return character list
 //  @access Public
-router.get('/', character_controller.character_list);
+router.get('/', attachUserInfo, character_controller.character_list);
 
 // Requires the character information for routes referencing a character
-router.param('characterid', character_controller.attachCharacterInfo);
+router.param('characterid', attachUserInfo,character_controller.attachCharacterInfo);
 
 //  @route GET /characters/:characterid
 //  @desc Return character
 //  @access Public
-router.get("/:characterid", character_controller.character_detail);
+router.get("/:characterid", attachUserInfo,character_controller.character_detail);
 
 //  @route PUT /characters/:characterid
 //  @desc Update character
 //  @access Private
-router.put("/:characterid", requireOwnership, character_controller.update_character);
+router.put("/:characterid", attachUserInfo,requireOwnership, character_controller.update_character);
 
 //  @route DELETE /characters/:characterid
 //  @desc Delete character
 //  @access Private
-router.delete("/:characterid", requireOwnership, character_controller.delete_character);
+router.delete("/:characterid", attachUserInfo,requireOwnership, character_controller.delete_character);
 
 module.exports = router;
