@@ -3,6 +3,7 @@ const mongoose = require("mongoose");
 const { Schema } = mongoose;
 
 const CharacterSchema = new Schema({
+  charID: String,
   name: String,
   level: {
     type: Number,
@@ -149,13 +150,15 @@ const CharacterSchema = new Schema({
   ],
   background: {
     name: String,
+    /*
     features: [
       {
         name: String,
         description: String
       }
-    ]
+    ]*/
   },
+  proficiency_bonus: Number,
   misc_proficiencies: {
     armor: [ {name: String} ], //and desc?
     weapons: [ {name: String} ],
@@ -344,11 +347,13 @@ const CharacterSchema = new Schema({
     max: Number,
     temp: Number
   },
-  hit_dice: {
-    current: Number,
-    max: Number,
-    type: String            // '4d4", etc.
-  },
+  hit_dice: [ //for multiclassing
+    {
+        current: Number,
+        max: Number,
+        type: String     
+    }       // '4d4", etc.
+  ],
   initiative_bonus: Number,
   attacks: {
     advantage: Number,
@@ -390,10 +395,10 @@ const CharacterSchema = new Schema({
     ]
   },
   spells: {
-    slots: {
+    slots: [{
       current: Number,
       max: Number
-    },
+    }],
     casting_ability: String,
     advantage: Number,
     cards: [
@@ -500,14 +505,14 @@ const CharacterSchema = new Schema({
   size: String,           // "small", "medium"
   lore: {
     alignment: String,
-    personality_traits: [ {trait: String} ],
-    ideals: [ {ideal: String} ],
-    bonds: [ {bond: String} ],
-    flaws: [ {flaw: String} ],
+    personality_traits: String,
+    ideals: String,
+    bonds: String,
+    flaws: String,
     backstory: String,
-    allies: [ {ally: String} ],
-    organizations: [ {organization: String} ],
-    additional_features: [ {additional_feature: String} ]
+    relationships: String,
+    //organizations: String,
+    //additional_features: String
   },
   physical_description: {   // all strings so that users can put whatever they want, never referenced in code so doesn't matter
     age: String,

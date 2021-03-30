@@ -356,20 +356,23 @@ export const Equipment = ({ charID, setPage }) => {
 
   const finalizeEquipment = () => new Promise((resolve, reject) => {
     console.log('in finalize equipment');
-    dispatch(setEquipment(charID, {
+    resolve(dispatch(setEquipment(charID, {
       choices: equipmentSelection,
       set: equipmentList
-    }));
-    resolve();
+    })));
   })
 
   const validateAndStore = () => {
-    finalizeEquipment.then(() => {console.log("VALANDSTORE", character);
-    CharacterService.createCharacter(character)})
+    finalizeEquipment().then(() => {
+      if(character.equipment == null) { //crimes i'm sorry couldn't get it working otherwise
+        character.equipment = {choices: equipmentSelection, set: equipmentList}
+      }
+      console.log(character)
+      CharacterService.createCharacter(CharacterService.validateCharacter(character));
+    })
   }
 
   const onNext = () => {
-    console.log(equipmentSelection, equipmentList);
     dispatch(setEquipment(charID, {
       choices: equipmentSelection,
       set: equipmentList

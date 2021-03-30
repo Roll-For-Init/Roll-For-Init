@@ -15,7 +15,7 @@ import {
   SET_DESCRIPTION,
   SET_ABILITIES,
   SET_SPELLS,
-  SET_EQUIPMENT
+  SET_EQUIPMENT,
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';

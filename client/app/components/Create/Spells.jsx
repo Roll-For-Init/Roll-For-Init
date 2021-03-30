@@ -206,7 +206,7 @@ export const Spells = ({ charID, setPage }) => {
 
   const validateAndStore = () => {
     console.log(character);
-    CharacterService.createCharacter(character);
+    CharacterService.createCharacter(CharacterService.validateCharacter(character));
   }
 
   useEffect(() => {
@@ -216,6 +216,7 @@ export const Spells = ({ charID, setPage }) => {
       1,
     ]).then(cards => {
       setSpellChoices(cards);
+      dispatch(setSpells(charID, {cards: cards}))
     });
     console.log(character);
   }, []);
