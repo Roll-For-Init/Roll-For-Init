@@ -95,7 +95,33 @@
 
   .abilities {
       .container-fluid {
+          padding-left: 10%;
+          padding-right: 10%;
+      }
+      .col-4 {
+          padding-left: 10px;
+          padding-right: 10px;
+          flex: 0 0 33%;
+          max-width: 33%;
+      }
+      .description-card {
+          padding: 5px;
+          width: 100%;
+      }
+      .ability-score {
+          background-color: $dark-off-white;
+          font-size: 1.25rem;
+          font-weight: bold;
           padding: 0;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+          margin-left: 12%;
+          z-index: 1;
+          margin-top: -2px !important;
+      }
+      .ability-bonus {
+          box-shadow: 1px 1px 3px $dark-maroon;
+          z-index: 2;
       }
   }
 
@@ -157,11 +183,6 @@
     width: fit-content;
     background-color: $off-white;
     font-size: 16px;
-  }
-  .ability-grid {
-      .description-card {
-          width: 100%;
-      }
   }
 
   /******* tables *******/

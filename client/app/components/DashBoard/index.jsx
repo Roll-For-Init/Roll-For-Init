@@ -68,7 +68,7 @@ const TEMP_DATA = {
       advantage: 3,
     },
     con: {
-      score: 1,
+      score: 10,
       modifier: 1,
       advantage: 1,
     },
@@ -335,30 +335,30 @@ const AbilitiesCard = ({ ability_scores }) => {
     <div className="abilities card translucent-card">
       <h5 className="card-title">Abilities</h5>
       <div className="container-fluid">
-        <div className="row ">
+        <div className="row">
           {Object.entries(ability_scores).map(ability => {
             return (
               <div className="ability-grid col-4">
-              <div
-                className="card content-card description-card"
-                key={ability[0]}
-              >
                 <div>
-                  <h6 className="text-uppercase text-center mb-0">
-                    {ability[0]}
-                  </h6>
-                  <h2 className="text-center mb-0">
-                    {ability[1].modifier >= 0 && '+'}
-                    {ability[1].modifier}
-                  </h2>
-                </div>
-              </div>
-              <div
-                  className="card content-card description-card"
+                  <div
+                  className="card content-card description-card ability-bonus mb-0"
                   key={ability[0]}
-              >
+                  >
+                    <h6 className="text-uppercase text-center mb-0">
+                      {ability[0]}
+                    </h6>
+                    <h2 className="text-center mb-0 align-bottom">
+                      {ability[1].modifier >= 0 && '+'}
+                      {ability[1].modifier}
+                    </h2>
+                </div>
+                <div
+                  className="card content-card description-card mt-0 text-center w-75 ability-score"
+                  key={ability[0]}
+                >
                   {ability[1].score}
-              </div>
+                </div>
+                </div>  
               </div>
             );
           })}
