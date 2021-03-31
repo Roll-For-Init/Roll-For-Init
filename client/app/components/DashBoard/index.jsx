@@ -248,26 +248,27 @@ export const DashBoard = () => {
             </p>
           );
         })} */}
-      <div className="container-fluid px-5" style={{paddingTop: '130px'}}>
-        <div className="row position-relative" >
+      <div style={{paddingTop: '105px'}}>
+      <div className="container-fluid px-5 py-4">
+        <div className="row position-relative no-gutters mb-3" >
           <div className="w-100">
             <div className="float-start w-auto d-inline-block">
-              <button className="text-uppercase m-0 mx-2 py-0">
+              <button className="text-uppercase btn btn-primary">
                 Inventory
               </button>
-              <button className="text-uppercase m-0 mx-2 py-0">
+              <button className="text-uppercase btn btn-primary">
                 Spellbook
               </button>
-              <button className="text-uppercase m-0 mx-2 py-0">
+              <button className="text-uppercase btn btn-primary">
                 Description
               </button>
-              <button className="text-uppercase m-0 mx-2 py-0">Features</button>
+              <button className="text-uppercase btn btn-primary">Features</button>
             </div>
             <div className="float-right w-auto d-inline-block">
-              <button className="text-uppercase m-0 mx-2 py-0">
+              <button className="text-uppercase btn btn-secondary mx-2">
                 Short Rest
               </button>
-              <button className="text-uppercase m-0 mx-2 py-0">
+              <button className="text-uppercase btn btn-secondary mx-2">
                 Long Rest
               </button>
             </div>
@@ -331,6 +332,7 @@ export const DashBoard = () => {
         </div>
       </div>
       {/* </div> */}
+    </div>
     </div>
   );
 };
