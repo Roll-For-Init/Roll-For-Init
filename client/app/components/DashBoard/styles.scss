@@ -4,7 +4,7 @@
   /******* header *******/
 
   .toolbar {
-    width: calc(100vw - 10px);
+    width: 100%;
     margin-top: 45px;
     //position:fixed;
     .header {
@@ -33,10 +33,18 @@
         color: white;
         width: fit-content;
         display: inline-block;
-        margin: 10px;
-        margin-right: 45px;
+        margin-right: 2.5rem;
+      }
+      h2 {
+          font-size: 2.5rem;
       }
     }
+    .button-icon {
+        max-width: 43px;
+        max-height: 25px;
+        margin-right: 8px;
+        margin-bottom: 5px;
+      }
   }
 
   /******* cards *******/

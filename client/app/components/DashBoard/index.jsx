@@ -2,7 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Header from '../shared/Header';
-
+//import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
 import './styles.scss';
 
 const TEMP_DATA = {
@@ -13,12 +13,12 @@ const TEMP_DATA = {
     threshhold: 960,
   },
   race: {
-    name: 'Rogue',
+    name: 'Halfling',
     description: 'BLAH BLAH BLAH',
   },
   class: [
     {
-      name: 'Halfling',
+      name: 'Rogue',
       levels: 2,
     },
   ],
@@ -211,15 +211,33 @@ export const DashBoard = () => {
   const character = useSelector(state => state.characters);
   console.log(character);
 
+  const raceIcon = `../../../public/assets/imgs/icons/off-white/race/${TEMP_DATA.race.name.toLowerCase()}.png`;
+  //const classIcon = `../../../public/assets/imgs/icons/off-white/class/${TEMP_DATA.class[0].name.toLowerCase()}.png`;
+
+  
   return (
     <div className="dashboard">
       <Header />
       <div className="toolbar fixed-top">
-        <div className="subheader">
-          <h2 className="small-caps">Liir Thropp</h2>
-          <h5 className="text-uppercase">Rogue</h5>
-          <h5 className="text-uppercase">Halfling</h5>
-          <h5 className="text-uppercase">Level 2</h5>
+        <div className="subheader py-2 px-3">
+          <h2 className="small-caps mr-5">Liir Thropp</h2>
+          <span className="align-middle ml-2">
+            <h5 className="text-uppercase">
+              <img
+                className="button-icon"
+                src={require(`../../../public/assets/imgs/icons/off-white/class/${TEMP_DATA.class[0].name.toLowerCase()}.png`)}
+              />
+              Rogue
+            </h5>
+            <h5 className="text-uppercase">
+              <img
+                className="button-icon"
+                src={require(`../../../public/assets/imgs/icons/off-white/race/${TEMP_DATA.race.name.toLowerCase()}.png`)}
+              />
+              Halfling
+            </h5>
+            <h5 className="text-uppercase">Level <span style={{fontSize:'1.6rem'}}>&nbsp;2</span></h5>
+          </span>
         </div>
       </div>
       {/* <div>
