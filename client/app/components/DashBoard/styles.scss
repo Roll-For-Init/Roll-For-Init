@@ -78,16 +78,12 @@
   }
 
   .description-card {
-    width: fit-content;
     border: 0px;
   }
 
   .short-card {
     width: auto;
-    font-size: 80%;
-    h6 {
-      font-size: 16px;
-    }
+    font-size: .9rem;
   }
   .small-caps {
       font-size: 1.2rem;
@@ -123,6 +119,27 @@
           box-shadow: 1px 1px 3px $dark-maroon;
           z-index: 2;
       }
+  }
+  .extra-stats {
+      ul {
+          padding-left: 1rem;
+          margin-bottom: 0;
+          &:last-child {
+              margin-bottom: 0;
+          }
+          li {
+              span {
+                  margin-left: -5px;
+              }
+          }
+      }
+  }
+  .skills {
+    .px-5 {
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
+        
+    }
   }
 
 
@@ -209,14 +226,9 @@
   }
 
   .skills-points {
-    width: 2rem;
     text-align: center;
   }
-
-  .skills-name {
-    width: 8rem;
-  }
-
+  
   input[type='radio']:after {
     width: 13px;
     height: 13px;

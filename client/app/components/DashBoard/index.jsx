@@ -372,7 +372,7 @@ const SavingThrowsCard = ({ saving_throws }) => {
   return (
     <div className="card translucent-card">
       <h5 className="card-title">Saving Throws</h5>
-      <div className="card content-card description-card">
+      <div className="card content-card description-card" style={{width:'fit-content'}}>
         <table className="table table-borderless table-sm">
           <tbody>
             {Object.entries(saving_throws).map(saving_throw => {
@@ -396,11 +396,11 @@ const SavingThrowsCard = ({ saving_throws }) => {
 
 const SkillsCard = ({ skills }) => {
   return (
-    <div>
+    <div className="skills">
       <h4 className="translucent-card proficiency-title text-uppercase">
         Proficiency bonus: +2
       </h4>
-      <div className="card translucent-card">
+      <div className="card translucent-card px-5">
         <h5 className="card-title">Skills</h5>
         <div className="card content-card description-card">
         <table className="table table-borderless table-sm">
@@ -464,25 +464,35 @@ const SensesCard = () => {
 
 const StatsCard = () => {
   return (
+    <div className="stats-card">
     <div className="card translucent-card">
-      <div className="d-table-row">
-        <div className="card content-card description-card my-0 mx-2">
-          <h6 className="text-uppercase m-0">Initiative</h6>
-          <h3 className="text-uppercase text-center m-0">+4</h3>
+      <div className="row">
+        <div className="col-sm px-2 py-1">
+          <div className="card content-card description-card">
+            <h6 className="text-uppercase m-0">Initiative</h6>
+            <h2 className="text-uppercase text-center m-0">+4</h2>
+          </div>
         </div>
-        <div className="card content-card description-card my-0 mx-2">
-          <h6 className="text-uppercase m-0">Inspiration</h6>
-          <h3 className="text-uppercase text-center m-0">(star)</h3>
+        <div className="col-sm px-2 py-1">
+          <div className="card content-card description-card">
+            <h6 className="text-uppercase m-0">Inspiration</h6>
+            <h2 className="text-uppercase text-center m-0">(star)</h2>
+          </div>
         </div>
-        <div className="card content-card description-card my-0 px-4 mx-2">
-          <h6 className="text-uppercase m-0">AC</h6>
-          <h3 className="text-uppercase text-center m-0">15</h3>
+        <div className="col-sm px-2 py-1">
+          <div className="card content-card description-card px-4">
+            <h6 className="text-uppercase m-0">AC</h6>
+            <h2 className="text-uppercase text-center m-0">15</h2>
+          </div>
         </div>
-        <div className="card content-card description-card my-0 mx-2">
-          <h6 className="text-uppercase m-0">Speed</h6>
-          <h3 className="text-uppercase text-center m-0">30</h3>
+        <div className="col-sm px-2 py-1">
+          <div className="card content-card description-card">
+            <h6 className="text-uppercase m-0">Speed</h6>
+            <h2 className="text-uppercase text-center m-0">30</h2>
+          </div>
         </div>
       </div>
+    </div>
     </div>
   );
 };
@@ -506,13 +516,15 @@ const HitPointsCard = () => {
 
 const ExtraStatsCard = () => {
   return (
-    <div className="card translucent-card short-card">
+    <div className="card translucent-card short-card extra-stats">
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Conditions</h6>
       </div>
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Defenses</h6>
-        <div>Resistant to fire damage</div>
+        <ul>
+          <li><span>Resistant to fire damage</span></li>
+        </ul>
       </div>
     </div>
   );
