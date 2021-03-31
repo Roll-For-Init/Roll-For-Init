@@ -6,7 +6,7 @@
   flex-wrap: nowrap;
   max-width: 500px;
   width: 100%;
-  margin: 5px auto;
+  margin: 0 auto;
   text-transform: capitalize;
   position: relative;
   .dd-label {
@@ -70,10 +70,13 @@
     z-index: 10;
     border: 3px solid $maroon;
     border-radius: 8px;
-
+    max-height: 19.5rem;
     &.eq-card {
       box-shadow: none;
       border: 1px solid $maroon;
+      &.scroll::-webkit-scrollbar-track {
+        margin: 1px 0;
+      }
     }
     li {
       list-style-type: none;
@@ -121,7 +124,6 @@
   width: 10px;
 }
 .scroll::-webkit-scrollbar-track {
-  //margin: 1px 0;
   border-radius: 0px 5px 5px 0px;
   background-color: $off-white;
 }

@@ -158,7 +158,7 @@ export const Background = ({ charID, setPage }) => {
 
   return (
     <div className="background">
-      {(backgrounds && selectionBg) ? (
+      {backgrounds && selectionBg ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Background</h2>
@@ -170,15 +170,17 @@ export const Background = ({ charID, setPage }) => {
             your GM to build one that makes sense for your character.
           </div>
           <div className="card translucent-card">
-            <Dropdown
-              ddLabel="Background"
-              title="Custom"
-              items={[...backgrounds]}
-              width="70%"
-              selection={selectionBg}
-              setSelection={selectBackground}
-              classname="header"
-            />
+            <div className="dd-container mt-0">
+              <Dropdown
+                ddLabel="Background"
+                title="Custom"
+                items={[...backgrounds]}
+                width="70%"
+                selection={selectionBg}
+                setSelection={selectBackground}
+                classname="header"
+              />
+            </div>
             {selectionBg[0].index === 'custom' && (
               <div className="card content-card card-subtitle">
                 <FloatingLabel
@@ -223,26 +225,27 @@ export const Background = ({ charID, setPage }) => {
               <div className="choice-container">
                 {selectionBg[0].options.map((option, index) => {
                   return (
-                    <Dropdown
-                      ddLabel={`${option.header}`}
-                      title={`Choose ${option.choose}`}
-                      items={option.options}
-                      selectLimit={option.choose}
-                      multiSelect={option.choose > 1}
-                      selection={
-                        userChoices[
-                          `${option.header
-                            .toLowerCase()
-                            .replace(' ', '-')}-${index}`
-                        ]
-                      }
-                      setSelection={setUserChoices}
-                      classname="dd-choice"
-                      stateKey={`${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${index}`}
-                      key={index}
-                    />
+                    <div className="dd-container" key={index}>
+                      <Dropdown
+                        ddLabel={`${option.header}`}
+                        title={`Choose ${option.choose}`}
+                        items={option.options}
+                        selectLimit={option.choose}
+                        multiSelect={option.choose > 1}
+                        selection={
+                          userChoices[
+                            `${option.header
+                              .toLowerCase()
+                              .replace(' ', '-')}-${index}`
+                          ]
+                        }
+                        setSelection={setUserChoices}
+                        classname="dd-choice"
+                        stateKey={`${option.header
+                          .toLowerCase()
+                          .replace(' ', '-')}-${index}`}
+                      />
+                    </div>
                   );
                 })}
               </div>
@@ -402,8 +405,9 @@ export const Background = ({ charID, setPage }) => {
             OK
           </button>
         </>
-      ) :
-      <>Loading</>}
+      ) : (
+        <>Loading</>
+      )}
     </div>
   );
 };

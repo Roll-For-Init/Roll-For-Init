@@ -201,7 +201,7 @@ useEffect(() => {
 
   return (
     <div className="row position-relative" style={{ top: '45px' }}>
-      <div className="col-3 d-none d-md-block side-bar overflow-auto">
+      <div className="col-3 d-none d-md-block side-bar overflow-auto scroll">
         {/* <div className="side-bar-icon-container">
           {charRace !== null && (
             <div className="card content-card side-bar-icon-card">
@@ -298,7 +298,10 @@ useEffect(() => {
           {charRace !== null && (
             <div className="card content-card card-title">
               <h5>
-                {charRace !== null && `${charRace.index} `}
+                {charRace !== null &&
+                  (charRace.subrace?.index
+                    ? `${charRace.subrace.index} `
+                    : `${charRace.index} `)}
                 {charClass !== null && `${charClass.index}`}
               </h5>
             </div>
@@ -318,32 +321,37 @@ useEffect(() => {
               />
             )}
           </div>
-          <div className="card content-card side-bar-card">
-            {page.name === 'race' && charRace !== null && (
-              <p className="mb-0">
-                Half-Orcs are use their great Strength to excel as Barbarians or
-                Paladins. Many see them as brutish, but their incredible
-                Constitution also lends well to healing in the midst of battle.
-              </p>
-            )}
-            {page.name === 'class' &&
-              (charClass !== null ? (
+          {charRace !== null && (
+            <div className="card content-card side-bar-card scroll">
+              {page.name === 'race' && charRace !== null && (
                 <p className="mb-0">
-                  Clerics are known for their great Wisdom and close connection
-                  to their deity, through which they can cast powerful healing
-                  magic and offensive spells. Their sheer versatility is both
-                  daunting to their enemies and widely sought-after by future
-                  allies.
+                  Half-Orcs are known for their power and fortitude, and so
+                  often use their great Strength to excel in the Barbarian or
+                  Paladin professions. Many see them as brutish, but their
+                  incredible Constitution also lends well to healing in the
+                  midst of battle.
                 </p>
-              ) : (
-                <p className="mb-0">
-                  Half-Orcs are use their great Strength to excel as Barbarians
-                  or Paladins. Many see them as brutish, but their incredible
-                  Constitution also lends well to healing in the midst of
-                  battle.
-                </p>
-              ))}
-          </div>
+              )}
+              {page.name === 'class' &&
+                (charClass !== null ? (
+                  <p className="mb-0">
+                    Clerics are known for their great Wisdom and close
+                    connection to their deity, through which they can cast
+                    powerful healing magic and offensive spells. Their sheer
+                    versatility is both daunting to their enemies and widely
+                    sought-after by future allies.
+                  </p>
+                ) : (
+                  <p className="mb-0">
+                    Half-Orcs are known for their power and fortitude, and so
+                    often use their great Strength to excel in the Barbarian or
+                    Paladin professions. Many see them as brutish, but their
+                    incredible Constitution also lends well to healing in the
+                    midst of battle.
+                  </p>
+                ))}
+            </div>
+          )}
         </div>
       </div>
       <MobileMenu
