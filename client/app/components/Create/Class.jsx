@@ -14,6 +14,9 @@ const Class = ({ charID, setPage }) => {
   const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
+    if (character?.class?.index) {
+      setViewClass(true);
+    }
     CharacterService.getIndexedList('classes').then(list => setClasses(list));
   }, []);
 
@@ -78,7 +81,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
       .then(
         theClass => {
           setClassInfo(theClass);
-          console.log("CLASS", theClass);
+          console.log('CLASS', theClass);
           return theClass;
         }
         /*error => {
@@ -91,10 +94,12 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         });
         let equipment = { equipment: theClass.main.starting_equipment };
         dispatch(setClass(charID, equipment));
-        dispatch(setClass(charID, { equipment_options: theClass.equipment_options }));
+        dispatch(
+          setClass(charID, { equipment_options: theClass.equipment_options })
+        );
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
-        dispatch(setClass(charID, {spellcasting: theClass.spellcasting}))
-        dispatch(setClass(charID, {subclass: theClass.subclass}))
+        dispatch(setClass(charID, { spellcasting: theClass.spellcasting }));
+        dispatch(setClass(charID, { subclass: theClass.subclass }));
       });
   }, []);
 
@@ -103,6 +108,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
     clearClass();
     window.scrollTo(0, 0);
   };
+
   if (classInfo) {
     const { main, features, options, proficiencies, subclass } = classInfo;
     return (
@@ -152,49 +158,49 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
               {options.map((option, index) => {
                 return (
                   <Dropdown
-                      ddLabel={`${option.header}`}
-                      title={`Choose ${option.choose}`}
-                      items={option.options}
-                      selectLimit={option.choose}
-                      multiSelect={option.choose > 1}
-                      selection={
-                        userChoices[
-                          `${option.header
-                            .toLowerCase()
-                            .replace(' ', '-')}-${index}`
-                        ]
-                      }
-                      setSelection={setUserChoices}
-                      classname="choice"
-                      stateKey={`${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${index}`}
-                      key={index}
-                    />
+                    ddLabel={`${option.header}`}
+                    title={`Choose ${option.choose}`}
+                    items={option.options}
+                    selectLimit={option.choose}
+                    multiSelect={option.choose > 1}
+                    selection={
+                      userChoices[
+                        `${option.header
+                          .toLowerCase()
+                          .replace(' ', '-')}-${index}`
+                      ]
+                    }
+                    setSelection={setUserChoices}
+                    classname="choice"
+                    stateKey={`${option.header
+                      .toLowerCase()
+                      .replace(' ', '-')}-${index}`}
+                    key={index}
+                  />
                 );
               })}
               {subclass?.subclass_options?.map((option, index) => {
                 return (
                   <Dropdown
-                      ddLabel={`${option.header} (${subclass.name})`}
-                      title={`Choose ${option.choose}`}
-                      items={option.options}
-                      selectLimit={option.choose}
-                      multiSelect={option.choose > 1}
-                      selection={
-                        userChoices[
-                          `${option.header
-                            .toLowerCase()
-                            .replace(' ', '-')}-${index}`
-                        ]
-                      }
-                      setSelection={setUserChoices}
-                      classname="choice"
-                      stateKey={`${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${index}`}
-                      key={index}
-                    />
+                    ddLabel={`${option.header} (${subclass.name})`}
+                    title={`Choose ${option.choose}`}
+                    items={option.options}
+                    selectLimit={option.choose}
+                    multiSelect={option.choose > 1}
+                    selection={
+                      userChoices[
+                        `${option.header
+                          .toLowerCase()
+                          .replace(' ', '-')}-${index}`
+                      ]
+                    }
+                    setSelection={setUserChoices}
+                    classname="choice"
+                    stateKey={`${option.header
+                      .toLowerCase()
+                      .replace(' ', '-')}-${index}`}
+                    key={index}
+                  />
                 );
               })}
             </div>
@@ -223,29 +229,35 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             <h4 className="card content-card card-title">Level 1 Features</h4>
             {features.map(feature => {
               return (
-              <div
-                className="card content-card description-card"
-                key={feature.index}
-              >
-                <h5 className="text-center">{feature.name}</h5>
-                {feature.desc.map(desc => (
-                  <p key={desc}>{desc}</p>
-                ))}
-              </div>
-            )})}
+                <div
+                  className="card content-card description-card"
+                  key={feature.index}
+                >
+                  <h5 className="text-center">{feature.name}</h5>
+                  {feature.desc.map(desc => (
+                    <p key={desc}>{desc}</p>
+                  ))}
+                </div>
+              );
+            })}
             {subclass?.subclass_features?.map((feature, index) => {
               return (
                 <div
                   className="card content-card description-card"
                   key={feature.index}
                 >
-                  <h5 className="text-center">{`${feature.name} (${subclass.name})`} </h5>
+                  <h5 className="text-center">
+                    {`${feature.name} (${subclass.name})`}{' '}
+                  </h5>
                   {feature.desc.map(desc => (
                     <p key={desc}>{desc}</p>
                   ))}
-                  <p key={`subclass-${index}`}>{`Note: Only the ${main.name} subclass ${subclass.name} is available in this app.`} </p>
+                  <p key={`subclass-${index}`}>
+                    {`Note: Only the ${main.name} subclass ${subclass.name} is available in this app.`}{' '}
+                  </p>
                 </div>
-            )})}
+              );
+            })}
           </div>
         )}
         {main.spellcasting && (

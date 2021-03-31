@@ -2,6 +2,7 @@ import {
   SUBMIT_CHARACTER_SUCCESS,
   SUBMIT_CHARACTER_FAIL,
   CREATE_CHARACTER,
+  SET_CURRENT_CHARACTER,
   CREATE_CHARACTER_SUCCESS,
   CREATE_CHARACTER_FAIL,
   UPDATE_CHARACTER_SUCCESS,
@@ -15,6 +16,7 @@ import {
   SET_DESCRIPTION,
   SET_ABILITIES,
   SET_SPELLS,
+  SET_PAGE,
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -105,6 +107,10 @@ export const startCharacter = () => dispatch => {
     type: CREATE_CHARACTER,
     payload: { charID: uuid },
   });
+  dispatch({
+    type: SET_CURRENT_CHARACTER,
+    payload: { charID: uuid },
+  });
   return uuid;
 };
 
@@ -136,4 +142,9 @@ export const setAbilities = (charID, abilities) => dispatch => {
 export const setSpells = (charID, spells) => dispatch => {
   console.log('SET_SPELLS', charID, spells);
   dispatch({ type: SET_SPELLS, payload: { charID, spells } });
+};
+
+export const setPage = (charID, page) => dispatch => {
+  console.log('SET_PAGE', charID, page);
+  dispatch({ type: SET_PAGE, payload: { charID, page } });
 };

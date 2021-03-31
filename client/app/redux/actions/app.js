@@ -1,4 +1,9 @@
-import { LOADING_ON, LOADING_OFF, CACHE_URL } from '../actions/types';
+import {
+  LOADING_ON,
+  LOADING_OFF,
+  CACHE_URL,
+  SET_CURRENT_CHARACTER,
+} from '../actions/types';
 
 export const finishLoading = cause => dispatch => {
   dispatch({ type: LOADING_OFF, payload: cause });
@@ -7,6 +12,14 @@ export const finishLoading = cause => dispatch => {
 
 export const startLoading = cause => dispatch => {
   dispatch({ type: LOADING_ON, payload: cause });
+  return;
+};
+
+export const setCurrentCharacter = charID => dispatch => {
+  dispatch({
+    type: SET_CURRENT_CHARACTER,
+    payload: { charID: charID },
+  });
   return;
 };
 

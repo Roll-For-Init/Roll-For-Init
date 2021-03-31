@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import Dropdown from '../shared/Dropdown';
-import { setRace } from '../../redux/actions';
+import { setRace, setPage } from '../../redux/actions';
 import CharacterService from '../../redux/services/character.service';
 import { PropTypes } from 'prop-types';
 
@@ -57,7 +57,7 @@ const Loading = () => {
   return 'LOADING';
 };
 
-const Race = ({ charID, setPage }) => {
+const Race = ({ charID }) => {
   const dispatch = useDispatch();
   const [races, setRaces] = useState(null);
   const [viewRace, setViewRace] = useState(false);
@@ -65,6 +65,9 @@ const Race = ({ charID, setPage }) => {
   const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
+    if (character?.race?.index) {
+      setViewRace(true);
+    }
     CharacterService.getIndexedList('races').then(list => setRaces(list));
   }, []);
 
@@ -111,7 +114,6 @@ const Race = ({ charID, setPage }) => {
       ) : (
         <RaceDetails
           charID={charID}
-          setPage={setPage}
           clearRace={() => setViewRace(false)}
           dispatch={dispatch}
         />
@@ -179,7 +181,7 @@ AbilityBonuses.propTypes = {
   ),
 };
 */
-const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
+const RaceDetails = ({ charID, clearRace, dispatch }) => {
   const reducer = (state, newProp) => {
     let newState = { ...state, ...newProp };
     dispatch(setRace(charID, { choices: newState }));
@@ -229,7 +231,7 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
   const [selection2, setSelection2] = useState([]);
 
   const onNext = () => {
-    setPage({ index: 1, name: 'class' });
+    dispatch(setPage(charID, { index: 1, name: 'class' }));
     window.scrollTo(0, 0);
   };
 
@@ -339,17 +341,17 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
                   <table>
                     <tr>
                       {trait.table.header.map(item => {
-                        return (<th>{item}</th>)
+                        return <th>{item}</th>;
                       })}
                     </tr>
                     {trait.table.rows.map(row => {
                       return (
                         <tr>
                           {row.map(item => {
-                            return (<td>{item}</td>)
+                            return <td>{item}</td>;
                           })}
                         </tr>
-                      )
+                      );
                     })}
                   </table>
                 )}
@@ -386,38 +388,3 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
 };
 
 export default Race;
-
-// let apiData;
-// useEffect(() => {
-//   const fetchData = async () => {
-//     apiData = await classCaller();
-//     console.log(apiData);
-//     /*apiData.main for the top level race, .sub for the subrace. pull qualities from .main and .sub together to form the interface.
-//     all properties are the same as in the api, but you can access .desc for those that were pointers before, such as in traits and options.
-//     there are also two properties in .main and .sub, .options and .proficiencies, that group all options and proficiencies together.
-//     proficiencies are sorted into .weapons, .armor, .languages, .skills, .tools, and .throws.
-//     options is an array where each object in it has a .choose (with how many you should choose, an integer), .header (the type, ie "extra language")
-//       and .options subarray with .name and .desc in each.
-//     ANY .DESC DESCRIPTION IS AN ARRAY. proceeed accordingly.
-//   */
-//   };
-//   fetchData();
-// }, []);
-
-// useEffect(() => {
-//   CharacterService.getRaceInfo().then(
-//     response => {
-//       setRaces(response.data.results);
-//       console.log(response.data.results);
-//     },
-//     error => {
-//       const err =
-//         (error.response &&
-//           error.response.data &&
-//           error.response.data.message) ||
-//         error.message ||
-//         error.toString();
-//       console.log(err);
-//     }
-//   );
-// }, []);

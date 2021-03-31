@@ -1,6 +1,16 @@
-import { LOADING_ON, LOADING_OFF, CACHE_URL } from '../actions/types';
+import {
+  LOADING_ON,
+  LOADING_OFF,
+  CACHE_URL,
+  SET_CURRENT_CHARACTER,
+} from '../actions/types';
 
-const initialState = { isAppLoading: true, awaiting: ['app'], urls: null };
+const initialState = {
+  isAppLoading: true,
+  awaiting: ['app'],
+  urls: null,
+  current_character: null,
+};
 
 export default function(state = initialState, action) {
   const { type, payload } = action;
@@ -28,6 +38,11 @@ export default function(state = initialState, action) {
           ...state.urls,
           ...payload,
         },
+      };
+    case SET_CURRENT_CHARACTER:
+      return {
+        ...state,
+        current_character: payload.charID,
       };
     default:
       return state;
