@@ -1,108 +1,131 @@
 @import 'client/app/variables';
 
-/******* header *******/
+.dashboard {
+  /******* header *******/
 
-.toolbar {
-  height: 105px;
-  width: calc(100vw - 6px);
-  margin-bottom: 10px;
-  .header {
-    height: 45px;
-  }
-  .subheader {
-    height: 60px;
-    background-color: $maroon;
-    h2,
-    h5 {
-      color: white;
-      width: fit-content;
-      display: inline-block;
-      margin: 10px;
-      margin-right: 45px;
+  .toolbar {
+    height: 105px;
+    width: calc(100vw - 10px);
+    margin-bottom: 10px;
+    .header {
+      height: 45px;
+      .navbar {
+        text-align: center;
+        margin: 0;
+        background-color: #333;
+        box-shadow: 0px 1px 2px rgb(0 0 0 / 67%);
+        z-index: 100;
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 0px;
+      }
+    }
+    .subheader {
+      height: 60px;
+      background-color: $maroon;
+      z-index: 100;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      h2,
+      h5 {
+        color: white;
+        width: fit-content;
+        display: inline-block;
+        margin: 10px;
+        margin-right: 45px;
+      }
     }
   }
-}
 
-/******* cards *******/
+  /******* cards *******/
 
-.translucent-card {
-  width: 300px;
-  padding-top: 10px;
-  padding-bottom: 10px;
-  margin: 10px;
-}
+  .translucent-card {
+    width: 300px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 10px;
+  }
 
-.description-card {
-  width: fit-content;
-  border: 0px;
-}
+  .description-card {
+    width: fit-content;
+    border: 0px;
+  }
 
-/******* titles *******/
+  .long-card {
+    min-width: 300px;
+    width: max-content;
+  }
 
-.card-title {
-  color: white;
-  font-size: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08rem;
-  margin: 0px;
-  padding: 0px;
-  text-align: center;
-}
+  /******* titles *******/
 
-.proficiency-title {
-  background-color: white;
-  width: fit-content;
-  background-color: $off-white;
-  font-size: 16px;
-  margin: 15px auto;
-}
+  .card-title {
+    color: white;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08rem;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+  }
 
-/******* radio buttons *******/
+  .proficiency-title {
+    background-color: white;
+    width: fit-content;
+    background-color: $off-white;
+    font-size: 16px;
+    margin: 15px auto;
+  }
 
-.list-item {
-  display: inline-block;
-}
+  /******* radio buttons *******/
 
-label {
-  margin: 0px;
-}
+  .list-item {
+    display: inline-block;
+  }
 
-.skills-points {
-  width: 2rem;
-  text-align: center;
-}
+  label {
+    margin: 0px;
+  }
 
-.skills-name {
-  width: 8rem;
-}
+  .skills-points {
+    width: 2rem;
+    text-align: center;
+  }
 
-input[type='radio']:after {
-  width: 13px;
-  height: 13px;
-  border-radius: 15px;
-  top: -4px;
-  left: 0px;
-  position: relative;
-  content: '';
-  display: inline-block;
-  visibility: visible;
-  background-color: inherit;
-  border: 1px solid gray;
-}
+  .skills-name {
+    width: 8rem;
+  }
 
-input[type='radio']:checked:after {
-  width: 13px;
-  height: 13px;
-  border-radius: 15px;
-  top: -4px;
-  left: 0px;
-  position: relative;
-  background-color: #000;
-  content: '';
-  display: inline-block;
-  visibility: visible;
-}
+  input[type='radio']:after {
+    width: 13px;
+    height: 13px;
+    border-radius: 15px;
+    top: -4px;
+    left: 0px;
+    position: relative;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    background-color: inherit;
+    border: 1px solid gray;
+  }
 
-div {
-  color: $dark-blue !important;
+  input[type='radio']:checked:after {
+    width: 13px;
+    height: 13px;
+    border-radius: 15px;
+    top: -4px;
+    left: 0px;
+    position: relative;
+    background-color: #000;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+  }
+
+  div {
+    color: $dark-blue !important;
+  }
 }
