@@ -236,7 +236,7 @@ export const DashBoard = () => {
               />
               Halfling
             </h5>
-            <h5 className="text-uppercase">Level <span style={{fontSize:'1.6rem'}}>&nbsp;2</span></h5>
+            <h5 className="text-uppercase">Level <span style={{fontSize:'1.6rem'}}>&#8198;2</span></h5>
           </span>
         </div>
       </div>
