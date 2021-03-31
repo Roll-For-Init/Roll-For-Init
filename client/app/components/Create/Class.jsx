@@ -117,8 +117,13 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           setClass(charID, { equipment_options: theClass.equipment_options })
         );
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
-        dispatch(setClass(charID, { spellcasting: theClass.spellcasting }));
-        dispatch(setClass(charID, { subclass: theClass.subclass }));
+        dispatch(setClass(charID, {spellcasting: theClass.spellcasting===null ? null : {...theClass.spellcasting, ...theClass.main.spellcasting}}))
+        dispatch(setClass(charID, {subclass: theClass.subclass}))
+        dispatch(setClass(charID, {features: theClass.features}))
+        dispatch(setClass(charID, {saving_throws: theClass.main.saving_throws}))
+        dispatch(setClass(charID, {hit_die: theClass.main.hit_die}))
+        dispatch(setClass(charID, {level: 1}))
+        dispatch(setClass(charID, {levels: theClass.levels}))
       });
   }, []);
 
@@ -185,14 +190,14 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                       userChoices[
                         `${option.header
                           .toLowerCase()
-                          .replace(' ', '-')}-${index}`
+                          .replace(' ', '-')}-${option.type}-${index}`
                       ]
                     }
                     setSelection={setUserChoices}
                     classname="dd-choice"
                     stateKey={`${option.header
                       .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
+                      .replace(' ', '-')}-${option.type}-${index}`}
                     key={index}
                   />
                 );
@@ -209,14 +214,14 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                       userChoices[
                         `${option.header
                           .toLowerCase()
-                          .replace(' ', '-')}-${index}`
+                          .replace(' ', '-')}-${option.type}-${index}`
                       ]
                     }
                     setSelection={setUserChoices}
                     classname="choice"
                     stateKey={`${option.header
                       .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
+                      .replace(' ', '-')}-${option.type}-${index}`}
                     key={index}
                   />
                 );
@@ -230,7 +235,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           </h4>
           <div className="card content-card description-card">
             {Object.entries(proficiencies).map(prof => (
-              <p className="text-capitalize" key={prof[0]}>
+                prof[1].length > 0 && <p className="text-capitalize" key={prof[0]}>
                 <strong className="small-caps">{prof[0]}</strong> –{' '}
                 {prof[1].map((item, idx) => (
                   <React.Fragment key={idx}>

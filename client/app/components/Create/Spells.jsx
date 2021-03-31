@@ -6,6 +6,7 @@ import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 /**
  * FOR DEACTIVATING SELECT BUTTONS: you will have to target all spell card children that are NOT selected,
@@ -214,10 +215,16 @@ export const Spells = ({ charID, setPage }) => {
     dispatch(setSpells(charID, payload));
   };
 
+  const validateAndStore = () => {
+    console.log(character);
+    CharacterService.createCharacter(CharacterService.validateCharacter(character));
+  }
+
   useEffect(() => {
     if (!character.class.index) return;
     CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
+      dispatch(setSpells(charID, {cards: cards}))
     });
     console.log(character);
   }, []);
@@ -245,15 +252,17 @@ export const Spells = ({ charID, setPage }) => {
               );
             })}
           </>
-          <Link to="/dashboard">
-            <button className="text-uppercase btn-primary btn-lg px-5 btn-floating">
-              Finish
-            </button>
-          </Link>
-        </>
-      ) : (
-        <>Loading</>
-      )}
+        <Link to="/dashboard" onClick={validateAndStore}>
+        <button
+          className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+        >
+          Finish
+        </button>
+        </Link>
+      </>
+      ):
+      <>Loading</>}
+
     </div>
   );
 };
