@@ -213,19 +213,8 @@ export const DashBoard = () => {
 
   return (
     <div className="dashboard">
-      <div className="toolbar">
-        <div className="header">
-          <header className="navbar">
-            <nav>
-              <Link to="/">
-                <img
-                  src={require('/client/public/assets/imgs/navbar-logo.png')}
-                  alt="Roll for Init"
-                />
-              </Link>
-            </nav>
-          </header>
-        </div>
+      <Header />
+      <div className="toolbar fixed-top">
         <div className="subheader">
           <h2 className="small-caps">Liir Thropp</h2>
           <h5 className="text-uppercase">Rogue</h5>
@@ -241,8 +230,8 @@ export const DashBoard = () => {
             </p>
           );
         })} */}
-      <div className="container-fluid px-5">
-        <div className="row">
+      <div className="container-fluid px-5" style={{paddingTop: '130px'}}>
+        <div className="row position-relative" >
           <div className="w-100">
             <div className="float-start w-auto d-inline-block">
               <button className="text-uppercase m-0 mx-2 py-0">
@@ -433,18 +422,15 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
       <div className="card content-card description-card">
         {Object.entries(misc_proficiencies).map(misc_proficiency => {
           return (
-            <div key={misc_proficiency[0]}>
-              <div className="small-caps w-auto list-item">
-                {misc_proficiency[0]}
-              </div>
-              —{' '}
-              {misc_proficiency[1].map((items, idx) => (
-                <div key={idx} className="list-item px-1">
-                  {items.name}
-                  {idx < misc_proficiency[1].length - 1 && ', '}
-                </div>
-              ))}
-            </div>
+            <p className="text-capitalize" key={misc_proficiency[0]}>
+                <span className="small-caps">{misc_proficiency[0]}</span> –{' '}
+                {misc_proficiency[1].map((item, idx) => (
+                  <React.Fragment key={idx}>
+                    {item.name}
+                    {idx < misc_proficiency[1].length - 1 && ', '}
+                  </React.Fragment>
+                ))}
+            </p>
           );
         })}
       </div>
