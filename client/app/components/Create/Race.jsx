@@ -483,16 +483,18 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
                   arr.length - 1 && 'mb-0'}`}
                 key={trait.name}
               >
-                <h3 className="card-subtitle small-caps">{trait.name}</h3>
-                <ReactReadMoreReadLess
-                  charLimit={250}
-                  readMoreText="Show more"
-                  readLessText="Show less"
-                  readMoreClassName="read-more-less--more"
-                  readLessClassName="read-more-less--less"
-                >
-                  {trait.desc.join('\n')}
-                </ReactReadMoreReadLess>
+                <h5 className="card-subtitle small-caps">{trait.name}</h5>
+                <p>
+                  <ReactReadMoreReadLess
+                    charLimit={250}
+                    readMoreText="Show more"
+                    readLessText="Show less"
+                    readMoreClassName="read-more-less--more"
+                    readLessClassName="read-more-less--less"
+                  >
+                    {trait.desc.join('\n')}
+                  </ReactReadMoreReadLess>
+                </p>
               </div>
             );
           })}
