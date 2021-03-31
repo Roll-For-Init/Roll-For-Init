@@ -271,7 +271,7 @@ export const DashBoard = () => {
         })} */}
       <div style={{paddingTop: '105px'}}>
       <div className="container-fluid px-5 py-4">
-        <div className="row position-relative no-gutters mb-3" >
+        <div className="row position-relative no-gutters mb-2" >
           <div className="w-100">
             <div className="float-start w-auto d-inline-block">
               <button className="text-uppercase btn btn-primary">
@@ -295,60 +295,30 @@ export const DashBoard = () => {
             </div>
           </div>
         </div>
-        {/* first column */}
         <div className="row">
-          <div className="col-auto px-0">
-            <div className="container-fluid px-0">
-              <div className="row">
-                <div className="col-auto px-4">
+          <div className="col-xl-5 px-0">
+            <div className="row">
+              <div className="col-sm-7 pl-0 pr-2">
                   <AbilitiesCard ability_scores={ability_scores} />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-auto">
                   <SavingThrowsCard saving_throws={saving_throws} />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-auto">
                   <ProficienciesCard misc_proficiencies={misc_proficiencies} />
-                </div>
+              </div>
+              <div className="col-sm-5 px-2">
+                      <SkillsCard skills={skills} />
+                      <SensesCard />
               </div>
             </div>
           </div>
-          {/* second column */}
-          <div className="col-auto px-0">
-            <div className="container-fluid px-0">
-              <div className="row">
-                <div className="col-auto">
-                  <SkillsCard skills={skills} />
-                </div>
+          <div className="col-xl-7 px-0">
+            <div className="row">
+              <div className="col-sm-8 px-2">
+                      <StatsCard />
+                      <HitPointsCard />
               </div>
-              <div className="row">
-                <div className="col-auto">
-                  <SensesCard />
-                </div>
+              <div className="col-sm-4 px-2 pr-0 pl-2">
+                <ExtraStatsCard />
               </div>
             </div>
-          </div>
-          {/* third column */}
-          <div className="col-auto px-0">
-            <div className="container-fluid px-0">
-              <div className="row">
-                <div className="col-auto">
-                  <StatsCard />
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-auto">
-                  <HitPointsCard />
-                </div>
-              </div>
-            </div>
-          </div>
-          {/* fourth column */}
-          <div className="col-auto px-0">
-            <ExtraStatsCard />
           </div>
         </div>
       </div>
@@ -362,36 +332,38 @@ const AbilitiesCard = ({ ability_scores }) => {
   console.log(ability_scores);
 
   return (
-    <div className="card translucent-card px-0 mx-0">
+    <div className="abilities card translucent-card">
       <h5 className="card-title">Abilities</h5>
-      <div className="container-fluid p-0">
-        <div className="row ml-3">
+      <div className="container-fluid">
+        <div className="row ">
           {Object.entries(ability_scores).map(ability => {
             return (
+              <div className="ability-grid col-4">
               <div
-                className="col-3 p-0 m-2 card content-card description-card"
+                className="card content-card description-card"
                 key={ability[0]}
               >
                 <div>
-                  <h6 className="text-uppercase text-center mt-2 mb-0">
+                  <h6 className="text-uppercase text-center mb-0">
                     {ability[0]}
                   </h6>
-                  <h2 className="text-center">
+                  <h2 className="text-center mb-0">
                     {ability[1].modifier >= 0 && '+'}
                     {ability[1].modifier}
                   </h2>
                 </div>
-                <div
+              </div>
+              <div
                   className="card content-card description-card"
                   key={ability[0]}
-                >
+              >
                   {ability[1].score}
-                </div>
+              </div>
               </div>
             );
           })}
         </div>
-      </div>
+      </div>     
     </div>
   );
 };
@@ -492,7 +464,7 @@ const SensesCard = () => {
 
 const StatsCard = () => {
   return (
-    <div className="card translucent-card long-card">
+    <div className="card translucent-card">
       <div className="d-table-row">
         <div className="card content-card description-card my-0 mx-2">
           <h6 className="text-uppercase m-0">Initiative</h6>

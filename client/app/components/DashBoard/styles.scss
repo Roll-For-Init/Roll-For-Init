@@ -72,20 +72,14 @@
   /******* cards *******/
 
   .translucent-card {
-    width: 300px;
     padding-top: 10px;
     padding-bottom: 10px;
-    margin: 10px;
+    margin: 20px auto;
   }
 
   .description-card {
     width: fit-content;
     border: 0px;
-  }
-
-  .long-card {
-    min-width: 300px;
-    width: max-content;
   }
 
   .short-card {
@@ -95,14 +89,64 @@
       font-size: 16px;
     }
   }
+  .small-caps {
+      font-size: 1.2rem;
+  }
 
+  .abilities {
+      .container-fluid {
+          padding: 0;
+      }
+  }
+
+
+  /******* layuot *******/
+  @media (min-width: 1200px) {
+    .col-xl-5 {
+        -ms-flex: 0 0 48%;
+        flex: 0 0 48%;
+        max-width: 48%;
+    }
+    .col-xl-7 {
+        -ms-flex: 0 0 52%;
+        flex: 0 0 52%;
+        max-width: 52%;
+    }
+  }
+    @media (min-width: 576px) {
+        .col-sm-7 {
+            -ms-flex: 0 0 55%;
+            flex: 0 0 55%;
+            max-width: 55%;
+        }
+        .col-sm-5 {
+            -ms-flex: 0 0 45%;
+            flex: 0 0 45%;
+            max-width: 45%;
+        }
+        .col-sm-8 {
+            -ms-flex: 0 0 70%;
+            flex: 0 0 70%;
+            max-width: 70%;
+        }
+        .col-sm-4 {
+            -ms-flex: 0 0 30%;
+            flex: 0 0 30%;
+            max-width: 30%;
+        }
+    }
+    .row {
+        margin-right: 0;
+        margin-left: 0;
+    }
+  
   /******* titles *******/
 
   .card-title {
     color: white;
     font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 0.08rem;
+    letter-spacing: 1.44px;
     margin: 0px;
     padding: 0px;
     text-align: center;
@@ -113,7 +157,11 @@
     width: fit-content;
     background-color: $off-white;
     font-size: 16px;
-    margin: 15px auto;
+  }
+  .ability-grid {
+      .description-card {
+          width: 100%;
+      }
   }
 
   /******* tables *******/
