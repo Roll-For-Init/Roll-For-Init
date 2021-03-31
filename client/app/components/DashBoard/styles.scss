@@ -1,46 +1,75 @@
 @import 'client/app/variables';
 
-/******* header *******/
-
 .dashboard {
-    .toolbar {
+  /******* header *******/
+
+  .toolbar {
     height: 105px;
-    width: calc(100vw - 6px);
+    width: calc(100vw - 10px);
     margin-bottom: 10px;
     .header {
-        height: 45px;
+      height: 45px;
+      .navbar {
+        text-align: center;
+        margin: 0;
+        background-color: #333;
+        box-shadow: 0px 1px 2px rgb(0 0 0 / 67%);
+        z-index: 100;
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 0px;
+      }
     }
     .subheader {
-        height: 60px;
-        background-color: $maroon;
-        h2,
-        h5 {
+      height: 60px;
+      background-color: $maroon;
+      z-index: 100;
+      position: sticky;
+      top: 0;
+      width: 100%;
+      h2,
+      h5 {
         color: white;
         width: fit-content;
         display: inline-block;
         margin: 10px;
         margin-right: 45px;
-        }
+      }
     }
-    }
+  }
 
-    /******* cards *******/
+  /******* cards *******/
 
-    .translucent-card {
+  .translucent-card {
     width: 300px;
     padding-top: 10px;
     padding-bottom: 10px;
     margin: 10px;
-    }
+  }
 
-    .description-card {
+  .description-card {
     width: fit-content;
     border: 0px;
+  }
+
+  .long-card {
+    min-width: 300px;
+    width: max-content;
+  }
+
+  .short-card {
+    width: auto;
+    font-size: 80%;
+    h6 {
+      font-size: 16px;
     }
+  }
 
-    /******* titles *******/
+  /******* titles *******/
 
-    .card-title {
+  .card-title {
     color: white;
     font-size: 1rem;
     text-transform: uppercase;
@@ -48,36 +77,36 @@
     margin: 0px;
     padding: 0px;
     text-align: center;
-    }
+  }
 
-    .proficiency-title {
+  .proficiency-title {
     background-color: white;
     width: fit-content;
     background-color: $off-white;
     font-size: 16px;
     margin: 15px auto;
-    }
+  }
 
-    /******* radio buttons *******/
+  /******* radio buttons *******/
 
-    .list-item {
+  .list-item {
     display: inline-block;
-    }
+  }
 
-    label {
+  label {
     margin: 0px;
-    }
+  }
 
-    .skills-points {
+  .skills-points {
     width: 2rem;
     text-align: center;
-    }
+  }
 
-    .skills-name {
+  .skills-name {
     width: 8rem;
-    }
+  }
 
-    input[type='radio']:after {
+  input[type='radio']:after {
     width: 13px;
     height: 13px;
     border-radius: 15px;
@@ -89,9 +118,9 @@
     visibility: visible;
     background-color: inherit;
     border: 1px solid gray;
-    }
+  }
 
-    input[type='radio']:checked:after {
+  input[type='radio']:checked:after {
     width: 13px;
     height: 13px;
     border-radius: 15px;
@@ -102,9 +131,9 @@
     content: '';
     display: inline-block;
     visibility: visible;
-    }
+  }
 
-    div {
+  div {
     color: $dark-blue !important;
-    }
+  }
 }

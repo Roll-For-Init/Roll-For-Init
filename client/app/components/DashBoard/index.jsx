@@ -215,7 +215,16 @@ export const DashBoard = () => {
     <div className="dashboard">
       <div className="toolbar">
         <div className="header">
-          <Header />
+          <header className="navbar">
+            <nav>
+              <Link to="/">
+                <img
+                  src={require('/client/public/assets/imgs/navbar-logo.png')}
+                  alt="Roll for Init"
+                />
+              </Link>
+            </nav>
+          </header>
         </div>
         <div className="subheader">
           <h2 className="small-caps">Liir Thropp</h2>
@@ -232,7 +241,31 @@ export const DashBoard = () => {
             </p>
           );
         })} */}
-      <div className="container-fluid mx-5">
+      <div className="container-fluid px-5">
+        <div className="row">
+          <div className="w-100">
+            <div className="float-start w-auto d-inline-block">
+              <button className="text-uppercase m-0 mx-2 py-0">
+                Inventory
+              </button>
+              <button className="text-uppercase m-0 mx-2 py-0">
+                Spellbook
+              </button>
+              <button className="text-uppercase m-0 mx-2 py-0">
+                Description
+              </button>
+              <button className="text-uppercase m-0 mx-2 py-0">Features</button>
+            </div>
+            <div className="float-right w-auto d-inline-block">
+              <button className="text-uppercase m-0 mx-2 py-0">
+                Short Rest
+              </button>
+              <button className="text-uppercase m-0 mx-2 py-0">
+                Long Rest
+              </button>
+            </div>
+          </div>
+        </div>
         {/* first column */}
         <div className="row">
           <div className="col-auto px-0">
@@ -268,6 +301,25 @@ export const DashBoard = () => {
                 </div>
               </div>
             </div>
+          </div>
+          {/* third column */}
+          <div className="col-auto px-0">
+            <div className="container-fluid px-0">
+              <div className="row">
+                <div className="col-auto">
+                  <StatsCard />
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-auto">
+                  <HitPointsCard />
+                </div>
+              </div>
+            </div>
+          </div>
+          {/* fourth column */}
+          <div className="col-auto px-0">
+            <ExtraStatsCard />
           </div>
         </div>
       </div>
@@ -387,7 +439,7 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
               </div>
               —{' '}
               {misc_proficiency[1].map((items, idx) => (
-                <div key={idx} className="list-item">
+                <div key={idx} className="list-item px-1">
                   {items.name}
                   {idx < misc_proficiency[1].length - 1 && ', '}
                 </div>
@@ -408,6 +460,62 @@ const SensesCard = () => {
         <div>Passive Perception (WIS): 12</div>
         <div>Passive Insight (WIS): 10</div>
         <div>Passive Investigation (INT): 7</div>
+      </div>
+    </div>
+  );
+};
+
+const StatsCard = () => {
+  return (
+    <div className="card translucent-card long-card">
+      <div className="d-table-row">
+        <div className="card content-card description-card my-0 mx-2">
+          <h6 className="text-uppercase m-0">Initiative</h6>
+          <h3 className="text-uppercase text-center m-0">+4</h3>
+        </div>
+        <div className="card content-card description-card my-0 mx-2">
+          <h6 className="text-uppercase m-0">Inspiration</h6>
+          <h3 className="text-uppercase text-center m-0">(star)</h3>
+        </div>
+        <div className="card content-card description-card my-0 px-4 mx-2">
+          <h6 className="text-uppercase m-0">AC</h6>
+          <h3 className="text-uppercase text-center m-0">15</h3>
+        </div>
+        <div className="card content-card description-card my-0 mx-2">
+          <h6 className="text-uppercase m-0">Speed</h6>
+          <h3 className="text-uppercase text-center m-0">30</h3>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const HitPointsCard = () => {
+  return (
+    <div className="card translucent-card long-card">
+      <div className="d-table-row">
+        <div className="card description-card my-0 mx-2">
+          <h6 className="text-uppercase m-0 text-white">Hit Points</h6>
+          <h3 className="text-uppercase text-center m-0">+4</h3>
+        </div>
+        <div className="card description-card my-0 mx-2">
+          <h6 className="text-uppercase m-0 text-white">Hit Dice</h6>
+          <h3 className="text-uppercase text-center m-0">30</h3>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const ExtraStatsCard = () => {
+  return (
+    <div className="card translucent-card short-card">
+      <div className="card content-card description-card">
+        <h6 className="text-uppercase text-center m-0">Conditions</h6>
+      </div>
+      <div className="card content-card description-card">
+        <h6 className="text-uppercase text-center m-0">Defenses</h6>
+        <div>Resistant to fire damage</div>
       </div>
     </div>
   );
