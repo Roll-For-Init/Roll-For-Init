@@ -5,14 +5,20 @@ import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
-// import { setEquipment } from '../../redux/actions';
+import { setEquipment } from '../../redux/actions';
+import { Link } from 'react-router-dom';
+
 
 const EquipmentItem = ({
   equipment,
   selectionEq,
   setSelectionEq,
-  dropdown = false,
+  dropdown,
+  stateKey
 }) => {
+
+ // const [selection, setSelection] = useState(null)
+
   return (
     <>
       <div className="equipment-card-title same-line">
@@ -39,6 +45,7 @@ const EquipmentItem = ({
           selection={selectionEq}
           setSelection={setSelectionEq}
           classname="eq-card"
+          stateKey={stateKey}
         />
       ) : (
         <>
@@ -148,28 +155,37 @@ const EquipmentCard = ({
   clickable = false,
   selectedCard,
   setSelectedCard,
+  charID
 }) => {
   const handleClick = () => {
-    if (selectedCard === cardKey) setSelectedCard(null);
-    else setSelectedCard(cardKey);
-    console.log(selectedCard);
+    if (selectedCard?.cardKey === cardKey) setSelectedCard(null);
+    else setSelectedCard({cardKey: cardKey, equipment: equipmentItem});
+  };
+  const reducer = (state, newProp) => {
+    let newState = { ...state, ...newProp };
+    if(selectedCard?.cardKey === cardKey) {
+      setSelectedCard({...selectedCard, selection: newState})
+    } //THIS WONT WORK IF YOU DO A DROPDOWN DESELECT AND RESELECT OR SMTH
+    return newState;
   };
 
-  const [selectionEq, setSelectionEq] = useState([]);
+  //make selectedcard {index: , equipment: }
+
+  const [selectionEq, setSelectionEq] = useReducer(reducer, {});
 
   return (
     <div
-      className={`card content-card equipment-card ${selectedCard === cardKey &&
+      className={`card content-card equipment-card ${selectedCard?.cardKey === cardKey &&
         `selected-card`}`}
     >
       {clickable && (
         <button
           onClick={() => handleClick()}
           className={`btn ${
-            selectedCard === cardKey ? `btn-clicked` : `btn-outline-success`
+            selectedCard?.cardKey === cardKey ? `btn-clicked` : `btn-outline-success`
           } btn-card`}
         >
-          {selectedCard === cardKey ? 'Selected' : 'Select'}
+          {selectedCard?.cardKey === cardKey ? 'Selected' : 'Select'}
         </button>
       )}
       {equipmentItem.type ? (
@@ -178,13 +194,23 @@ const EquipmentCard = ({
             <>
               <EquipmentItem
                 equipment={equipmentItem}
-                selectionEq={selectionEq}
+                selectionEq={selectionEq[
+                  `${equipmentItem.header
+                    .toLowerCase()
+                    .replace(' ', '-')}`
+                ]}
+                stateKey={`${equipmentItem.header
+                  .toLowerCase()
+                  .replace(' ', '-')}`}
                 setSelectionEq={setSelectionEq}
                 dropdown
               />
               {Object.keys(selectionEq).length !== 0 && (
                 <>
-                  {selectionEq.map((dropdownItem, idx) => {
+                  {selectionEq[`${equipmentItem.header
+                    .toLowerCase()
+                    .replace(' ', '-')}`].map((dropdownItem, idx) => {
+
                     return (
                       <div key={idx} style={{ marginTop: '5px' }}>
                         <EquipmentItem equipment={dropdownItem} />
@@ -209,13 +235,22 @@ const EquipmentCard = ({
                           <>
                             <EquipmentItem
                               equipment={multiEquipmentOption}
-                              selectionEq={selectionEq}
+                              selectionEq={selectionEq[
+                                `${multiEquipmentOption.header
+                                  .toLowerCase()
+                                  .replace(' ', '-')}-${idx}`
+                              ]}
+                              stateKey={`${multiEquipmentOption.header
+                                .toLowerCase()
+                                .replace(' ', '-')}-${idx}`}
                               setSelectionEq={setSelectionEq}
                               dropdown
                             />
                             {Object.keys(selectionEq).length !== 0 && (
                               <>
-                                {selectionEq.map((dropdownItem, idx) => {
+                                {selectionEq[`${multiEquipmentOption.header
+                                  .toLowerCase()
+                                  .replace(' ', '-')}-${idx}`].map((dropdownItem, idx) => {
                                   return (
                                     <div key={idx} style={{ marginTop: '5px' }}>
                                       <EquipmentItem equipment={dropdownItem} />
@@ -250,7 +285,7 @@ const EquipmentCard = ({
   );
 };
 
-const EquipmentList = ({ equipmentOption }) => {
+const EquipmentList = ({ equipmentOption, charID, theKey, setEquipmentSelection, equipmentSelection }) => {
   // either store the equipment list here, and then select from that list
   // based on the key of the selected card (+1 since the first index is just the header)
   // or do it in equipment card, where each card stores all of its own equipment
@@ -266,6 +301,10 @@ const EquipmentList = ({ equipmentOption }) => {
     default: 2,
     767: 1,
   };
+  useEffect(() => {
+    setEquipmentSelection({[theKey]: selectedCard});
+    //console.log("EQUIPMENT ITEM", equipmentItem);
+  }, [selectedCard])
 
   return (
     <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
@@ -286,6 +325,7 @@ const EquipmentList = ({ equipmentOption }) => {
               clickable
               selectedCard={selectedCard}
               setSelectedCard={setSelectedCard}
+              charID={charID}
             />
           );
         })}
@@ -296,7 +336,8 @@ const EquipmentList = ({ equipmentOption }) => {
 
 export const Equipment = ({ charID, setPage }) => {
   const character = useSelector(state => state.characters[charID]);
-  const [equipment, setEquipment] = useState(
+  const dispatch = useDispatch();
+  const [equipmentList, setEquipmentList] = useState(
     character.class.equipment.concat(character.background.equipment)
   );
   const [equipmentOptions, setEquipmentOptions] = useState(
@@ -304,10 +345,14 @@ export const Equipment = ({ charID, setPage }) => {
       character.background.equipment_options
     )
   );
+  const reducer = (state, newProp) => {
+    let newState = { ...state, ...newProp };
+    return newState;
+  };
   const [equipmentLoaded, setEquipmentLoaded] = useState(false);
 
-  const [selectionEq, setSelectionEq] = useState([]);
   const [addedEquipment, setAddedEquipment] = useState([]);
+  const [equipmentSelection, setEquipmentSelection] = useReducer(reducer, {});
 
   const addEquipment = idx => {
     setAddedEquipment(...addedEquipment, idx);
@@ -319,7 +364,29 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
+  const finalizeEquipment = () => new Promise((resolve, reject) => {
+    console.log('in finalize equipment');
+    resolve(dispatch(setEquipment(charID, {
+      choices: equipmentSelection,
+      set: equipmentList
+    })));
+  })
+
+  const validateAndStore = () => {
+    finalizeEquipment().then(() => {
+      if(character.equipment == null) { //crimes i'm sorry couldn't get it working otherwise
+        character.equipment = {choices: equipmentSelection, set: equipmentList}
+      }
+      console.log(character)
+      CharacterService.createCharacter(CharacterService.validateCharacter(character));
+    })
+  }
+
   const onNext = () => {
+    dispatch(setEquipment(charID, {
+      choices: equipmentSelection,
+      set: equipmentList
+    }))
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
@@ -327,9 +394,9 @@ export const Equipment = ({ charID, setPage }) => {
   useEffect(() => {
     const promises = [];
     promises.push(
-      CharacterService.getEquipmentDetails(equipment).then(
+      CharacterService.getEquipmentDetails(equipmentList).then(
         equipmentWDetails => {
-          setEquipment(equipmentWDetails);
+          setEquipmentList(equipmentWDetails);
           console.log('equipment', equipmentWDetails);
         }
       )
@@ -371,10 +438,10 @@ export const Equipment = ({ charID, setPage }) => {
               className="my-masonry-grid"
               columnClassName="my-masonry-grid_column"
             >
-              {equipment.map((equipmentItem, idx) => {
+              {equipmentList.map((equipmentItem, idx) => {
                 return (
                   <div className="card content-card equipment-card" key={idx}>
-                    <EquipmentItem equipment={equipmentItem} />
+                    <EquipmentItem equipment={equipmentItem}/>
                   </div>
                 );
               })}
@@ -382,15 +449,25 @@ export const Equipment = ({ charID, setPage }) => {
           </div>
           {equipmentOptions.map((equipmentOption, idx) => {
             return (
-              <EquipmentList equipmentOption={equipmentOption} key={idx} />
+              <EquipmentList equipmentOption={equipmentOption} charID={charID} theKey={idx} setEquipmentSelection={setEquipmentSelection} equipmentSelection={equipmentSelection}/>
             );
           })}
-          <button
-            className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-            onClick={onNext}
-          >
-            OK
-          </button>
+          {character.class?.spellcasting ? (
+            <button
+              className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+              onClick={onNext}
+            >
+              OK
+            </button>)
+          : (
+            <Link to="/dashboard" onClick={validateAndStore}>
+            <button
+              className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+            >
+              Finish
+            </button>
+            </Link>
+          )}
         </>
       ) : (
         <>Loading</>

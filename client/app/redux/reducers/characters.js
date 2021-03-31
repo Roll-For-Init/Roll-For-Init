@@ -9,6 +9,7 @@ import {
   SET_BACKGROUND,
   SET_DESCRIPTION,
   SET_ABILITIES,
+  SET_EQUIPMENT,
   SET_SPELLS,
 } from '../actions/types';
 
@@ -83,6 +84,11 @@ const character = (state = initialCharacter, action, charID) => {
         ...state,
         abilities: { ...state.abilities, ...payload.abilities },
       };
+    case SET_EQUIPMENT:
+        return {
+            ...state,
+            equipment: {...state.equipment, ...payload.equipment }
+        }
     case SET_SPELLS:
       return {
         ...state,
@@ -143,6 +149,11 @@ export default function(state = initialState, action) {
         ...state,
         [payload.charID]: character(state[payload.charID], action, payload),
       };
+      case SET_EQUIPMENT:
+        return {
+          ...state,
+          [payload.charID]: character(state[payload.charID], action, payload),
+        };
     case SET_SPELLS:
       return {
         ...state,

@@ -69,42 +69,42 @@ const TEMP_DATA = {
   },
   saving_throws: {
     Strength: {
-      proficiency: 0,
-      modifier: 0,
-      advantage: -1,
+      proficiency: false,
+      modifier: -1,
+      advantage: 0,
     },
     Dexterity: {
-      proficiency: 1,
-      modifier: 0,
-      advantage: 5,
+      proficiency: true,
+      modifier: 5,
+      advantage: 0,
     },
     Constitution: {
-      proficiency: 1,
-      modifier: 0,
-      advantage: 1,
+      proficiency: true,
+      modifier: 1,
+      advantage: 0,
     },
     Intelligence: {
-      proficiency: 1,
-      modifier: 0,
-      advantage: -1,
+      proficiency: true,
+      modifier: -1,
+      advantage: 0,
     },
     Wisdom: {
-      proficiency: 1,
+      proficiency: true,
       modifier: 0,
       advantage: 0,
     },
     Charisma: {
-      proficiency: 1,
-      modifier: 0,
-      advantage: 2,
+      proficiency: true,
+      modifier: 2,
+      advantage: 0,
     },
   },
   skills: {
     // should these skills have an associated ability, or are we getting that from the api?
     acrobatics: {
       proficiency: false,
-      modifier: 0,
-      advantage: 5,
+      modifier: 5,
+      advantage: 0,
     },
     animal_handling: {
       proficiency: false,
@@ -113,23 +113,23 @@ const TEMP_DATA = {
     },
     arcana: {
       proficiency: false,
-      modifier: 0,
-      advantage: -3,
+      modifier: -3,
+      advantage: 0,
     },
     athletics: {
       proficiency: false,
-      modifier: 0,
-      advantage: -1,
+      modifier: -1,
+      advantage: 0,
     },
     deception: {
       proficiency: true,
-      modifier: 0,
-      advantage: 4,
+      modifier: 4,
+      advantage: 0,
     },
     history: {
       proficiency: false,
-      modifier: 0,
-      advantage: -3,
+      modifier: -3,
+      advantage: 0,
     },
     insight: {
       proficiency: false,
@@ -138,13 +138,13 @@ const TEMP_DATA = {
     },
     intimidation: {
       proficiency: false,
-      modifier: 0,
-      advantage: 4,
+      modifier: 4,
+      advantage: 0,
     },
     investigation: {
       proficiency: true,
-      modifier: 0,
-      advantage: -3,
+      modifier: -3,
+      advantage: 0,
     },
     medicine: {
       proficiency: false,
@@ -153,38 +153,38 @@ const TEMP_DATA = {
     },
     nature: {
       proficiency: false,
-      modifier: 0,
-      advantage: -3,
+      modifier: -3,
+      advantage: 0,
     },
     perception: {
       proficiency: false,
-      modifier: 0,
-      advantage: 2,
+      modifier: 2,
+      advantage: 0,
     },
     performance: {
       proficiency: true,
-      modifier: 0,
-      advantage: 2,
+      modifier: 2,
+      advantage: 0,
     },
     persuasion: {
       proficiency: false,
-      modifier: 0,
-      advantage: -4,
+      modifier: -4,
+      advantage: 0,
     },
     religion: {
       proficiency: false,
-      modifier: 0,
-      advantage: 3,
+      modifier: 3,
+      advantage: 0,
     },
     sleight_of_hand: {
       proficiency: false,
-      modifier: 0,
-      advantage: 5,
+      modifier: 5,
+      advantage: 0,
     },
     stealth: {
       proficiency: false,
-      modifier: 0,
-      advantage: 5,
+      modifier: 5,
+      advantage: 0,
     },
     survival: {
       proficiency: false,
@@ -219,9 +219,9 @@ export const DashBoard = () => {
     <div className="dashboard">
       <Header />
       <div className="toolbar fixed-top">
-        <div className="subheader py-2 px-3">
+        <div className="subheader py-1 px-3 pt-2">
           <h2 className="small-caps mr-5">Liir Thropp</h2>
-          <span className="align-middle ml-2">
+          <span className="ml-2">
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
@@ -356,8 +356,8 @@ const AbilitiesCard = ({ ability_scores }) => {
                     {ability[0]}
                   </h6>
                   <h2 className="text-center">
-                    {ability[1].advantage >= 0 && '+'}
-                    {ability[1].advantage}
+                    {ability[1].modifier >= 0 && '+'}
+                    {ability[1].modifier}
                   </h2>
                 </div>
                 <div
@@ -380,24 +380,22 @@ const SavingThrowsCard = ({ saving_throws }) => {
     <div className="card translucent-card">
       <h5 className="card-title">Saving Throws</h5>
       <div className="card content-card description-card">
-        {Object.entries(saving_throws).map(saving_throw => {
-          return (
-            <div key={saving_throw[0]}>
-              <input
-                type="radio"
-                checked={saving_throw[1].proficiency > 0}
-                readOnly
-              />
-              <label>
-                <div className="list-item skills-points">
-                  {saving_throw[1].advantage >= 0 && '+'}
-                  {saving_throw[1].advantage}{' '}
-                </div>
-                <div className="list-item">{saving_throw[0]}</div>
-              </label>
-            </div>
-          );
-        })}
+        <table className="table table-borderless table-sm">
+          <tbody>
+            {Object.entries(saving_throws).map(saving_throw => {
+              return (
+                <tr key={saving_throw[0]}>
+                  {saving_throw[1].proficiency ? <td>&#9679;</td> : <td>&#9675;</td>} {/**Star if expertise */}
+                  <td>
+                    {saving_throw[1].modifier >= 0 && '+'}
+                    {saving_throw[1].modifier}{' '}
+                  </td>
+                  <td>{saving_throw[0]}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
       </div>
     </div>
   );
@@ -412,6 +410,22 @@ const SkillsCard = ({ skills }) => {
       <div className="card translucent-card">
         <h5 className="card-title">Skills</h5>
         <div className="card content-card description-card">
+        <table className="table table-borderless table-sm">
+          <tbody>
+            {Object.entries(skills).map(skill => {
+              return (
+                <tr key={skill[0]}>
+                  {skill[1].proficiency ? <td>&#9679;</td> : <td>&#9675;</td>} {/**Star if expertise */}
+                  <td>
+                    {skill[1].modifier >= 0 && '+'}
+                    {skill[1].modifier}{' '}
+                  </td>
+                  <td>{skill[0]}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
           {Object.entries(skills).map(skill => {
             return (
               <div key={skill[0]}>

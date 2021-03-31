@@ -279,6 +279,13 @@ AbilityBonuses.propTypes = {
 */
 const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
   const reducer = (state, newProp) => {
+    let key = Object.keys(newProp)[0];
+    if(key.includes("ability")) {
+      let bonus = parseInt(key.charAt(1));
+      for(let item of newProp[key]) {
+        item.bonus = bonus;
+      }
+    }
     let newState = { ...state, ...newProp };
     dispatch(setRace(charID, { choices: newState }));
     return newState;
@@ -308,18 +315,24 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
         let abilityBonuses = race.sub
           ? race.main.ability_bonuses.concat(race.sub.ability_bonuses)
           : race.main.ability_bonuses;
-        dispatch(setRace(charID, { ability_bonuses: abilityBonuses }));
-        dispatch(setRace(charID, { proficiencies: race.proficiencies }));
         let allTraits = race.sub
-          ? race.main.traits.concat(race.sub.racial_traits)
-          : race.main.traits;
-        dispatch(setRace(charID, { traits: allTraits }));
-        let description = {
+        ? race.main.traits.concat(race.sub.racial_traits)
+        : race.main.traits;
+        let theDescription = {
           summary: [race.main.alignment, race.sub?.desc],
           age: race.main.age,
           size: race.main.size_description,
         };
-        dispatch(setRace(charID, { description: description }));
+
+        dispatch(setRace(charID, 
+          { ability_bonuses: abilityBonuses,
+            proficiencies: race.proficiencies,
+            traits: allTraits,
+            subrace: race.sub?.name,
+            description: theDescription, 
+            size: race.main.size,
+            speed: race.main.speed
+          }));
       });
   }, []);
 
@@ -386,14 +399,14 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
                     userChoices[
                       `${option.header
                         .toLowerCase()
-                        .replace(' ', '-')}-${index}`
+                        .replace(' ', '-')}-${option.type}-${index}`
                     ]
                   }
                   setSelection={setUserChoices}
                   classname="dd-choice"
                   stateKey={`${option.header
                     .toLowerCase()
-                    .replace(' ', '-')}-${index}`}
+                    .replace(' ', '-')}-${option.type}-${index}`}
                   key={index}
                 />
               );
@@ -410,7 +423,7 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
             {//console.log(Object.values(raceInfo.proficiencies))
             Object.keys(raceInfo.proficiencies).map(key => {
               return (
-                <p className="text-capitalize">
+                raceInfo.proficiencies[key].length > 0 && <p className="text-capitalize">
                   <strong className="small-caps">{key}</strong> -{' '}
                   {raceInfo.proficiencies[key].map((prof, index) => {
                     if (raceInfo.proficiencies[key].length === index + 1)

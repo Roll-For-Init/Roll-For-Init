@@ -41,7 +41,12 @@ const makeEquipmentDesc = async (item, itemDetails) => {
             category: `${itemDetails.armor_category} Armor`,
             ac: ac,
             cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
-            weight: itemDetails.weight
+            weight: itemDetails.weight,
+            dex_bonus: armorClassDeets.dex_bonus,
+            max_bonus: armorClassDeets.max_bonus,
+            base: armorClassDeets.base,
+            str_minimum: itemDetails.str_minimum, 
+            stealth_disadvantage: itemDetails.stealth_disadvantage           
         }
         if(itemDetails.str_minimum > 0) desc.strength = itemDetails.str_minimum;
         if(itemDetails.stealth_disadvantage) desc.desc = 'stealth disadvantage'
@@ -132,16 +137,28 @@ const optionsHelper = async (container, options, key) => {
     let optionSet = {
         header: '',
         options: [],
+        type: '',
         choose: 0,
       }  
     optionSet.choose = options.choose;
     if(options.type.toLowerCase().includes("feature")) {
       optionSet.header = container.name;
       optionSet.desc = container.desc;
+      optionSet.type = "feature"
     } 
-    else if (options.type.toLowerCase().includes('language'))
+    else if (options.type.toLowerCase().includes("trait")) {
+        console.log(options);
+        optionSet.header = options.header ? options.header : options.type.replace('_', " ");
+        optionSet.type = "trait";
+    }
+    else if (options.type.toLowerCase().includes('language')) {
       optionSet.header = `extra ${options.type}`;
-    else optionSet.header = options.type.replace('_', " ");
+      optionSet.type = options.type;
+    }
+    else {
+        optionSet.header = options.type.replace('_', " ");
+        optionSet.type = options.type;
+    }
     for (let option of options.from) {
         if (key.toLowerCase().includes('ability_bonus')) {
             optionSet.header = `+${options.from[0].bonus} Ability Bonus`
@@ -180,6 +197,7 @@ const optionsHelper = async (container, options, key) => {
             option.name = optionName;
             let optionObject = option;
             optionSet.options.push(optionObject);
+            optionSet.type = "skill";
         } 
         else {
             let optionObject = option;
@@ -343,7 +361,13 @@ const propogateRacePointer = async racePointer => {
     const raceContainer = {
         options: [],
         profCount: 0,
-        proficiencies: {},
+        proficiencies: {
+            Armor: [],
+            Weapons: [],
+            Tools: [],
+            Languages: [],
+            Throws: []
+        },
         main: {},
         sub: {},
         equipment_options: []
@@ -389,12 +413,19 @@ const classCaller = async (classPointer) => {
   const promises = [];
   const classContainer = {
     options: [],
-    proficiencies: {},
+    proficiencies: {
+        Armor: [],
+        Weapons: [],
+        Tools: [],
+        Languages: [],
+        Throws: []
+    },
     features: [],
     profCount: 0,
     main: {
 
     },
+    levels: [],
     equipment_options: [],
     spellcasting: null,
     subclass: null
@@ -444,9 +475,11 @@ const classCaller = async (classPointer) => {
                     }
                 }
                 const morePromises = [];
-                morePromises.push(axios.get(`${details.subclass_levels}/1`).then((deets) => {
+                morePromises.push(axios.get(`${details.subclass_levels}`).then((deets) => {
                     const moremorepromises = [];
-                    let details = deets.data;
+                    classContainer.subclass.levels = deets.data;
+                    //console.log(deets.data);
+                    let details = deets.data[0]; //level 1
                     if(details.feature_choices.length >0) {
                         if(!classContainer.subclass.subclass_options) classContainer.subclass.subclass_options = [];
                         for (let set of details.feature_choices) {
@@ -478,11 +511,13 @@ const classCaller = async (classPointer) => {
         }
     }
 
-    let featureURL = `${theClass.class_levels}/1`;
+    let featureURL = `${theClass.class_levels}`;
     promises.push(axios.get(featureURL)
     .then((details) => {
         const morePromises = [];
-        details = details.data;
+        //console.log(details.data);
+        classContainer.levels = details.data;
+        details = details.data[0];
         if(details.feature_choices.length >0) {
             for (let set of details.feature_choices) {
                 //console.log(set);
@@ -504,7 +539,8 @@ const classCaller = async (classPointer) => {
             }
         }
         if(details.features.length > 0) {
-            classContainer.features = details.features;
+            classContainer.features = classContainer.features.concat(details.features);
+            //console.log(details.features);
             morePromises.push(descriptionAdder(classContainer, 'features').then());
         }
         return Promise.all(morePromises);
@@ -544,7 +580,13 @@ const backgroundCaller = async (url) => {
     const promises = [];
     let container = {
         profCount: 0,
-        proficiencies: {},
+        proficiencies: {
+            Armor: [],
+            Weapons: [],
+            Tools: [],
+            Languages: [],
+            Throws: []
+        },
         options: [], 
         equipment_options: [],
     };
@@ -588,7 +630,7 @@ const getAlignments = async () => {
 const equipmentDetails = async (equipment) => {
     const promises = [];
     let result;
-    if(equipment[0].equipment) {
+    if(equipment[0]?.equipment) {
         result = equipment.map((theItem) => {
             let item = theItem.equipment;
             if(item.hasOwnProperty('url')) {

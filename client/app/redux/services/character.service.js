@@ -1,10 +1,18 @@
 const axios = require('axios').default;
 
 import { racePointerList } from './constants';
-import apiCaller from '../../components/apiCaller';
+import apiCaller from '../../utils/apiCaller';
+const {parseEquipment, fillModel} = require('../../utils/characterValidator');
 
 const API_URL = '/api/';
 
+const validateCharacter = characterData => {
+    let equipment = parseEquipment(characterData.equipment);
+    let validatedCharacter = fillModel(equipment, characterData);
+    console.log(validatedCharacter);
+    
+    return validatedCharacter;
+}
 const createCharacter = characterData => {
   return axios.post(API_URL + 'characters/create', characterData);
 };
@@ -78,6 +86,7 @@ const getSpells = (theClass, levels) => {
 }
 
 export default {
+  validateCharacter,
   createCharacter,
   updateCharacter,
   deleteCharacter,

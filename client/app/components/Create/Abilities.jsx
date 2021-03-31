@@ -68,14 +68,23 @@ export const Abilities = ({ charID, setPage }) => {
         const ability = charInfo.race.ability_bonuses.find(
           abil => abil.ability_score.index === item.short_name
         );
-        if (ability) {
+        let ability2=null;
+        for(let key in charInfo.race.choices) { //assumes u can only choose an ability score ONCE
+          if(key.includes("ability")) { //assumes u can only modify an ability ONCE
+            ability2 = charInfo.race.choices[key].find(
+              abil => abil.index === item.short_name
+            );
+            console.log(ability2);
+          }
+        }
+        if (ability || ability2) {
           return {
-            name: ability.ability_score.full_name,
-            short_name: ability.ability_score.index,
+            name: ability ? ability.ability_score.full_name : ability2.full_name,
+            short_name: ability ? ability.ability_score.index : ability2.index,
             points: 10,
-            bonus: ability.bonus,
+            bonus: ability ? ability.bonus + (ability2 ? ability2.bonus : 0) : ability2.bonus,
             modifier: 0,
-            finalScore: 10 + ability.bonus,
+            finalScore: ability ? 10 + ability.bonus + (ability2 ? ability2.bonus : 0) : 10 + ability2.bonus,
           };
         } else {
           return item;
@@ -113,6 +122,7 @@ export const Abilities = ({ charID, setPage }) => {
 
   const onNext = () => {
     // setSelectedAbilities({ index: race.name, url: race.url });
+    console.log("ONNEXT", abilityCards);
     dispatch(setAbilities(charID, abilityCards));
     setPage({ index: 3, name: 'background' });
     window.scrollTo(0, 0);
@@ -282,6 +292,7 @@ const PointBuyCard = ({
           // totalPointsUsed > 0 &&
           ability.points < 20
         ) {
+
           return {
             name: title,
             short_name,
