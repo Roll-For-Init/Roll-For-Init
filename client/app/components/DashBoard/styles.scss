@@ -59,6 +59,14 @@
     width: max-content;
   }
 
+  .short-card {
+    width: auto;
+    font-size: 80%;
+    h6 {
+      font-size: 16px;
+    }
+  }
+
   /******* titles *******/
 
   .card-title {

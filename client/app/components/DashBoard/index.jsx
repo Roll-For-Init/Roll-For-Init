@@ -509,12 +509,13 @@ const HitPointsCard = () => {
 
 const ExtraStatsCard = () => {
   return (
-    <div className="card translucent-card">
+    <div className="card translucent-card short-card">
       <div className="card content-card description-card">
-        <h3 className="text-uppercase text-center m-0">+4</h3>
+        <h6 className="text-uppercase text-center m-0">Conditions</h6>
       </div>
       <div className="card content-card description-card">
-        <h3 className="text-uppercase text-center m-0">30</h3>
+        <h6 className="text-uppercase text-center m-0">Defenses</h6>
+        <div>Resistant to fire damage</div>
       </div>
     </div>
   );
