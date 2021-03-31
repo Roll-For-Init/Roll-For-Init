@@ -5,6 +5,27 @@ import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
 import './styles.scss';
 
+const skillScores = {
+  athletics: 'str',
+  acrobatics: 'dex',
+  sleight_of_hand: 'dex',
+  stealth: 'dex',
+  arcana: 'int',
+  history: 'int',
+  investigation: 'int',
+  nature: 'int', 
+  religion: 'int',
+  animal_handling: 'wis',
+  insight: 'wis',
+  medicine: 'wis', 
+  perception: 'wis',
+  survival: 'wis',
+  deception: 'cha',
+  intimidation: 'cha',
+  performance: 'cha',
+  persuasion: 'cha'
+}
+
 const TEMP_DATA = {
   name: 'Liir Thropp',
   level: 2,
@@ -420,29 +441,13 @@ const SkillsCard = ({ skills }) => {
                     {skill[1].modifier >= 0 && '+'}
                     {skill[1].modifier}{' '}
                   </td>
-                  <td>{skill[0]}</td>
+                  <td className='text-capitalize'>{skill[0].replaceAll('_',' ')}</td>
+                  <td><small>{skillScores[skill[0]].toUpperCase()}</small></td>
                 </tr>
               );
             })}
           </tbody>
         </table>
-          {Object.entries(skills).map(skill => {
-            return (
-              <div key={skill[0]}>
-                <input type="radio" checked={skill[1].proficiency} readOnly />
-                <label>
-                  <div className="list-item skills-points">
-                    {skill[1].advantage >= 0 && '+'}
-                    {skill[1].advantage}{' '}
-                  </div>
-                  <div className="list-item text-capitalize skills-name">
-                    {skill[0]}
-                  </div>
-                  <div className="list-item">WIS</div>
-                </label>
-              </div>
-            );
-          })}
         </div>
       </div>
     </div>
