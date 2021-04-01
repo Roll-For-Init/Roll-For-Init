@@ -25,6 +25,13 @@ import { v4 as uuidv4 } from 'uuid';
 import CharacterService from '../services/character.service';
 
 export const submitCharacter = characterInfo => dispatch => {
+  console.log(characterInfo);
+
+  //! temporarily add to redux before the database to test redux
+  dispatch({
+    type: SUBMIT_CHARACTER_SUCCESS,
+    payload: characterInfo,
+  });
   return CharacterService.createCharacter(characterInfo).then(
     res => {
       dispatch({
@@ -150,6 +157,6 @@ export const setPage = (charID, page) => dispatch => {
   dispatch({ type: SET_PAGE, payload: { charID, page } });
 };
 export const setEquipment = (charID, equipment) => dispatch => {
-    console.log('SET_EQUIPMENT', charID, equipment);
-    dispatch({type: SET_EQUIPMENT, payload: {charID, equipment}})
-}
+  console.log('SET_EQUIPMENT', charID, equipment);
+  dispatch({ type: SET_EQUIPMENT, payload: { charID, equipment } });
+};

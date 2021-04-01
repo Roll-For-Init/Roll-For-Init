@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSpells } from '../../redux/actions/characters';
+import { setSpells, submitCharacter } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
@@ -155,6 +155,13 @@ SpellList.propTypes = {
 };
 
 export const Spells = ({ charID, setPage }) => {
+  const history = useHistory();
+
+  const onNext = () => {
+    setPage({ index: 5, name: 'spells' });
+    window.scrollTo(0, 0);
+  };
+
   const character = useSelector(state => state.characters[charID]);
   const [spellChoices, setSpellChoices] = useState(null);
   const dispatch = useDispatch();
@@ -214,10 +221,8 @@ export const Spells = ({ charID, setPage }) => {
   };
 
   const validateAndStore = () => {
-    console.log(character);
-    CharacterService.createCharacter(
-      CharacterService.validateCharacter(character)
-    );
+    // console.log(character);
+    dispatch(submitCharacter(CharacterService.validateCharacter(character)));
     history.push('/dashboard');
   };
 
