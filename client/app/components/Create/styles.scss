@@ -39,6 +39,7 @@
       text-transform: capitalize;
       border-radius: 8px;
     }
+
     .dropdown-menu {
       min-width: 250px;
       width: 400px;
@@ -47,30 +48,130 @@
       border: $maroon 3px solid !important;
       border-top: 0px !important;
     }
+
     .dropdown-toggle::after {
       float: right;
       margin-top: 12px;
     }
+
     .options-dropdown {
       color: $dark-blue;
       background-color: $medium-off-white;
     }
+
     .abilities-dropdown {
       font-size: 24px;
       margin-top: 20px;
     }
+
+    .indie-dice-card {
+      border: none;
+      padding: 5px;
+    }
+
+    .dice-roll-card {
+      width: fit-content;
+      padding: 1rem;
+      margin-top: 0;
+
+      .dice {
+        display: inline-block;
+        padding-bottom: 0;
+        vertical-align: middle;
+        margin-right: 0.4rem;
+        div {
+          display: inline-block;
+          color: $off-white;
+          width: 1.4rem;
+          height: 1.4rem;
+          font-size: 1.4rem;
+          line-height: 1;
+          margin: 0;
+          color: $maroon;
+          vertical-align: middle;
+        }
+        .dropped {
+          color: $maroon-translucent;
+        }
+      }
+      h4 {
+        display: inline-block;
+        margin: auto;
+        line-height: 1;
+        vertical-align: middle;
+      }
+    }
+
     .point-card {
       background-color: $light-maroon-translucent;
       padding: 10px;
       min-height: 250px;
-      margin-right: 15px;
-      margin-left: 15px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+
+    .points-remaining-card {
+      min-width: 7rem;
+
+      i {
+        padding-right: 0.5rem;
+        display: inline-block;
+      }
+      h4 {
+        display: inline-block;
+      }
+    }
+
+    // select {
+    //   -webkit-appearance: none;
+    //   -moz-appearance: none;
+    //   border-radius: 8px;
+    //   border: 0px;
+    //   background: $off-white;
+    // }
+
+    .points-header {
+      border-radius: 8px;
+      margin: 5px auto;
+      padding: 5px;
+      background-color: $off-white;
+      color: $dark-blue;
+      width: fit-content;
+    }
+
+    .point-button {
+      margin: 0px 5px !important;
+      box-shadow: none !important;
+      width: auto;
+      padding: 10px;
     }
 
     .text-background {
       background-color: $medium-off-white;
       border: $maroon 3px solid !important;
       color: $dark-blue;
+    }
+
+    .table {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 0;
+
+      > div {
+        flex: 1;
+        max-width: 10rem;
+      }
+    }
+
+    .table-data {
+      color: $dark-blue;
+      padding-left: 5px;
+      padding-right: 5px;
+      margin: 0;
+    }
+
+    .vertical-divider {
+      border-right: 1.5px solid $maroon;
     }
 
     .dd-wrapper {
@@ -105,8 +206,7 @@
 }
 
 .menu-button {
-  margin-left: 0px;
-  margin-right: 0px;
+  //margin: 0 0 20px 0;
   border-radius: 8px !important;
   min-width: 150px;
   max-width: 80%;
@@ -158,6 +258,16 @@
   }
 }
 
+.dd-container {
+  margin: 5px 0;
+  &:first-child {
+    margin-top: 0;
+  }
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
 .card {
   color: $dark-blue;
   margin: 5px auto;
@@ -170,6 +280,21 @@
   background-color: $off-white;
   border: 3px solid $maroon;
 }
+
+.character-card {
+  margin: 5px 0px;
+  border: none;
+  //padding: 10px 5px;
+  //height: 60px;
+  cursor: pointer;
+  &:first-child {
+    margin-top: 0px;
+  }
+  &:last-child {
+    margin-bottom: 0px;
+  }
+}
+//.character-card:first-child
 
 .shadow-card {
   box-shadow: 0px 1px 10px hsla(0, 0, 0, 67%);
@@ -185,8 +310,29 @@
 
 .floating-card {
   padding: 10px;
-  margin-right: 5px;
-  margin-left: 5px;
+  margin: 5px;
+}
+
+.warning-card {
+  display: flex;
+  flex-direction: row;
+  padding: 10px 15px;
+  max-width: 400px;
+
+  .icon {
+    flex: 0 1 2rem;
+    font-size: 2rem;
+    margin: auto 1rem auto 0;
+    vertical-align: middle;
+    line-height: 1;
+  }
+  .text {
+    flex: 1;
+    color: $dark-blue;
+    text-align: left;
+    font-size: 1rem;
+    margin: auto;
+  }
 }
 
 .card-title {
@@ -197,6 +343,9 @@
   margin-top: 0px;
 
   h4 {
+    margin: 0;
+  }
+  h5 {
     margin: 0;
   }
 }
@@ -242,6 +391,20 @@
   margin-bottom: 5px;
 }
 
+.name-card {
+  padding: 5px;
+  max-width: 200px;
+  margin: 0 auto;
+  box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
+}
+
+.modal-button {
+  font-size: 1.25rem;
+  max-width: 300px;
+  padding: 10px 20px;
+  margin: 20px auto 0 auto;
+}
+
 .drag-drop-card {
   max-width: 500px;
   padding: 5px;
@@ -251,24 +414,68 @@
 }
 
 .equipment-card {
+  margin: 0;
   padding: 10px;
   text-align: left;
   color: $dark-blue;
+  &.selected-card {
+    border: 3px solid $green;
+    -webkit-box-shadow: 0 0 5px 1px $green;
+    -moz-box-shadow: 0 0 5px 1px $green;
+    box-shadow: 0 0 5px 1px $green;
+  }
+  .equipment-card-title {
+    line-height: 1;
+    color: $dark-blue;
+    h5 {
+      margin-bottom: 6px;
+    }
+  }
+  .equipment-card-body {
+    margin: 0;
+    line-height: normal;
+    color: $dark-blue;
+    .equipment-item {
+      margin: 0;
+      color: $dark-blue;
+    }
+    .equipment-item-info {
+      margin: 0;
+      text-transform: lowercase;
+    }
+  }
+  .separator {
+    display: flex;
+    align-items: center;
+    text-align: center;
+    &::before,
+    &::after {
+      content: '';
+      flex: 1;
+      border-bottom: 1.5px solid $dark-blue-disabled;
+      border-radius: 0.75px;
+    }
+    &:not(:empty)::before {
+      margin-left: 15px;
+    }
+    &:not(:empty)::after {
+      margin-right: 15px;
+    }
+    .amp {
+      font-family: 'IM Fell English';
+      color: $dark-blue;
+      font-size: 2rem;
+      padding: 0 5px;
+    }
+  }
 }
-
-.equipment-card-title {
-  color: $dark-blue;
-}
-
-.equipment-card-body {
-  color: $dark-blue;
-}
-
-.equipment-item {
-  color: $dark-blue;
-}
-.equipment-item-info {
-  text-transform: lowercase;
+hr {
+  display: block;
+  //height: 2px;
+  border-top: 1.5px solid $dark-blue;
+  border-radius: 1px;
+  margin: 4px auto;
+  padding: 0px;
 }
 
 .same-line {
@@ -276,45 +483,6 @@
   color: $dark-blue;
   display: flex;
   justify-content: space-between;
-}
-
-.separator {
-  display: flex;
-  align-items: center;
-  text-align: center;
-}
-
-.separator::before,
-.separator::after {
-  content: '';
-  flex: 1;
-  border-bottom: 1.5px solid $dark-blue-disabled;
-  border-radius: 0.75px;
-}
-
-.separator:not(:empty)::before {
-  margin-left: 15px;
-}
-
-.separator:not(:empty)::after {
-  margin-right: 15px;
-}
-
-.amp {
-  font-family: 'IM Fell English';
-  color: $dark-blue;
-  font-size: 2rem;
-  padding: 0 5px;
-}
-
-hr {
-  display: block;
-  height: 2px;
-  border: 0;
-  border-top: 1.5px solid $dark-blue;
-  border-radius: 0.75px;
-  margin: 5px auto;
-  padding: 0;
 }
 
 .upload-buttons {
@@ -325,7 +493,7 @@ hr {
 }
 
 .description-card {
-  padding: 10px 10px;
+  padding: 10px;
   text-align: left;
   width: 100%;
   max-width: 620px;
@@ -337,135 +505,306 @@ hr {
     padding: 0px;
   }
 
-  p {
+  p,
+  td {
     margin: 0 auto;
+    line-height: normal;
+  }
+  table {
+    width: 100%;
+  }
+}
+
+.fancy-card {
+  border-image: url('../../../public/assets/imgs/border-maroon.png') 156.375 /
+    156.375 stretch;
+  padding: 10px 30px;
+  width: auto;
+}
+.icon-grid {
+  max-width: 500px;
+  padding-bottom: 25px;
+  margin: 20px auto;
+  display: grid;
+  grid-gap: 20px;
+
+  .icon-card-container {
+    display: flex;
+    flex-direction: column;
+
+    .icon-card-label {
+      margin: 0;
+      background-color: $off-white;
+      cursor: pointer;
+      height: 150px;
+      -webkit-transition: background-color 0.25s ease-out;
+      -moz-transition: background-color 0.25s ease-out;
+      -o-transition: background-color 0.25s ease-out;
+      transition: background-color 0.25s ease-out;
+      & > p {
+        font-size: 1.2em;
+        margin: 5px auto;
+        color: $dark-blue;
+      }
+      &:hover {
+        background-color: $medium-off-white;
+      }
+      &:hover .icon-card {
+        background-color: $dark-blue;
+      }
+      &:hover .card-icon {
+        transform: scale(1.1);
+      }
+
+      .icon-card {
+        box-shadow: -1px 1px 2px rgba(0, 0%, 0%, 67%);
+        height: 100%;
+        margin: 0;
+        background-color: $medium-blue;
+        -webkit-transition: background-color 0.25s ease-out;
+        -moz-transition: background-color 0.25s ease-out;
+        -o-transition: background-color 0.25s ease-out;
+        transition: background-color 0.25s ease-out;
+
+        .card-icon {
+          transition: transform 0.25s;
+          margin: auto;
+          max-width: 105px;
+          max-height: 80px;
+          width: auto;
+          height: auto;
+        }
+      }
+    }
+  }
+}
+
+@media (min-width: 768px) {
+  .icon-grid {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 992px) {
-    .card-columns {
-        column-count: 1;
-    }
+  .card-columns {
+    column-count: 1;
+  }
+  .icon-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
 }
 
-.spell-custom-container {
-    &>.container {
-        height: auto;
-        padding-left: 0;
-        padding-right: 0;
-        &>.card-columns {
-            column-count: 1;
-            widows: 2;
-            column-gap: 0;
-            .card {
-                width: 302.5px;
-                margin-bottom: .3rem;
-            }
-            @media (min-width: 992px) {
-                column-count: 2;
-            }
-        }
-    }
+.side-bar-icon-container {
+  margin: 20px auto;
+  //height: 70px;
+  max-width: 180px;
 }
-.spell-card {
-    padding: 8px;
+
+.side-bar-icon-card {
+  border: none;
+  //background: none;
+  max-width: fit-content;
+  padding: 10px;
+  //   width: 70px;
+  //   height: 70px;
+}
+
+.side-bar-icon {
+  display: flex;
+  justify-content: space-between;
+  margin: 0 10px;
+  max-width: 100px;
+  max-height: 50px;
+  width: auto;
+  height: auto;
+  &:first-child {
+    margin-left: 0;
+  }
+  &:last-child {
+    margin-right: 0;
+  }
+}
+
+.button-icon-container {
+  display: flex;
+  position: absolute;
+  right: 10px;
+  top: 0;
+  bottom: 0;
+  .button-icon {
+    max-width: 40px;
+    max-height: 22px;
+    margin: auto;
+    width: auto;
     height: auto;
-    margin-left: 0px;
-    margin-right: 0px;
-    &>.container-fluid {
-        padding-left: 0;
-        padding-right: 0;
-        &>.row {
-            margin-right: auto;
-            margin-left: auto;
-            &>.spell-title {
-                font-size: 1.25rem;
-                display: inline-block;
-                color: $dark-blue;
-                padding: 0;
-                text-align: left;
-            }
-            &>.btn-outline-success {
-                border: {
-                    style: solid !important;
-                    color: $green !important;
-                    width: 3px !important;
-                    radius: 8px;
-                }
-                color: $dark-blue;
-                box-shadow: none;
-                float: right;
-                font-size: 1rem;
-                padding: 2px 5px;
-                max-height: 1.67rem;
-                line-height: 1;
-                flex-grow: 0;
-                margin: auto 0px;
-        
-                &:hover, &:active {
-                    background-color: $medium-off-white;
-                }
-            }
-            &>.btn-clicked {
-                @extend .btn-outline-success;
-                background-color: $green;
-                color: $off-white;
-
-                &:hover {
-                    background-color: $medium-green;
-                    border-color: $medium-green !important;
-                }
-                &:active {
-                    background-color: $dark-green;
-                }
-                //how to make it go back to default immediately on click?
-                
-            }
-            &>.btn-inactive {
-                @extend .btn-outline-success;
-                background-color: $medium-off-white;
-                color: $dark-blue-disabled;
-                &:hover {
-                    background-color: $medium-off-white;
-                    color: $dark-blue-disabled;
-                }
-            }
-        }
-    }
-
-    hr {
-        margin: {
-            top: 4px;
-            bottom: 4px;
-            right: -4px;
-            left: -4px;
-        }
-        border: {
-            width: 2px;
-            color: $dark-blue;
-            radius: 1px;
-        }
-    }
-
-    .spell-desc {
-        text-align: left;
-        line-height: normal;
-        color: $dark-blue !important;
-
-        &>div {
-            color: $dark-blue !important;
-        }
-        &>p {
-            color: $dark-blue !important;
-            margin-bottom: 0;
-            &>span {
-                float: right;
-                color: $dark-blue !important;
-            }
-        }
-        
-    }
+  }
 }
+
+.right-side-bar-container {
+  padding: 10px;
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 40px;
+  left: 0;
+  display: flex;
+  flex-direction: column;
+
+  //   height: 93vh;
+  .race-silhouette-container {
+    //height: 70%;
+    flex: 1;
+    position: relative;
+    margin: 10px 0;
+    img {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: auto;
+      height: auto;
+      max-width: 125%;
+      max-height: 100%;
+    }
+  }
+  .side-bar-card {
+    overflow-y: scroll;
+    height: 150px;
+    line-height: normal;
+    width: 100%;
+    padding: 5px;
+    //flex: 1;
+  }
+}
+
+.spell-card {
+  padding: 8px;
+  height: auto;
+  margin-left: 0px;
+  margin-right: 0px;
+  & > .container-fluid {
+    padding-left: 0;
+    padding-right: 0;
+    & > .row {
+      margin-right: auto;
+      margin-left: auto;
+      & > .spell-title {
+        font-size: 1.25rem;
+        display: inline-block;
+        color: $dark-blue;
+        padding: 0;
+        text-align: left;
+      }
+      & > .btn-outline-success {
+        border: {
+          style: solid !important;
+          color: $green !important;
+          width: 3px !important;
+          radius: 8px;
+        }
+        color: $dark-blue;
+        box-shadow: none;
+        float: right;
+        font-size: 1rem;
+        padding: 2px 5px;
+        max-height: 1.67rem;
+        line-height: 1;
+        flex-grow: 0;
+        margin: auto 0px;
+
+        &:hover,
+        &:active {
+          background-color: $medium-off-white;
+        }
+      }
+      & > .btn-clicked {
+        @extend .btn-outline-success;
+        background-color: $green;
+        color: $off-white;
+
+        &:hover {
+          background-color: $medium-green;
+          border-color: $medium-green !important;
+        }
+        &:active {
+          background-color: $dark-green;
+        }
+        //how to make it go back to default immediately on click?
+      }
+      & > .btn-inactive {
+        @extend .btn-outline-success;
+        background-color: $medium-off-white;
+        color: $dark-blue-disabled;
+        &:hover {
+          background-color: $medium-off-white;
+          color: $dark-blue-disabled;
+        }
+      }
+    }
+  }
+
+  hr {
+    margin: {
+      top: 4px;
+      bottom: 4px;
+      right: -4px;
+      left: -4px;
+    }
+    border: {
+      width: 1.5px;
+      color: $dark-blue;
+      radius: 1px;
+    }
+  }
+
+  .spell-desc {
+    text-align: left;
+    line-height: normal;
+    color: $dark-blue !important;
+
+    & > div {
+      color: $dark-blue !important;
+    }
+    & > p {
+      color: $dark-blue !important;
+      margin-bottom: 0;
+      & > span {
+        float: right;
+        color: $dark-blue !important;
+      }
+    }
+  }
+}
+
+.my-masonry-grid {
+  display: -webkit-box; /* Not needed if autoprefixing */
+  display: -ms-flexbox; /* Not needed if autoprefixing */
+  display: flex;
+  margin-left: -10px; /* gutter size offset */
+  width: auto;
+  margin-top: 5px;
+}
+.my-masonry-grid_column {
+  padding-left: 10px; /* gutter size */
+  background-clip: padding-box;
+}
+.my-masonry-grid_column > div {
+  margin-bottom: 10px; /* space between items */
+  margin-top: 0px;
+}
+
+// /* Optional, different gutter size on mobile */
+// @media (max-width: 700px) {
+//   .my-masonry-grid {
+//     margin-left: -15px; /* gutter size offset */
+//   }
+//   .my-masonry-grid_column {
+//     padding-left: 15px; /* gutter size offset */
+//   }
+//   .my-masonry-grid_column > div {
+//     margin-bottom: 15px; /* space between items */
+//   }
+// }
 
 .read-more-less--more,
 .read-more-less--less {
@@ -550,10 +889,44 @@ hr {
 }
 
 .btn-floating {
+  position: -webkit-sticky;
   position: sticky;
   bottom: 25px;
   z-index: 10;
   margin: 0 25px 25px;
+}
+
+.btn-card {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  color: $medium-green;
+  font-size: 1rem;
+  max-width: 70px;
+  margin: 0 0px 10px 0px;
+  padding: 5px;
+  box-shadow: none;
+  line-height: 1;
+  max-height: 1.67rem;
+}
+.btn-outline-success {
+  &:hover {
+    background-color: $medium-green;
+  }
+  &:focus {
+    color: $off-white;
+    background-color: $dark-green;
+  }
+}
+.btn-clicked {
+  color: $off-white;
+  background-color: $medium-green;
+  &:hover {
+    color: $off-white;
+  }
+  &:focus {
+    color: $off-white;
+  }
 }
 
 // .read-animate {

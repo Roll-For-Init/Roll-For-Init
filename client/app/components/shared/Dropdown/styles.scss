@@ -6,7 +6,7 @@
   flex-wrap: nowrap;
   max-width: 500px;
   width: 100%;
-  margin: 5px auto;
+  margin: 0 auto;
   text-transform: capitalize;
   position: relative;
   .dd-label {
@@ -43,11 +43,12 @@
     }
     &.eq-card {
       box-shadow: none;
-      border: 2px solid $maroon;
+      border: 1px solid $maroon;
     }
     &__title {
       flex: 1;
       color: $dark-blue;
+      text-overflow: ellipsis;
     }
     &__action {
       padding-left: 10px;
@@ -70,13 +71,23 @@
     border: 3px solid $maroon;
     border-radius: 8px;
     max-height: 19.5rem;
+    &.eq-card {
+      box-shadow: none;
+      border: 1px solid $maroon;
+      &.scroll::-webkit-scrollbar-track {
+        margin: 1px 0;
+      }
+    }
     li {
       list-style-type: none;
 
       button {
         color: $dark-blue;
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+        margin: auto;
         background-color: $off-white;
         font-size: 16px;
         padding: 5px 10px;
@@ -84,8 +95,11 @@
         border-bottom: 1px solid rgb(0, 0, 0);
         width: 100%;
         text-align: left;
-        margin: 0 auto;
         text-transform: none;
+
+        h5 {
+          margin: 4px auto;
+        }
 
         &.selected {
           background-color: $medium-off-white;

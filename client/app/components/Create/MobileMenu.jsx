@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
+import useSelector from 'react-redux';
 
-function MobileMenu({ buttonNames, page, setPage }) {
+function MobileMenu({ buttonNames, page, pages, setPage }) {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen(!open);
 

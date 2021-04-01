@@ -1,4 +1,4 @@
-const axios = require('./axios');
+const axios = require('axios');
 const placeholderDescription = [
   'Please see the 5e SRD for more details @ https://dnd.wizards.com/articles/features/systems-reference-document-srd',
 ];
@@ -16,65 +16,67 @@ const fullAbScore = {
 };
 
 const makeEquipmentDesc = async (item, itemDetails) => {
-  let desc;
-  if (
-    itemDetails.gear_category &&
-    itemDetails.gear_category.index == 'equipment-packs'
-  ) {
-    desc = {
-      cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
-      contents: itemDetails.contents,
-    };
-  } else if (
-    itemDetails.equipment_category.index == 'weapon' &&
-    itemDetails.special == undefined
-  ) {
-    desc = {
-      category: `${itemDetails.category_range} Weapon`,
-      damage: `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`,
-      cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
-      weight: itemDetails.weight,
-      desc: itemDetails.properties.map(prop => prop.name).join(', '),
-    };
-  } else if (itemDetails.equipment_category.index == 'armor') {
-    let armorClassDeets = itemDetails.armor_class;
-    let ac = armorClassDeets.dex_bonus
-      ? `${armorClassDeets.base} + Dex. modifier`
-      : `${armorClassDeets.base}`;
-    desc = {
-      category: `${itemDetails.armor_category} Armor`,
-      ac: ac,
-      cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
-      weight: itemDetails.weight,
-    };
-    if (itemDetails.str_minimum > 0) desc.strength = itemDetails.str_minimum;
-    if (itemDetails.stealth_disadvantage) desc.desc = 'stealth disadvantage';
-  } else {
-    desc = {
-      category: null,
-      quantity: null,
-      cost: null,
-      weight: null,
-      desc: null,
-    };
-    let keys = Object.keys(itemDetails);
-    for (key in keys) {
-      if (key.includes('category') && !key.includes('equipment')) {
-        desc.category =
-          typeof itemDetails[key] == 'string'
-            ? itemDetails[key]
-            : itemDetails[key].name;
-        break;
-      }
+    let desc;
+    if(itemDetails.gear_category && itemDetails.gear_category.index=="equipment-packs") {
+        desc = 
+        {
+            cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+            contents: itemDetails.contents
+        }
     }
-    if (itemDetails.quantity != undefined) desc.quantity = itemDetails.quantity;
-    if (itemDetails.cost != undefined)
-      desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
-    if (itemDetails.weight != undefined) desc.weight = itemDetails.weight;
-    if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
-    if (itemDetails.special != undefined)
-      desc.desc = itemDetails.special.join(' ');
-  }
+    else if (itemDetails.equipment_category.index=="weapon" && itemDetails.special == undefined) {
+        desc = 
+        {
+            category: `${itemDetails.category_range} Weapon`,
+            damage: `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`,
+            cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+            weight: itemDetails.weight,
+            desc: itemDetails.properties.map(prop=>prop.name).join(', ')
+        }
+        
+    }
+    else if (itemDetails.equipment_category.index=="armor") {
+        let armorClassDeets = itemDetails.armor_class;
+        let ac = armorClassDeets.dex_bonus ? `${armorClassDeets.base} + Dex. modifier` : `${armorClassDeets.base}`
+        desc = 
+        {
+            category: `${itemDetails.armor_category} Armor`,
+            ac: ac,
+            cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+            weight: itemDetails.weight,
+            dex_bonus: armorClassDeets.dex_bonus,
+            max_bonus: armorClassDeets.max_bonus,
+            base: armorClassDeets.base,
+            str_minimum: itemDetails.str_minimum, 
+            stealth_disadvantage: itemDetails.stealth_disadvantage           
+        }
+        if(itemDetails.str_minimum > 0) desc.strength = itemDetails.str_minimum;
+        if(itemDetails.stealth_disadvantage) desc.desc = 'stealth disadvantage'
+    }
+    else {
+        desc = {
+            category: null,
+            quantity: null,
+            cost: null,
+            weight: null,
+            desc: null
+        }
+        let keys = Object.keys(itemDetails);
+        for(key in keys) {
+            if(key.includes("category") && !key.includes("equipment")) {
+                desc.category = typeof itemDetails[key] == 'string' ? itemDetails[key] : itemDetails[key].name;
+                break;
+            }
+        }
+        if(itemDetails.weapon_category != undefined) desc.category = `${itemDetails.category_range} Weapon`;
+        if(itemDetails.damage != undefined) desc.damage = `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`;
+        if(itemDetails.quantity != undefined) desc.quantity = itemDetails.quantity;
+        if (itemDetails.cost != undefined) desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
+        if (itemDetails.weight != undefined) desc.weight = itemDetails.weight;
+        if (itemDetails.special != undefined) desc.special = itemDetails.special.join(' ');
+        if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
+        else if(itemDetails.properties != undefined) desc.desc = itemDetails.properties.map(prop=>prop.name).join(', ');
+    }
   return desc;
 };
 const equipmentOptions = async (container, options, key) => {
@@ -137,58 +139,77 @@ const equipmentOptions = async (container, options, key) => {
 };
 
 const optionsHelper = async (container, options, key) => {
-  const promises = [];
-  let optionSet = {
-    header: '',
-    options: [],
-    choose: 0,
-  };
-  optionSet.choose = options.choose;
-  if (options.type.toLowerCase().includes('feature')) {
-    optionSet.header = container.name;
-    optionSet.desc = container.desc;
-  } else if (options.type.toLowerCase().includes('language'))
-    optionSet.header = `extra ${options.type}`;
-  else optionSet.header = options.type.replace('_', ' ');
-  for (let option of options.from) {
-    if (key.toLowerCase().includes('ability_bonus')) {
-      optionSet.header = `+${options.from[0].bonus} Ability Bonus`;
-      option.ability_score.full_name = fullAbScore[option.ability_score.name];
-      optionSet.options.push(option.ability_score);
-    } else if (Object.keys(option)[0].includes('category')) {
-      //if it try to not do this multiple times there are race conditions
-      let optionObject = option[Object.keys(option)[0]];
-      optionSet.header = optionObject.name;
-      promises.push(
-        axios.get(optionObject.url).then(cat => {
-          optionSet.options = cat.data.results;
-        })
-      );
-    } else if (Object.keys(option)[0].includes('option')) {
-      let thekey = Object.keys(option)[0];
-      let optionObject = option[thekey];
-      if (key.includes('category')) {
-        optionObject.header = optionObject.from[thekey].name;
-      }
-      optionSet.options.push(optionObject);
-    } else if (option['0']) {
-      let options = [];
-      for (let i = 0; option[i] != undefined; i++) {
-        let optionObject;
-        optionObject = option[i];
-        options.push(optionObject);
-      }
-      optionSet.options.push(options);
-    } else if (option.index.toLowerCase().includes('skill')) {
-      let optionName = option.name.substring(option.name.indexOf(':') + 2);
-      option.name = optionName;
-      let optionObject = option;
-      optionSet.options.push(optionObject);
-    } else {
-      let optionObject = option;
-      optionSet.options.push(optionObject);
+    const promises = [];
+    let optionSet = {
+        header: '',
+        options: [],
+        type: '',
+        choose: 0,
+      }  
+    optionSet.choose = options.choose;
+    if(options.type.toLowerCase().includes("feature")) {
+      optionSet.header = container.name;
+      optionSet.desc = container.desc;
+      optionSet.type = "feature"
+    } 
+    else if (options.type.toLowerCase().includes("trait")) {
+        console.log(options);
+        optionSet.header = options.header ? options.header : options.type.replace('_', " ");
+        optionSet.type = "trait";
     }
-  }
+    else if (options.type.toLowerCase().includes('language')) {
+      optionSet.header = `extra ${options.type}`;
+      optionSet.type = options.type;
+    }
+    else {
+        optionSet.header = options.type.replace('_', " ");
+        optionSet.type = options.type;
+    }
+    for (let option of options.from) {
+        if (key.toLowerCase().includes('ability_bonus')) {
+            optionSet.header = `+${options.from[0].bonus} Ability Bonus`
+            option.ability_score.full_name = fullAbScore[option.ability_score.name];
+            optionSet.options.push(option.ability_score);
+        }
+        else if (Object.keys(option)[0].includes("category")) { //if it try to not do this multiple times there are race conditions
+            let optionObject = option[Object.keys(option)[0]];
+            optionSet.header=optionObject.name;
+            promises.push(axios.get(optionObject.url).then((cat) => {
+                optionSet.options = cat.data.results;
+            }));
+        }
+        else if (Object.keys(option)[0].includes("option")) {
+            let thekey = Object.keys(option)[0];
+            let optionObject = option[thekey];
+            if(key.includes("category")) {
+                optionObject.header=optionObject.from[thekey].name;
+            }
+            optionSet.options.push(optionObject);
+        }
+        else if (option['0']) {
+            let options=[];
+            for (let i = 0; option[i] != undefined; i++) {
+                let optionObject;
+                optionObject = option[i];
+                options.push(optionObject)
+            }
+            optionSet.options.push(options);
+        } 
+        else if (
+          option.index.toLowerCase().includes('skill')
+        ) 
+        {
+            let optionName = option.name.substring(option.name.indexOf(':') + 2);
+            option.name = optionName;
+            let optionObject = option;
+            optionSet.options.push(optionObject);
+            optionSet.type = "skill";
+        } 
+        else {
+            let optionObject = option;
+            optionSet.options.push(optionObject);
+        }
+    }
   if (optionSet.header == '') optionSet = null;
   return Promise.all(promises).then(() => {
     return { options: optionSet };
@@ -356,17 +377,25 @@ const getRaceMiscDescriptions = async race => {
 };
 
 const propogateRacePointer = async racePointer => {
-  const promises = [];
-  const raceContainer = {
-    options: [],
-    profCount: 0,
-    proficiencies: {},
-    main: {},
-    sub: {},
-    equipment_options: [],
-  };
+    console.log(racePointer);
+    const promises =[];
+    const raceContainer = {
+        options: [],
+        profCount: 0,
+        proficiencies: {
+            Armor: [],
+            Weapons: [],
+            Tools: [],
+            Languages: [],
+            Throws: []
+        },
+        main: {},
+        sub: {},
+        equipment_options: []
+    };
   const race = (await axios.get(racePointer.url)).data;
-  const subrace = racePointer.hasOwnProperty('subrace')
+
+  const subrace = racePointer.subrace
     ? (await axios.get(racePointer.subrace.url)).data
     : null;
   if (subrace) promises.push(propogateSubracePointer(subrace, raceContainer));
@@ -412,10 +441,19 @@ const classCaller = async classPointer => {
   const promises = [];
   const classContainer = {
     options: [],
-    proficiencies: {},
+    proficiencies: {
+        Armor: [],
+        Weapons: [],
+        Tools: [],
+        Languages: [],
+        Throws: []
+    },
     features: [],
     profCount: 0,
-    main: {},
+    main: {
+
+    },
+    levels: [],
     equipment_options: [],
     spellcasting: null,
     subclass: null,
@@ -596,14 +634,20 @@ const getBackgroundList = async () => {
   let backgroundList = backgroundPointerList.data.results;
 };
 
-const backgroundCaller = async url => {
-  const promises = [];
-  let container = {
-    profCount: 0,
-    proficiencies: {},
-    options: [],
-    equipment_options: [],
-  };
+const backgroundCaller = async (url) => {
+    const promises = [];
+    let container = {
+        profCount: 0,
+        proficiencies: {
+            Armor: [],
+            Weapons: [],
+            Tools: [],
+            Languages: [],
+            Throws: []
+        },
+        options: [], 
+        equipment_options: [],
+    };
 
   const background = (await axios.get(url)).data;
   Object.keys(background).some(key => {

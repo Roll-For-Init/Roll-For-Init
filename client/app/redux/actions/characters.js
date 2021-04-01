@@ -17,6 +17,7 @@ import {
   SET_ABILITIES,
   SET_SPELLS,
   SET_PAGE,
+  SET_EQUIPMENT,
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -148,3 +149,7 @@ export const setPage = (charID, page) => dispatch => {
   console.log('SET_PAGE', charID, page);
   dispatch({ type: SET_PAGE, payload: { charID, page } });
 };
+export const setEquipment = (charID, equipment) => dispatch => {
+    console.log('SET_EQUIPMENT', charID, equipment);
+    dispatch({type: SET_EQUIPMENT, payload: {charID, equipment}})
+}

@@ -3,6 +3,7 @@ import React, { useEffect, useState, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CharacterService from '../../redux/services/character.service';
 // import { clearSelectedInfo, getClassInfo } from '../../redux/actions';
+import poop from '../../../public/assets/imgs/icons/off-white/class/barbarian.png';
 import Dropdown from '../shared/Dropdown';
 import { setClass } from '../../redux/actions';
 
@@ -25,6 +26,22 @@ const Class = ({ charID, setPage }) => {
     setViewClass(true);
   };
 
+  function importAll(r) {
+    let images = {};
+    r.keys().map((item, index) => {
+      images[item.replace('./', '')] = r(item);
+    });
+    return images;
+  }
+
+  const classIconsOffWhite = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/off-white/class',
+      false,
+      /\.(png)$/
+    )
+  );
+
   return (
     <div className="class position-relative">
       {!viewClass ? (
@@ -32,19 +49,24 @@ const Class = ({ charID, setPage }) => {
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Class</h2>
           </div>
-          <div className="dropdown btn-group-vertical w-100 mt-3">
+          <div className="icon-grid">
             {classes &&
               classes.map((theClass, idx) => (
-                <div className="w-100 h-auto" key={idx}>
-                  <button
-                    className="btn btn-secondary btn-lg m-0 mb-3 options"
-                    type="button"
-                    onClick={() =>
-                      selectClass({ index: theClass.name, url: theClass.url })
-                    }
-                  >
-                    {theClass.name}
-                  </button>
+                <div className="icon-card-container" key={idx}>
+                  <div className="card icon-card-label">
+                    <div
+                      className="card icon-card"
+                      onClick={() =>
+                        selectClass({ index: theClass.name, url: theClass.url })
+                      }
+                    >
+                      <img
+                        className="card-icon"
+                        src={classIconsOffWhite[`${theClass.index}.png`]}
+                      />
+                    </div>
+                    <p>{theClass.name}</p>
+                  </div>
                 </div>
               ))}
           </div>
@@ -98,8 +120,13 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           setClass(charID, { equipment_options: theClass.equipment_options })
         );
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
-        dispatch(setClass(charID, { spellcasting: theClass.spellcasting }));
-        dispatch(setClass(charID, { subclass: theClass.subclass }));
+        dispatch(setClass(charID, {spellcasting: theClass.spellcasting===null ? null : {...theClass.spellcasting, ...theClass.main.spellcasting}}))
+        dispatch(setClass(charID, {subclass: theClass.subclass}))
+        dispatch(setClass(charID, {features: theClass.features}))
+        dispatch(setClass(charID, {saving_throws: theClass.main.saving_throws}))
+        dispatch(setClass(charID, {hit_die: theClass.main.hit_die}))
+        dispatch(setClass(charID, {level: 1}))
+        dispatch(setClass(charID, {levels: theClass.levels}))
       });
   }, []);
 
@@ -137,10 +164,10 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             <h4>{main.name}</h4>
           </div>
           <div>
-            <div className="w-auto d-inline-block card content-card floating-card">
+            <div className="w-auto d-inline-block card content-card floating-card mb-0">
               Hit Die - {main.hit_die}
             </div>
-            <div className="w-auto d-inline-block card content-card floating-card">
+            <div className="w-auto d-inline-block card content-card floating-card mb-0">
               SAVING THROWS -{' '}
               {main.saving_throws.map((throws, idx) => (
                 <small key={idx}>
@@ -154,10 +181,11 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         {options.length > 0 && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Class Options</h4>
-            <div>
+            <>
               {options.map((option, index) => {
                 return (
-                  <Dropdown
+                  <div className="dd-container" key={index}>
+                    <Dropdown
                     ddLabel={`${option.header}`}
                     title={`Choose ${option.choose}`}
                     items={option.options}
@@ -167,16 +195,16 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                       userChoices[
                         `${option.header
                           .toLowerCase()
-                          .replace(' ', '-')}-${index}`
+                          .replace(' ', '-')}-${option.type}-${index}`
                       ]
                     }
                     setSelection={setUserChoices}
-                    classname="choice"
+                    classname="dd-choice"
                     stateKey={`${option.header
                       .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
-                    key={index}
-                  />
+                      .replace(' ', '-')}-${option.type}-${index}`}
+                    />
+                  </div>
                 );
               })}
               {subclass?.subclass_options?.map((option, index) => {
@@ -191,28 +219,28 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                       userChoices[
                         `${option.header
                           .toLowerCase()
-                          .replace(' ', '-')}-${index}`
+                          .replace(' ', '-')}-${option.type}-${index}`
                       ]
                     }
                     setSelection={setUserChoices}
                     classname="choice"
                     stateKey={`${option.header
                       .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
+                      .replace(' ', '-')}-${option.type}-${index}`}
                     key={index}
                   />
                 );
               })}
-            </div>
+            </>
           </div>
         )}
         <div className="card translucent-card">
           <h4 className="card content-card card-title">
             Starting Proficiencies
           </h4>
-          <div className="card content-card description-card">
+          <div className="card content-card description-card mb-0">
             {Object.entries(proficiencies).map(prof => (
-              <p className="text-capitalize" key={prof[0]}>
+                prof[1].length > 0 && <p className="text-capitalize" key={prof[0]}>
                 <strong className="small-caps">{prof[0]}</strong> –{' '}
                 {prof[1].map((item, idx) => (
                   <React.Fragment key={idx}>
@@ -227,13 +255,17 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         {features.length > 0 && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Level 1 Features</h4>
-            {features.map(feature => {
+            {features.map((feature, idx, arr) => {
               return (
                 <div
-                  className="card content-card description-card"
+                  className={`card content-card description-card ${
+                    subclass?.subclass_features
+                      ? 'mb-0'
+                      : idx === arr.length - 1 && 'mb-0'
+                  }`}
                   key={feature.index}
                 >
-                  <h5 className="text-center">{feature.name}</h5>
+                  <h5 className="card-subtitle small-caps">{feature.name}</h5>
                   {feature.desc.map(desc => (
                     <p key={desc}>{desc}</p>
                   ))}
@@ -243,10 +275,10 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             {subclass?.subclass_features?.map((feature, index) => {
               return (
                 <div
-                  className="card content-card description-card"
+                  className="card content-card description-card mb-0"
                   key={feature.index}
                 >
-                  <h5 className="text-center">
+                  <h5 className="card-subtitle small-caps">
                     {`${feature.name} (${subclass.name})`}{' '}
                   </h5>
                   {feature.desc.map(desc => (
@@ -262,13 +294,14 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         )}
         {main.spellcasting && (
           <div className="card translucent-card">
-            <h4 className="card content-card card-title">SPELL CASTING</h4>
-            {main.spellcasting.info.map(spell => (
+            <h4 className="card content-card card-title">Spellcasting</h4>
+            {main.spellcasting.info.map((spell, idx, arr) => (
               <div
-                className="card content-card description-card"
+                className={`card content-card description-card ${idx ===
+                  arr.length - 1 && 'mb-0'}`}
                 key={spell.name}
               >
-                <h5 className="text-center">{spell.name}</h5>
+                <h5 className="card-subtitle small-caps">{spell.name}</h5>
                 {spell.desc.map(desc => (
                   <p key={desc}>{desc}</p>
                 ))}

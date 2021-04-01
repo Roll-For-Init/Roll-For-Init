@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { Link, Redirect } from 'react-router-dom';
+import { Link, Redirect, useHistory } from 'react-router-dom';
 import Upload from '../Upload';
 import Dropzone from 'react-dropzone';
-
+import charPlaceholder from '../../../public/assets/imgs/char-placeholder.png';
 import './styles.scss';
 import { PropTypes } from 'prop-types';
 import { setCurrentCharacter } from '../../redux/actions';
@@ -102,14 +102,6 @@ const UploadCharacter = () => {
 
   return (
     <>
-      <button
-        type="button"
-        className="btn btn-secondary btn-lg top-buttons"
-        data-toggle="modal"
-        data-target="#uploadModal"
-      >
-        Upload Existing Character
-      </button>
       <div
         className="modal fade"
         id="uploadModal"
@@ -204,15 +196,38 @@ const CharacterSection = ({ characters }) => {
     dispatch(setCurrentCharacter(null));
   };
   return (
-    <div className="card d-grid gap-2">
-      <FinishCharacter characters={characters} />
-      <Link to="/create">
-        <button type="button" onClick={handleClick} className="btn btn-secondary btn-lg top-buttons">
-          Create New Character
+    <>
+    <FinishCharacter characters={characters} />
+    <div className="d-grid gap-2">
+        <Link to="/create">
+          <button
+            type="button"
+            className="btn btn-secondary btn-lg top-buttons"
+            onClick={handleClick}
+          >
+            Create New Character
+          </button>
+        </Link>
+        {/*
+        <Link to="/upload">
+          <button
+            type="button"
+            className="btn btn-secondary btn-lg top-buttons"
+          >
+            Upload Existing Character
+          </button>
+        </Link>*/}
+        <button
+          type="button"
+          className="btn btn-secondary btn-lg top-buttons"
+          data-toggle="modal"
+          data-target="#uploadModal"
+        >
+          Upload Existing Character
         </button>
-      </Link>
-      <UploadCharacter />
+        <UploadCharacter />
     </div>
+    </>
   );
 };
 const characterPropTypes = PropTypes.shape({});
@@ -222,6 +237,65 @@ CharacterSection.propTypes = {
 
 const LandingPage = () => {
   const { auth, characters } = useSelector(state => state);
+  const history = useHistory();
+
+  function handleClick() {
+    history.push('/dashboard');
+  }
+
+  function importAll(r) {
+    let images = {};
+    r.keys().map((item, index) => {
+      images[item.replace('./', '')] = r(item);
+    });
+    return images;
+  }
+
+  const raceIcons = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/medium-blue/race',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const classIcons = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/medium-blue/class',
+      false,
+      /\.(png)$/
+    )
+  );
+
+  const exampleCharacters = [
+    {
+      firstname: 'Glorbin',
+      lastname: 'Shmoo',
+      race: 'elf',
+      class: 'barbarian',
+      level: '2',
+      portraitsrc: charPlaceholder,
+    },
+    {
+      firstname: 'Xorglum',
+      lastname: 'Lightbeard',
+      race: 'gnome',
+      class: 'cleric',
+      level: '4',
+      portraitsrc: charPlaceholder,
+    },
+    {
+      firstname: 'Rooaar',
+      lastname: 'Graaagggh',
+      race: 'half-orc',
+      class: 'rogue',
+      level: '8',
+      portraitsrc: charPlaceholder,
+    },
+  ];
+
+  const { isLoggedIn } = useSelector(state => state.auth);
+  // const isLoggedIn = true;
   return (
     <div className="container landing">
       <div className="filler-space"></div>
@@ -236,7 +310,7 @@ const LandingPage = () => {
         <div className="col-1 col-md"></div>
       </div>
       <CharacterSection characters={characters} />
-      {auth.isLoggedIn !== true && (
+      {auth.isLoggedIn !== true ? (
         <div className="d-grid gap-6 btm-button-container">
           <Link to="/login">
             <button
@@ -254,6 +328,47 @@ const LandingPage = () => {
               Sign Up
             </button>
           </Link>
+        </div>
+      ) : (
+        <div className="character-container">
+          <div className="card translucent-card mt-0">
+            {exampleCharacters.map((character, idx) => {
+              return (
+                <div
+                  className="card content-card character-card"
+                  key={idx}
+                  onClick={handleClick}
+                >
+                  <div className="same-line mb-0">
+                    <span className="same-line mb-0">
+                      <img
+                        className="portrait-icon"
+                        src={character.portraitsrc}
+                        width="70"
+                        height="70"
+                      />
+                      <div className="info-container">
+                        <p className="character-name">{`${character.firstname}`}</p>
+                        <p className="character-info">{`${character.race} ${character.class} ${character.level}`}</p>
+                      </div>
+                    </span>
+                    <span className="same-line mb-0">
+                      <div className="icon-container">
+                        <img
+                          className="character-icon"
+                          src={raceIcons[`${character.race}.png`]}
+                        />
+                        <img
+                          className="character-icon"
+                          src={classIcons[`${character.class}.png`]}
+                        />
+                      </div>
+                    </span>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
         </div>
       )}
     </div>

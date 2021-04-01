@@ -1,4 +1,4 @@
-@import "client/app/variables";
+@import 'client/app/variables';
 
 .container {
   height: calc(100vh - 56px);
@@ -6,11 +6,11 @@
 }
 
 .container.landing {
-	position: absolute;
-	top:0;
-	bottom: 0;
-	left: 0;
-	right: 0;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
 }
 
 .logo {
@@ -33,7 +33,7 @@
   // width: auto;
   margin: 15px 0px;
   @media (min-width: 768px) {
-    margin: 25px calc((min(40%, 325px) - 200px) / 2 + 25px); 
+    margin: 25px calc((min(40%, 325px) - 200px) / 2 + 25px);
     max-width: 200px;
     width: 30% !important;
   }
@@ -65,22 +65,23 @@
 }
 
 .close {
+  font-size: 1.75rem;
   box-shadow: none;
   color: $off-white;
   width: 10%;
   height: 15%;
   position: absolute;
-  right: -20px;
-  top: -25px;
-}
-.close:hover {
-  color: $dark-off-white;
+  right: -22px;
+  top: -20px;
+  &:hover {
+    color: $off-white;
+  }
 }
 
 .modal-content {
   color: white;
   border: none;
-  font-family: "IM Fell DW Pica" !important;
+  font-family: 'IM Fell DW Pica' !important;
   background-color: $dark-maroon;
   box-shadow: 0px 1px 10px hsla(0, 0, 0, 67%);
   padding: 20px;
@@ -93,6 +94,8 @@
 }
 
 .modal-sect {
+  display: flex;
+  flex-direction: column;
   background-color: $off-white;
   box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
   color: #172838;
@@ -105,10 +108,68 @@
     font-variant: small-caps;
   }
   p {
+    margin: auto;
     text-align: left;
   }
 }
 
 .landing .btn {
   text-transform: lowercase;
+}
+
+.character-container {
+  max-width: 500px;
+  padding-bottom: 5px;
+  margin: 0 auto;
+}
+
+.info-container {
+  margin: auto;
+  margin-left: 10px;
+  text-align: left;
+}
+
+.character-name {
+  font-variant: small-caps;
+  margin: 0;
+  margin-bottom: 4px;
+  color: $dark-blue;
+  font-size: 1.4rem;
+  line-height: 1;
+  h5 {
+    margin: 0;
+  }
+}
+
+.character-info {
+  text-transform: capitalize;
+  color: $dark-blue;
+  font-variant: none;
+  font-size: 1rem;
+  margin: 0;
+}
+
+.character-icon {
+  //   &:first-child {
+  //     margin-left: 0;
+  //   }
+  margin-left: 8px;
+  display: inline-block;
+  max-width: 60px;
+  max-height: 30px;
+  width: auto;
+  height: auto;
+}
+
+.portrait-icon {
+  display: inline-block;
+  max-width: 80px;
+  max-height: 80px;
+  width: auto;
+  height: auto;
+}
+
+.icon-container {
+  margin: auto;
+  margin-right: 10px;
 }

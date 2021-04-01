@@ -91,6 +91,7 @@ const update_character = (req, res) => {
 }
 
 const create_character = (req, res) => {
+    console.log('in create character');
     const character = new Character(req.body);
     character.create(character).then(newCharacter => {
         if(!newCharacter) return throwError(res, 500, "Error registering character.")
@@ -99,6 +100,5 @@ const create_character = (req, res) => {
         throwError(res, 500, "Error registering character.", err)
     });
 }
-
 
 module.exports = { character_list, character_detail, delete_character, update_character, create_character, attachCharacterInfo }
