@@ -206,9 +206,14 @@ const UploadCharacter = () => {
         >
           <div className="modal-dialog modal-dialog-centered" role="document">
             <div className="modal-content">
-              {/* <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                <span aria-hidden="true">&times;</span>
-              </button>  */}
+              <button
+                type="button"
+                className="close"
+                data-dismiss="modal"
+                aria-label="Close"
+              >
+                <i className="bi bi-x"></i>
+              </button>
               <div className="modal-sect pb-0">
                 <h5>Upload a Character</h5>
               </div>

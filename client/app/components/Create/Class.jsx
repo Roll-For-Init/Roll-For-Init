@@ -173,10 +173,10 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             <h4>{main.name}</h4>
           </div>
           <div>
-            <div className="w-auto d-inline-block card content-card floating-card">
+            <div className="w-auto d-inline-block card content-card floating-card mb-0">
               Hit Die - {main.hit_die}
             </div>
-            <div className="w-auto d-inline-block card content-card floating-card">
+            <div className="w-auto d-inline-block card content-card floating-card mb-0">
               SAVING THROWS -{' '}
               {main.saving_throws.map((throws, idx) => (
                 <small key={idx}>
@@ -190,29 +190,30 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         {options.length > 0 && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Class Options</h4>
-            <div>
+            <>
               {options.map((option, index) => {
                 return (
-                  <Dropdown
-                    ddLabel={`${option.header}`}
-                    title={`Choose ${option.choose}`}
-                    items={option.options}
-                    selectLimit={option.choose}
-                    multiSelect={option.choose > 1}
-                    selection={
-                      userChoices[
-                        `${option.header.toLowerCase().replace(' ', '-')}-${
-                          option.type
-                        }-${index}`
-                      ]
-                    }
-                    setSelection={setUserChoices}
-                    classname="dd-choice"
-                    stateKey={`${option.header
-                      .toLowerCase()
-                      .replace(' ', '-')}-${option.type}-${index}`}
-                    key={index}
-                  />
+                  <div className="dd-container" key={index}>
+                    <Dropdown
+                      ddLabel={`${option.header}`}
+                      title={`Choose ${option.choose}`}
+                      items={option.options}
+                      selectLimit={option.choose}
+                      multiSelect={option.choose > 1}
+                      selection={
+                        userChoices[
+                          `${option.header.toLowerCase().replace(' ', '-')}-${
+                            option.type
+                          }-${index}`
+                        ]
+                      }
+                      setSelection={setUserChoices}
+                      classname="dd-choice"
+                      stateKey={`${option.header
+                        .toLowerCase()
+                        .replace(' ', '-')}-${option.type}-${index}`}
+                    />
+                  </div>
                 );
               })}
               {subclass?.subclass_options?.map((option, index) => {
@@ -239,14 +240,14 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                   />
                 );
               })}
-            </div>
+            </>
           </div>
         )}
         <div className="card translucent-card">
           <h4 className="card content-card card-title">
             Starting Proficiencies
           </h4>
-          <div className="card content-card description-card">
+          <div className="card content-card description-card mb-0">
             {Object.entries(proficiencies).map(
               prof =>
                 prof[1].length > 0 && (
@@ -266,13 +267,17 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         {features.length > 0 && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Level 1 Features</h4>
-            {features.map(feature => {
+            {features.map((feature, idx, arr) => {
               return (
                 <div
-                  className="card content-card description-card"
+                  className={`card content-card description-card ${
+                    subclass?.subclass_features
+                      ? 'mb-0'
+                      : idx === arr.length - 1 && 'mb-0'
+                  }`}
                   key={feature.index}
                 >
-                  <h5 className="text-center">{feature.name}</h5>
+                  <h5 className="card-subtitle small-caps">{feature.name}</h5>
                   {feature.desc.map(desc => (
                     <p key={desc}>{desc}</p>
                   ))}
@@ -282,10 +287,10 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             {subclass?.subclass_features?.map((feature, index) => {
               return (
                 <div
-                  className="card content-card description-card"
+                  className="card content-card description-card mb-0"
                   key={feature.index}
                 >
-                  <h5 className="text-center">
+                  <h5 className="card-subtitle small-caps">
                     {`${feature.name} (${subclass.name})`}{' '}
                   </h5>
                   {feature.desc.map(desc => (
@@ -302,12 +307,13 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         {main.spellcasting && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Spellcasting</h4>
-            {main.spellcasting.info.map(spell => (
+            {main.spellcasting.info.map((spell, idx, arr) => (
               <div
-                className="card content-card description-card"
+                className={`card content-card description-card ${idx ===
+                  arr.length - 1 && 'mb-0'}`}
                 key={spell.name}
               >
-                <h5 className="text-center">{spell.name}</h5>
+                <h5 className="card-subtitle small-caps">{spell.name}</h5>
                 {spell.desc.map(desc => (
                   <p key={desc}>{desc}</p>
                 ))}
