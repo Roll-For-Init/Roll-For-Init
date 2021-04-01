@@ -117,8 +117,13 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           setClass(charID, { equipment_options: theClass.equipment_options })
         );
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
-        dispatch(setClass(charID, { spellcasting: theClass.spellcasting }));
-        dispatch(setClass(charID, { subclass: theClass.subclass }));
+        dispatch(setClass(charID, {spellcasting: theClass.spellcasting===null ? null : {...theClass.spellcasting, ...theClass.main.spellcasting}}))
+        dispatch(setClass(charID, {subclass: theClass.subclass}))
+        dispatch(setClass(charID, {features: theClass.features}))
+        dispatch(setClass(charID, {saving_throws: theClass.main.saving_throws}))
+        dispatch(setClass(charID, {hit_die: theClass.main.hit_die}))
+        dispatch(setClass(charID, {level: 1}))
+        dispatch(setClass(charID, {levels: theClass.levels}))
       });
   }, []);
 
@@ -177,23 +182,23 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                 return (
                   <div className="dd-container" key={index}>
                     <Dropdown
-                      ddLabel={`${option.header}`}
-                      title={`Choose ${option.choose}`}
-                      items={option.options}
-                      selectLimit={option.choose}
-                      multiSelect={option.choose > 1}
-                      selection={
-                        userChoices[
-                          `${option.header
-                            .toLowerCase()
-                            .replace(' ', '-')}-${index}`
-                        ]
-                      }
-                      setSelection={setUserChoices}
-                      classname="dd-choice"
-                      stateKey={`${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${index}`}
+                    ddLabel={`${option.header}`}
+                    title={`Choose ${option.choose}`}
+                    items={option.options}
+                    selectLimit={option.choose}
+                    multiSelect={option.choose > 1}
+                    selection={
+                      userChoices[
+                        `${option.header
+                          .toLowerCase()
+                          .replace(' ', '-')}-${option.type}-${index}`
+                      ]
+                    }
+                    setSelection={setUserChoices}
+                    classname="dd-choice"
+                    stateKey={`${option.header
+                      .toLowerCase()
+                      .replace(' ', '-')}-${option.type}-${index}`}
                     />
                   </div>
                 );
@@ -210,14 +215,14 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                       userChoices[
                         `${option.header
                           .toLowerCase()
-                          .replace(' ', '-')}-${index}`
+                          .replace(' ', '-')}-${option.type}-${index}`
                       ]
                     }
                     setSelection={setUserChoices}
                     classname="choice"
                     stateKey={`${option.header
                       .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
+                      .replace(' ', '-')}-${option.type}-${index}`}
                     key={index}
                   />
                 );
@@ -231,19 +236,15 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           </h4>
           <div className="card content-card description-card mb-0">
             {Object.entries(proficiencies).map(prof => (
-              <>
-                {prof[0].toLowerCase() !== 'throws' && (
-                  <p className="text-capitalize" key={prof[0]}>
-                    <strong className="small-caps">{prof[0]}</strong> –{' '}
-                    {prof[1].map((item, idx) => (
-                      <React.Fragment key={idx}>
-                        {item}
-                        {idx < prof[1].length - 1 && ', '}
-                      </React.Fragment>
-                    ))}
-                  </p>
-                )}
-              </>
+                prof[1].length > 0 && <p className="text-capitalize" key={prof[0]}>
+                <strong className="small-caps">{prof[0]}</strong> –{' '}
+                {prof[1].map((item, idx) => (
+                  <React.Fragment key={idx}>
+                    {item}
+                    {idx < prof[1].length - 1 && ', '}
+                  </React.Fragment>
+                ))}
+              </p>
             ))}
           </div>
         </div>

@@ -7,6 +7,8 @@ import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
 import FloatingLabel from 'floating-label-react';
 import { useHistory } from 'react-router-dom';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 /**
  * FOR DEACTIVATING SELECT BUTTONS: you will have to target all spell card children that are NOT selected,
@@ -158,13 +160,6 @@ export const Spells = ({ charID, setPage }) => {
     window.scrollTo(0, 0);
   };
 
-  const history = useHistory();
-
-  const onFinish = () => {
-    console.log('hi');
-    history.push('/dashboard');
-  };
-
   const character = useSelector(state => state.characters[charID]);
   console.log(character);
   const [spellChoices, setSpellChoices] = useState(null);
@@ -224,10 +219,17 @@ export const Spells = ({ charID, setPage }) => {
     dispatch(setSpells(charID, payload));
   };
 
+  const validateAndStore = () => {
+    console.log(character);
+    CharacterService.createCharacter(CharacterService.validateCharacter(character));
+    history.push('/dashboard');
+  }
+
   useEffect(() => {
     if (!character.class.index) return;
     CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
+      dispatch(setSpells(charID, {cards: cards}))
     });
     console.log(character);
   }, []);
@@ -294,7 +296,7 @@ export const Spells = ({ charID, setPage }) => {
                 </div>
                 <button
                   className="text-uppercase btn-primary modal-button"
-                  onClick={onFinish}
+                  onClick={validateAndStore}
                   data-dismiss="modal"
                 >
                   FINISH

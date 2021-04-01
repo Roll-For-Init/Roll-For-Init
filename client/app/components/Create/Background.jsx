@@ -140,8 +140,9 @@ export const Background = ({ charID, setPage }) => {
     if (selectionBg[0].index == 'custom') {
       let customBackground = {
         proficiencies: {
-          ToolsLanguages: [selectionTlLg1, selectionTlLg2],
-          Skills: [selectionSk1, selectionSk2],
+          Tools: [],
+          Languages: [],
+          Skills: [...selectionSk1],
         },
         name: bgName,
         desc: bgDesc,
@@ -150,6 +151,14 @@ export const Background = ({ charID, setPage }) => {
           desc: featureDesc,
         },
       };
+      for(let selection of selectionTlLg1) {
+        if(selection.url.includes('language')) {
+          customBackground.proficiencies.Languages.push(selection);
+        }
+        else {
+          customBackground.proficiencies.Tools.push(selection);
+        }
+      }
       dispatch(setBackground(charID, customBackground));
     }
     setPage({ index: 4, name: 'description' });
@@ -227,25 +236,26 @@ export const Background = ({ charID, setPage }) => {
                   return (
                     <div className="dd-container" key={index}>
                       <Dropdown
-                        ddLabel={`${option.header}`}
-                        title={`Choose ${option.choose}`}
-                        items={option.options}
-                        selectLimit={option.choose}
-                        multiSelect={option.choose > 1}
-                        selection={
-                          userChoices[
-                            `${option.header
-                              .toLowerCase()
-                              .replace(' ', '-')}-${index}`
-                          ]
-                        }
-                        setSelection={setUserChoices}
-                        classname="dd-choice"
-                        stateKey={`${option.header
-                          .toLowerCase()
-                          .replace(' ', '-')}-${index}`}
+                     ddLabel={`${option.header}`}
+                     title={`Choose ${option.choose}`}
+                     items={option.options}
+                     selectLimit={option.choose}
+                     multiSelect={option.choose > 1}
+                     selection={
+                       userChoices[
+                         `${option.header
+                           .toLowerCase()
+                           .replace(' ', '-')}-${option.type}-${index}`
+                       ]
+                     }
+                     setSelection={setUserChoices}
+                     classname="dd-choice"
+                     stateKey={`${option.header
+                       .toLowerCase()
+                       .replace(' ', '-')}-${option.type}-${index}`}
                       />
                     </div>
+
                   );
                 })}
               </div>
@@ -326,7 +336,7 @@ export const Background = ({ charID, setPage }) => {
                 <div className="card content-card description-card mb-0">
                   {Object.keys(selectionBg[0].proficiencies).map(key => {
                     return (
-                      <p className="text-capitalize" key={key}>
+                      proficiencies[key].length > 0 && <p className="text-capitalize" key={key}>
                         <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
                         -{' '}
                         {selectionBg[0].proficiencies[key].map(
