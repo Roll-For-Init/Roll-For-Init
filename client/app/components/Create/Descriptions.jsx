@@ -151,9 +151,9 @@ export const Descriptions = ({ charID, setPage }) => {
         personality_traits: personality,
         ideals: ideals,
         bonds: bonds,
-        flaws: flaws, 
+        flaws: flaws,
         backstory: backstory,
-        relationships: relationships
+        relationships: relationships,
       },
       physical_description: {
         height: height,
@@ -163,8 +163,8 @@ export const Descriptions = ({ charID, setPage }) => {
         skin: skin,
         hair: hair,
       },
-      portrait: {name: fileName}
-    }
+      portrait: { name: fileName },
+    };
     dispatch(setDescription(charID, description));
     setPage({ index: 5, name: 'equipment' });
     window.scrollTo(0, 0);
@@ -181,76 +181,87 @@ export const Descriptions = ({ charID, setPage }) => {
           <h4>Personality</h4>
         </div>
         <div className="card content-card description-card">
-          <ReactReadMoreReadLess
-            charLimit={250}
-            readMoreText="Show more"
-            readLessText="Show less"
-            readMoreClassName="read-more-less--more"
-            readLessClassName="read-more-less--less"
-          >
-            {race.description.summary.join('\n')}
-          </ReactReadMoreReadLess>
+          <p>
+            <ReactReadMoreReadLess
+              charLimit={250}
+              readMoreText="Show more"
+              readLessText="Show less"
+              readMoreClassName="read-more-less--more"
+              readLessClassName="read-more-less--less"
+            >
+              {race.description.summary.join('\n')}
+            </ReactReadMoreReadLess>
+          </p>
         </div>
-        <Dropdown
-          ddLabel="Alignment"
-          title="Choose 1"
-          items={alignments}
-          width="80%"
-          selection={selectionAl}
-          setSelection={setSelectionAl}
-        />
-        <div className="card content-card description-card">
-          <FloatingLabel
-            component="textarea"
-            id="persTraits"
-            name="persTraits"
-            placeholder="Personality Traits"
-            type="text"
-            value={personality}
-            onChange={e => setPersonality(e.target.value)}
+        <div className="dd-container">
+          <Dropdown
+            ddLabel="Alignment"
+            title="Choose 1"
+            items={alignments}
+            width="80%"
+            selection={selectionAl}
+            setSelection={setSelectionAl}
           />
         </div>
         <div className="card content-card description-card">
-          <FloatingLabel
-            component="textarea"
-            id="ideals"
-            name="ideals"
-            placeholder="Ideals"
-            type="text"
-            value={ideals}
-            onChange={e => setIdeals(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="persTraits"
+              name="persTraits"
+              placeholder="Personality Traits"
+              type="text"
+              value={personality}
+              onChange={e => setPersonality(e.target.value)}
+            />
+          </p>
         </div>
         <div className="card content-card description-card">
-          <FloatingLabel
-            component="textarea"
-            id="bonds"
-            name="bonds"
-            placeholder="Bonds"
-            type="text"
-            value={bonds}
-            onChange={e => setBonds(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="ideals"
+              name="ideals"
+              placeholder="Ideals"
+              type="text"
+              value={ideals}
+              onChange={e => setIdeals(e.target.value)}
+            />
+          </p>
+        </div>
+        <div className="card content-card description-card">
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="bonds"
+              name="bonds"
+              placeholder="Bonds"
+              type="text"
+              value={bonds}
+              onChange={e => setBonds(e.target.value)}
+            />
+          </p>
         </div>
         <div className="card content-card description-card mb-0">
-          <FloatingLabel
-            component="textarea"
-            id="flaws"
-            name="flaws"
-            placeholder="Flaws"
-            type="text"
-            value={flaws}
-            onChange={e => setFlaws(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="flaws"
+              name="flaws"
+              placeholder="Flaws"
+              type="text"
+              value={flaws}
+              onChange={e => setFlaws(e.target.value)}
+            />
+          </p>
         </div>
       </div>
       <div className="card translucent-card">
-        {' '}
         <div className="card content-card card-title">
           <h4>Physical</h4>
         </div>
         <div className="card content-card description-card">
-          {race.description.size}
+          <p>{race.description.size}</p>
         </div>
         <div className="choice-container">
           <div className="card content-card physical-card choice">
@@ -276,15 +287,17 @@ export const Descriptions = ({ charID, setPage }) => {
           </div>
         </div>
         <div className="card content-card description-card mt-0">
-          <ReactReadMoreReadLess
-            charLimit={250}
-            readMoreText="Show more"
-            readLessText="Show less"
-            readMoreClassName="read-more-less--more"
-            readLessClassName="read-more-less--less"
-          >
-            {race.description.age}
-          </ReactReadMoreReadLess>
+          <p>
+            <ReactReadMoreReadLess
+              charLimit={250}
+              readMoreText="Show more"
+              readLessText="Show less"
+              readMoreClassName="read-more-less--more"
+              readLessClassName="read-more-less--less"
+            >
+              {race.description.age}
+            </ReactReadMoreReadLess>
+          </p>
         </div>
         <div className="card content-card physical-card">
           <FloatingLabel
@@ -369,26 +382,30 @@ export const Descriptions = ({ charID, setPage }) => {
           <h4>Other</h4>
         </div>
         <div className="card content-card description-card">
-          <FloatingLabel
-            component="textarea"
-            id="charBackstory"
-            name="charBackstory"
-            placeholder="Character Backstory"
-            type="text"
-            value={backstory}
-            onChange={e => setBackstory(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="charBackstory"
+              name="charBackstory"
+              placeholder="Character Backstory"
+              type="text"
+              value={backstory}
+              onChange={e => setBackstory(e.target.value)}
+            />
+          </p>
         </div>
         <div className="card content-card description-card mb-0">
-          <FloatingLabel
-            component="textarea"
-            id="relationships"
-            name="relationships"
-            placeholder="Relationships"
-            type="text"
-            value={relationships}
-            onChange={e => setRelationships(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="relationships"
+              name="relationships"
+              placeholder="Relationships"
+              type="text"
+              value={relationships}
+              onChange={e => setRelationships(e.target.value)}
+            />
+          </p>
         </div>
       </div>
       <button

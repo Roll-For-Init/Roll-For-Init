@@ -150,11 +150,10 @@ export const Background = ({ charID, setPage }) => {
           desc: featureDesc,
         },
       };
-      for(let selection of selectionTlLg1) {
-        if(selection.url.includes('language')) {
+      for (let selection of selectionTlLg1) {
+        if (selection.url.includes('language')) {
           customBackground.proficiencies.Languages.push(selection);
-        }
-        else {
+        } else {
           customBackground.proficiencies.Tools.push(selection);
         }
       }
@@ -172,10 +171,12 @@ export const Background = ({ charID, setPage }) => {
             <h2 className="title-card p-4">Background</h2>
           </div>
           <div className="card content-card description-card m-0 mt-4">
-            Choose a preset background, or create your own. Your background
-            reveals where you came from. how you became an adventurer, and your
-            place in the world. If you create a custom background, work with
-            your GM to build one that makes sense for your character.
+            <p>
+              Choose a preset background, or create your own. Your background
+              reveals where you came from. how you became an adventurer, and
+              your place in the world. If you create a custom background, work
+              with your GM to build one that makes sense for your character.
+            </p>
           </div>
           <div className="card translucent-card">
             <div className="dd-container mt-0">
@@ -203,25 +204,29 @@ export const Background = ({ charID, setPage }) => {
             )}
             <div className="card content-card description-card mb-0">
               {selectionBg[0].index === 'custom' ? (
-                <FloatingLabel
-                  component="textarea"
-                  id="backgroundDesc"
-                  name="backgroundDesc"
-                  placeholder="Background Description (optional)"
-                  type="text"
-                  value={bgDesc}
-                  onChange={e => setBgDesc(e.target.value)}
-                />
+                <p>
+                  <FloatingLabel
+                    component="textarea"
+                    id="backgroundDesc"
+                    name="backgroundDesc"
+                    placeholder="Background Description (optional)"
+                    type="text"
+                    value={bgDesc}
+                    onChange={e => setBgDesc(e.target.value)}
+                  />
+                </p>
               ) : (
-                <ReactReadMoreReadLess
-                  charLimit={250}
-                  readMoreText="Show more"
-                  readLessText="Show less"
-                  readMoreClassName="read-more-less--more"
-                  readLessClassName="read-more-less--less"
-                >
-                  {selectionBg[0].desc.join('\n')}
-                </ReactReadMoreReadLess>
+                <p>
+                  <ReactReadMoreReadLess
+                    charLimit={250}
+                    readMoreText="Show more"
+                    readLessText="Show less"
+                    readMoreClassName="read-more-less--more"
+                    readLessClassName="read-more-less--less"
+                  >
+                    {selectionBg[0].desc.join('\n')}
+                  </ReactReadMoreReadLess>
+                </p>
               )}
             </div>
           </div>
@@ -230,35 +235,31 @@ export const Background = ({ charID, setPage }) => {
               <div className="card content-card card-title">
                 <h4>Background Options</h4>
               </div>
-              <div className="choice-container">
-                {selectionBg[0].options.map((option, index) => {
-                  return (
-                    <div className="dd-container" style={{width:'100%'}} key={index}>
-                      <Dropdown
-                     ddLabel={`${option.header}`}
-                     title={`Choose ${option.choose}`}
-                     items={option.options}
-                     selectLimit={option.choose}
-                     multiSelect={option.choose > 1}
-                     selection={
-                       userChoices[
-                         `${option.header
-                           .toLowerCase()
-                           .replace(' ', '-')}-${option.type}-${index}`
-                       ]
-                     }
-                     setSelection={setUserChoices}
-                     classname="dd-choice"
-                     stateKey={`${option.header
-                       .toLowerCase()
-                       .replace(' ', '-')}-${option.type}-${index}`}
-                      key={index}
-                      />
-                    </div>
-
-                  );
-                })}
-              </div>
+              {selectionBg[0].options.map((option, index) => {
+                return (
+                  <div className="dd-container" key={index}>
+                    <Dropdown
+                      ddLabel={`${option.header}`}
+                      title={`Choose ${option.choose}`}
+                      items={option.options}
+                      selectLimit={option.choose}
+                      multiSelect={option.choose > 1}
+                      selection={
+                        userChoices[
+                          `${option.header.toLowerCase().replace(' ', '-')}-${
+                            option.type
+                          }-${index}`
+                        ]
+                      }
+                      setSelection={setUserChoices}
+                      classname="dd-choice"
+                      stateKey={`${option.header
+                        .toLowerCase()
+                        .replace(' ', '-')}-${option.type}-${index}`}
+                    />
+                  </div>
+                );
+              })}
             </div>
           )}
           <div className="card translucent-card">
@@ -266,32 +267,22 @@ export const Background = ({ charID, setPage }) => {
               <h4>Proficiencies</h4>
             </div>
             {selectionBg[0].index === 'custom' && (
-              <div className="choice-container mb-0">
-                <>
-                  <Dropdown
-                    ddLabel="Extra Skills"
-                    title="Choose 2"
-                    items={[...skills]}
-                    selection={selectionSk1}
-                    multiSelect
-                    selectLimit={2}
-                    setSelection={setSelectionSk1}
-                    classname="dd-choice mb-0"
-                  />
-                  {/* <Dropdown
-                    ddLabel="Extra Skill"
-                    title="Choose 1"
-                    items={[...skills]}
-                    selection={selectionSk2}
-                    setSelection={setSelectionSk2}
-                    classname="choice"
-                  /> */}
-                </>
+              <div className="dd-container">
+                <Dropdown
+                  ddLabel="Extra Skills"
+                  title="Choose 2"
+                  items={[...skills]}
+                  selection={selectionSk1}
+                  multiSelect
+                  selectLimit={2}
+                  setSelection={setSelectionSk1}
+                  classname="dd-choice"
+                />
               </div>
             )}
-            <div className="choice-container mb-0">
+            <>
               {selectionBg[0].index === 'custom' && (
-                <>
+                <div className="dd-container">
                   <Dropdown
                     ddLabel="Tools &#38; Languages"
                     title="Choose 2"
@@ -330,31 +321,35 @@ export const Background = ({ charID, setPage }) => {
                     setSelection={setSelectionTlLg2}
                     classname="choice"
                   /> */}
-                </>
+                </div>
               )}
               {selectionBg[0].index !== 'custom' && (
                 <div className="card content-card description-card mb-0">
-                  {Object.keys(selectionBg[0].proficiencies).map(key => {
-                    return (
-                      selectionBg[0].proficiencies[key].length > 0 && <p className="text-capitalize" key={key}>
-                        <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
-                        -{' '}
-                        {selectionBg[0].proficiencies[key].map(
-                          (prof, index) => {
-                            if (
-                              selectionBg[0].proficiencies[key].length ===
-                              index + 1
-                            )
-                              return `${prof}`;
-                            else return `${prof}, `;
-                          }
-                        )}
-                      </p>
-                    );
-                  })}
+                  <p>
+                    {Object.keys(selectionBg[0].proficiencies).map(key => {
+                      return (
+                        selectionBg[0].proficiencies[key].length > 0 && (
+                          <p className="text-capitalize" key={key}>
+                            <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
+                            -{' '}
+                            {selectionBg[0].proficiencies[key].map(
+                              (prof, index) => {
+                                if (
+                                  selectionBg[0].proficiencies[key].length ===
+                                  index + 1
+                                )
+                                  return `${prof}`;
+                                else return `${prof}, `;
+                              }
+                            )}
+                          </p>
+                        )
+                      );
+                    })}
+                  </p>
                 </div>
               )}
-            </div>
+            </>
           </div>
           <div className="card translucent-card">
             <div className="card content-card card-title">
@@ -362,12 +357,14 @@ export const Background = ({ charID, setPage }) => {
             </div>
             {selectionBg[0].index === 'custom' && (
               <div className="card content-card description-card">
-                Background features are normally soft skills that can help you
-                outside of combat. Background features can help you with social
-                interactions, give you knowledge about a certain topic, or give
-                you resources to otherwise give you an upper hand in specific
-                situations. If you create a custom feature, work with your GM to
-                ensure it makes sense for your character.
+                <p>
+                  Background features are normally soft skills that can help you
+                  outside of combat. Background features can help you with
+                  social interactions, give you knowledge about a certain topic,
+                  or give you resources to otherwise give you an upper hand in
+                  specific situations. If you create a custom feature, work with
+                  your GM to ensure it makes sense for your character.
+                </p>
               </div>
             )}
             <div className="card content-card card-subtitle">
@@ -386,25 +383,29 @@ export const Background = ({ charID, setPage }) => {
             </div>
             <div className="card content-card description-card mb-0">
               {selectionBg[0].index === 'custom' ? (
-                <FloatingLabel
-                  component="textarea"
-                  id="featDesc"
-                  name="featDesc"
-                  placeholder="Feature Description"
-                  type="text"
-                  value={featureDesc}
-                  onChange={e => setFeatureDesc(e.target.value)}
-                />
+                <p>
+                  <FloatingLabel
+                    component="textarea"
+                    id="featDesc"
+                    name="featDesc"
+                    placeholder="Feature Description"
+                    type="text"
+                    value={featureDesc}
+                    onChange={e => setFeatureDesc(e.target.value)}
+                  />
+                </p>
               ) : (
-                <ReactReadMoreReadLess
-                  charLimit={240}
-                  readMoreText="Show more"
-                  readLessText="Show less"
-                  readMoreClassName="read-more-less--more"
-                  readLessClassName="read-more-less--less"
-                >
-                  {selectionBg[0].feature.desc.join('\n')}
-                </ReactReadMoreReadLess>
+                <p>
+                  <ReactReadMoreReadLess
+                    charLimit={240}
+                    readMoreText="Show more"
+                    readLessText="Show less"
+                    readMoreClassName="read-more-less--more"
+                    readLessClassName="read-more-less--less"
+                  >
+                    {selectionBg[0].feature.desc.join('\n')}
+                  </ReactReadMoreReadLess>
+                </p>
               )}
             </div>
           </div>

@@ -79,7 +79,6 @@
 }
 
 .modal-content {
-  color: white;
   border: none;
   font-family: 'IM Fell DW Pica' !important;
   background-color: $dark-maroon;
@@ -98,7 +97,7 @@
   flex-direction: column;
   background-color: $off-white;
   box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
-  color: #172838;
+  color: $dark-blue;
   border: 3px solid $maroon;
   border-radius: 8px;
   padding: 10px;
@@ -110,6 +109,7 @@
   p {
     margin: auto;
     text-align: left;
+    line-height: normal;
   }
 }
 

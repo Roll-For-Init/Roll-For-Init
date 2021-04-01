@@ -266,6 +266,11 @@
   &:last-child {
     margin-bottom: 0;
   }
+
+  //   @media (min-width: 768px) {
+  //     display: flex;
+  //     justify-content: center;
+  //   }
 }
 
 .card {
@@ -411,6 +416,7 @@
   display: flex;
   flex-direction: row;
   outline: none;
+  box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
 }
 
 .equipment-card {
