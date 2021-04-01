@@ -34,7 +34,6 @@ export const Background = ({ charID, setPage }) => {
       CharacterService.getBackgroundInfo(background[0])
         .then(bg => {
           setSelectionBg([bg]);
-          console.log(bg);
           return bg;
         })
         .then(bg => {
@@ -167,7 +166,7 @@ export const Background = ({ charID, setPage }) => {
 
   return (
     <div className="background">
-      {(backgrounds && selectionBg) ? (
+      {backgrounds && selectionBg ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Background</h2>
@@ -179,15 +178,17 @@ export const Background = ({ charID, setPage }) => {
             your GM to build one that makes sense for your character.
           </div>
           <div className="card translucent-card">
-            <Dropdown
-              ddLabel="Background"
-              title="Custom"
-              items={[...backgrounds]}
-              width="70%"
-              selection={selectionBg}
-              setSelection={selectBackground}
-              classname="header"
-            />
+            <div className="dd-container mt-0">
+              <Dropdown
+                ddLabel="Background"
+                title="Custom"
+                items={[...backgrounds]}
+                width="70%"
+                selection={selectionBg}
+                setSelection={selectBackground}
+                classname="header"
+              />
+            </div>
             {selectionBg[0].index === 'custom' && (
               <div className="card content-card card-subtitle">
                 <FloatingLabel
@@ -232,26 +233,29 @@ export const Background = ({ charID, setPage }) => {
               <div className="choice-container">
                 {selectionBg[0].options.map((option, index) => {
                   return (
-                    <Dropdown
-                      ddLabel={`${option.header}`}
-                      title={`Choose ${option.choose}`}
-                      items={option.options}
-                      selectLimit={option.choose}
-                      multiSelect={option.choose > 1}
-                      selection={
-                        userChoices[
-                          `${option.header
-                            .toLowerCase()
-                            .replace(' ', '-')}-${option.type}-${index}`
-                        ]
-                      }
-                      setSelection={setUserChoices}
-                      classname="dd-choice"
-                      stateKey={`${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${option.type}-${index}`}
+                    <div className="dd-container" style={{width:'100%'}} key={index}>
+                      <Dropdown
+                     ddLabel={`${option.header}`}
+                     title={`Choose ${option.choose}`}
+                     items={option.options}
+                     selectLimit={option.choose}
+                     multiSelect={option.choose > 1}
+                     selection={
+                       userChoices[
+                         `${option.header
+                           .toLowerCase()
+                           .replace(' ', '-')}-${option.type}-${index}`
+                       ]
+                     }
+                     setSelection={setUserChoices}
+                     classname="dd-choice"
+                     stateKey={`${option.header
+                       .toLowerCase()
+                       .replace(' ', '-')}-${option.type}-${index}`}
                       key={index}
-                    />
+                      />
+                    </div>
+
                   );
                 })}
               </div>
@@ -332,7 +336,7 @@ export const Background = ({ charID, setPage }) => {
                 <div className="card content-card description-card mb-0">
                   {Object.keys(selectionBg[0].proficiencies).map(key => {
                     return (
-                      proficiencies[key].length > 0 && <p className="text-capitalize" key={key}>
+                      selectionBg[0].proficiencies[key].length > 0 && <p className="text-capitalize" key={key}>
                         <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
                         -{' '}
                         {selectionBg[0].proficiencies[key].map(
@@ -411,8 +415,9 @@ export const Background = ({ charID, setPage }) => {
             OK
           </button>
         </>
-      ) :
-      <>Loading</>}
+      ) : (
+        <>Loading</>
+      )}
     </div>
   );
 };
