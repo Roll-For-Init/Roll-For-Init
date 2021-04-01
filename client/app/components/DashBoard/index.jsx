@@ -4,7 +4,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
 import './styles.scss';
-
+import {D20, StarOutline} from '../../utils/svgLibrary';
 //swap race class icons with white
 
 const skillScores = {
@@ -215,6 +215,7 @@ const TEMP_DATA = {
       advantage: 0,
     },
   },
+  conditions: ['Blinded', 'Prone']
 };
 
 export const DashBoard = () => {
@@ -233,10 +234,6 @@ export const DashBoard = () => {
 
   const character = useSelector(state => state.characters);
   console.log(character);
-
-  const raceIcon = `../../../public/assets/imgs/icons/off-white/race/${TEMP_DATA.race.name.toLowerCase()}.png`;
-  //const classIcon = `../../../public/assets/imgs/icons/off-white/class/${TEMP_DATA.class[0].name.toLowerCase()}.png`;
-
   
   return (
     <div className="dashboard">
@@ -248,18 +245,19 @@ export const DashBoard = () => {
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
-                src={require(`../../../public/assets/imgs/icons/off-white/class/${TEMP_DATA.class[0].name.toLowerCase()}.png`)}
+                src={require(`../../../public/assets/imgs/icons/white/class/${TEMP_DATA.class[0].name.toLowerCase()}.png`)}
               />
               Rogue
             </h5>
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
-                src={require(`../../../public/assets/imgs/icons/off-white/race/${TEMP_DATA.race.name.toLowerCase()}.png`)}
+                src={require(`../../../public/assets/imgs/icons/white/race/${TEMP_DATA.race.name.toLowerCase()}.png`)}
               />
               Halfling
             </h5>
             <h5 className="text-uppercase">Level <span style={{fontSize:'1.6rem'}}>&#8198;2</span></h5>
+            <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
           </span>
         </div>
       </div>
@@ -478,7 +476,7 @@ const StatsCard = () => {
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card">
             <h6 className="text-uppercase m-0">Inspiration</h6>
-            <h2 className="text-uppercase text-center m-0">(star)</h2>
+            <StarOutline style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
@@ -519,9 +517,12 @@ const HitPointsCard = () => {
 const ExtraStatsCard = () => {
   return (
     <div className="card translucent-card short-card extra-stats">
-      <div className="card content-card description-card">
+      <div className="card content-card description-card px-1">
         <h6 className="text-uppercase text-center m-0">Conditions</h6>
-        <button className="btn-outline-success">+ Add condition</button>
+        {TEMP_DATA.conditions.map((condition, index) => {
+          return (<button className="btn-outline-primary" key={`condition-${index}`}>{condition}</button>)
+        })}
+        <button className="btn-outline-success"><span className="green">+</span> Add condition</button>
       </div>
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Defenses</h6>

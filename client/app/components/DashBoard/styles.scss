@@ -220,7 +220,7 @@
     border: {
       style: solid !important;
       color: $green !important;
-      width: 3px !important;
+      width: 2px !important;
       radius: 8px;
     }
     color: $dark-blue;
@@ -233,10 +233,20 @@
     flex-grow: 0;
     margin: auto 0px;
     background-color: transparent;
+    margin: 2px;
 
     &:hover,
-    &:active, &:focus {
-      background-color: $medium-off-white !important;
+    &:active {
+      background-color: $medium-off-white;
+    }
+    span {
+        color: $dark-green;
+    }
+}
+.btn-outline-primary {
+    @extend .btn-outline-success;
+    border: {
+      color: $blue !important;
     }
 }
 
