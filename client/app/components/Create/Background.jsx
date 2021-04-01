@@ -25,7 +25,6 @@ export const Background = ({ charID, setPage }) => {
   const [waterVehicles, setWaterVehicles] = useState([]);
 
   const selectBackground = background => {
-    console.log(background);
     dispatch(setBackground(charID, background[0]));
     if (background[0].index == 'custom') {
       setSelectionBg(background);
@@ -35,7 +34,6 @@ export const Background = ({ charID, setPage }) => {
       CharacterService.getBackgroundInfo(background[0])
         .then(bg => {
           setSelectionBg([bg]);
-          console.log(bg);
           return bg;
         })
         .then(bg => {
@@ -168,7 +166,6 @@ export const Background = ({ charID, setPage }) => {
 
   return (
     <div className="background">
-      {console.log(selectionBg && selectionBg)}
       {backgrounds && selectionBg ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
