@@ -256,7 +256,21 @@ export const DashBoard = () => {
               />
               Halfling
             </h5>
-            <h5 className="text-uppercase">Level <span style={{fontSize:'1.6rem'}}>&#8198;2</span></h5>
+            <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;2</span></h5>
+            <span className="m-0 align-top">
+              <table style={{display: 'inline-table'}}>
+                <tbody>
+                  <tr>
+                  <span className="card content-card description-card m-0 p-1 w-auto">
+                  <h6 className="text-uppercase text-center m-0 px-4">647 XP</h6>
+                  </span>
+                  </tr>
+                  <tr>
+                  <h6 className="text-uppercase text-center text-white m-0 w-auto"><small className="text-uppercase text-white">Next Level: 900</small></h6>
+                  </tr>
+                </tbody>
+              </table>
+            </span>
             <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
           </span>
         </div>
@@ -296,7 +310,7 @@ export const DashBoard = () => {
           </div>
         </div>
         <div className="row">
-          <div className="col-xl-5 px-0">
+          <div className="col-xl-5 px-0 maincol">
             <div className="row">
               <div className="col-sm-7 pl-0 pr-2">
                   <AbilitiesCard ability_scores={ability_scores} />
@@ -317,6 +331,12 @@ export const DashBoard = () => {
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
                 <ExtraStatsCard />
+              </div>
+            </div>
+            <div className="pinned row px-2">
+              <div className="col-12 px-0">
+                <SpellsAndPinned />
+
               </div>
             </div>
           </div>
@@ -469,25 +489,25 @@ const StatsCard = () => {
       <div className="row">
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0">Initiative</h6>
+            <h6 className="text-uppercase m-0 text-center">Initiative</h6>
             <h2 className="text-uppercase text-center m-0">+4</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0">Inspiration</h6>
+            <h6 className="text-uppercase m-0 text-center">Inspiration</h6>
             <StarOutline style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card px-4">
-            <h6 className="text-uppercase m-0">AC</h6>
+            <h6 className="text-uppercase m-0 text-center">AC</h6>
             <h2 className="text-uppercase text-center m-0">15</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0">Speed</h6>
+            <h6 className="text-uppercase m-0 text-center">Speed</h6>
             <h2 className="text-uppercase text-center m-0">30</h2>
           </div>
         </div>
@@ -499,15 +519,40 @@ const StatsCard = () => {
 
 const HitPointsCard = () => {
   return (
-    <div className="card translucent-card long-card">
-      <div className="d-table-row">
-        <div className="card description-card my-0 mx-2">
-          <h6 className="text-uppercase m-0 text-white">Hit Points</h6>
-          <h3 className="text-uppercase text-center m-0">+4</h3>
+    <div className="hit-points card translucent-card long-card">
+      <div className="row px-3">
+        <div className="col-sm-7 px-2 py-1">
+        <h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Points</h6>
+        <div className="row p-0 m-0">
+          <div className="col-sm-8 px-1 py-0">
+            <div className="card content-card description-card my-0 mr-2 ml-0">
+              <h3 className="text-uppercase text-center m-0">4/10</h3>
+            </div>
+            <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
+          </div>
+          <div className="col-sm-4 px-1 py-0">
+            <div className="card content-card description-card my-0 mr-2 ml-0">
+              <h3 className="text-uppercase text-center m-0">0</h3>
+            </div>
+            <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
+          </div>
         </div>
-        <div className="card description-card my-0 mx-2">
-          <h6 className="text-uppercase m-0 text-white">Hit Dice</h6>
-          <h3 className="text-uppercase text-center m-0">30</h3>
+        <div className="row px-3 m-0 mt-2">
+          <div className="col-sm px-1 py-0">
+            <button className="btn btn-alert text-uppercase text-center align-middle">Damage</button>
+          </div>
+          <div className="col-sm px-1 py-0">
+            <button className="btn btn-success text-uppercase text-center align-middle">Heal</button>
+          </div>
+        </div>
+        </div>
+        <div className="col-sm-5 px-2 pl-5 py-1">
+        <h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Dice</h6>
+
+          <div className="card content-card description-card my-0 mr-0">
+            <h3 className="text-uppercase text-center m-0">2d8</h3>
+          </div>
+          <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Max: 2d8</small></h6>
         </div>
       </div>
     </div>
@@ -533,5 +578,67 @@ const ExtraStatsCard = () => {
     </div>
   );
 };
+
+const SpellsAndPinned = () => {
+  return (
+  <div className="card translucent-card w-100 mx-0">
+    <div className="row px-5">
+      <div>
+        <div className="card content-card description-card p-1">
+        <h6 className="text-uppercase text-center m-0">Spellcasting</h6>
+        <table className="table table-borderless table-sm">
+          <tbody>
+            <tr>
+          <td>
+            <h5 className="text-uppercase text-center m-0">+4<super><small>(Wis)</small></super></h5>
+          </td>
+          <td>
+            <h5 className="text-uppercase text-center m-0">15</h5>
+          </td>
+          <td>
+            <h5 className="text-uppercase text-center m-0">+6</h5>
+          </td>
+          </tr>
+          <tr>
+          <td><h6 className="text-uppercase text-center m-0">Ability</h6></td>
+          <td><h6 className="text-uppercase text-center m-0">Save DC</h6></td>
+          <td><h6 className="text-uppercase text-center m-0">Atk Bonus</h6></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+      <div className="ml-auto">
+        <div className="card content-card description-card pb-0">
+        <h6 className="text-uppercase text-center m-0">Spell Slots</h6>
+        <table className="table table-borderless table-sm">
+          <tbody>
+            <tr>
+          <td>
+            <h5 className="text-uppercase text-center m-0"><span>&#9679;&#9679;&#9675;&#9675;</span></h5>
+          </td>
+          <td>
+            <h5 className="text-uppercase text-center m-0">&#9675;&#9675;&#9675;</h5>
+          </td>
+          <td>
+            <h5 className="text-uppercase text-center m-0">&#9675;&#9675;</h5>
+          </td>
+          </tr>
+          <tr>
+          <td><h4 className="text-uppercase text-center m-0">1</h4></td>
+          <td><h4 className="text-uppercase text-center m-0">2</h4></td>
+          <td><h4 className="text-uppercase text-center m-0">3</h4></td>
+          </tr>
+          </tbody>
+        </table>
+      </div>
+      </div>
+    </div>
+    <div className="row">
+
+    </div>
+  </div>
+  )
+}
 
 export default DashBoard;
