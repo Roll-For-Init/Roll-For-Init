@@ -67,6 +67,8 @@ const fillModel = (equipment, character) => { //will probably need a separate wa
     const ability_relevant = abilityScoreParser(character.abilities, userSelections, proficiency_bonus);
     let health = character.class.hit_die + ability_relevant.ability_scores.con.modifier;//only works for 1st level
     if(character.subrace == 'Hill Dwarf') health+= level;
+    let subclassFeatures = character.subclass ? character.subclass.subclass_features : [];
+    let subraceTraits = character.subrace ? character.subrace.racial_traits : [];
 
     try {
         const model = {
@@ -85,8 +87,8 @@ const fillModel = (equipment, character) => { //will probably need a separate wa
                 name: character.class.index,
                 levels: character.class.level 
             }],
-            features: character.class.features.concat(userSelections.feature).concat(character.subclass?.subclass_features), 
-            traits: character.race.traits.concat(userSelections.trait).concat(character.subrace?.racial_traits), 
+            features: character.class.features.concat(userFeatures).concat(subclassFeatures), 
+            traits: character.race.traits.concat(userSelections.trait).concat(subraceTraits), 
             background: {
                 name: character.background.name,
             },
