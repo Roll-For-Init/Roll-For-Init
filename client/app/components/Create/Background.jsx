@@ -25,6 +25,7 @@ export const Background = ({ charID, setPage }) => {
   const [waterVehicles, setWaterVehicles] = useState([]);
 
   const selectBackground = background => {
+    console.log(background);
     dispatch(setBackground(charID, background[0]));
     if (background[0].index == 'custom') {
       setSelectionBg(background);
@@ -167,6 +168,7 @@ export const Background = ({ charID, setPage }) => {
 
   return (
     <div className="background">
+      {console.log(selectionBg && selectionBg)}
       {backgrounds && selectionBg ? (
         <>
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
@@ -234,7 +236,7 @@ export const Background = ({ charID, setPage }) => {
               <div className="choice-container">
                 {selectionBg[0].options.map((option, index) => {
                   return (
-                    <div className="dd-container" key={index}>
+                    <div className="dd-container" style={{width:'100%'}} key={index}>
                       <Dropdown
                      ddLabel={`${option.header}`}
                      title={`Choose ${option.choose}`}
@@ -253,6 +255,7 @@ export const Background = ({ charID, setPage }) => {
                      stateKey={`${option.header
                        .toLowerCase()
                        .replace(' ', '-')}-${option.type}-${index}`}
+                      key={index}
                       />
                     </div>
 
@@ -336,7 +339,7 @@ export const Background = ({ charID, setPage }) => {
                 <div className="card content-card description-card mb-0">
                   {Object.keys(selectionBg[0].proficiencies).map(key => {
                     return (
-                      proficiencies[key].length > 0 && <p className="text-capitalize" key={key}>
+                      selectionBg[0].proficiencies[key].length > 0 && <p className="text-capitalize" key={key}>
                         <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
                         -{' '}
                         {selectionBg[0].proficiencies[key].map(
