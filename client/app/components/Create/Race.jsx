@@ -4,54 +4,55 @@ import Dropdown from '../shared/Dropdown';
 import { setRace } from '../../redux/actions';
 import CharacterService from '../../redux/services/character.service';
 import { PropTypes } from 'prop-types';
+import ReactReadMoreReadLess from 'react-read-more-read-less';
 
-const RaceButton = ({ race, setRace, idx }) => {
-  const hasSubraces = race.subraces.length > 0;
+// const RaceButton = ({ race, setRace, idx }) => {
+//   const hasSubraces = race.subraces.length > 0;
 
-  const handleClick = () => {
-    if (!hasSubraces) {
-      setRace();
-    }
-  };
+//   const handleClick = () => {
+//     if (!hasSubraces) {
+//       setRace();
+//     }
+//   };
 
-  const handleSubClick = subrace => {
-    setRace(subrace);
-  };
+//   const handleSubClick = subrace => {
+//     setRace(subrace);
+//   };
 
-  return (
-    <div className="w-100 h-auto">
-      <button
-        className={
-          hasSubraces
-            ? 'btn btn-secondary btn-lg m-0 mb-3 options dropdown-toggle'
-            : 'btn btn-secondary btn-lg m-0 mb-3 options'
-        }
-        type="button"
-        id={`dropdownMenuButton1${idx}`}
-        data-toggle={hasSubraces ? 'dropdown' : ''}
-        onClick={() => handleClick()}
-        aria-expanded="true"
-      >
-        {race.name}
-      </button>
-      <div
-        className="dropdown-menu m-0 p-0"
-        aria-labelledby={`dropdownMenuButton1${idx}`}
-      >
-        {hasSubraces &&
-          race.subraces.map((subrace, idx) => (
-            <button
-              key={idx}
-              className="w-100 m-0 border-0 shadow-none text-center text-uppercase options-dropdown"
-              onClick={() => handleSubClick(subrace)}
-            >
-              {subrace.name}
-            </button>
-          ))}
-      </div>
-    </div>
-  );
-};
+//   return (
+//     <div className="w-100 h-auto">
+//       <button
+//         className={
+//           hasSubraces
+//             ? 'btn btn-secondary btn-lg m-0 mb-3 options dropdown-toggle'
+//             : 'btn btn-secondary btn-lg m-0 mb-3 options'
+//         }
+//         type="button"
+//         id={`dropdownMenuButton1${idx}`}
+//         data-toggle={hasSubraces ? 'dropdown' : ''}
+//         onClick={() => handleClick()}
+//         aria-expanded="true"
+//       >
+//         {race.name}
+//       </button>
+//       <div
+//         className="dropdown-menu m-0 p-0"
+//         aria-labelledby={`dropdownMenuButton1${idx}`}
+//       >
+//         {hasSubraces &&
+//           race.subraces.map((subrace, idx) => (
+//             <button
+//               key={idx}
+//               className="w-100 m-0 border-0 shadow-none text-center text-uppercase options-dropdown"
+//               onClick={() => handleSubClick(subrace)}
+//             >
+//               {subrace.name}
+//             </button>
+//           ))}
+//       </div>
+//     </div>
+//   );
+// };
 
 const Loading = () => {
   return 'LOADING';
@@ -220,7 +221,7 @@ const Race = ({ charID, setPage }) => {
 
 const BasicInfoCard = ({ speed, size }) => {
   return (
-    <div className="w-auto d-inline-block card content-card floating-card">
+    <div className="w-auto d-inline-block card content-card floating-card mb-0">
       Speed: {speed}
       <br />
       Size: {size}
@@ -234,7 +235,7 @@ BasicInfoCard.propTypes = {
 
 const AbilityBonusCard = ({ ability_bonuses }) => {
   return (
-    <div className="w-auto d-inline-block card content-card floating-card">
+    <div className="w-auto d-inline-block card content-card floating-card mb-0">
       {ability_bonuses.map((ability, index) => {
         if (index + 1 == ability_bonuses.length)
           return `+${ability.bonus} ${ability.ability_score.full_name}`;
@@ -385,9 +386,10 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
       {raceInfo.options.length > 0 && (
         <div className="card translucent-card">
           <h4 className="card content-card card-title">Race Options</h4>
-          <div>
-            {raceInfo.options.map((option, index) => {
-              return (
+
+          {raceInfo.options.map((option, index) => {
+            return (
+              <div className="dd-container" key={index}>
                 <Dropdown
                   ddLabel={`${option.header}`}
                   title={`Choose ${option.choose}`}
@@ -407,11 +409,10 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
                   stateKey={`${option.header
                     .toLowerCase()
                     .replace(' ', '-')}-${option.type}-${index}`}
-                  key={index}
                 />
-              );
-            })}
-          </div>
+              </div>
+            );
+          })}
         </div>
       )}
       {raceInfo.profCount > 0 && (
@@ -419,7 +420,7 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
           <div className="card content-card card-title">
             <h4>Starting Proficiencies</h4>
           </div>
-          <div className="card content-card description-card">
+          <div className="card content-card description-card mb-0">
             {//console.log(Object.values(raceInfo.proficiencies))
             Object.keys(raceInfo.proficiencies).map(key => {
               return (
@@ -441,23 +442,37 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
           <div className="card content-card card-title">
             <h4>{`${raceInfo.main.name} Traits`}</h4>
           </div>
-          {raceInfo.main.traits.map(trait => {
+          {raceInfo.main.traits.map((trait, idx, arr) => {
             return (
-              <div className="card content-card description-card">
-                <h3 className="card-subtitle small-caps">{trait.name}</h3>
-                <p>{trait.desc}</p>
+              <div
+                className={`card content-card description-card ${idx ===
+                  arr.length - 1 && 'mb-0'}`}
+                key={trait.name}
+              >
+                <h5 className="card-subtitle small-caps">{trait.name}</h5>
+                <p>
+                  <ReactReadMoreReadLess
+                    charLimit={250}
+                    readMoreText="Show more"
+                    readLessText="Show less"
+                    readMoreClassName="read-more-less--more"
+                    readLessClassName="read-more-less--less"
+                  >
+                    {trait.desc.join('\n')}
+                  </ReactReadMoreReadLess>
+                </p>
                 {trait.table && (
                   <table>
                     <tr>
                       {trait.table.header.map(item => {
-                        return <th>{item}</th>;
+                        return <th key={item}>{item}</th>;
                       })}
                     </tr>
                     {trait.table.rows.map(row => {
                       return (
-                        <tr>
+                        <tr key={row}>
                           {row.map(item => {
-                            return <td>{item}</td>;
+                            return <td key={item}>{item}</td>;
                           })}
                         </tr>
                       );
@@ -474,11 +489,25 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
           <div className="card content-card card-title">
             <h4>{`${raceInfo.sub.name} Traits`}</h4>
           </div>
-          {raceInfo.sub.racial_traits.map(trait => {
+          {raceInfo.sub.racial_traits.map((trait, idx, arr) => {
             return (
-              <div className="card content-card description-card">
-                <h3 className="card-subtitle small-caps">{trait.name}</h3>
-                <p>{trait.desc}</p>
+              <div
+                className={`card content-card description-card ${idx ===
+                  arr.length - 1 && 'mb-0'}`}
+                key={trait.name}
+              >
+                <h5 className="card-subtitle small-caps">{trait.name}</h5>
+                <p>
+                  <ReactReadMoreReadLess
+                    charLimit={250}
+                    readMoreText="Show more"
+                    readLessText="Show less"
+                    readMoreClassName="read-more-less--more"
+                    readLessClassName="read-more-less--less"
+                  >
+                    {trait.desc.join('\n')}
+                  </ReactReadMoreReadLess>
+                </p>
               </div>
             );
           })}

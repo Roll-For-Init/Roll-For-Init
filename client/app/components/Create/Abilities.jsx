@@ -113,7 +113,11 @@ export const Abilities = ({ charID, setPage }) => {
           }
         }
       });
-      if (abilityCards.some(ab => { return (ab.points < 8 || ab.points > 15); })) {
+      if (
+        abilityCards.some(ab => {
+          return ab.points < 8 || ab.points > 15;
+        })
+      ) {
         tempTotal = Infinity;
       }
     }
@@ -144,8 +148,8 @@ export const Abilities = ({ charID, setPage }) => {
       allTotals.push({
         dice: dice,
         total: total,
-        droppedIndex: dice.indexOf(min)
-      })
+        droppedIndex: dice.indexOf(min),
+      });
     }
     setDiceTotals(allTotals);
   };
@@ -163,7 +167,7 @@ export const Abilities = ({ charID, setPage }) => {
             'Rolled: Click the button below to generate a set of 6 scores using the rolled method and assign those scores to your abilities. Alternatively, roll dice yourself according to your abilities. Alternatively, roll dice yourself according to the following rules and input the scores yourself. Roll 4d6 and add the highest 3 numbers to generate each score. Do this 6 times and assign the values to your abilites.',
           ]}
         />
-        <div className="container-fluid w-75 mx-auto">
+        <div className="container-fluid mx-auto">
           <DiceRoll onDiceRoll={onDiceRoll} diceTotals={diceTotals} />
           <div className="row">
             {abilityCards &&
@@ -217,10 +221,7 @@ const DiceRoll = ({ onDiceRoll, diceTotals }) => {
     <div>
       <div className="row">
         <div className="col">
-          <button
-            className="btn-primary btn-lg mt-0 px-5"
-            onClick={onDiceRoll}
-          >
+          <button className="btn-primary btn-lg mt-0 px-5" onClick={onDiceRoll}>
             Roll Scores
           </button>
         </div>
@@ -230,13 +231,27 @@ const DiceRoll = ({ onDiceRoll, diceTotals }) => {
           <div className="card translucent-card dice-roll-card">
             <div className="container-fluid">
               <div className="row row-cols-3">
-                {diceTotals.map(dice => {
+                {diceTotals.map((dice, idx) => {
                   return (
-                    <div className="col px-1">
-                      <div className="d-inline-block card content-card floating-card w-100 mx-0 px-0">
+                    <div className="col px-1" key={idx}>
+                      <div className="d-inline-block card content-card floating-card indie-dice-card w-100 mx-0 px-0">
                         <div className="dice">
                           {dice.dice.map((d, idx) => {
-                            return <div className={(idx === dice.droppedIndex ? "dropped" : "")}>{d}</div>
+                            return (
+                              <div
+                                // className={
+                                //   idx === dice.droppedIndex ? 'dropped' : ''
+                                // }
+                                key={idx}
+                              >
+                                {/* {d} */}
+                                <i
+                                  className={`${
+                                    idx === dice.droppedIndex ? 'dropped' : ''
+                                  } df-solid-small-dot-d6-${d}`}
+                                ></i>
+                              </div>
+                            );
                           })}
                         </div>
                         <h4> = {dice.total}</h4>
@@ -378,27 +393,27 @@ const PointBuyCard = ({
   );
 };
 
-const PointsRemainingCard = ({ pointsRemaining, }) => {
+const PointsRemainingCard = ({ pointsRemaining }) => {
   return (
     <div className="card translucent-card w-fit-content">
-      { (pointsRemaining === Infinity)
-        ?
-          <div className="d-flex">
-            <div className="card content-card warning-card">
-              <i className="bi bi-exclamation-triangle-fill text-warning icon"></i>
-              <h4 className="text">
-                You have scores above 15 or below 8, which is not allowed using point buy.
-              </h4>
-            </div>
+      {pointsRemaining === Infinity ? (
+        <div className="d-flex">
+          <div className="card content-card warning-card">
+            <i className="bi bi-exclamation-triangle-fill text-warning icon"></i>
+            <h4 className="text">
+              You have scores above 15 or below 8, which is not allowed using
+              point buy.
+            </h4>
           </div>
-        :
+        </div>
+      ) : (
         <div>
           <div>
             <div className="card content-card card-title mr-3">
               <h4>Points Remaining</h4>
             </div>
             <div className="card content-card card-title points-remaining-card mb-2">
-              { pointsRemaining < 0 && (
+              {pointsRemaining < 0 && (
                 <i className="bi bi-exclamation-triangle-fill text-warning icon"></i>
               )}
               <h4>{pointsRemaining}/27</h4>
@@ -465,7 +480,7 @@ const PointsRemainingCard = ({ pointsRemaining, }) => {
             </div>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };
