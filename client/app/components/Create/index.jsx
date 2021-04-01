@@ -55,13 +55,22 @@ const Page = ({ page, setCharPage, charID }) => {
       break;
   }
   return (
-    <div className="col-md-9 offset-md-3 pb-0 pt-md-3 container">
+    <div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">
       {currentPage}
     </div>
   );
 };
 
-const Buttons = ({ page, onPageChange }) => {
+const Buttons = ({
+  page,
+  onPageChange,
+  charRace,
+  charClass,
+  raceIconsOffWhite,
+  raceIconsMedBlue,
+  classIconsOffWhite,
+  classIconsMedBlue,
+}) => {
   return (
     page && (
       <React.Fragment>
@@ -77,10 +86,42 @@ const Buttons = ({ page, onPageChange }) => {
               className={classname}
               disabled={page.index < idx}
               onClick={() => {
-                page.index >= idx && onPageChange(name, idx);
+                page.index > idx && onPageChange(name, idx);
               }}
             >
               {name}
+              {name === 'race' && charRace !== null && (
+                <div className="button-icon-container">
+                  <img
+                    className="button-icon"
+                    src={
+                      page.name === name
+                        ? raceIconsOffWhite[
+                            `${charRace.index.toLowerCase()}.png`
+                          ]
+                        : raceIconsMedBlue[
+                            `${charRace.index.toLowerCase()}.png`
+                          ]
+                    }
+                  />
+                </div>
+              )}
+              {name === 'class' && charClass !== null && (
+                <div className="button-icon-container">
+                  <img
+                    className="button-icon"
+                    src={
+                      page.name === name
+                        ? classIconsOffWhite[
+                            `${charClass.index.toLowerCase()}.png`
+                          ]
+                        : classIconsMedBlue[
+                            `${charClass.index.toLowerCase()}.png`
+                          ]
+                    }
+                  />
+                </div>
+              )}
             </button>
           );
         })}
@@ -94,7 +135,6 @@ const PageViewer = ({ charID }) => {
 
   const dispatch = useDispatch();
   const setCharPage = (name, index) => {
-    console.log('YAY');
     dispatch(setPage(charID, { ...name, ...index }));
   };
 
@@ -352,7 +392,7 @@ const PageViewer = ({ charID }) => {
           </div>
           {charRace !== null && (
             <div className="card content-card side-bar-card scroll">
-              {page.name === 'race' && charRace !== null && (
+              {character.page.name === 'race' && charRace !== null && (
                 <p className="mb-0">
                   Half-Orcs are known for their power and fortitude, and so
                   often use their great Strength to excel in the Barbarian or
@@ -361,7 +401,7 @@ const PageViewer = ({ charID }) => {
                   midst of battle.
                 </p>
               )}
-              {page.name === 'class' &&
+              {character.page.name === 'class' &&
                 (charClass !== null ? (
                   <p className="mb-0">
                     Clerics are known for their great Wisdom and close

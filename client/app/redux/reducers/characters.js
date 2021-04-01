@@ -92,10 +92,10 @@ const character = (state = initialCharacter, action, charID) => {
         abilities: { ...state.abilities, ...payload.abilities },
       };
     case SET_EQUIPMENT:
-        return {
-            ...state,
-            equipment: {...state.equipment, ...payload.equipment }
-        }
+      return {
+        ...state,
+        equipment: { ...state.equipment, ...payload.equipment },
+      };
     case SET_SPELLS:
       return {
         ...state,
@@ -121,9 +121,10 @@ export default function(state = initialState, action) {
 
   switch (type) {
     case SUBMIT_CHARACTER_SUCCESS:
+      console.log('REDUCER', payload);
       return {
         ...state,
-        [payload.name]: payload,
+        [payload.charID]: payload,
       };
     case SUBMIT_CHARACTER_FAIL:
       return {
@@ -168,11 +169,11 @@ export default function(state = initialState, action) {
         ...state,
         [payload.charID]: character(state[payload.charID], action, payload),
       };
-      case SET_EQUIPMENT:
-        return {
-          ...state,
-          [payload.charID]: character(state[payload.charID], action, payload),
-        };
+    case SET_EQUIPMENT:
+      return {
+        ...state,
+        [payload.charID]: character(state[payload.charID], action, payload),
+      };
     case SET_SPELLS:
       return {
         ...state,

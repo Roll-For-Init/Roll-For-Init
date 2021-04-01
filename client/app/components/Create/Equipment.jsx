@@ -426,6 +426,7 @@ export const Equipment = ({ charID, setPage }) => {
   const history = useHistory();
 
   const onFinish = () => {
+    validateAndStore();
     history.push('/dashboard');
   };
 

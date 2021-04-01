@@ -1,4 +1,4 @@
-const axios = require('./axios');
+const axios = require('axios');
 const placeholderDescription = [
   'Please see the 5e SRD for more details @ https://dnd.wizards.com/articles/features/systems-reference-document-srd',
 ];
@@ -46,6 +46,11 @@ const makeEquipmentDesc = async (item, itemDetails) => {
       ac: ac,
       cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
       weight: itemDetails.weight,
+      dex_bonus: armorClassDeets.dex_bonus,
+      max_bonus: armorClassDeets.max_bonus,
+      base: armorClassDeets.base,
+      str_minimum: itemDetails.str_minimum,
+      stealth_disadvantage: itemDetails.stealth_disadvantage,
     };
     if (itemDetails.str_minimum > 0) desc.strength = itemDetails.str_minimum;
     if (itemDetails.stealth_disadvantage) desc.desc = 'stealth disadvantage';
@@ -67,13 +72,19 @@ const makeEquipmentDesc = async (item, itemDetails) => {
         break;
       }
     }
+    if (itemDetails.weapon_category != undefined)
+      desc.category = `${itemDetails.category_range} Weapon`;
+    if (itemDetails.damage != undefined)
+      desc.damage = `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`;
     if (itemDetails.quantity != undefined) desc.quantity = itemDetails.quantity;
     if (itemDetails.cost != undefined)
       desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
     if (itemDetails.weight != undefined) desc.weight = itemDetails.weight;
-    if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
     if (itemDetails.special != undefined)
-      desc.desc = itemDetails.special.join(' ');
+      desc.special = itemDetails.special.join(' ');
+    if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
+    else if (itemDetails.properties != undefined)
+      desc.desc = itemDetails.properties.map(prop => prop.name).join(', ');
   }
   return desc;
 };
@@ -141,15 +152,27 @@ const optionsHelper = async (container, options, key) => {
   let optionSet = {
     header: '',
     options: [],
+    type: '',
     choose: 0,
   };
   optionSet.choose = options.choose;
   if (options.type.toLowerCase().includes('feature')) {
     optionSet.header = container.name;
     optionSet.desc = container.desc;
-  } else if (options.type.toLowerCase().includes('language'))
+    optionSet.type = 'feature';
+  } else if (options.type.toLowerCase().includes('trait')) {
+    console.log(options);
+    optionSet.header = options.header
+      ? options.header
+      : options.type.replace('_', ' ');
+    optionSet.type = 'trait';
+  } else if (options.type.toLowerCase().includes('language')) {
     optionSet.header = `extra ${options.type}`;
-  else optionSet.header = options.type.replace('_', ' ');
+    optionSet.type = options.type;
+  } else {
+    optionSet.header = options.type.replace('_', ' ');
+    optionSet.type = options.type;
+  }
   for (let option of options.from) {
     if (key.toLowerCase().includes('ability_bonus')) {
       optionSet.header = `+${options.from[0].bonus} Ability Bonus`;
@@ -184,6 +207,7 @@ const optionsHelper = async (container, options, key) => {
       option.name = optionName;
       let optionObject = option;
       optionSet.options.push(optionObject);
+      optionSet.type = 'skill';
     } else {
       let optionObject = option;
       optionSet.options.push(optionObject);
@@ -356,17 +380,25 @@ const getRaceMiscDescriptions = async race => {
 };
 
 const propogateRacePointer = async racePointer => {
+  console.log(racePointer);
   const promises = [];
   const raceContainer = {
     options: [],
     profCount: 0,
-    proficiencies: {},
+    proficiencies: {
+      Armor: [],
+      Weapons: [],
+      Tools: [],
+      Languages: [],
+      Throws: [],
+    },
     main: {},
     sub: {},
     equipment_options: [],
   };
   const race = (await axios.get(racePointer.url)).data;
-  const subrace = racePointer.hasOwnProperty('subrace')
+
+  const subrace = racePointer.subrace
     ? (await axios.get(racePointer.subrace.url)).data
     : null;
   if (subrace) promises.push(propogateSubracePointer(subrace, raceContainer));
@@ -422,6 +454,7 @@ const classCaller = async classPointer => {
     features: [],
     profCount: 0,
     main: {},
+    levels: [],
     equipment_options: [],
     spellcasting: null,
     subclass: null,
@@ -606,7 +639,13 @@ const backgroundCaller = async url => {
   const promises = [];
   let container = {
     profCount: 0,
-    proficiencies: {},
+    proficiencies: {
+      Armor: [],
+      Weapons: [],
+      Tools: [],
+      Languages: [],
+      Throws: [],
+    },
     options: [],
     equipment_options: [],
   };
