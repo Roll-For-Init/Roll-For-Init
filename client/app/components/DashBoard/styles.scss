@@ -215,7 +215,30 @@
       }
   }
 
-  /******* radio buttons *******/
+  /******* buttons *******/
+  .btn-outline-success {
+    border: {
+      style: solid !important;
+      color: $green !important;
+      width: 3px !important;
+      radius: 8px;
+    }
+    color: $dark-blue;
+    box-shadow: none;
+    float: left;
+    font-size: 1rem;
+    padding: 2px 5px;
+    max-height: 1.67rem;
+    line-height: 1;
+    flex-grow: 0;
+    margin: auto 0px;
+    background-color: transparent;
+
+    &:hover,
+    &:active, &:focus {
+      background-color: $medium-off-white !important;
+    }
+}
 
   .list-item {
     display: inline-block;

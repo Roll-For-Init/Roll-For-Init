@@ -5,6 +5,8 @@ import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
 import './styles.scss';
 
+//swap race class icons with white
+
 const skillScores = {
   athletics: 'str',
   acrobatics: 'dex',
@@ -519,6 +521,7 @@ const ExtraStatsCard = () => {
     <div className="card translucent-card short-card extra-stats">
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Conditions</h6>
+        <button className="btn-outline-success">+ Add condition</button>
       </div>
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Defenses</h6>
