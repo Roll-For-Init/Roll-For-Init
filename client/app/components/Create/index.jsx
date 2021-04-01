@@ -64,7 +64,6 @@ const Page = ({ page, setCharPage, charID }) => {
 };
 
 const Buttons = ({ page, onPageChange, charRace, charClass, raceIconsOffWhite, raceIconsMedBlue, classIconsOffWhite, classIconsMedBlue }) => {
-  console.log(raceIconsOffWhite);
   return (
     page && (
       <React.Fragment>
@@ -129,7 +128,6 @@ const PageViewer = ({ charID}) => {
 
   const dispatch = useDispatch();
   const setCharPage = (name, index) => {
-    console.log('YAY');
     dispatch(setPage(charID, { ...name, ...index }));
   };
 

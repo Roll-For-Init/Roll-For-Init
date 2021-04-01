@@ -248,10 +248,10 @@ const acCalculator = (armorList, theClass, abScores) => {
     }
     let shield = false;
     //unarmored
-    if(theClass='monk') maxAC += abScores.wis.modifier;
-    else if(theClass='barbarian') maxAC += abScores.con.modifier;
+    if(theClass='monk') best.maxAC += abScores.wis.modifier;
+    else if(theClass='barbarian') best.maxAC += abScores.con.modifier;
     best.maxAC += abScores.dex.modifier;
-    
+
     for(let armor of armorList) {
         if(armor.name.toLowerCase().includes('shield')) shield = true;
         let maxAC = armor.armor_class.base + (armor.dex_bonus ? (armor.max_bonus && dex >= armor.max_bonus ? armor.max_bonus : dex) : 0);
