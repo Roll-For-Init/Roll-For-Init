@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+const mongoose = require('mongoose');
 
 const { Schema } = mongoose;
 
@@ -42,43 +42,240 @@ const CharacterSchema = new Schema({ //Add class specific slots
       ribbon: [
         {
           name: String,
-          description: String
-        }
+          description: String,
+        },
       ],
-      damage: [
+    },
+    misc_proficiencies: {
+      armor: [{ name: String }],
+      weapons: [{ name: String }],
+      tools: [{ name: String }],
+      languages: [{ name: String }],
+    },
+    ability_scores: {
+      str: {
+        score: Number,
+        modifier: Number,
+        advantage: Number,
+      },
+      dex: {
+        score: Number,
+        modifier: Number,
+        advantage: Number,
+      },
+      con: {
+        score: Number,
+        modifier: Number,
+        advantage: Number,
+      },
+      int: {
+        score: Number,
+        modifier: Number,
+        advantage: Number,
+      },
+      wis: {
+        score: Number,
+        modifier: Number,
+        advantage: Number,
+      },
+      cha: {
+        score: Number,
+        modifier: Number,
+        advantage: Number,
+      },
+    },
+    saving_throws: {
+      str: {
+        proficiency: Boolean,
+        modifier: Number, // NOT base ability score modifier
+        advantage: Number,
+      },
+      dex: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      con: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      int: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      wis: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      cha: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+    },
+    skills: {
+      // should these skills have an associated ability, or are we getting that from the api?
+      acrobatics: {
+        proficiency: Boolean,
+        // i.e., should each skill have an ability field (like DEX for acrobatics)
+        modifier: Number, // NOT base ability score modifier
+        advantage: Number,
+      },
+      animal_handling: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      arcana: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      athletics: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      deception: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      history: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      insight: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      intimidation: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      investigation: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      medicine: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      nature: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      perception: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      performance: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      persuasion: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      religion: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      sleight_of_hand: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      stealth: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+      survival: {
+        proficiency: Boolean,
+        modifier: Number,
+        advantage: Number,
+      },
+    },
+    ac: Number,
+    equipped_armor: [
+      {
+        name: String,
+        description: String,
+        type: String, // e.g. light, medium, heavy
+        base_ac: Number,
+        modifier: String, // modifier is max +2 bonus?
+        mechanics: [
+          {
+            skill: String,
+            stat: Number,
+            is_active: {
+              type: Boolean,
+              default: false,
+            },
+          },
+        ],
+      },
+    ],
+    health: {
+      current: Number,
+      max: Number,
+      temp: Number,
+    },
+    hit_dice: {
+      current: Number,
+      max: Number,
+      type: String, // '4d4", etc.
+    },
+    initiative_bonus: Number,
+    attacks: {
+      advantage: Number,
+      weapons: [
         {
           name: String,
-          description: String,
+          attack_type: String,
+          damage_type: String,
+          damage_dice: String,
+          modifier: Number,
+          ammunition: {
+            current: Number,
+            max: Number,
+          },
+        },
+      ],
+      magic_weapons: [
+        {
+          name: String,
+          attack_type: String,
+          damage_type: String,
+          damage_dice: String,
+          modifier: Number,
+          ammunition: {
+            current: Number,
+            max: Number,
+          },
           mechanics: [
             {
               skill: String,
               stat: Number,
               is_active: {
                 type: Boolean,
-                default: false
-              }
-            }
-          ],
-          charges: {
-            current: Number,
-            max: Number
-          }
-        }
-      ],
-      utility: [
-        {
-          name: String,
-          duration: String,
-          description: String,
-          mechanics: [
-            {
-              skill: Number,
-              stat: Number,
-              is_active: {
-                type: Boolean,
-                default: false
-              }
-            }
+                default: false,
+              },
+            },
           ],
           charges: {
             current: Number,
@@ -105,25 +302,35 @@ const CharacterSchema = new Schema({ //Add class specific slots
           description: String
         }
       ],
-      damage: [
+    },
+    spells: {
+      slots: {
+        current: Number,
+        max: Number,
+      },
+      casting_ability: String,
+      advantage: Number,
+      combat: [
         {
           name: String,
-          description: String,
-          mechanics: [
+          description: String, // e.g. "ranged"
+          spell_type: String,
+          school: String,
+          casting_time: String, // in terms of actions?, e.g. "instantaneous"
+          components: [
             {
-              skill: String,
-              stat: Number,
-              is_active: {
-                type: Boolean,
-                default: false
-              }
-            }
+              name: String, // v, s, r
+            },
           ],
-          charges: {
-            current: Number,
-            max: Number
-          }
-        }
+          material: String,
+          duration: String,
+          damage_type: String, // acid, necrotic, etc.
+          dc: {
+            name: String, // optional field for attribute (WIS, PER, etc.)
+            success: Number, // percentage, half damage??
+          },
+          level: String, // "4d4", etc.
+        },
       ],
       utility: [
         {
@@ -306,20 +513,20 @@ const CharacterSchema = new Schema({ //Add class specific slots
       modifier: Number,     
       advantage: Number
     },
-    sleight_of_hand: {
-      proficiency: Boolean,
-      modifier: Number,     
-      advantage: Number
+    defenses: {
+      advantage: Number, // if advantage is -1, 0, or 1
+      resistances: [{ name: String }],
+      immunities: [{ name: String }],
+      vulnerabilities: [{ name: String }],
     },
-    stealth: {
-      proficiency: Boolean,
-      modifier: Number,     
-      advantage: Number
+    conditions: [{ name: String }],
+    death_throws: {
+      successes: Number,
+      failures: Number,
     },
-    survival: {
-      proficiency: Boolean,
-      modifier: Number,     
-      advantage: Number
+    inspiration: {
+      type: Boolean,
+      default: false,
     },
   },
   ac: Number,
@@ -436,15 +643,7 @@ const CharacterSchema = new Schema({ //Add class specific slots
             name: String        // v, s, r 
           }
         ],
-        material: String,
-        duration: String,
-        damage_type: String,    // acid, necrotic, etc.
-        dc: {
-          name: String,         // optional field for attribute (WIS, PER, etc.)
-          success: Number       // percentage, half damage?? 
-        },
-        damage: String           // "4d4", etc.
-      }
+      },
     ],
     utility: [
       {
@@ -538,17 +737,19 @@ const CharacterSchema = new Schema({ //Add class specific slots
     type: Boolean,
     default: false,
   },*/
-  date_updated: {
-    type: Date,
-    default: Date.now,
+    date_updated: {
+      type: Date,
+      default: Date.now,
+    },
+    date_created: {
+      type: Date,
+      default: Date.now,
+    },
   },
-  date_created: {
-    type: Date,
-    default: Date.now,
-  },
-}, {
-  timestamps: true
-});
+  {
+    timestamps: true,
+  }
+);
 
-const Character = mongoose.model("Character", CharacterSchema);
+const Character = mongoose.model('Character', CharacterSchema);
 module.exports = Character;
