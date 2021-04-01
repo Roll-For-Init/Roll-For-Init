@@ -3,6 +3,7 @@ import React, { useEffect, useState, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CharacterService from '../../redux/services/character.service';
 // import { clearSelectedInfo, getClassInfo } from '../../redux/actions';
+import poop from '../../../public/assets/imgs/icons/off-white/class/barbarian.png';
 import Dropdown from '../shared/Dropdown';
 import { setClass } from '../../redux/actions';
 
@@ -25,6 +26,22 @@ const Class = ({ charID, setPage }) => {
     setViewClass(true);
   };
 
+  function importAll(r) {
+    let images = {};
+    r.keys().map((item, index) => {
+      images[item.replace('./', '')] = r(item);
+    });
+    return images;
+  }
+
+  const classIconsOffWhite = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/off-white/class',
+      false,
+      /\.(png)$/
+    )
+  );
+
   return (
     <div className="class position-relative">
       {!viewClass ? (
@@ -32,19 +49,24 @@ const Class = ({ charID, setPage }) => {
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Class</h2>
           </div>
-          <div className="dropdown btn-group-vertical w-100 mt-3">
+          <div className="icon-grid">
             {classes &&
               classes.map((theClass, idx) => (
-                <div className="w-100 h-auto" key={idx}>
-                  <button
-                    className="btn btn-secondary btn-lg m-0 mb-3 options"
-                    type="button"
-                    onClick={() =>
-                      selectClass({ index: theClass.name, url: theClass.url })
-                    }
-                  >
-                    {theClass.name}
-                  </button>
+                <div className="icon-card-container" key={idx}>
+                  <div className="card icon-card-label">
+                    <div
+                      className="card icon-card"
+                      onClick={() =>
+                        selectClass({ index: theClass.name, url: theClass.url })
+                      }
+                    >
+                      <img
+                        className="card-icon"
+                        src={classIconsOffWhite[`${theClass.index}.png`]}
+                      />
+                    </div>
+                    <p>{theClass.name}</p>
+                  </div>
                 </div>
               ))}
           </div>
@@ -98,8 +120,22 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           setClass(charID, { equipment_options: theClass.equipment_options })
         );
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
-        dispatch(setClass(charID, { spellcasting: theClass.spellcasting }));
+        dispatch(
+          setClass(charID, {
+            spellcasting:
+              theClass.spellcasting === null
+                ? null
+                : { ...theClass.spellcasting, ...theClass.main.spellcasting },
+          })
+        );
         dispatch(setClass(charID, { subclass: theClass.subclass }));
+        dispatch(setClass(charID, { features: theClass.features }));
+        dispatch(
+          setClass(charID, { saving_throws: theClass.main.saving_throws })
+        );
+        dispatch(setClass(charID, { hit_die: theClass.main.hit_die }));
+        dispatch(setClass(charID, { level: 1 }));
+        dispatch(setClass(charID, { levels: theClass.levels }));
       });
   }, []);
 
@@ -165,16 +201,16 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                     multiSelect={option.choose > 1}
                     selection={
                       userChoices[
-                        `${option.header
-                          .toLowerCase()
-                          .replace(' ', '-')}-${index}`
+                        `${option.header.toLowerCase().replace(' ', '-')}-${
+                          option.type
+                        }-${index}`
                       ]
                     }
                     setSelection={setUserChoices}
-                    classname="choice"
+                    classname="dd-choice"
                     stateKey={`${option.header
                       .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
+                      .replace(' ', '-')}-${option.type}-${index}`}
                     key={index}
                   />
                 );
@@ -189,16 +225,16 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                     multiSelect={option.choose > 1}
                     selection={
                       userChoices[
-                        `${option.header
-                          .toLowerCase()
-                          .replace(' ', '-')}-${index}`
+                        `${option.header.toLowerCase().replace(' ', '-')}-${
+                          option.type
+                        }-${index}`
                       ]
                     }
                     setSelection={setUserChoices}
                     classname="choice"
                     stateKey={`${option.header
                       .toLowerCase()
-                      .replace(' ', '-')}-${index}`}
+                      .replace(' ', '-')}-${option.type}-${index}`}
                     key={index}
                   />
                 );
@@ -211,17 +247,20 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             Starting Proficiencies
           </h4>
           <div className="card content-card description-card">
-            {Object.entries(proficiencies).map(prof => (
-              <p className="text-capitalize" key={prof[0]}>
-                <strong className="small-caps">{prof[0]}</strong> –{' '}
-                {prof[1].map((item, idx) => (
-                  <React.Fragment key={idx}>
-                    {item}
-                    {idx < prof[1].length - 1 && ', '}
-                  </React.Fragment>
-                ))}
-              </p>
-            ))}
+            {Object.entries(proficiencies).map(
+              prof =>
+                prof[1].length > 0 && (
+                  <p className="text-capitalize" key={prof[0]}>
+                    <strong className="small-caps">{prof[0]}</strong> –{' '}
+                    {prof[1].map((item, idx) => (
+                      <React.Fragment key={idx}>
+                        {item}
+                        {idx < prof[1].length - 1 && ', '}
+                      </React.Fragment>
+                    ))}
+                  </p>
+                )
+            )}
           </div>
         </div>
         {features.length > 0 && (
@@ -262,7 +301,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         )}
         {main.spellcasting && (
           <div className="card translucent-card">
-            <h4 className="card content-card card-title">SPELL CASTING</h4>
+            <h4 className="card content-card card-title">Spellcasting</h4>
             {main.spellcasting.info.map(spell => (
               <div
                 className="card content-card description-card"

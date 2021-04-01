@@ -412,7 +412,13 @@ const classCaller = async classPointer => {
   const promises = [];
   const classContainer = {
     options: [],
-    proficiencies: {},
+    proficiencies: {
+      Armor: [],
+      Weapons: [],
+      Tools: [],
+      Languages: [],
+      Throws: [],
+    },
     features: [],
     profCount: 0,
     main: {},

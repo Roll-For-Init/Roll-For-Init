@@ -145,6 +145,27 @@ export const Descriptions = ({ charID, setPage }) => {
   };
 
   const onNext = () => {
+    const description = {
+      lore: {
+        alignment: selectionAl,
+        personality_traits: personality,
+        ideals: ideals,
+        bonds: bonds,
+        flaws: flaws, 
+        backstory: backstory,
+        relationships: relationships
+      },
+      physical_description: {
+        height: height,
+        weight: weight,
+        age: age,
+        eyes: eyes,
+        skin: skin,
+        hair: hair,
+      },
+      portrait: {name: fileName}
+    }
+    dispatch(setDescription(charID, description));
     setPage({ index: 5, name: 'equipment' });
     window.scrollTo(0, 0);
   };

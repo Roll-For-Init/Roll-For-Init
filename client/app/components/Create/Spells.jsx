@@ -4,7 +4,9 @@ import { useSelector, useDispatch } from 'react-redux';
 import { setSpells } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
+import Masonry from 'react-masonry-css';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 /**
  * FOR DEACTIVATING SELECT BUTTONS: you will have to target all spell card children that are NOT selected,
@@ -107,8 +109,13 @@ const SpellList = ({ spells, known, level, limit, toggleSelected }) => {
     return known.includes(spell.index);
   };
 
+  const breakpointColumnsObj = {
+    default: 2,
+    767: 1,
+  };
+
   return (
-    <div className="card translucent-card">
+    <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
       <div className="card content-card card-title">
         <h6>
           {level == 0 ? 'Cantrips' : level == 1 ? 'Level 1 Spells' : 'Spells'} -
@@ -116,23 +123,23 @@ const SpellList = ({ spells, known, level, limit, toggleSelected }) => {
         </h6>
       </div>
       {spells !== undefined && (
-        <div className="spell-custom-container">
-          <div className="container">
-            <div className="card-columns">
-              {spells.map((spell, idx) => {
-                return (
-                  <SpellCard
-                    selected={isSelected(spell)}
-                    spell={spell}
-                    key={idx}
-                    level={level}
-                    toggleSelected={() => toggleSelected(spell.index)}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
+          {spells.map((spell, idx) => {
+            return (
+              <SpellCard
+                selected={isSelected(spell)}
+                spell={spell}
+                key={idx}
+                level={level}
+                toggleSelected={() => toggleSelected(spell.index)}
+              />
+            );
+          })}
+        </Masonry>
       )}
     </div>
   );
@@ -202,10 +209,18 @@ export const Spells = ({ charID, setPage }) => {
     dispatch(setSpells(charID, payload));
   };
 
+  const validateAndStore = () => {
+    console.log(character);
+    CharacterService.createCharacter(
+      CharacterService.validateCharacter(character)
+    );
+  };
+
   useEffect(() => {
     if (!character.class.index) return;
     CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
+      dispatch(setSpells(charID, { cards: cards }));
     });
     console.log(character);
   }, []);
@@ -233,7 +248,7 @@ export const Spells = ({ charID, setPage }) => {
               );
             })}
           </>
-          <Link to="/dashboard">
+          <Link to="/dashboard" onClick={validateAndStore}>
             <button className="text-uppercase btn-primary btn-lg px-5 btn-floating">
               Finish
             </button>
