@@ -87,7 +87,7 @@ const fillModel = (equipment, character) => { //will probably need a separate wa
                 name: character.class.index,
                 levels: character.class.level 
             }],
-            features: character.class.features.concat(userFeatures).concat(subclassFeatures), 
+            features: character.class.features.concat(userSelections.feature).concat(subclassFeatures), 
             traits: character.race.traits.concat(userSelections.trait).concat(subraceTraits), 
             background: {
                 name: character.background.name,
