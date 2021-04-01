@@ -48,6 +48,7 @@ const parseEquipment = (items) => {
 }
 
 const fillModel = (equipment, character) => { //will probably need a separate way to update an existing model
+    console.log("in model", equipment,character);
     const userSelections = {
         feature: [],
         skill: [],
@@ -102,7 +103,7 @@ const fillModel = (equipment, character) => { //will probably need a separate wa
             ability_scores: ability_relevant.ability_scores,
             saving_throws: ability_relevant.saving_throws,
             skills: ability_relevant.skills,
-            ac: acCalculator(equipment.equipped_armor, ability_relevant.ability_scores.dex.modifier), 
+            ac: acCalculator(equipment.equipped_armor, character.class.index, ability_relevant.ability_scores), 
             health: {//not expandable for multiple subraces...it's checking for hill dwarf lazily
                 current: health,
                 max: health, 
@@ -240,12 +241,17 @@ const abilityScoreParser = (abilities, selections, proficiency) => {
     return scores;
 }
 
-const acCalculator = (armorList, dex) => {
+const acCalculator = (armorList, theClass, abScores) => {
     let best = {
         armor: {},
-        maxAC: 0
+        maxAC: 10
     }
     let shield = false;
+    //unarmored
+    if(theClass='monk') maxAC += abScores.wis.modifier;
+    else if(theClass='barbarian') maxAC += abScores.con.modifier;
+    best.maxAC += abScores.dex.modifier;
+    
     for(let armor of armorList) {
         if(armor.name.toLowerCase().includes('shield')) shield = true;
         let maxAC = armor.armor_class.base + (armor.dex_bonus ? (armor.max_bonus && dex >= armor.max_bonus ? armor.max_bonus : dex) : 0);
