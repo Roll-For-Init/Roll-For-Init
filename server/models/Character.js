@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const { boolean } = require('yup');
 
 const { Schema } = mongoose;
 
@@ -530,13 +531,26 @@ const CharacterSchema = new Schema({ //Add class specific slots
     },
   },
   ac: Number,
-  equipped_armor: [
+  armor: [
     {
       name: String,
+      category: String,
       description: String,
+      equipped: Boolean,
       armor_type: String,        // e.g. light, medium, heavy
-      base_ac: Number,
+      armor_class: {
+        base: Number,
+        dex_bonus: Boolean,
+        max_bonus: Number
+      },
+      str_minimum: Number,
+      stealth_disadvantage: Boolean,
       modifier: String,    // modifier is max +2 bonus?
+      weight: Number,
+      cost: {
+        amount: Number,
+        denomination: String        // e.g. "gp", "sp", etc.
+      }
       /*mechanics: [
         {
           skill: String,
@@ -567,39 +581,56 @@ const CharacterSchema = new Schema({ //Add class specific slots
     weapons: [
       {
         name: String,
+        category: String,
+        description: String,
+        range: {
+          normal: Number,
+          long: Number
+        },
         attack_type: String,
         damage_type: String,
         damage_dice: String,
+        two_handed_damage_dice: String,
         modifier: Number,
-        ammunition: {
-          current: Number,
-          max: Number
-        }
+        weight: Number,
+        quantity: Number,
+        cost: {
+          amount: Number,
+          denomination: String        // e.g. "gp", "sp", etc.
+        },
+        properties: [{ name: String }],
+        attack_bonus: Number,
+        damage_bonus: Number
+        // ammunition: {
+        //   current: Number,
+        //   max: Number
+        // }
       }
     ],
-    magic_weapons: [
-      {
-        name: String,
-        attack_type: String,
-        damage_type: String,
-        damage_dice: String,
-        modifier: Number,
-        ammunition: {
-          current: Number,
-          max: Number
-        }/*,
-        mechanics: [
-          {
-            skill: String,
-            stat: Number,
-            is_active: {
-              type: Boolean,
-              default: false
-            }  
-          }
-        ]*/
-      }
-    ]
+    // magic_weapons: [
+    //   {
+    //     name: String,
+    //     attack_type: String,
+    //     damage_type: String,
+    //     damage_dice: String,
+    //     modifier: Number,
+    //     // ammunition: {
+    //     //   current: Number,
+    //     //   max: Number
+    //     // }
+    //     /*,
+    //     mechanics: [
+    //       {
+    //         skill: String,
+    //         stat: Number,
+    //         is_active: {
+    //           type: Boolean,
+    //           default: false
+    //         }  
+    //       }
+    //     ]*/
+    //   }
+    // ]
   },
   spells: {
     slots: [{
