@@ -1,17 +1,14 @@
-const axios = require('axios').default;
-
-import { racePointerList } from './constants';
-import apiCaller from '../../utils/apiCaller';
+const axios = require('axios');
+const apiCaller = require('../../utils/apiCaller');
 const {parseEquipment, fillModel} = require('../../utils/characterValidator');
 
 const API_URL = '/api/';
 
-const validateCharacter = characterData => {
+const validateCharacter = async characterData => {
     let equipment = parseEquipment(characterData.equipment);
-    let validatedCharacter = fillModel(equipment, characterData);
-    console.log(validatedCharacter);
-    
-    return validatedCharacter;
+    return await fillModel(equipment, characterData).then((validatedCharacter) => {
+        return validatedCharacter
+    });    
 }
 const createCharacter = characterData => {
   return axios.post(API_URL + 'characters/create', characterData);
@@ -37,24 +34,10 @@ const getSubList = (url) => {
     return axios.get(`${API_URL}${url}`).then((items) => {
         return items.data;
     })
-}
+};
 
-//Leave out index to get all race objects
 const getRaceInfo = (race) => {
     return apiCaller.propogateRacePointer(race);
-    /*
-  if (index) {
-    const racePointer = list.find(
-      racePointer => racePointer.index === index
-    );
-    return apiCaller.propogateRacePointer(racePointer);
-  } else {
-    let raceInfoList = [];
-    for (let racePointer of racePointerList) {
-      raceInfoList.push(apiCaller.propogateRacePointer(racePointer));
-    }
-    return raceInfoList;
-  }*/
 };
 const getRaceDetails = (race) => {
     return apiCaller.getRaceMiscDescriptions(race);
@@ -78,26 +61,28 @@ const getAbilityScoreInfo = abilityScore => {
 
 const getEquipmentDetails = equipment => {
   return apiCaller.equipmentDetails(equipment);
-}
+};
 const getSpells = (theClass, levels) => {
     let url = `${API_URL}classes/${theClass.index.toLowerCase()}/levels/`;
     let subclassSpells = theClass.subclass && theClass.subclass_spells ? theClass.subclass.subclass_spells : [];
     return apiCaller.getSpellCards(levels, url, subclassSpells);
-}
-
-export default {
-  validateCharacter,
-  createCharacter,
-  updateCharacter,
-  deleteCharacter,
-  getIndexedList,
-  getSubList,
-  getRaceInfo,
-  getClassInfo,
-  getBackgroundInfo,
-  getAbilityScoreInfo,
-  getRaceDetails,
-  getClassDetails,
-  getEquipmentDetails,
-  getSpells
 };
+const getLevel = (theClass, level) => {
+    return axios.get(API_URL + 'classes/' + theClass + 'levels/' + level);
+};
+
+export default { validateCharacter,
+    createCharacter,
+    updateCharacter,
+    deleteCharacter,
+    getIndexedList,
+    getSubList,
+    getRaceInfo,
+    getClassInfo,
+    getBackgroundInfo,
+    getAbilityScoreInfo,
+    getRaceDetails,
+    getClassDetails,
+    getEquipmentDetails,
+    getSpells,
+    getLevel }

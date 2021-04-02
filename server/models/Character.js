@@ -19,7 +19,8 @@ const CharacterSchema = new Schema({ //Add class specific slots
         age: String,
         size: String,
         summary: [String]
-    }
+    },
+    subrace: String
   },
   class: [
     {

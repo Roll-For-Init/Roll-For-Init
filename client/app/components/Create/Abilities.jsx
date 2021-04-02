@@ -74,7 +74,6 @@ export const Abilities = ({ charID, setPage }) => {
             ability2 = charInfo.race.choices[key].find(
               abil => abil.index === item.short_name
             );
-            console.log(ability2);
           }
         }
         if (ability || ability2) {
@@ -126,8 +125,8 @@ export const Abilities = ({ charID, setPage }) => {
 
   const onNext = () => {
     // setSelectedAbilities({ index: race.name, url: race.url });
-    console.log("ONNEXT", abilityCards);
     dispatch(setAbilities(charID, abilityCards));
+    console.log("ABILITIES", abilityCards);
     setPage({ index: 3, name: 'background' });
     window.scrollTo(0, 0);
   };

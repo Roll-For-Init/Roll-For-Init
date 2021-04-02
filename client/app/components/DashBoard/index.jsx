@@ -1,10 +1,12 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
 import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
 import './styles.scss';
 import {D20, StarOutline} from '../../utils/svgLibrary';
+import CharacterService from '../../redux/services/character.service';
+
 //swap race class icons with white
 
 const skillScores = {
@@ -28,245 +30,59 @@ const skillScores = {
   persuasion: 'cha'
 }
 
-const TEMP_DATA = {
-  name: 'Liir Thropp',
-  level: 2,
-  experience: {
-    current: 647,
-    threshhold: 960,
-  },
-  race: {
-    name: 'Halfling',
-    description: 'BLAH BLAH BLAH',
-  },
-  class: [
-    {
-      name: 'Rogue',
-      levels: 2,
-    },
-  ],
-  misc_proficiencies: {
-    armor: [{ name: 'Light Armor' }],
-    weapons: [
-      { name: 'Crossbows' },
-      { name: 'Hand' },
-      { name: 'Longswords' },
-      { name: 'Rapiers' },
-      { name: 'Shortswords' },
-      { name: 'Simple Weapons' },
-    ],
-    tools: [{ name: "Thieve's Tools" }],
-    languages: [{ name: 'Common' }, { name: 'Halfling' }],
-  },
-  ability_scores: {
-    str: {
-      score: 9,
-      modifier: 2,
-      advantage: -1,
-    },
-    dex: {
-      score: 16,
-      modifier: 4,
-      advantage: 3,
-    },
-    con: {
-      score: 10,
-      modifier: 1,
-      advantage: 1,
-    },
-    int: {
-      score: 5,
-      modifier: -1,
-      advantage: -3,
-    },
-    wis: {
-      score: 11,
-      modifier: 3,
-      advantage: 0,
-    },
-    cha: {
-      score: 14,
-      modifier: 3,
-      advantage: 2,
-    },
-  },
-  saving_throws: {
-    Strength: {
-      proficiency: false,
-      modifier: -1,
-      advantage: 0,
-    },
-    Dexterity: {
-      proficiency: true,
-      modifier: 5,
-      advantage: 0,
-    },
-    Constitution: {
-      proficiency: true,
-      modifier: 1,
-      advantage: 0,
-    },
-    Intelligence: {
-      proficiency: true,
-      modifier: -1,
-      advantage: 0,
-    },
-    Wisdom: {
-      proficiency: true,
-      modifier: 0,
-      advantage: 0,
-    },
-    Charisma: {
-      proficiency: true,
-      modifier: 2,
-      advantage: 0,
-    },
-  },
-  skills: {
-    // should these skills have an associated ability, or are we getting that from the api?
-    acrobatics: {
-      proficiency: false,
-      modifier: 5,
-      advantage: 0,
-    },
-    animal_handling: {
-      proficiency: false,
-      modifier: 0,
-      advantage: 0,
-    },
-    arcana: {
-      proficiency: false,
-      modifier: -3,
-      advantage: 0,
-    },
-    athletics: {
-      proficiency: false,
-      modifier: -1,
-      advantage: 0,
-    },
-    deception: {
-      proficiency: true,
-      modifier: 4,
-      advantage: 0,
-    },
-    history: {
-      proficiency: false,
-      modifier: -3,
-      advantage: 0,
-    },
-    insight: {
-      proficiency: false,
-      modifier: 0,
-      advantage: 0,
-    },
-    intimidation: {
-      proficiency: false,
-      modifier: 4,
-      advantage: 0,
-    },
-    investigation: {
-      proficiency: true,
-      modifier: -3,
-      advantage: 0,
-    },
-    medicine: {
-      proficiency: false,
-      modifier: 0,
-      advantage: 0,
-    },
-    nature: {
-      proficiency: false,
-      modifier: -3,
-      advantage: 0,
-    },
-    perception: {
-      proficiency: false,
-      modifier: 2,
-      advantage: 0,
-    },
-    performance: {
-      proficiency: true,
-      modifier: 2,
-      advantage: 0,
-    },
-    persuasion: {
-      proficiency: false,
-      modifier: -4,
-      advantage: 0,
-    },
-    religion: {
-      proficiency: false,
-      modifier: 3,
-      advantage: 0,
-    },
-    sleight_of_hand: {
-      proficiency: false,
-      modifier: 5,
-      advantage: 0,
-    },
-    stealth: {
-      proficiency: false,
-      modifier: 5,
-      advantage: 0,
-    },
-    survival: {
-      proficiency: false,
-      modifier: 0,
-      advantage: 0,
-    },
-  },
-  conditions: ['Blinded', 'Prone']
+const fullAbScore = {
+  cha: 'charisma',
+  int: 'intelligence',
+  str: 'str',
+  wis: 'wisdom',
+  dex: 'dexterity',
+  con: 'constitution'
 };
 
 export const DashBoard = () => {
-  const {
-    name,
-    level,
-    experience,
-    race,
-    misc_proficiencies,
-    ability_scores,
-    saving_throws,
-    skills,
-  } = TEMP_DATA;
   const user = useSelector(state => state.user);
   console.log(user);
-
-  const character = useSelector(state => state.characters);
-  console.log(character);
   
+  const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
+
+  const character = useSelector(state => state.characters[charID]);
+  console.log(character);
+
+  const [levelSpecific, setLevelSpecific] = useState(null)
+
   return (
-    <div className="dashboard">
+    character.level ?
+    (<div className="dashboard">
       <Header />
       <div className="toolbar fixed-top">
         <div className="subheader py-1 px-3 pt-2">
-          <h2 className="small-caps mr-5">Liir Thropp</h2>
+          <h2 className="small-caps mr-5">{character.name}</h2>
           <span className="ml-2">
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
-                src={require(`../../../public/assets/imgs/icons/white/class/${TEMP_DATA.class[0].name.toLowerCase()}.png`)}
+                src={require(`../../../public/assets/imgs/icons/white/class/${character.class[0].name.toLowerCase()}.png`)}
               />
-              Rogue
+              {character.class.name}
             </h5>
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
-                src={require(`../../../public/assets/imgs/icons/white/race/${TEMP_DATA.race.name.toLowerCase()}.png`)}
+                src={require(`../../../public/assets/imgs/icons/white/race/${character.race.name.toLowerCase().replaceAll('-','_')}.png`)}
               />
-              Halfling
+              {character.race.name}
             </h5>
-            <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;2</span></h5>
+            <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;{character.level}</span></h5>
             <span className="m-0 align-top">
               <table style={{display: 'inline-table'}}>
                 <tbody>
                   <tr>
                   <span className="card content-card description-card m-0 p-1 w-auto">
-                  <h6 className="text-uppercase text-center m-0 px-4">647 XP</h6>
+                  <h6 className="text-uppercase text-center m-0 px-4">{character.experience.current} XP</h6>
                   </span>
                   </tr>
                   <tr>
-                  <h6 className="text-uppercase text-center text-white m-0 w-auto"><small className="text-uppercase text-white">Next Level: 900</small></h6>
+                  <h6 className="text-uppercase text-center text-white m-0 w-auto"><small className="text-uppercase text-white">Next Level: {character.experience.threshold}</small></h6>
                   </tr>
                 </tbody>
               </table>
@@ -313,29 +129,29 @@ export const DashBoard = () => {
           <div className="col-xl-5 px-0 maincol">
             <div className="row">
               <div className="col-sm-7 pl-0 pr-2">
-                  <AbilitiesCard ability_scores={ability_scores} />
-                  <SavingThrowsCard saving_throws={saving_throws} />
-                  <ProficienciesCard misc_proficiencies={misc_proficiencies} />
+                  <AbilitiesCard ability_scores={character.ability_scores} />
+                  <SavingThrowsCard saving_throws={character.saving_throws} />
+                  <ProficienciesCard misc_proficiencies={character.misc_proficiencies} />
               </div>
               <div className="col-sm-5 px-2">
-                      <SkillsCard skills={skills} />
-                      <SensesCard />
+                      <SkillsCard skills={character.skills} proficiency={character.proficiency_bonus}/>
+                      <SensesCard perception={character.skills.perception.modifier} insight={character.skills.insight.modifier} investigation={character.skills.investigation.modifier}/>
               </div>
             </div>
           </div>
           <div className="col-xl-7 px-0">
             <div className="row">
               <div className="col-sm-8 px-2">
-                      <StatsCard />
-                      <HitPointsCard />
+                      <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed}/>
+                      <HitPointsCard health={character.health} hit_dice={character.hit_dice}/>
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
-                <ExtraStatsCard />
+                <ExtraStatsCard conditions={character.conditions} defenses={character.defenses}/>
               </div>
             </div>
             <div className="pinned row px-2">
               <div className="col-12 px-0">
-                <SpellsAndPinned />
+                <SpellsAndPinned spells={character.spells} modifier={character.ability_scores[character.spells.casting_ability].modifier} proficiency={character.proficiency_bonus}/>
 
               </div>
             </div>
@@ -344,12 +160,13 @@ export const DashBoard = () => {
       </div>
       {/* </div> */}
     </div>
-    </div>
+    </div>)
+    :
+    <>Loading...</>
   );
 };
 
 const AbilitiesCard = ({ ability_scores }) => {
-  console.log(ability_scores);
 
   return (
     <div className="abilities card translucent-card">
@@ -414,11 +231,11 @@ const SavingThrowsCard = ({ saving_throws }) => {
   );
 };
 
-const SkillsCard = ({ skills }) => {
+const SkillsCard = ({ skills, proficiency }) => {
   return (
     <div className="skills">
       <h4 className="translucent-card proficiency-title text-uppercase">
-        Proficiency bonus: +2
+        Proficiency bonus: +{proficiency}
       </h4>
       <div className="card translucent-card px-5">
         <h5 className="card-title">Skills</h5>
@@ -457,7 +274,7 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
                 <span className="small-caps">{misc_proficiency[0]}</span> –{' '}
                 {misc_proficiency[1].map((item, idx) => (
                   <React.Fragment key={idx}>
-                    {item.name}
+                    {item}
                     {idx < misc_proficiency[1].length - 1 && ', '}
                   </React.Fragment>
                 ))}
@@ -469,20 +286,20 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
   );
 };
 
-const SensesCard = () => {
+const SensesCard = ({perception, insight, investigation}) => {
   return (
     <div className="card translucent-card">
       <h5 className="card-title">Senses</h5>
       <div className="card content-card description-card">
-        <div>Passive Perception (WIS): 12</div>
-        <div>Passive Insight (WIS): 10</div>
-        <div>Passive Investigation (INT): 7</div>
+        <div>Passive Perception (WIS): {10+perception}</div>
+        <div>Passive Insight (WIS): {10+insight}</div>
+        <div>Passive Investigation (INT): {10+investigation}</div>
       </div>
     </div>
   );
 };
 
-const StatsCard = () => {
+const StatsCard = ({initiative, ac, speed}) => {
   return (
     <div className="stats-card">
     <div className="card translucent-card">
@@ -490,7 +307,7 @@ const StatsCard = () => {
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card">
             <h6 className="text-uppercase m-0 text-center">Initiative</h6>
-            <h2 className="text-uppercase text-center m-0">+4</h2>
+            <h2 className="text-uppercase text-center m-0">{initiative < 0 ? `-${initiative}` : `+${initiative}`}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
@@ -502,13 +319,13 @@ const StatsCard = () => {
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card px-4">
             <h6 className="text-uppercase m-0 text-center">AC</h6>
-            <h2 className="text-uppercase text-center m-0">15</h2>
+            <h2 className="text-uppercase text-center m-0">{ac}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card">
             <h6 className="text-uppercase m-0 text-center">Speed</h6>
-            <h2 className="text-uppercase text-center m-0">30</h2>
+            <h2 className="text-uppercase text-center m-0">{speed}</h2>
           </div>
         </div>
       </div>
@@ -517,7 +334,7 @@ const StatsCard = () => {
   );
 };
 
-const HitPointsCard = () => {
+const HitPointsCard = ({health, hit_dice}) => {
   return (
     <div className="hit-points card translucent-card long-card">
       <div className="row px-3">
@@ -526,13 +343,13 @@ const HitPointsCard = () => {
         <div className="row p-0 m-0">
           <div className="col-sm-8 px-1 py-0">
             <div className="card content-card description-card my-0 mr-2 ml-0">
-              <h3 className="text-uppercase text-center m-0">4/10</h3>
+              <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
             </div>
             <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
           </div>
           <div className="col-sm-4 px-1 py-0">
             <div className="card content-card description-card my-0 mr-2 ml-0">
-              <h3 className="text-uppercase text-center m-0">0</h3>
+              <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
             </div>
             <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
           </div>
@@ -550,21 +367,21 @@ const HitPointsCard = () => {
         <h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Dice</h6>
 
           <div className="card content-card description-card my-0 mr-0">
-            <h3 className="text-uppercase text-center m-0">2d8</h3>
+            <h3 className="text-uppercase text-center m-0">{hit_dice[0].current}d{hit_dice[0].type}</h3>
           </div>
-          <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Max: 2d8</small></h6>
+          <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Max: {hit_dice[0].max}d{hit_dice[0].type}</small></h6>
         </div>
       </div>
     </div>
   );
 };
 
-const ExtraStatsCard = () => {
+const ExtraStatsCard = ({conditions, defenses}) => {
   return (
     <div className="card translucent-card short-card extra-stats">
       <div className="card content-card description-card px-1">
         <h6 className="text-uppercase text-center m-0">Conditions</h6>
-        {TEMP_DATA.conditions.map((condition, index) => {
+        {conditions.map((condition, index) => {
           return (<button className="btn-outline-primary" key={`condition-${index}`}>{condition}</button>)
         })}
         <button className="btn-outline-success"><span className="green">+</span> Add condition</button>
@@ -572,17 +389,19 @@ const ExtraStatsCard = () => {
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Defenses</h6>
         <ul>
-          <li><span>Resistant to fire damage</span></li>
+          {defenses.resistances.map((defense, index) => {
+            return (<li key={`defense-${index}`}><span>Resistant to {defense} damage</span></li>)
+          })}
         </ul>
       </div>
     </div>
   );
 };
 
-const SpellsAndPinned = () => {
+const SpellsAndPinned = ({spells, modifier, proficiency}) => {
   return (
   <div className="card translucent-card w-100 mx-0">
-    <div className="row px-5">
+    {spells && <div className="row px-5">
       <div>
         <div className="card content-card description-card p-1">
         <h6 className="text-uppercase text-center m-0">Spellcasting</h6>
@@ -590,13 +409,13 @@ const SpellsAndPinned = () => {
           <tbody>
             <tr>
           <td>
-            <h5 className="text-uppercase text-center m-0">+4<super><small>(Wis)</small></super></h5>
+            <h5 className="text-uppercase text-center m-0">{modifier >= 0 ? `+${modifier}` : `-${modifier}`}<super><small>({spells.casting_ability})</small></super></h5>
           </td>
           <td>
-            <h5 className="text-uppercase text-center m-0">15</h5>
+            <h5 className="text-uppercase text-center m-0">{8+modifier+proficiency}</h5>
           </td>
           <td>
-            <h5 className="text-uppercase text-center m-0">+6</h5>
+            <h5 className="text-uppercase text-center m-0">{modifier+proficiency >= 0 ? `+${modifier+proficiency}` : `-${modifier+proficiency}`}</h5>
           </td>
           </tr>
           <tr>
@@ -610,30 +429,49 @@ const SpellsAndPinned = () => {
       </div>
       <div className="ml-auto">
         <div className="card content-card description-card pb-0">
+                      {/*SPELL SLOTS TBD*/}
         <h6 className="text-uppercase text-center m-0">Spell Slots</h6>
         <table className="table table-borderless table-sm">
           <tbody>
             <tr>
-          <td>
-            <h5 className="text-uppercase text-center m-0"><span>&#9679;&#9679;&#9675;&#9675;</span></h5>
-          </td>
-          <td>
-            <h5 className="text-uppercase text-center m-0">&#9675;&#9675;&#9675;</h5>
-          </td>
-          <td>
-            <h5 className="text-uppercase text-center m-0">&#9675;&#9675;</h5>
-          </td>
+          {spells.slots.map((slot) => {
+            return (
+              slot.max > 0 ? <td key={slot.max}>
+              <h5 className="text-uppercase text-center m-0"><span>
+                {[...Array(slot.current)].map(() => {
+                  return (
+                    <>&#9679;</>
+                  )
+                })}
+                {[...Array(slot.max)].map(() => {
+                  return (
+                    <>&#9675;</>
+                  )
+                })}
+              </span></h5>
+              </td>
+              : 
+              null
+            )      
+          })}
+          
           </tr>
           <tr>
-          <td><h4 className="text-uppercase text-center m-0">1</h4></td>
-          <td><h4 className="text-uppercase text-center m-0">2</h4></td>
-          <td><h4 className="text-uppercase text-center m-0">3</h4></td>
+          {spells.slots.map((slot, index) => {
+            return (
+              slot.max > 0 ? <td>
+                <h4 className="text-uppercase text-center m-0">{index+1}</h4>
+              </td>
+              : 
+              null
+            )      
+          })}
           </tr>
           </tbody>
         </table>
       </div>
       </div>
-    </div>
+    </div>}
     <div className="row">
 
     </div>

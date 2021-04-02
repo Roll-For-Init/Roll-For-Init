@@ -409,7 +409,6 @@ export const Equipment = ({ charID, setPage }) => {
 
   const finalizeEquipment = () =>
     new Promise((resolve, reject) => {
-      console.log('in finalize equipment');
       resolve(
         dispatch(
           setEquipment(charID, {
@@ -429,8 +428,12 @@ export const Equipment = ({ charID, setPage }) => {
           set: equipmentList,
         };
       }
-      // console.log(character);
-      dispatch(submitCharacter(CharacterService.validateCharacter(character)));
+      character.name = name;
+      console.log(character);
+      history.push('/dashboard');
+      CharacterService.validateCharacter(character).then((character) => {
+        dispatch(submitCharacter(character));
+      })
     });
   };
 
@@ -441,6 +444,7 @@ export const Equipment = ({ charID, setPage }) => {
         set: equipmentList,
       })
     );
+    console.log("EQUIPMENT", {choices: equipmentSelection, set: equipmentList})
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
@@ -458,7 +462,7 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentList).then(
         equipmentWDetails => {
           setEquipmentList(equipmentWDetails);
-          console.log('equipment', equipmentWDetails);
+          console.log('INITIAL EQUIPMENT', equipmentWDetails);
         }
       )
     );
@@ -466,7 +470,7 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentOptions).then(
         equipmentWDetails => {
           setEquipmentOptions(equipmentWDetails);
-          console.log('options', equipmentWDetails);
+          console.log('EQUIPMENT OPTIONS', equipmentWDetails);
         }
       )
     );

@@ -169,6 +169,10 @@ const optionsHelper = async (container, options, key) => {
   } else if (options.type.toLowerCase().includes('language')) {
     optionSet.header = `extra ${options.type}`;
     optionSet.type = options.type;
+  }
+  else if (options.type.toLowerCase().includes('prof') && !options.from[0].index.toLowerCase().includes('skill')) {
+    optionSet.type = options.type;
+    optionSet.header = 'tool';
   } else {
     optionSet.header = options.type.replace('_', ' ');
     optionSet.type = options.type;
@@ -606,7 +610,7 @@ const classCaller = async classPointer => {
 
 const getClassDescriptions = async theClass => {
   let promises = [];
-  for (optionSet of theClass.options) {
+  for (let optionSet of theClass.options) {
     optionSet.options.forEach(option => {
       if (!option.hasOwnProperty('url')) {
         return;
