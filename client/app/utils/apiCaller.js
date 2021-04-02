@@ -354,7 +354,9 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
       }
     }
   });
-  return Promise.all(promises);
+  return Promise.all(promises).then(() => {
+      raceContainer.sub = subrace;
+  });
 };
 
 const getRaceMiscDescriptions = async race => {

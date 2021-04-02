@@ -1,11 +1,9 @@
-import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React  from 'react';
+import { useSelector, /*useDispatch*/ } from 'react-redux';
 import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
 import './styles.scss';
 import {D20, StarOutline} from '../../utils/svgLibrary';
-import CharacterService from '../../redux/services/character.service';
 
 //swap race class icons with white
 
@@ -30,15 +28,6 @@ const skillScores = {
   persuasion: 'cha'
 }
 
-const fullAbScore = {
-  cha: 'charisma',
-  int: 'intelligence',
-  str: 'str',
-  wis: 'wisdom',
-  dex: 'dexterity',
-  con: 'constitution'
-};
-
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
   console.log(user);
@@ -47,8 +36,6 @@ export const DashBoard = () => {
 
   const character = useSelector(state => state.characters[charID]);
   console.log(character);
-
-  const [levelSpecific, setLevelSpecific] = useState(null)
 
   return (
     character.level ?
@@ -63,14 +50,14 @@ export const DashBoard = () => {
                 className="button-icon"
                 src={require(`../../../public/assets/imgs/icons/white/class/${character.class[0].name.toLowerCase()}.png`)}
               />
-              {character.class.name}
+              {character.class[0].name}
             </h5>
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
                 src={require(`../../../public/assets/imgs/icons/white/race/${character.race.name.toLowerCase().replaceAll('-','_')}.png`)}
               />
-              {character.race.name}
+              {character.race.subrace ? character.race.subrace : character.race.name}
             </h5>
             <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;{character.level}</span></h5>
             <span className="m-0 align-top">
@@ -173,9 +160,9 @@ const AbilitiesCard = ({ ability_scores }) => {
       <h5 className="card-title">Abilities</h5>
       <div className="container-fluid">
         <div className="row">
-          {Object.entries(ability_scores).map(ability => {
+          {Object.entries(ability_scores).map((ability, index) => {
             return (
-              <div className="ability-grid col-4">
+              <div key={`ability-${index}`} className="ability-grid col-4">
                 <div>
                   <div
                   className="card content-card description-card ability-bonus mb-0"

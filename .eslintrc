@@ -43,5 +43,8 @@
       }
     ]
   },
-  "plugins": ["react"]
+  "plugins": ["react"],
+  "rules": {
+    "react/prop-types": 0
+  }
 }

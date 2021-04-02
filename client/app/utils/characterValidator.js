@@ -109,12 +109,12 @@ const fillModel = async (equipment, character) => { //will probably need a separ
             },
             race: {
                 name: character.race.index,
-                description: character.race.description,
-                subrace: character.race.subrace?.index
+                subrace: character.race.sub ? character.race.sub.name : null
             },
             class: [{ //Will need to do a loop to fill any other classes
                 name: character.class.index,
-                levels: character.class.level 
+                levels: character.class.level,
+                subclass: character.class.subclass ? character.class.subclass.name : null
             }],
             features: character.class.features.concat(userSelections.feature).concat(subclassFeatures), 
             traits: character.race.traits.concat(userSelections.trait).concat(subraceTraits), 
