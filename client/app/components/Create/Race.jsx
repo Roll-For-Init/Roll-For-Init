@@ -5,6 +5,7 @@ import { setRace } from '../../redux/actions';
 import CharacterService from '../../redux/services/character.service';
 import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
 
 // const RaceButton = ({ race, setRace, idx }) => {
 //   const hasSubraces = race.subraces.length > 0;
@@ -281,9 +282,9 @@ AbilityBonuses.propTypes = {
 const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
   const reducer = (state, newProp) => {
     let key = Object.keys(newProp)[0];
-    if(key.includes("ability")) {
+    if (key.includes('ability')) {
       let bonus = parseInt(key.charAt(1));
-      for(let item of newProp[key]) {
+      for (let item of newProp[key]) {
         item.bonus = bonus;
       }
     }
@@ -317,23 +318,25 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
           ? race.main.ability_bonuses.concat(race.sub.ability_bonuses)
           : race.main.ability_bonuses;
         let allTraits = race.sub
-        ? race.main.traits.concat(race.sub.racial_traits)
-        : race.main.traits;
+          ? race.main.traits.concat(race.sub.racial_traits)
+          : race.main.traits;
         let theDescription = {
           summary: [race.main.alignment, race.sub?.desc],
           age: race.main.age,
           size: race.main.size_description,
         };
 
-        dispatch(setRace(charID, 
-          { ability_bonuses: abilityBonuses,
+        dispatch(
+          setRace(charID, {
+            ability_bonuses: abilityBonuses,
             proficiencies: race.proficiencies,
             traits: allTraits,
             subrace: race.sub?.name,
-            description: theDescription, 
+            description: theDescription,
             size: race.main.size,
-            speed: race.main.speed
-          }));
+            speed: race.main.speed,
+          })
+        );
       });
   }, []);
 
@@ -386,30 +389,31 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
       {raceInfo.options.length > 0 && (
         <div className="card translucent-card">
           <h4 className="card content-card card-title">Race Options</h4>
-
           {raceInfo.options.map((option, index) => {
             return (
               <div className="dd-container" key={index}>
-                <Dropdown
-                  ddLabel={`${option.header}`}
-                  title={`Choose ${option.choose}`}
-                  items={option.options}
-                  width="100%"
-                  selectLimit={option.choose}
-                  multiSelect={option.choose > 1}
-                  selection={
-                    userChoices[
-                      `${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${option.type}-${index}`
-                    ]
-                  }
-                  setSelection={setUserChoices}
-                  classname="dd-choice"
-                  stateKey={`${option.header
-                    .toLowerCase()
-                    .replace(' ', '-')}-${option.type}-${index}`}
-                />
+                <div className="same-line mb-0">
+                  <Dropdown
+                    ddLabel={`${option.header}`}
+                    title={`Choose ${option.choose}`}
+                    items={option.options}
+                    width="100%"
+                    selectLimit={option.choose}
+                    multiSelect={option.choose > 1}
+                    selection={
+                      userChoices[
+                        `${option.header.toLowerCase().replace(' ', '-')}-${
+                          option.type
+                        }-${index}`
+                      ]
+                    }
+                    setSelection={setUserChoices}
+                    classname="dd-choice"
+                    stateKey={`${option.header
+                      .toLowerCase()
+                      .replace(' ', '-')}-${option.type}-${index}`}
+                  />
+                </div>
               </div>
             );
           })}
@@ -424,14 +428,16 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
             {//console.log(Object.values(raceInfo.proficiencies))
             Object.keys(raceInfo.proficiencies).map(key => {
               return (
-                raceInfo.proficiencies[key].length > 0 && <p className="text-capitalize">
-                  <strong className="small-caps">{key}</strong> -{' '}
-                  {raceInfo.proficiencies[key].map((prof, index) => {
-                    if (raceInfo.proficiencies[key].length === index + 1)
-                      return `${prof}`;
-                    else return `${prof}, `;
-                  })}
-                </p>
+                raceInfo.proficiencies[key].length > 0 && (
+                  <p className="text-capitalize">
+                    <strong className="small-caps">{key}</strong> -{' '}
+                    {raceInfo.proficiencies[key].map((prof, index) => {
+                      if (raceInfo.proficiencies[key].length === index + 1)
+                        return `${prof}`;
+                      else return `${prof}, `;
+                    })}
+                  </p>
+                )
               );
             })}
           </div>

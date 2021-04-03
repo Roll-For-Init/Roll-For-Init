@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import onClickOutside from 'react-onclickoutside';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
+
 import './styles.scss';
 
 function Dropdown({
@@ -9,6 +11,8 @@ function Dropdown({
   items,
   width,
   multiSelect = false,
+  popover = false,
+  popoverText,
   selectLimit = 1,
   selection,
   setSelection,
@@ -85,10 +89,47 @@ function Dropdown({
     return false;
   }
 
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
   return (
     <div className="dd-wrapper" style={{ width: width }}>
       {!hideLabel && (
         <div className={classname ? 'dd-label ' + classname : 'dd-label'}>
+          {popover && (
+            <Popover
+              isOpen={isPopoverOpen}
+              positions={['left', 'top', 'bottom']}
+              padding={15}
+              //containerParent=?
+              //reposition
+              //boundaryInset={10}
+              onClickOutside={() => setIsPopoverOpen(false)}
+              content={({ position, childRect, popoverRect }) => (
+                <ArrowContainer
+                  position={position}
+                  childRect={childRect}
+                  popoverRect={popoverRect}
+                  arrowColor={'#f6efe4'}
+                  arrowSize={10}
+                  className="popover-arrow-container"
+                  arrowClassName="popover-arrow"
+                >
+                  <div
+                    className="card content-card description-card popover-card"
+                    style={{ maxWidth: '250px' }}
+                    onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+                  >
+                    <p>{popoverText}</p>
+                  </div>
+                </ArrowContainer>
+              )}
+            >
+              <i
+                className="bi bi-info-circle info-icon"
+                onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+              ></i>
+            </Popover>
+          )}
           {ddLabel}
         </div>
       )}

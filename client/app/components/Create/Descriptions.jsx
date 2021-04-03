@@ -310,7 +310,7 @@ export const Descriptions = ({ charID, setPage }) => {
           />
         </div>
         <div className="choice-container mb-0">
-          <div className="card content-card choice mb-0">
+          <div className="card content-card physical-card choice mb-0">
             <FloatingLabel
               id="eyes"
               name="eyes"
@@ -320,7 +320,7 @@ export const Descriptions = ({ charID, setPage }) => {
               onChange={e => setEyes(e.target.value)}
             />
           </div>{' '}
-          <div className="card content-card choice mb-0">
+          <div className="card content-card physical-card choice mb-0">
             <FloatingLabel
               id="skin"
               name="skin"
@@ -330,7 +330,7 @@ export const Descriptions = ({ charID, setPage }) => {
               onChange={e => setSkin(e.target.value)}
             />
           </div>{' '}
-          <div className="card content-card choice mb-0">
+          <div className="card content-card physical-card choice mb-0">
             <FloatingLabel
               id="hair"
               name="hair"
@@ -362,7 +362,7 @@ export const Descriptions = ({ charID, setPage }) => {
           {({ getRootProps, getInputProps }) => (
             <section>
               <div
-                className="card content-card drag-drop-card mb-0"
+                className="card content-card drag-drop-card no-shadow mb-0"
                 {...getRootProps()}
               >
                 <button className="btn btn-primary btm-buttons upload-buttons">

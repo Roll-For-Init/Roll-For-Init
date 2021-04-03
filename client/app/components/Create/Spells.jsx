@@ -219,17 +219,21 @@ export const Spells = ({ charID, setPage }) => {
     dispatch(setSpells(charID, payload));
   };
 
+  const history = useHistory();
+
   const validateAndStore = () => {
     console.log(character);
-    CharacterService.createCharacter(CharacterService.validateCharacter(character));
+    CharacterService.createCharacter(
+      CharacterService.validateCharacter(character)
+    );
     history.push('/dashboard');
-  }
+  };
 
   useEffect(() => {
     if (!character.class.index) return;
     CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
-      dispatch(setSpells(charID, {cards: cards}))
+      dispatch(setSpells(charID, { cards: cards }));
     });
     console.log(character);
   }, []);
@@ -284,7 +288,7 @@ export const Spells = ({ charID, setPage }) => {
                 <div className="modal-sect pb-0">
                   <h5>Name Your Character</h5>
                 </div>
-                <div className="card content-card name-card">
+                <div className="card content-card modal-name-card">
                   <FloatingLabel
                     id="name"
                     name="name"

@@ -68,9 +68,11 @@ export const Abilities = ({ charID, setPage }) => {
         const ability = charInfo.race.ability_bonuses.find(
           abil => abil.ability_score.index === item.short_name
         );
-        let ability2=null;
-        for(let key in charInfo.race.choices) { //assumes u can only choose an ability score ONCE
-          if(key.includes("ability")) { //assumes u can only modify an ability ONCE
+        let ability2 = null;
+        for (let key in charInfo.race.choices) {
+          //assumes u can only choose an ability score ONCE
+          if (key.includes('ability')) {
+            //assumes u can only modify an ability ONCE
             ability2 = charInfo.race.choices[key].find(
               abil => abil.index === item.short_name
             );
@@ -79,12 +81,18 @@ export const Abilities = ({ charID, setPage }) => {
         }
         if (ability || ability2) {
           return {
-            name: ability ? ability.ability_score.full_name : ability2.full_name,
+            name: ability
+              ? ability.ability_score.full_name
+              : ability2.full_name,
             short_name: ability ? ability.ability_score.index : ability2.index,
             points: 10,
-            bonus: ability ? ability.bonus + (ability2 ? ability2.bonus : 0) : ability2.bonus,
+            bonus: ability
+              ? ability.bonus + (ability2 ? ability2.bonus : 0)
+              : ability2.bonus,
             modifier: 0,
-            finalScore: ability ? 10 + ability.bonus + (ability2 ? ability2.bonus : 0) : 10 + ability2.bonus,
+            finalScore: ability
+              ? 10 + ability.bonus + (ability2 ? ability2.bonus : 0)
+              : 10 + ability2.bonus,
           };
         } else {
           return item;
@@ -126,7 +134,7 @@ export const Abilities = ({ charID, setPage }) => {
 
   const onNext = () => {
     // setSelectedAbilities({ index: race.name, url: race.url });
-    console.log("ONNEXT", abilityCards);
+    console.log('ONNEXT', abilityCards);
     dispatch(setAbilities(charID, abilityCards));
     setPage({ index: 3, name: 'background' });
     window.scrollTo(0, 0);
@@ -205,7 +213,7 @@ export const Abilities = ({ charID, setPage }) => {
 const BasicInfoCard = ({ content }) => {
   return (
     <div className="card translucent-card">
-      <div className="w-auto d-inline-block card content-card floating-card">
+      <div className="w-auto d-inline-block card content-card description-card mt-0 mb-0">
         {content.map((cont, idx) => (
           <p key={idx} className="m-0 text-left">
             {cont}
@@ -307,7 +315,6 @@ const PointBuyCard = ({
           // totalPointsUsed > 0 &&
           ability.points < 20
         ) {
-
           return {
             name: title,
             short_name,
@@ -382,7 +389,7 @@ const PointBuyCard = ({
           <p className="text-capitalize">Racial Bonus: +{bonus}</p>
         </div>
       )}
-      <div className="card content-card description-card fancy-card text-center">
+      <div className="card content-card description-card fancy-card text-center mb-0">
         <p className="text-capitalize">Final Score: </p>
         <h4 className="mb-0 text-capitalize">
           {finalScore} ({modifier >= 0 && '+'}

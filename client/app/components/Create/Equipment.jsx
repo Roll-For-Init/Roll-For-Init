@@ -10,17 +10,16 @@ import { useHistory } from 'react-router-dom';
 import { setEquipment } from '../../redux/actions';
 import { Link } from 'react-router-dom';
 
-
 const EquipmentItem = ({
   equipment,
   selectionEq,
   setSelectionEq,
   dropdown = false,
   className,
-  stateKey
+  stateKey,
 }) => {
   const mapObj = { ', monk': '', monk: '' };
- // const [selection, setSelection] = useState(null)
+  // const [selection, setSelection] = useState(null)
   function replaceAll(str, mapObj) {
     var re = new RegExp(Object.keys(mapObj).join('|'), 'gi');
 
@@ -174,16 +173,16 @@ const EquipmentCard = ({
   selectedCard,
   setSelectedCard,
   className,
-  charID
+  charID,
 }) => {
   const handleClick = () => {
     if (selectedCard?.cardKey === cardKey) setSelectedCard(null);
-    else setSelectedCard({cardKey: cardKey, equipment: equipmentItem});
+    else setSelectedCard({ cardKey: cardKey, equipment: equipmentItem });
   };
   const reducer = (state, newProp) => {
     let newState = { ...state, ...newProp };
-    if(selectedCard?.cardKey === cardKey) {
-      setSelectedCard({...selectedCard, selection: newState})
+    if (selectedCard?.cardKey === cardKey) {
+      setSelectedCard({ ...selectedCard, selection: newState });
     } //THIS WONT WORK IF YOU DO A DROPDOWN DESELECT AND RESELECT OR SMTH
     return newState;
   };
@@ -194,14 +193,16 @@ const EquipmentCard = ({
 
   return (
     <div
-      className={`card content-card equipment-card ${selectedCard?.cardKey === cardKey &&
-        `selected-card`}`}
+      className={`card content-card equipment-card ${selectedCard?.cardKey ===
+        cardKey && `selected-card`}`}
     >
       {clickable && (
         <button
           onClick={() => handleClick()}
           className={`btn ${
-            selectedCard?.cardKey === cardKey ? `btn-clicked` : `btn-outline-success`
+            selectedCard?.cardKey === cardKey
+              ? `btn-clicked`
+              : `btn-outline-success`
           } btn-card`}
         >
           {selectedCard?.cardKey === cardKey ? 'Selected' : 'Select'}
@@ -213,11 +214,11 @@ const EquipmentCard = ({
             <>
               <EquipmentItem
                 equipment={equipmentItem}
-                selectionEq={selectionEq[
-                  `${equipmentItem.header
-                    .toLowerCase()
-                    .replace(' ', '-')}`
-                ]}
+                selectionEq={
+                  selectionEq[
+                    `${equipmentItem.header.toLowerCase().replace(' ', '-')}`
+                  ]
+                }
                 stateKey={`${equipmentItem.header
                   .toLowerCase()
                   .replace(' ', '-')}`}
@@ -226,10 +227,9 @@ const EquipmentCard = ({
               />
               {Object.keys(selectionEq).length !== 0 && (
                 <>
-                  {selectionEq[`${equipmentItem.header
-                    .toLowerCase()
-                    .replace(' ', '-')}`].map((dropdownItem, idx) => {
-
+                  {selectionEq[
+                    `${equipmentItem.header.toLowerCase().replace(' ', '-')}`
+                  ].map((dropdownItem, idx) => {
                     return (
                       <div key={idx} style={{ marginTop: '5px' }}>
                         <EquipmentItem equipment={dropdownItem} />
@@ -254,11 +254,13 @@ const EquipmentCard = ({
                           <>
                             <EquipmentItem
                               equipment={multiEquipmentOption}
-                              selectionEq={selectionEq[
-                                `${multiEquipmentOption.header
-                                  .toLowerCase()
-                                  .replace(' ', '-')}-${idx}`
-                              ]}
+                              selectionEq={
+                                selectionEq[
+                                  `${multiEquipmentOption.header
+                                    .toLowerCase()
+                                    .replace(' ', '-')}-${idx}`
+                                ]
+                              }
                               stateKey={`${multiEquipmentOption.header
                                 .toLowerCase()
                                 .replace(' ', '-')}-${idx}`}
@@ -267,9 +269,11 @@ const EquipmentCard = ({
                             />
                             {Object.keys(selectionEq).length !== 0 && (
                               <>
-                                {selectionEq[`${multiEquipmentOption.header
-                                  .toLowerCase()
-                                  .replace(' ', '-')}-${idx}`].map((dropdownItem, idx) => {
+                                {selectionEq[
+                                  `${multiEquipmentOption.header
+                                    .toLowerCase()
+                                    .replace(' ', '-')}-${idx}`
+                                ].map((dropdownItem, idx) => {
                                   return (
                                     <div key={idx} style={{ marginTop: '5px' }}>
                                       <EquipmentItem equipment={dropdownItem} />
@@ -311,14 +315,15 @@ const EquipmentCard = ({
   );
 };
 
-const EquipmentList = ({ equipmentOption, className, charID, theKey, setEquipmentSelection, equipmentSelection }) => {
-  // either store the equipment list here, and then select from that list
-  // based on the key of the selected card (+1 since the first index is just the header)
-  // or do it in equipment card, where each card stores all of its own equipment
-  // doing it in equipmentlist is probably better, but im not sure
-  // either way, they would have to be concatenated in the main equipment component,
-  // but it would probably be best to wait until the user goes to the next page, so
-  // it doesn't have to be updated every time they change their selection?
+const EquipmentList = ({
+  equipmentOption,
+  className,
+  charID,
+  theKey,
+  setEquipmentSelection,
+  equipmentSelection,
+  dispatch,
+}) => {
   //const equipmentList = [].concat.apply([], Object.values(equipmentItems));
   //console.log(equipmentList);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -327,10 +332,22 @@ const EquipmentList = ({ equipmentOption, className, charID, theKey, setEquipmen
     default: 2,
     767: 1,
   };
+  // useEffect(() => {
+  //   setEquipmentSelection({ [theKey]: selectedCard });
+  //   //console.log("EQUIPMENT ITEM", equipmentItem);
+  // }, [selectedCard]);
+
   useEffect(() => {
-    setEquipmentSelection({[theKey]: selectedCard});
+    setEquipmentSelection({ [theKey]: selectedCard });
+    dispatch(
+      setEquipment(charID, {
+        choices: {
+          [theKey]: selectedCard,
+        },
+      })
+    );
     //console.log("EQUIPMENT ITEM", equipmentItem);
-  }, [selectedCard])
+  }, [selectedCard]);
 
   return (
     <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
@@ -396,37 +413,47 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
-  const finalizeEquipment = () => new Promise((resolve, reject) => {
-    console.log('in finalize equipment');
-    resolve(dispatch(setEquipment(charID, {
-      choices: equipmentSelection,
-      set: equipmentList
-    })));
-  })
-
-  const validateAndStore = () => {
-    finalizeEquipment().then(() => {
-      if(character.equipment == null) { //crimes i'm sorry couldn't get it working otherwise
-        character.equipment = {choices: equipmentSelection, set: equipmentList}
-      }
-      console.log(character)
-      CharacterService.createCharacter(CharacterService.validateCharacter(character));
-    })
-  }
-
-  const onNext = () => {
-    dispatch(setEquipment(charID, {
-      choices: equipmentSelection,
-      set: equipmentList
-    }))
-    setPage({ index: 6, name: 'spells' });
-    window.scrollTo(0, 0);
-  };
+  const finalizeEquipment = () =>
+    new Promise((resolve, reject) => {
+      console.log('in finalize equipment');
+      resolve(
+        dispatch(
+          setEquipment(charID, {
+            choices: equipmentSelection,
+            set: equipmentList,
+          })
+        )
+      );
+    });
 
   const history = useHistory();
 
-  const onFinish = () => {
+  const validateAndStore = () => {
+    finalizeEquipment().then(() => {
+      if (character.equipment == null) {
+        //crimes i'm sorry couldn't get it working otherwise
+        character.equipment = {
+          choices: equipmentSelection,
+          set: equipmentList,
+        };
+      }
+      console.log(character);
+      CharacterService.createCharacter(
+        CharacterService.validateCharacter(character)
+      );
+    });
     history.push('/dashboard');
+  };
+
+  const onNext = () => {
+    dispatch(
+      setEquipment(charID, {
+        choices: equipmentSelection,
+        set: equipmentList,
+      })
+    );
+    setPage({ index: 6, name: 'spells' });
+    window.scrollTo(0, 0);
   };
 
   useEffect(() => {
@@ -492,13 +519,14 @@ export const Equipment = ({ charID, setPage }) => {
             return (
               <EquipmentList
                 equipmentOption={equipmentOption}
-                charID={charID} 
+                charID={charID}
                 theKey={idx}
                 key={idx}
-                setEquipmentSelection={setEquipmentSelection} 
+                setEquipmentSelection={setEquipmentSelection}
                 equipmentSelection={equipmentSelection}
                 className={className}
-              /> 
+                dispatch={dispatch}
+              />
             );
           })}
           {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}
@@ -510,7 +538,6 @@ export const Equipment = ({ charID, setPage }) => {
           >
             OK
           </button>
-
           <div
             className="modal fade"
             id="nameModalEq"
@@ -531,7 +558,7 @@ export const Equipment = ({ charID, setPage }) => {
                 <div className="modal-sect pb-0">
                   <h5>Name Your Character</h5>
                 </div>
-                <div className="card content-card name-card">
+                <div className="card content-card modal-name-card">
                   <FloatingLabel
                     id="name"
                     name="name"
@@ -543,7 +570,7 @@ export const Equipment = ({ charID, setPage }) => {
                 </div>
                 <button
                   className="text-uppercase btn-primary modal-button"
-                  onClick={onFinish}
+                  onClick={validateAndStore}
                   data-dismiss="modal"
                 >
                   FINISH

@@ -104,8 +104,8 @@
 
     .point-card {
       background-color: $light-maroon-translucent;
-      padding: 10px;
-      min-height: 250px;
+      padding: 1rem;
+      min-height: 230px;
       margin-right: auto;
       margin-left: auto;
     }
@@ -191,6 +191,17 @@
 
     .btn-group-vertical {
       align-items: center;
+    }
+
+    &::-webkit-scrollbar {
+      width: 8px;
+    }
+    &::-webkit-scrollbar-track {
+      background-color: none;
+    }
+    &::-webkit-scrollbar-thumb {
+      background-color: rgba(255, 255, 255, 0.75);
+      border-radius: 5px;
     }
   }
 
@@ -396,13 +407,6 @@
   margin-bottom: 5px;
 }
 
-.name-card {
-  padding: 5px;
-  max-width: 200px;
-  margin: 0 auto;
-  box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
-}
-
 .modal-button {
   font-size: 1.25rem;
   max-width: 300px;
@@ -417,6 +421,32 @@
   flex-direction: row;
   outline: none;
   box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
+}
+
+.no-shadow {
+  box-shadow: none;
+}
+
+.info-icon {
+  display: flex;
+  font-size: large;
+  color: $dark-blue;
+  margin: auto;
+  margin-right: 6px;
+}
+
+.popover-arrow {
+  //z-index: 10;
+  box-shadow: 0px 1px 10px hsla(0, 0, 0, 67%);
+  background-color: $off-white;
+  color: $off-white;
+}
+
+.popover-card {
+  //z-index: 1;
+  margin: 0;
+  border: none;
+  box-shadow: 0px 1px 10px hsla(0, 0, 0, 67%);
 }
 
 .equipment-card {
@@ -515,6 +545,9 @@ hr {
   td {
     margin: 0 auto;
     line-height: normal;
+  }
+  td {
+    vertical-align: top;
   }
   table {
     width: 100%;
@@ -653,13 +686,14 @@ hr {
   right: 0;
   bottom: 40px;
   left: 0;
-  display: flex;
-  flex-direction: column;
+  //display: flex;
+  //flex-direction: column;
+  overflow-y: auto;
 
   //   height: 93vh;
   .race-silhouette-container {
-    //height: 70%;
-    flex: 1;
+    height: 350px;
+    //flex: 1;
     position: relative;
     margin: 10px 0;
     img {
@@ -669,17 +703,28 @@ hr {
       transform: translate(-50%, -50%);
       width: auto;
       height: auto;
-      max-width: 125%;
-      max-height: 100%;
+      max-width: 100%;
+      max-height: 110%;
     }
   }
   .side-bar-card {
-    overflow-y: scroll;
-    height: 150px;
     line-height: normal;
     width: 100%;
     padding: 5px;
-    //flex: 1;
+    p {
+      margin: 0;
+    }
+  }
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+  &::-webkit-scrollbar-track {
+    background-color: none;
+  }
+  &::-webkit-scrollbar-thumb {
+    background-color: rgba(255, 255, 255, 0.75);
+    border-radius: 5px;
   }
 }
 
