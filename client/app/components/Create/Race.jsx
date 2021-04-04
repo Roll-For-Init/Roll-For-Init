@@ -74,10 +74,15 @@ const Race = ({ charID, setPage }) => {
   //pass in an object of the fields to edit i.e. {index: INDEX} or {choiceA: CHOICE}
   //access with character.race.choiceA
   const selectRace = race => {
-    dispatch(setRace(charID, {index: race.index,
-      url: race.url, subrace: race.subrace.index}));
-    setViewRace(true);
     setCurrentRace(race)
+    if(race.subrace) {
+      let racewsubrace = {...race, ...{subrace: race.subrace.index}};
+      dispatch(setRace(charID, racewsubrace));
+    }
+    else {
+      dispatch(setRace(charID, race));
+    }
+    setViewRace(true);
   };
 
   function importAll(r) {

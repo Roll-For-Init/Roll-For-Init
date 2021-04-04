@@ -211,7 +211,7 @@ useEffect(() => {
             'A jack of all trades due to their split heritage, Half-Elves can be found in all professions, and will excel at any of them. They are especially Charismatic due to their Elven sides, however, and are known for their negotiation skills.',
         },
         {
-          index: 'high-elf',
+          index: 'high elf',
           info:
             'High-Elves are known for their craftsmanship and Dexterous ability as Fighters, Monks, Rangers, and Rogues. Their long lifespans may make them alluring and arrogant in equal measure, but they are a great addition to any party.',
         },
@@ -240,6 +240,11 @@ useEffect(() => {
           info:
             'Underestimated for their plain appearance, Humans often surprise opponents with their versatility and sheer determination. They can be found in all walks of life, and are some of the most common adventurers in the land.',
         },
+        {
+          index: 'tiefling',
+          info:
+            'Tieflings have a fearsome reputation for their cunning and silver tongues. However, they aren’t all as their demonic heritage suggests; with high Intelligence and Charisma, they are staunch allies as Paladins, Bards, Warlocks, and Sorcerers.'
+        }
       ],
     },
     {
@@ -473,7 +478,7 @@ useEffect(() => {
             <div className="card content-card side-bar-card scroll">
               {page.name === 'race' && charRace !== null && (
                 <p>
-                  {console.log(charRace)}
+                  {console.log(fluffText[0], charRace)}
                   {
                     fluffText[0].contents.find(
                       fluffRace =>
