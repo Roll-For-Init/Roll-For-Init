@@ -63,6 +63,7 @@ const Race = ({ charID, setPage }) => {
   const dispatch = useDispatch();
   const [races, setRaces] = useState(null);
   const [viewRace, setViewRace] = useState(false);
+  const [currentRace, setCurrentRace] = useState(null)
 
   const character = useSelector(state => state.characters[charID]);
 
@@ -73,8 +74,10 @@ const Race = ({ charID, setPage }) => {
   //pass in an object of the fields to edit i.e. {index: INDEX} or {choiceA: CHOICE}
   //access with character.race.choiceA
   const selectRace = race => {
-    dispatch(setRace(charID, race));
+    dispatch(setRace(charID, {index: race.index,
+      url: race.url, subrace: race.subrace.index}));
     setViewRace(true);
+    setCurrentRace(race)
   };
 
   function importAll(r) {
@@ -214,6 +217,7 @@ const Race = ({ charID, setPage }) => {
           setPage={setPage}
           clearRace={() => setViewRace(false)}
           dispatch={dispatch}
+          currRace={currentRace}
         />
       )}
     </div>
@@ -279,7 +283,7 @@ AbilityBonuses.propTypes = {
   ),
 };
 */
-const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
+const RaceDetails = ({ charID, setPage, clearRace, dispatch, currRace }) => {
   const reducer = (state, newProp) => {
     let key = Object.keys(newProp)[0];
     if (key.includes('ability')) {
@@ -294,12 +298,11 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch }) => {
   };
 
   const [userChoices, setUserChoices] = useReducer(reducer, {});
-  const { race } = useSelector(state => state.characters[charID]);
 
   const [raceInfo, setRaceInfo] = useState(undefined);
 
   useEffect(() => {
-    CharacterService.getRaceInfo(race)
+    CharacterService.getRaceInfo(currRace)
       .then(
         race => {
           console.log(race);

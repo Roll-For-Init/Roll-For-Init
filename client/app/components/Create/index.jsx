@@ -447,8 +447,8 @@ useEffect(() => {
             <div className="card content-card card-title">
               <h5>
                 {charRace !== null &&
-                  (charRace.subrace?.index
-                    ? `${charRace.subrace.index} `
+                  (charRace.subrace
+                    ? `${charRace.subrace} `
                     : `${charRace.index} `)}
                 {charClass !== null && `${charClass.index}`}
               </h5>
@@ -473,12 +473,13 @@ useEffect(() => {
             <div className="card content-card side-bar-card scroll">
               {page.name === 'race' && charRace !== null && (
                 <p>
+                  {console.log(charRace)}
                   {
                     fluffText[0].contents.find(
                       fluffRace =>
                         fluffRace.index ===
-                        (charRace.subrace?.index
-                          ? charRace.subrace.index.toLowerCase()
+                        (charRace.subrace
+                          ? charRace.subrace.toLowerCase()
                           : charRace.index.toLowerCase())
                     ).info
                   }
