@@ -346,7 +346,7 @@ const EquipmentList = ({
         },
       })
     );
-    //console.log("EQUIPMENT ITEM", equipmentItem);
+    console.log("EQUIPMENT ITEM", selectedCard);
   }, [selectedCard]);
 
   return (
@@ -413,23 +413,9 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
-  const finalizeEquipment = () =>
-    new Promise((resolve, reject) => {
-      console.log('in finalize equipment');
-      resolve(
-        dispatch(
-          setEquipment(charID, {
-            choices: equipmentSelection,
-            set: equipmentList,
-          })
-        )
-      );
-    });
-
   const history = useHistory();
 
   const validateAndStore = () => {
-    finalizeEquipment().then(() => {
       if (character.equipment == null) {
         //crimes i'm sorry couldn't get it working otherwise
         character.equipment = {
@@ -441,7 +427,6 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.createCharacter(
         CharacterService.validateCharacter(character)
       );
-    });
     history.push('/dashboard');
   };
 
@@ -463,6 +448,11 @@ export const Equipment = ({ charID, setPage }) => {
         equipmentWDetails => {
           setEquipmentList(equipmentWDetails);
           console.log('equipment', equipmentWDetails);
+          dispatch(
+            setEquipment(charID, {
+              set: equipmentWDetails
+            })
+          );
         }
       )
     );

@@ -513,7 +513,24 @@ useEffect(() => {
               {page.name === 'background' && <p>{fluffText[2].contents}</p>}
               {page.name === 'description' && <p>{fluffText[3].contents}</p>}
               {page.name === 'equipment' && charEquipment !== null && (
-                <p>{charEquipment}</p>
+                <>
+                {charEquipment.set && charEquipment.set.map((equip, index) => {
+                  return(<p key={`equipset-${index}`}>{equip.name}</p>)
+                })}
+                {charEquipment.choices && Object.keys(charEquipment.choices).map((equipment, index) => {
+                  let equip = charEquipment.choices ? charEquipment.choices[equipment] : null;
+                  if(equip) {
+                    if(equip.equipment?.name) return(<p key={`equipchoice-${index}`}>{equip?.equipment?.name}</p>)
+                    else {
+                      if(equip.selection) return Object.keys(equip.selection).map((selection) => {
+                        return equip.selection[selection].map((item, index) => {
+                          return(<p key={`equipselect-${index}`}>{item.name}</p>)
+                        })
+                      })
+                    }
+                  }
+                })}
+                </>
               )}
             </div>
           )}
