@@ -321,7 +321,7 @@ const EquipmentList = ({
   charID,
   theKey,
   setEquipmentSelection,
-  equipmentSelection,
+  dispatch
 }) => {
   // either store the equipment list here, and then select from that list
   // based on the key of the selected card (+1 since the first index is just the header)
@@ -340,6 +340,13 @@ const EquipmentList = ({
   };
   useEffect(() => {
     setEquipmentSelection({ [theKey]: selectedCard });
+    dispatch(
+      setEquipment(charID, {
+        choices: {
+          [theKey]: selectedCard
+        }
+      })
+    );
     //console.log("EQUIPMENT ITEM", equipmentItem);
   }, [selectedCard]);
 
@@ -407,20 +414,7 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
-  const finalizeEquipment = () =>
-    new Promise((resolve, reject) => {
-      resolve(
-        dispatch(
-          setEquipment(charID, {
-            choices: equipmentSelection,
-            set: equipmentList,
-          })
-        )
-      );
-    });
-
   const validateAndStore = () => {
-    finalizeEquipment().then(() => {
       if (character.equipment == null) {
         //crimes i'm sorry couldn't get it working otherwise
         character.equipment = {
@@ -434,17 +428,10 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.validateCharacter(character).then((character) => {
         dispatch(submitCharacter(character));
       })
-    });
   };
 
   const onNext = () => {
-    dispatch(
-      setEquipment(charID, {
-        choices: equipmentSelection,
-        set: equipmentList,
-      })
-    );
-    console.log("EQUIPMENT", {choices: equipmentSelection, set: equipmentList})
+    console.log("EQUIPMENT", character.equipment)
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
@@ -463,6 +450,11 @@ export const Equipment = ({ charID, setPage }) => {
         equipmentWDetails => {
           setEquipmentList(equipmentWDetails);
           console.log('INITIAL EQUIPMENT', equipmentWDetails);
+          dispatch(
+            setEquipment(charID, {
+              set: equipmentList,
+            })
+          );
         }
       )
     );
@@ -525,6 +517,7 @@ export const Equipment = ({ charID, setPage }) => {
                 setEquipmentSelection={setEquipmentSelection}
                 equipmentSelection={equipmentSelection}
                 className={className}
+                dispatch={dispatch}
               />
             );
           })}
