@@ -531,7 +531,7 @@ const CharacterSchema = new Schema({ //Add class specific slots
     {
       name: String,
       category: String,
-      description: String,
+      desc: String,
       equipped: Boolean,
       armor_type: String,        // e.g. light, medium, heavy
       armor_class: {
@@ -541,11 +541,15 @@ const CharacterSchema = new Schema({ //Add class specific slots
       },
       str_minimum: Number,
       stealth_disadvantage: Boolean,
-      modifier: String,    // modifier is max +2 bonus?
+      proficiency: Boolean,
       weight: Number,
       cost: {
         amount: Number,
         denomination: String        // e.g. "gp", "sp", etc.
+      },
+      pinned: {
+        type: Boolean,
+        default: false
       }
       /*mechanics: [
         {
@@ -583,11 +587,10 @@ const CharacterSchema = new Schema({ //Add class specific slots
           normal: Number,
           long: Number
         },
-        attack_type: String,
         damage_type: String,
         damage_dice: String,
         two_handed_damage_dice: String,
-        modifier: Number,
+        proficiency: Boolean, 
         weight: Number,
         quantity: Number,
         cost: {
@@ -595,8 +598,12 @@ const CharacterSchema = new Schema({ //Add class specific slots
           denomination: String        // e.g. "gp", "sp", etc.
         },
         properties: [{ name: String }],
-        attack_bonus: Number,
-        damage_bonus: Number
+        pinned: {
+            type: Boolean,
+            default: false
+        }
+        //attack_bonus: Number,
+        //damage_bonus: Number
         // ammunition: {
         //   current: Number,
         //   max: Number
@@ -653,7 +660,11 @@ const CharacterSchema = new Schema({ //Add class specific slots
             damage: {
                 damage_type: String, 
                 damage_at_slot_level: {}
-            }      
+            },  
+            pinned: {
+                type: Boolean,
+                default: false
+            } 
         }
     ]
     /*
@@ -705,6 +716,10 @@ const CharacterSchema = new Schema({ //Add class specific slots
         amount: Number,
         denomination: String        // e.g. "gp", "sp", etc.
       },
+      pinned: {
+        type: Boolean,
+        default: false
+      }
       /*
       mechanics: [
         {
@@ -727,7 +742,11 @@ const CharacterSchema = new Schema({ //Add class specific slots
     other: [
       {
         name: String,
-        value: Number
+        value: Number,
+        pinned: {
+            type: Boolean,
+            default: false
+        }
       }
     ]
   },

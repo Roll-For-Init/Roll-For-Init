@@ -70,7 +70,14 @@ const EquipmentItem = ({
             {equipment.desc.damage && (
               <p className="equipment-item">
                 Damage:&nbsp;
-                <i className="equipment-item-info">{equipment.desc.damage}</i>
+                <i className="equipment-item-info">{`${equipment.desc.damage.damage_dice} ${equipment.desc.damage.damage_type}`}{equipment.desc.damage.two_handed ? ` one-handed, ` : null}</i>
+                {equipment.desc.damage.two_handed && (<i className="equipment-item-info">{`${equipment.desc.damage.two_handed.damage_dice} ${equipment.desc.damage.two_handed.damage_type} (two-handed)`}</i>)}
+              </p>
+            )}
+            {equipment.desc.range && (
+                <p className="equipment-item">
+                Range:&nbsp;
+                <i className="equipment-item-info">{`${equipment.desc.range.normal}${equipment.desc.range.long ? `/${equipment.desc.range.long}` : ``}`}</i>
               </p>
             )}
             {equipment.desc.cost && (
@@ -320,6 +327,7 @@ const EquipmentList = ({
   className,
   charID,
   theKey,
+  equipmentSelection, 
   setEquipmentSelection,
   dispatch
 }) => {
@@ -343,6 +351,7 @@ const EquipmentList = ({
     dispatch(
       setEquipment(charID, {
         choices: {
+          ...equipmentSelection, 
           [theKey]: selectedCard
         }
       })
@@ -522,15 +531,20 @@ export const Equipment = ({ charID, setPage }) => {
             );
           })}
           {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}
-          <button
+          {character.class?.spellcasting?.level<=1 && (
+            <button className="text-uppercase btn-primary btn-lg px-5 btn-floating" onClick={onNext}>
+              OK
+            </button>
+          )}
+          {!(character.class?.spellcasting?.level<=1) && (
+            <button
             className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-            data-toggle={!character.class?.spellcasting && 'modal'}
-            data-target={!character.class?.spellcasting && '#nameModalEq'}
-            onClick={character.class?.spellcasting && onNext}
-          >
+            data-toggle={'modal'}
+            data-target={'#nameModalEq'}
+            >
             OK
-          </button>
-
+            </button>
+          )}
           <div
             className="modal fade"
             id="nameModalEq"

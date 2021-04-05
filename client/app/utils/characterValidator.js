@@ -1,6 +1,6 @@
 const axios = require('axios')
 
-const parseEquipment = (items) => {
+const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
     const equipment = {
         equipped_armor: [],
         attacks: {
@@ -20,12 +20,36 @@ const parseEquipment = (items) => {
     }
 
     for(let item of items.set) {
-        item = {
-            ...item.desc,
-            name: item.name,
-            quantity: item.quantity ? 1 : item.quantity
+        if(item.equipment) {
+            let costAmt = item.equipment.desc.cost.match(/\d+/g)
+            let denom =  item.equipment.desc.cost.match(/[a-zA-Z]+/g);
+            item = {
+                ...item.equipment.desc,
+                cost: {
+                    amount: costAmt,
+                    denomination: denom
+                },
+                name: item.equipment.name,
+                quantity: item.quantity ? 1 : item.quantity
+            }
         }
-        sortEquipment(equipment, item);
+        else {
+            let costAmt = item.desc.cost.match(/\d+/g)
+            let denom =  item.desc.cost.match(/[a-zA-Z]+/g);
+
+            item = {
+                ...item.desc,
+                cost: {
+                    amount: costAmt,
+                    denomination: denom
+
+                },
+                name: item.name,
+                quantity: item.quantity ? 1 : item.quantity
+            }
+        }
+       
+        sortEquipment(equipment, item, weaponProficiencies, armorProficiencies);
     }
 
     for(let key in items.choices) {
@@ -33,38 +57,59 @@ const parseEquipment = (items) => {
         if(Array.isArray(item.equipment)) {
             for(let choice of item.equipment) {
                 if(choice.index != undefined) {
+                    let costAmt = choice.desc.cost.match(/\d+/g)
+                    let denom =  choice.desc.cost.match(/[a-zA-Z]+/g);
+        
                     choice = {
                         ...choice.desc,
                         name: choice.name,
+                        cost: {
+                            amount: costAmt,
+                            denomination: denom
+        
+                        },        
                         quantity: !choice.quantity ? 1 : choice.quantity
                     };
-                    sortEquipment(equipment, choice);
+                    sortEquipment(equipment, choice, weaponProficiencies, armorProficiencies);
                 }
             }
         }
-        else if (item.equipment.choose != undefined) {
-            //ignore
+        if (item.selection != undefined) {
+            for(let choice of Object.keys(item.selection)) {
+                choice = item.selection[choice];
+                for(let item of choice) {
+                    let costAmt = item.desc.cost.match(/\d+/g)
+                    let denom =  item.desc.cost.match(/[a-zA-Z]+/g);
+
+                    item = {
+                        ...item.desc, 
+                        name: item.name,
+                        cost: {
+                            amount: costAmt,
+                            denomination: denom
+        
+                        },        
+                        quantity: !item.quantity ? 1 : item.quantity
+                    };
+                    sortEquipment(equipment, item, weaponProficiencies, armorProficiencies)
+                }
+            }
         }
         else {
+            let costAmt = item.equipment.desc.cost.match(/\d+/g)
+            let denom =  item.equipment.desc.cost.match(/[a-zA-Z]+/g);
+
             item = {
                 ...item.equipment.desc,
                 name: item.equipment.name,
+                cost: {
+                    amount: costAmt,
+                    denomination: denom
+
+                },  
                 quantity: !item.equipment.quantity ? 1 : item.equipment.quantity
             }
-            sortEquipment(equipment, item);
-        }
-
-        if(item.selection != undefined) {
-            for(let key in item.selection) {
-                for(let choice of item.selection[key]) {
-                    choice = {
-                        ...choice.desc,
-                        name: choice.name,
-                        quantity: !choice.quantity ? 1 : choice.quantity
-                    };
-                    sortEquipment(equipment, choice);
-                }
-            }
+            sortEquipment(equipment, item, weaponProficiencies, armorProficiencies);
         }
     }
     return equipment;
@@ -82,13 +127,13 @@ const fillModel = async (equipment, character) => { //will probably need a separ
         throw: [],
         expertise: []
     }
-    console.log(character.class.choices, character.race.choices, character.background.choices);
+    //console.log(character.class.choices, character.race.choices, character.background.choices);
     sortChoices(userSelections, character.class.choices);
     sortChoices(userSelections, character.race.choices);
     character.background.choices && sortChoices(userSelections, character.background.choices);
     const level = character.level === undefined ? 1 : character.level;
     const proficiency_bonus = 1 + Math.ceil(level/4)
-    console.log(userSelections);
+    //console.log(userSelections);
     const ability_relevant = abilityScoreParser(character.abilities, userSelections, proficiency_bonus, character.race.proficiencies, character.class.proficiencies);
     let health = character.class.hit_die + ability_relevant.ability_scores.con.modifier;//only works for 1st level
     if(character.subrace == 'Hill Dwarf') health+= level;
@@ -174,16 +219,37 @@ const fillModel = async (equipment, character) => { //will probably need a separ
         return model;
 }
 
-const sortEquipment = (equipment, item) => {
+const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies) => {
     let category = item.category ? item.category.toLowerCase() : 'pack';
     if(category.includes("weapon")) {
-        console.log(item);
+        item.pinned = false;
+        console.log(weaponProficiencies, item)
+        if(weaponProficiencies.find(weapon => weapon.toLowerCase().includes(item.name.substring(0, item.name.indexOf(' ')).toLowerCase()))) item.proficiency = true;
+        else item.proficiency = false;
+        item.properties = item.desc.split(', ');
+        delete item.desc;
+
         //if(category.includes("magic")) equipment.attacks.magic_weapons.push(item);
         /*else*/ equipment.attacks.weapons.push(item);
     }
     else if (category.includes("armor")) {
-        console.log(item);
+        item.pinned = false;
         item.equipped = false;
+        item.armor_class= {
+            base: item.base,
+            dex_bonus: item.dex_bonus,
+            max_bonus: item.max_bonus
+        }
+        console.log(armorProficiencies, item);
+        if(armorProficiencies.find(armor=> armor.toLowerCase().includes(item.category.toLowerCase()))) item.proficiency = true;
+        else if(armorProficiencies.includes('All armor') && !item.category.toLowerCase().includes('shield')) item.proficiency=true;
+        else if(armorProficiencies.includes('Shields') && item.category.toLowerCase().includes('shield')) item.proficiency = true;
+        else if(armorProficiencies.find(armor => armor.toLowerCase() === item.name.toLowerCase())) item.proficiency = true;
+        else item.proficiency = false;
+
+        delete item.dex_bonus;
+        delete item.max_bonus;
+        delete item.base;
         equipment.equipped_armor.push(item);
     }
     else if (category.includes("currency")) {
@@ -191,9 +257,11 @@ const sortEquipment = (equipment, item) => {
         equipment.treasure[separated[1]] += separated[0];
     }
     else if (category.includes("treasure")) {
+        item.pinned = false;
         equipment.treasure.other.push(item);
     }
     else {
+        item.pinned = false;
         equipment.inventory.push(item);
     }
 }
@@ -210,10 +278,10 @@ const sortChoices = (choices, parent) => {
             }
         }
         let choice = parent[key1];
-        console.log(choice);
+        //console.log(choice);
         for(let item of choice) {
             if(item && typeof item=== 'object') {
-                console.log(item.name);
+                //console.log(item.name);
                 item = item.name;
             }
             choices[category].push(item);
@@ -289,27 +357,39 @@ const acCalculator = (armorList, theClass, abScores) => {
     if(theClass=='monk') best.maxAC += abScores.wis.modifier;
     else if(theClass=='barbarian') best.maxAC += abScores.con.modifier;
     best.maxAC += abScores.dex.modifier;
+    if (theClass=='sorcerer') best.maxAC = 13 + abScores.dex.modifier;
 
     for(let armor of armorList) {
-        if(armor.name.toLowerCase().includes('shield')) shield = true;
-        let maxAC = armor.base + (armor.dex_bonus ? (armor.max_bonus && abScores.dex.modifier >= armor.max_bonus ? armor.max_bonus : abScores.dex.modifier) : 0);
-        if(maxAC > best.maxAC) {
+        if(armor.proficiency && armor.name.toLowerCase().includes('shield')) {
+            shield = true;
+            armor.equipped = true;
+        }
+        let maxAC = armor.armor_class.base + (armor.armor_class.dex_bonus ? (armor.armor_class.max_bonus && abScores.dex.modifier >= armor.armor_class.max_bonus ? armor.armor_class.max_bonus : abScores.dex.modifier) : 0);
+        if(armor.proficiency && maxAC > best.maxAC) {
             best.maxAC = maxAC;
             best.armor = armor;
+        }
+    }
+    if(best.armor.name) {
+        for(let armor of armorList) {
+            console.log(best.armor);
+            if(armor.name.toLowerCase()===best.armor.name.toLowerCase()) {
+                armor.equipped = true;
+            }
         }
     }
     return shield ? best.maxAC : best.maxAC + 2;
 }
 
 const levelSorter = async (charClass, charLevel) => {
-    console.log("in levels sorter");
+    //console.log("in levels sorter");
     let connection = `/api/classes/${charClass.toLowerCase()}/levels/${charLevel}`;
-    console.log(connection);
+    //console.log(connection);
     const thing =  await axios
           .get(connection)
           .then(level => {
             level = level.data;
-            console.log(level);
+           // console.log(level);
             let slots = [];
             let class_specific = null;
             if(level.class_specific) {
@@ -331,14 +411,14 @@ const levelSorter = async (charClass, charLevel) => {
             return {slots: slots, class_specific: class_specific};
           })
           .then(level => {
-              console.log(level);
+              //console.log(level);
               return level
     })
     return thing;
 }
 
 const spellsPopulator = (spells) => {
-    console.log(spells);
+    //console.log(spells);
     const cards = [[],[],[],[],[],[],[], [], []];
     for (let i = 0; i < 9; i++) {
         let key;
