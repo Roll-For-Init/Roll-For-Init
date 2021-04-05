@@ -1,8 +1,11 @@
-import React  from 'react';
-import { useSelector, /*useDispatch*/ } from 'react-redux';
+import React, {useState}  from 'react';
+import { useSelector, useDispatch } from 'react-redux';
 import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
+import { setUpdate} from '../../redux/actions/characters';
 import './styles.scss';
+import FloatingLabel from 'floating-label-react';
+
 import {D20, StarOutline} from '../../utils/svgLibrary';
 
 //swap race class icons with white
@@ -28,12 +31,12 @@ const skillScores = {
   persuasion: 'cha'
 }
 
+
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
   console.log(user);
   
   const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
-
   const character = useSelector(state => state.characters[charID]);
   console.log(character);
 
@@ -130,7 +133,7 @@ export const DashBoard = () => {
             <div className="row">
               <div className="col-sm-8 px-2">
                       <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed}/>
-                      <HitPointsCard health={character.health} hit_dice={character.hit_dice}/>
+                      <HitPointsCard health={character.health} hit_dice={character.hit_dice} charID={charID}/>
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
                 <ExtraStatsCard conditions={character.conditions} defenses={character.defenses}/>
@@ -257,7 +260,7 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
       <div className="card content-card description-card">
         {Object.entries(misc_proficiencies).map(misc_proficiency => {
           return (
-            <p className="text-capitalize" key={misc_proficiency[0]}>
+            misc_proficiency[1].length > 0 ? <p className="text-capitalize" key={misc_proficiency[0]}>
                 <span className="small-caps">{misc_proficiency[0]}</span> –{' '}
                 {misc_proficiency[1].map((item, idx) => (
                   <React.Fragment key={idx}>
@@ -266,6 +269,8 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
                   </React.Fragment>
                 ))}
             </p>
+            :
+            null
           );
         })}
       </div>
@@ -320,9 +325,65 @@ const StatsCard = ({initiative, ac, speed}) => {
     </div>
   );
 };
+const ManualEntryModal = ({name, thePrompt, buttonText, submitFunction}) => {
+  const [value, setValue] = useState(null);
 
-const HitPointsCard = ({health, hit_dice}) => {
   return (
+    <div
+      className="modal fade"
+      id={`#nameModal${name}`}
+      role="dialog"
+      aria-labelledby={thePrompt}
+      aria-hidden="true"
+    >
+      <div className="modal-dialog modal-dialog-centered" role="document">
+        <div className="modal-content">
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>{thePrompt}</h5>
+          </div>
+          <div className="card content-card name-card">
+            <FloatingLabel
+              id="name"
+              name="name"
+              placeholder="Name"
+              type="number"
+              min="0"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </div>
+          <button
+            className="text-uppercase btn-primary modal-button"
+            onClick={() => submitFunction(value)}
+            data-dismiss="modal"
+          >
+            {buttonText}
+          </button>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+const HitPointsCard = ({health, hit_dice, charID}) => {
+  const dispatch = useDispatch();
+  const lowerHealth = (amt) => {
+    let newHealth = {current: health.current - amt};
+    dispatch(setUpdate(charID, 'health', newHealth))
+  }
+  const [value, setValue] = useState(null);
+
+
+  return (
+    <>
     <div className="hit-points card translucent-card long-card">
       <div className="row px-3">
         <div className="col-sm-7 px-2 py-1">
@@ -343,7 +404,8 @@ const HitPointsCard = ({health, hit_dice}) => {
         </div>
         <div className="row px-3 m-0 mt-2">
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-alert text-uppercase text-center align-middle">Damage</button>
+            <button className="btn btn-alert text-uppercase text-center align-middle" data-toggle={'modal'}
+            data-target={'#nameModalDmg'}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
             <button className="btn btn-success text-uppercase text-center align-middle">Heal</button>
@@ -360,10 +422,56 @@ const HitPointsCard = ({health, hit_dice}) => {
         </div>
       </div>
     </div>
+    <div
+      className="modal fade"
+      id="nameModalDmg"
+      role="dialog"
+      aria-labelledby="chooseDamage"
+      aria-hidden="true"
+    >
+      <div className="modal-dialog modal-dialog-centered" role="document">
+        <div className="modal-content">
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>How much damage?</h5>
+          </div>
+          <div className="card content-card name-card">
+            <FloatingLabel
+              id="name"
+              name="name"
+              placeholder="Amt"
+              type="number"
+              min="0"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </div>
+          <button
+            className="text-uppercase btn-primary modal-button"
+            onClick={() => lowerHealth(value)}
+            data-dismiss="modal"
+          >
+            OW!
+          </button>
+        </div>
+      </div>
+    </div>
+    {/*<ManualEntryModal name="Dmg" thePrompt= "How much damage?" buttonText="OW!" submitFunction={lowerHealth}/>*/}
+    </>
   );
 };
 
 const ExtraStatsCard = ({conditions, defenses}) => {
+  const addCondition = () => {
+
+  }
   return (
     <div className="card translucent-card short-card extra-stats">
       <div className="card content-card description-card px-1">
@@ -371,7 +479,7 @@ const ExtraStatsCard = ({conditions, defenses}) => {
         {conditions.map((condition, index) => {
           return (<button className="btn-outline-primary" key={`condition-${index}`}>{condition}</button>)
         })}
-        <button className="btn-outline-success"><span className="green">+</span> Add condition</button>
+        <button className="btn-outline-success" onClick={addCondition}>{/*<input className='form-control'/>*/}<span className="green">+</span>Add condition</button>
       </div>
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Defenses</h6>

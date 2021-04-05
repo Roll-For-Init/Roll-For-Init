@@ -12,6 +12,7 @@ import {
   SET_EQUIPMENT,
   SET_SPELLS,
   SET_PAGE,
+  SET_UPDATE
 } from '../actions/types';
 
 const initialCharacter = {
@@ -109,6 +110,11 @@ const character = (state = initialCharacter, action, charID) => {
           index: Math.max(payload.page.index, state.page.index),
         },
       };
+    case SET_UPDATE:
+        return {
+            ...state,
+            [payload.attribute]: {...state[payload.attribute], ...payload.updated}
+        }
     default:
       return state;
   }
@@ -184,6 +190,11 @@ export default function(state = initialState, action) {
         ...state,
         [payload.charID]: character(state[payload.charID], action, payload),
       };
+      case SET_UPDATE:
+        return {
+          ...state,
+          [payload.charID]: character(state[payload.charID], action, payload),
+        };
     default:
       return state;
   }

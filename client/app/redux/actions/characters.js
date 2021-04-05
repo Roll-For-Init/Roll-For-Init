@@ -18,6 +18,7 @@ import {
   SET_SPELLS,
   SET_PAGE,
   SET_EQUIPMENT,
+  SET_UPDATE
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -160,3 +161,8 @@ export const setEquipment = (charID, equipment) => dispatch => {
   console.log('SET_EQUIPMENT', charID, equipment);
   dispatch({ type: SET_EQUIPMENT, payload: { charID, equipment } });
 };
+
+export const setUpdate = (charID, attribute, updated) => dispatch => {
+    console.log('UPDATE_SHEET', charID, attribute, updated);
+    dispatch({type: SET_UPDATE, payload: {charID, attribute, updated}});
+}

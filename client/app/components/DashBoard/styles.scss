@@ -305,6 +305,10 @@
     span {
         color: $dark-green;
     }
+    input {
+        border: none;
+        background-color: transparent;
+    }
 }
 .btn-outline-primary {
     @extend .btn-outline-success;
@@ -354,5 +358,11 @@
 
   div {
     color: $dark-blue !important;
+  }
+  .modal-button {
+    font-size: 1.25rem;
+    max-width: 300px;
+    padding: 10px 20px;
+    margin: 20px auto 0 auto;
   }
 }
