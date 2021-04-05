@@ -141,7 +141,7 @@ export const DashBoard = () => {
             </div>
             <div className="pinned row px-2">
               <div className="col-12 px-0">
-                <SpellsAndPinned spells={character.spells} modifier={character.ability_scores[character.spells.casting_ability].modifier} proficiency={character.proficiency_bonus}/>
+                <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus}/>
 
               </div>
             </div>
@@ -496,7 +496,7 @@ const ExtraStatsCard = ({conditions, defenses}) => {
 const SpellsAndPinned = ({spells, modifier, proficiency}) => {
   return (
   <div className="card translucent-card w-100 mx-0">
-    {spells && <div className="row px-5">
+    {spells != null && (<div className="row px-5">
       <div>
         <div className="card content-card description-card p-1">
         <h6 className="text-uppercase text-center m-0">Spellcasting</h6>
@@ -566,7 +566,7 @@ const SpellsAndPinned = ({spells, modifier, proficiency}) => {
         </table>
       </div>
       </div>
-    </div>}
+    </div>)}
     <div className="row">
 
     </div>

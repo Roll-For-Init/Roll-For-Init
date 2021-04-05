@@ -279,7 +279,7 @@ const PageViewer = ({ charID}) => {
         <div className="btn-group-vertical w-100" role="group">
           
           <Buttons page={character.page} onPageChange={onPageChange} charRace={charRace} charClass={charClass} raceIconsOffWhite={raceIconsOffWhite} raceIconsMedBlue={raceIconsMedBlue} classIconsOffWhite={classIconsOffWhite} classIconsMedBlue={classIconsMedBlue}/>
-          {character.class?.spellcasting && (
+          {character.class?.spellcasting?.level <= 1 && (
             <button
               key="spells"
               type="button"
