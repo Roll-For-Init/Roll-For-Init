@@ -146,6 +146,7 @@ const fillModel = async (equipment, character) => { //will probably need a separ
                 }
             ], 
             initiative_bonus: ability_relevant.ability_scores.dex.modifier, 
+            ...equipment, 
             spells: character.spells ? {
                 slots: levelDetails.slots,
                 casting_ability: character.class.spellcasting.spellcasting_ability.index,
@@ -176,10 +177,13 @@ const fillModel = async (equipment, character) => { //will probably need a separ
 const sortEquipment = (equipment, item) => {
     let category = item.category ? item.category.toLowerCase() : 'pack';
     if(category.includes("weapon")) {
-        if(category.includes("magic")) equipment.attacks.magic_weapons.push(item);
-        else equipment.attacks.weapons.push(item);
+        console.log(item);
+        //if(category.includes("magic")) equipment.attacks.magic_weapons.push(item);
+        /*else*/ equipment.attacks.weapons.push(item);
     }
     else if (category.includes("armor")) {
+        console.log(item);
+        item.equipped = false;
         equipment.equipped_armor.push(item);
     }
     else if (category.includes("currency")) {
