@@ -215,7 +215,7 @@ const fillModel = async (equipment, character) => { //will probably need a separ
             physical_description: character.description.physical_description,
             portrait: character.description.portrait,
         }
-        console.log(model);
+        //console.log(model);
         return model;
 }
 
@@ -223,7 +223,7 @@ const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies)
     let category = item.category ? item.category.toLowerCase() : 'pack';
     if(category.includes("weapon")) {
         item.pinned = false;
-        console.log(weaponProficiencies, item)
+        //console.log(weaponProficiencies, item)
         if(weaponProficiencies.find(weapon => weapon.toLowerCase().includes(item.name.substring(0, item.name.indexOf(' ')).toLowerCase()))) item.proficiency = true;
         else item.proficiency = false;
         item.properties = item.desc.split(', ');
@@ -240,7 +240,7 @@ const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies)
             dex_bonus: item.dex_bonus,
             max_bonus: item.max_bonus
         }
-        console.log(armorProficiencies, item);
+        //console.log(armorProficiencies, item);
         if(armorProficiencies.find(armor=> armor.toLowerCase().includes(item.category.toLowerCase()))) item.proficiency = true;
         else if(armorProficiencies.includes('All armor') && !item.category.toLowerCase().includes('shield')) item.proficiency=true;
         else if(armorProficiencies.includes('Shields') && item.category.toLowerCase().includes('shield')) item.proficiency = true;
@@ -372,7 +372,7 @@ const acCalculator = (armorList, theClass, abScores) => {
     }
     if(best.armor.name) {
         for(let armor of armorList) {
-            console.log(best.armor);
+            //console.log(best.armor);
             if(armor.name.toLowerCase()===best.armor.name.toLowerCase()) {
                 armor.equipped = true;
             }
