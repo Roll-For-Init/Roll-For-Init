@@ -135,78 +135,79 @@ const equipmentOptions = async (container, options, key) => {
 const optionsHelper = async (container, options, key) => {
     const promises = [];
     let optionSet = {
-        header: '',
-        options: [],
-        type: '',
-        choose: 0,
-      }  
+      header: '',
+      options: [],
+      type: '',
+      choose: 0,
+    };
     optionSet.choose = options.choose;
-    if(options.type.toLowerCase().includes("feature")) {
+    if (options.type.toLowerCase().includes('feature')) {
       optionSet.header = container.name;
       optionSet.desc = container.desc;
-      optionSet.type = "feature"
-    } 
-    else if (options.type.toLowerCase().includes("trait")) {
-        console.log(options);
-        optionSet.header = options.header ? options.header : options.type.replace('_', " ");
-        optionSet.type = "trait";
-    }
-    else if (options.type.toLowerCase().includes('language')) {
+      optionSet.type = 'feature';
+    } else if (options.type.toLowerCase().includes('trait')) {
+      console.log(options);
+      optionSet.header = options.header
+        ? options.header
+        : options.type.replace('_', ' ');
+      optionSet.type = 'trait';
+      if(options.desc) optionSet.desc = options.desc;
+    } else if (options.type.toLowerCase().includes('language')) {
       optionSet.header = `extra ${options.type}`;
       optionSet.type = options.type;
     }
-    else {
-        optionSet.header = options.type.replace('_', " ");
-        optionSet.type = options.type;
+    else if (options.type.toLowerCase().includes('prof') && !options.from[0].index.toLowerCase().includes('skill')) {
+      optionSet.type = options.type;
+      optionSet.header = 'tool';
+    } else {
+      optionSet.header = options.type.replace('_', ' ');
+      optionSet.type = options.type;
     }
     for (let option of options.from) {
-        if (key.toLowerCase().includes('ability_bonus')) {
-            optionSet.header = `+${options.from[0].bonus} Ability Bonus`
-            option.ability_score.full_name = fullAbScore[option.ability_score.name];
-            optionSet.options.push(option.ability_score);
+      if (key.toLowerCase().includes('ability_bonus')) {
+        optionSet.header = `+${options.from[0].bonus} Ability Bonus`;
+        option.ability_score.full_name = fullAbScore[option.ability_score.name];
+        optionSet.options.push(option.ability_score);
+      } else if (Object.keys(option)[0].includes('category')) {
+        //if it try to not do this multiple times there are race conditions
+        let optionObject = option[Object.keys(option)[0]];
+        optionSet.header = optionObject.name;
+        promises.push(
+          axios.get(optionObject.url).then(cat => {
+            optionSet.options = cat.data.results;
+          })
+        );
+      } else if (Object.keys(option)[0].includes('option')) {
+        let thekey = Object.keys(option)[0];
+        let optionObject = option[thekey];
+        if (key.includes('category')) {
+          optionObject.header = optionObject.from[thekey].name;
         }
-        else if (Object.keys(option)[0].includes("category")) { //if it try to not do this multiple times there are race conditions
-            let optionObject = option[Object.keys(option)[0]];
-            optionSet.header=optionObject.name;
-            promises.push(axios.get(optionObject.url).then((cat) => {
-                optionSet.options = cat.data.results;
-            }));
+        optionSet.options.push(optionObject);
+      } else if (option['0']) {
+        let options = [];
+        for (let i = 0; option[i] != undefined; i++) {
+          let optionObject;
+          optionObject = option[i];
+          options.push(optionObject);
         }
-        else if (Object.keys(option)[0].includes("option")) {
-            let thekey = Object.keys(option)[0];
-            let optionObject = option[thekey];
-            if(key.includes("category")) {
-                optionObject.header=optionObject.from[thekey].name;
-            }
-            optionSet.options.push(optionObject);
-        }
-        else if (option['0']) {
-            let options=[];
-            for (let i = 0; option[i] != undefined; i++) {
-                let optionObject;
-                optionObject = option[i];
-                options.push(optionObject)
-            }
-            optionSet.options.push(options);
-        } 
-        else if (
-          option.index.toLowerCase().includes('skill')
-        ) 
-        {
-            let optionName = option.name.substring(option.name.indexOf(':') + 2);
-            option.name = optionName;
-            let optionObject = option;
-            optionSet.options.push(optionObject);
-            optionSet.type = "skill";
-        } 
-        else {
-            let optionObject = option;
-            optionSet.options.push(optionObject);
-        }
+        optionSet.options.push(options);
+      } else if (option.index.toLowerCase().includes('skill')) {
+        let optionName = option.name.substring(option.name.indexOf(':') + 2);
+        option.name = optionName;
+        let optionObject = option;
+        optionSet.options.push(optionObject);
+        optionSet.type = 'skill';
+      } else {
+        let optionObject = option;
+        optionSet.options.push(optionObject);
+      }
     }
-    if(optionSet.header=='') optionSet = null;
-    return Promise.all(promises).then(() => {return {options: optionSet}}); 
-}
+    if (optionSet.header == '') optionSet = null;
+    return Promise.all(promises).then(() => {
+      return { options: optionSet };
+    });
+  };
 const optionsExtractor = async (container, key) => {
   let promises = [];
   let listOfOptions = container[key];
@@ -552,22 +553,46 @@ const classCaller = async (classPointer) => {
     }).catch((err) => console.log(err));
 };
 
-const getClassDescriptions = async (theClass) => {
-    let promises = [];
-    for (optionSet of theClass.options) {
-        optionSet.options.forEach(option => {
-            if(!option.hasOwnProperty('url')) {return;}
-            promises.push(axios.get(option.url)
-            .then(optionDetails => {
-                optionDetails = optionDetails.data;
-                if(optionDetails.desc) option.desc = optionDetails.desc;
-                else option.desc = placeholderDescription;
-            })
-            .catch(err => console.error(err)));
-        })
-    }
-    return Promise.all(promises).then(() => {return theClass})
-}
+const getClassDescriptions = async theClass => {
+  let promises = [];
+  for (let optionSet of theClass.options) {
+    optionSet.options.forEach(option => {
+      if (!option.hasOwnProperty('url')) {
+        return;
+      }
+      promises.push(
+        axios
+          .get(option.url)
+          .then(optionDetails => {
+            optionDetails = optionDetails.data;
+            if (optionDetails.desc) option.desc = optionDetails.desc;
+            else option.desc = placeholderDescription;
+          })
+          .catch(err => console.error(err))
+      );
+    });
+  }
+  for (let optionSet of theClass.subclass.subclass_options) {
+    optionSet.options.forEach(option => {
+      if (!option.hasOwnProperty('url')) {
+        return;
+      }
+      promises.push(
+        axios
+          .get(option.url)
+          .then(optionDetails => {
+            optionDetails = optionDetails.data;
+            if (optionDetails.desc) option.desc = optionDetails.desc;
+            else option.desc = placeholderDescription;
+          })
+          .catch(err => console.error(err))
+      );
+    });
+  }
+  return Promise.all(promises).then(() => {
+    return theClass;
+  });
+};
 
 const getBackgroundList = async () => {
   var backgrounds=[];
