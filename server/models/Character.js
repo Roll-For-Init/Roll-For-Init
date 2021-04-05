@@ -16,16 +16,13 @@ const CharacterSchema = new Schema({ //Add class specific slots
   },
   race: {
     name: String,
-    description: {
-        age: String,
-        size: String,
-        summary: [String]
-    }
+    subrace: String
   },
   class: [
     {
       name: String,
-      levels: Number
+      levels: Number,
+      subclass: String
     }
   ],
   features: [

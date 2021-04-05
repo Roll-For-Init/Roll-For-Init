@@ -7,9 +7,8 @@ import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
 import FloatingLabel from 'floating-label-react';
 import { useHistory } from 'react-router-dom';
-import { setEquipment } from '../../redux/actions';
+import { setEquipment, submitCharacter } from '../../redux/actions';
 import { Link } from 'react-router-dom';
-
 
 const EquipmentItem = ({
   equipment,
@@ -17,10 +16,10 @@ const EquipmentItem = ({
   setSelectionEq,
   dropdown = false,
   className,
-  stateKey
+  stateKey,
 }) => {
   const mapObj = { ', monk': '', monk: '' };
- // const [selection, setSelection] = useState(null)
+  // const [selection, setSelection] = useState(null)
   function replaceAll(str, mapObj) {
     var re = new RegExp(Object.keys(mapObj).join('|'), 'gi');
 
@@ -174,16 +173,16 @@ const EquipmentCard = ({
   selectedCard,
   setSelectedCard,
   className,
-  charID
+  charID,
 }) => {
   const handleClick = () => {
     if (selectedCard?.cardKey === cardKey) setSelectedCard(null);
-    else setSelectedCard({cardKey: cardKey, equipment: equipmentItem});
+    else setSelectedCard({ cardKey: cardKey, equipment: equipmentItem });
   };
   const reducer = (state, newProp) => {
     let newState = { ...state, ...newProp };
-    if(selectedCard?.cardKey === cardKey) {
-      setSelectedCard({...selectedCard, selection: newState})
+    if (selectedCard?.cardKey === cardKey) {
+      setSelectedCard({ ...selectedCard, selection: newState });
     } //THIS WONT WORK IF YOU DO A DROPDOWN DESELECT AND RESELECT OR SMTH
     return newState;
   };
@@ -194,14 +193,16 @@ const EquipmentCard = ({
 
   return (
     <div
-      className={`card content-card equipment-card ${selectedCard?.cardKey === cardKey &&
-        `selected-card`}`}
+      className={`card content-card equipment-card ${selectedCard?.cardKey ===
+        cardKey && `selected-card`}`}
     >
       {clickable && (
         <button
           onClick={() => handleClick()}
           className={`btn ${
-            selectedCard?.cardKey === cardKey ? `btn-clicked` : `btn-outline-success`
+            selectedCard?.cardKey === cardKey
+              ? `btn-clicked`
+              : `btn-outline-success`
           } btn-card`}
         >
           {selectedCard?.cardKey === cardKey ? 'Selected' : 'Select'}
@@ -213,11 +214,11 @@ const EquipmentCard = ({
             <>
               <EquipmentItem
                 equipment={equipmentItem}
-                selectionEq={selectionEq[
-                  `${equipmentItem.header
-                    .toLowerCase()
-                    .replace(' ', '-')}`
-                ]}
+                selectionEq={
+                  selectionEq[
+                    `${equipmentItem.header.toLowerCase().replace(' ', '-')}`
+                  ]
+                }
                 stateKey={`${equipmentItem.header
                   .toLowerCase()
                   .replace(' ', '-')}`}
@@ -226,10 +227,9 @@ const EquipmentCard = ({
               />
               {Object.keys(selectionEq).length !== 0 && (
                 <>
-                  {selectionEq[`${equipmentItem.header
-                    .toLowerCase()
-                    .replace(' ', '-')}`].map((dropdownItem, idx) => {
-
+                  {selectionEq[
+                    `${equipmentItem.header.toLowerCase().replace(' ', '-')}`
+                  ].map((dropdownItem, idx) => {
                     return (
                       <div key={idx} style={{ marginTop: '5px' }}>
                         <EquipmentItem equipment={dropdownItem} />
@@ -254,11 +254,13 @@ const EquipmentCard = ({
                           <>
                             <EquipmentItem
                               equipment={multiEquipmentOption}
-                              selectionEq={selectionEq[
-                                `${multiEquipmentOption.header
-                                  .toLowerCase()
-                                  .replace(' ', '-')}-${idx}`
-                              ]}
+                              selectionEq={
+                                selectionEq[
+                                  `${multiEquipmentOption.header
+                                    .toLowerCase()
+                                    .replace(' ', '-')}-${idx}`
+                                ]
+                              }
                               stateKey={`${multiEquipmentOption.header
                                 .toLowerCase()
                                 .replace(' ', '-')}-${idx}`}
@@ -267,9 +269,11 @@ const EquipmentCard = ({
                             />
                             {Object.keys(selectionEq).length !== 0 && (
                               <>
-                                {selectionEq[`${multiEquipmentOption.header
-                                  .toLowerCase()
-                                  .replace(' ', '-')}-${idx}`].map((dropdownItem, idx) => {
+                                {selectionEq[
+                                  `${multiEquipmentOption.header
+                                    .toLowerCase()
+                                    .replace(' ', '-')}-${idx}`
+                                ].map((dropdownItem, idx) => {
                                   return (
                                     <div key={idx} style={{ marginTop: '5px' }}>
                                       <EquipmentItem equipment={dropdownItem} />
@@ -311,7 +315,14 @@ const EquipmentCard = ({
   );
 };
 
-const EquipmentList = ({ equipmentOption, className, charID, theKey, setEquipmentSelection, equipmentSelection }) => {
+const EquipmentList = ({
+  equipmentOption,
+  className,
+  charID,
+  theKey,
+  setEquipmentSelection,
+  dispatch
+}) => {
   // either store the equipment list here, and then select from that list
   // based on the key of the selected card (+1 since the first index is just the header)
   // or do it in equipment card, where each card stores all of its own equipment
@@ -328,9 +339,16 @@ const EquipmentList = ({ equipmentOption, className, charID, theKey, setEquipmen
     767: 1,
   };
   useEffect(() => {
-    setEquipmentSelection({[theKey]: selectedCard});
+    setEquipmentSelection({ [theKey]: selectedCard });
+    dispatch(
+      setEquipment(charID, {
+        choices: {
+          [theKey]: selectedCard
+        }
+      })
+    );
     //console.log("EQUIPMENT ITEM", equipmentItem);
-  }, [selectedCard])
+  }, [selectedCard]);
 
   return (
     <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
@@ -396,29 +414,24 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
-  const finalizeEquipment = () => new Promise((resolve, reject) => {
-    console.log('in finalize equipment');
-    resolve(dispatch(setEquipment(charID, {
-      choices: equipmentSelection,
-      set: equipmentList
-    })));
-  })
-
   const validateAndStore = () => {
-    finalizeEquipment().then(() => {
-      if(character.equipment == null) { //crimes i'm sorry couldn't get it working otherwise
-        character.equipment = {choices: equipmentSelection, set: equipmentList}
+      if (character.equipment == null) {
+        //crimes i'm sorry couldn't get it working otherwise
+        character.equipment = {
+          choices: equipmentSelection,
+          set: equipmentList,
+        };
       }
-      console.log(character)
-      CharacterService.createCharacter(CharacterService.validateCharacter(character));
-    })
-  }
+      character.name = name;
+      console.log(character);
+      history.push('/dashboard');
+      CharacterService.validateCharacter(character).then((character) => {
+        dispatch(submitCharacter(character));
+      })
+  };
 
   const onNext = () => {
-    dispatch(setEquipment(charID, {
-      choices: equipmentSelection,
-      set: equipmentList
-    }))
+    console.log("EQUIPMENT", character.equipment)
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
@@ -426,6 +439,7 @@ export const Equipment = ({ charID, setPage }) => {
   const history = useHistory();
 
   const onFinish = () => {
+    validateAndStore();
     history.push('/dashboard');
   };
 
@@ -435,7 +449,12 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentList).then(
         equipmentWDetails => {
           setEquipmentList(equipmentWDetails);
-          console.log('equipment', equipmentWDetails);
+          console.log('INITIAL EQUIPMENT', equipmentWDetails);
+          dispatch(
+            setEquipment(charID, {
+              set: equipmentList,
+            })
+          );
         }
       )
     );
@@ -443,7 +462,7 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentOptions).then(
         equipmentWDetails => {
           setEquipmentOptions(equipmentWDetails);
-          console.log('options', equipmentWDetails);
+          console.log('EQUIPMENT OPTIONS', equipmentWDetails);
         }
       )
     );
@@ -492,13 +511,14 @@ export const Equipment = ({ charID, setPage }) => {
             return (
               <EquipmentList
                 equipmentOption={equipmentOption}
-                charID={charID} 
+                charID={charID}
                 theKey={idx}
                 key={idx}
-                setEquipmentSelection={setEquipmentSelection} 
+                setEquipmentSelection={setEquipmentSelection}
                 equipmentSelection={equipmentSelection}
                 className={className}
-              /> 
+                dispatch={dispatch}
+              />
             );
           })}
           {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}
