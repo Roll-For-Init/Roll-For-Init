@@ -74,6 +74,25 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
                 }
             }
         }
+        else if(item.equipment.choose) {
+            //do nothing
+        }
+        else {
+            console.log(item);
+            let costAmt = item.equipment.desc.cost.match(/\d+/g)
+            let denom =  item.equipment.desc.cost.match(/[a-zA-Z]+/g);
+
+            item = {
+                ...item.equipment.desc,
+                name: item.equipment.name,
+                cost: {
+                    amount: costAmt,
+                    denomination: denom
+                },  
+                quantity: !item.equipment.quantity ? 1 : item.equipment.quantity
+            }
+            sortEquipment(equipment, item, weaponProficiencies, armorProficiencies);
+        }
         if (item.selection != undefined) {
             for(let choice of Object.keys(item.selection)) {
                 choice = item.selection[choice];
@@ -94,22 +113,6 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
                     sortEquipment(equipment, item, weaponProficiencies, armorProficiencies)
                 }
             }
-        }
-        else {
-            let costAmt = item.equipment.desc.cost.match(/\d+/g)
-            let denom =  item.equipment.desc.cost.match(/[a-zA-Z]+/g);
-
-            item = {
-                ...item.equipment.desc,
-                name: item.equipment.name,
-                cost: {
-                    amount: costAmt,
-                    denomination: denom
-
-                },  
-                quantity: !item.equipment.quantity ? 1 : item.equipment.quantity
-            }
-            sortEquipment(equipment, item, weaponProficiencies, armorProficiencies);
         }
     }
     return equipment;
