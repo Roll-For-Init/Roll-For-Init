@@ -36,7 +36,7 @@ export const submitCharacter = characterInfo => dispatch => {
     res => {
       dispatch({
         type: SUBMIT_CHARACTER_SUCCESS,
-        payload: { character: res.data },
+        payload: characterInfo,
       });
       return Promise.resolve();
     },

@@ -8,6 +8,7 @@ import {
 } from './types';
 
 import AuthService from '../services/auth.service';
+import { useHistory } from 'react-router';
 
 export const register = (username, email, password) => dispatch => {
   return AuthService.register(username, email, password).then(
@@ -24,6 +25,7 @@ export const register = (username, email, password) => dispatch => {
       return Promise.resolve();
     },
     err => {
+      console.log(err);
       const message =
         (err.response && err.response.data && err.response.data.message) ||
         err.message ||
@@ -46,6 +48,7 @@ export const register = (username, email, password) => dispatch => {
 export const login = (email, password) => dispatch => {
   return AuthService.login(email, password).then(
     res => {
+      console.log('login', res.data);
       dispatch({
         type: LOGIN_SUCCESS,
         payload: { user: res.data },
