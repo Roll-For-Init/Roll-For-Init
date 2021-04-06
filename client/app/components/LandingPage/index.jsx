@@ -197,7 +197,7 @@ const CharacterSection = ({ characters }) => {
   };
   return (
     <>
-    <FinishCharacter characters={characters} />
+    {/*<FinishCharacter characters={characters} />*/}
     <div className="d-grid gap-2">
         <Link to="/create">
           <button

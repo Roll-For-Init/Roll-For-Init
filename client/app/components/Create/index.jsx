@@ -9,7 +9,9 @@ import Descriptions from './Descriptions';
 import Equipment from './Equipment';
 import Spells from './Spells';
 import MobileMenu from './MobileMenu';
-import { startCharacter } from '../../redux/actions/';
+
+import { startCharacter, setPage} from '../../redux/actions/';
+
 import './styles.scss';
 import Header from '../shared/Header';
 import { Link } from 'react-router-dom';
@@ -56,21 +58,12 @@ const Page = ({ page, setCharPage, charID }) => {
   }
   return (
     <div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">
-      {currentPage}
+    {currentPage}
     </div>
   );
 };
 
-const Buttons = ({
-  page,
-  onPageChange,
-  charRace,
-  charClass,
-  raceIconsOffWhite,
-  raceIconsMedBlue,
-  classIconsOffWhite,
-  classIconsMedBlue,
-}) => {
+const Buttons = ({ page, onPageChange, charRace, charClass, raceIconsOffWhite, raceIconsMedBlue, classIconsOffWhite, classIconsMedBlue }) => {
   return (
     page && (
       <React.Fragment>
@@ -91,37 +84,37 @@ const Buttons = ({
             >
               {name}
               {name === 'race' && charRace !== null && (
-                <div className="button-icon-container">
-                  <img
-                    className="button-icon"
-                    src={
-                      page.name === name
-                        ? raceIconsOffWhite[
-                            `${charRace.index.toLowerCase()}.png`
-                          ]
-                        : raceIconsMedBlue[
-                            `${charRace.index.toLowerCase()}.png`
-                          ]
-                    }
-                  />
-                </div>
-              )}
-              {name === 'class' && charClass !== null && (
-                <div className="button-icon-container">
-                  <img
-                    className="button-icon"
-                    src={
-                      page.name === name
-                        ? classIconsOffWhite[
-                            `${charClass.index.toLowerCase()}.png`
-                          ]
-                        : classIconsMedBlue[
-                            `${charClass.index.toLowerCase()}.png`
-                          ]
-                    }
-                  />
-                </div>
-              )}
+              <div className="button-icon-container">
+                <img
+                  className="button-icon"
+                  src={
+                    page.name === name
+                      ? raceIconsOffWhite[
+                          `${charRace.index.toLowerCase()}.png`
+                        ]
+                      : raceIconsMedBlue[
+                          `${charRace.index.toLowerCase()}.png`
+                        ]
+                  }
+                />
+              </div>
+            )}
+            {name === 'class' && charClass !== null && (
+              <div className="button-icon-container">
+                <img
+                  className="button-icon"
+                  src={
+                    page.name === name
+                      ? classIconsOffWhite[
+                          `${charClass.index.toLowerCase()}.png`
+                        ]
+                      : classIconsMedBlue[
+                          `${charClass.index.toLowerCase()}.png`
+                        ]
+                  }
+                />
+              </div>
+            )}
             </button>
           );
         })}
@@ -130,7 +123,7 @@ const Buttons = ({
   );
 };
 
-const PageViewer = ({ charID }) => {
+const PageViewer = ({ charID}) => {
   const character = useSelector(state => state.characters[charID]);
 
   const dispatch = useDispatch();
@@ -143,14 +136,6 @@ const PageViewer = ({ charID }) => {
     dispatch(setPage(charID, payload));
     window.scrollTo(0, 0);
   };
-
-  const [currentPage, setCurrentPage] = useState(getPage(page));
-
-  useEffect(() => {
-    console.log('page', charID);
-    let nextPage = getPage(page);
-    setCurrentPage(nextPage);
-  }, [page]);
 
   function importAll(r) {
     let images = {};
@@ -268,7 +253,7 @@ const PageViewer = ({ charID }) => {
   const charRace = useSelector(state => state.characters[charID].race);
   const charClass = useSelector(state => state.characters[charID].class);
 
-  return (
+  return character ? (
     <div className="row position-relative" style={{ top: '45px' }}>
       <div className="col-3 d-none d-md-block side-bar overflow-auto scroll">
         {/* <div className="side-bar-icon-container">
@@ -292,69 +277,20 @@ const PageViewer = ({ charID }) => {
           )}
         </div> */}
         <div className="btn-group-vertical w-100" role="group">
-          {buttonNames.map((name, idx) => {
-            let classname = 'btn btn-lg btn-secondary menu-button';
-            if (page.name === name) {
-              classname = 'btn btn-lg btn-primary menu-button active';
-            }
-            return (
-              <button
-                key={name}
-                type="button"
-                className={classname}
-                disabled={page.index < idx}
-                onClick={() => {
-                  page.index > idx && onPageChange(name, idx);
-                }}
-              >
-                {name}
-                {name === 'race' && charRace !== null && (
-                  <div className="button-icon-container">
-                    <img
-                      className="button-icon"
-                      src={
-                        page.name === name
-                          ? raceIconsOffWhite[
-                              `${charRace.index.toLowerCase()}.png`
-                            ]
-                          : raceIconsMedBlue[
-                              `${charRace.index.toLowerCase()}.png`
-                            ]
-                      }
-                    />
-                  </div>
-                )}
-                {name === 'class' && charClass !== null && (
-                  <div className="button-icon-container">
-                    <img
-                      className="button-icon"
-                      src={
-                        page.name === name
-                          ? classIconsOffWhite[
-                              `${charClass.index.toLowerCase()}.png`
-                            ]
-                          : classIconsMedBlue[
-                              `${charClass.index.toLowerCase()}.png`
-                            ]
-                      }
-                    />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-          {character.class?.spellcasting && (
+          
+          <Buttons page={character.page} onPageChange={onPageChange} charRace={charRace} charClass={charClass} raceIconsOffWhite={raceIconsOffWhite} raceIconsMedBlue={raceIconsMedBlue} classIconsOffWhite={classIconsOffWhite} classIconsMedBlue={classIconsMedBlue}/>
+          {character.class?.spellcasting?.level <= 1 && (
             <button
               key="spells"
               type="button"
               className={
-                page.name === 'spells'
+                character.page.name === 'spells'
                   ? 'btn btn-lg btn-primary menu-button active'
                   : 'btn btn-lg btn-secondary menu-button'
               }
-              disabled={page.index < 6}
+              disabled={character.page.index < 6}
               onClick={() => {
-                page.index > 6 && onPageChange('spells', 6);
+                character.page.index >= 6 && onPageChange('spells', 6);
               }}
             >
               spells
@@ -429,9 +365,10 @@ const PageViewer = ({ charID }) => {
         setPage={setPage}
         charID={charID}
       />
-      <div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">
-        {charID ? pages : <Loading />}
-      </div>
+      <Page page={character.page} setCharPage={setCharPage} charID={charID} raceIconsOffWhite={raceIconsOffWhite} raceIconsMedBlue={raceIconsMedBlue} classIconsOffWhite={classIconsOffWhite} classIconsMedBlue={classIconsMedBlue}/>
+      {/*<div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">
+        {/*charID ? character.page : <Loading />}
+      </div>*/}
       {/* <div className="col-3 p-4 container overflow-auto">
       {selectedInfo ? (
         <SidePanel />
@@ -444,6 +381,8 @@ const PageViewer = ({ charID }) => {
       )}
     </div> */}
     </div>
+  ) : (
+    <Loading />
   );
 };
 

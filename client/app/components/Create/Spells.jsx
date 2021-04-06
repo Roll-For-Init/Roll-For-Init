@@ -168,9 +168,14 @@ export const Spells = ({ charID, setPage }) => {
 
   const [name, setName] = useState('');
 
+  let druid1;
+  /*ADDRESS: NOT FLEXIBLE */
+  if(character?.class?.index.toLowerCase() === 'druid') {
+    druid1 = character.abilities['4'].modifier +1;
+  }
   const limit = {
     0: character?.class?.spellcasting?.cantrips_known,
-    1: character?.class?.spellcasting?.spells_known,
+    1: druid1 ? (druid1 > 0 ? druid1 : 1) : character?.class?.spellcasting?.spells_known,
   };
 
   const getKnownSpells = level => {
@@ -222,17 +227,21 @@ export const Spells = ({ charID, setPage }) => {
 
   const validateAndStore = () => {
     // console.log(character);
-    dispatch(submitCharacter(CharacterService.validateCharacter(character)));
+    character.name = name;
+    console.log(character);
     history.push('/dashboard');
+    CharacterService.validateCharacter(character).then((character) => {
+      dispatch(submitCharacter(character));
+    })
   };
 
   useEffect(() => {
     if (!character.class.index) return;
+
     CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
       dispatch(setSpells(charID, { cards: cards }));
     });
-    console.log(character);
   }, []);
 
   return (

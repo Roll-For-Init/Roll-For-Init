@@ -70,7 +70,14 @@ const EquipmentItem = ({
             {equipment.desc.damage && (
               <p className="equipment-item">
                 Damage:&nbsp;
-                <i className="equipment-item-info">{equipment.desc.damage}</i>
+                <i className="equipment-item-info">{`${equipment.desc.damage.damage_dice} ${equipment.desc.damage.damage_type}`}{equipment.desc.damage.two_handed ? ` one-handed, ` : null}</i>
+                {equipment.desc.damage.two_handed && (<i className="equipment-item-info">{`${equipment.desc.damage.two_handed.damage_dice} ${equipment.desc.damage.two_handed.damage_type} (two-handed)`}</i>)}
+              </p>
+            )}
+            {equipment.desc.range && (
+                <p className="equipment-item">
+                Range:&nbsp;
+                <i className="equipment-item-info">{`${equipment.desc.range.normal}${equipment.desc.range.long ? `/${equipment.desc.range.long}` : ``}`}</i>
               </p>
             )}
             {equipment.desc.cost && (
@@ -320,8 +327,9 @@ const EquipmentList = ({
   className,
   charID,
   theKey,
+  equipmentSelection, 
   setEquipmentSelection,
-  equipmentSelection,
+  dispatch
 }) => {
   // either store the equipment list here, and then select from that list
   // based on the key of the selected card (+1 since the first index is just the header)
@@ -340,6 +348,14 @@ const EquipmentList = ({
   };
   useEffect(() => {
     setEquipmentSelection({ [theKey]: selectedCard });
+    dispatch(
+      setEquipment(charID, {
+        choices: {
+          ...equipmentSelection, 
+          [theKey]: selectedCard
+        }
+      })
+    );
     //console.log("EQUIPMENT ITEM", equipmentItem);
   }, [selectedCard]);
 
@@ -407,21 +423,7 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
-  const finalizeEquipment = () =>
-    new Promise((resolve, reject) => {
-      console.log('in finalize equipment');
-      resolve(
-        dispatch(
-          setEquipment(charID, {
-            choices: equipmentSelection,
-            set: equipmentList,
-          })
-        )
-      );
-    });
-
   const validateAndStore = () => {
-    finalizeEquipment().then(() => {
       if (character.equipment == null) {
         //crimes i'm sorry couldn't get it working otherwise
         character.equipment = {
@@ -429,18 +431,16 @@ export const Equipment = ({ charID, setPage }) => {
           set: equipmentList,
         };
       }
-      // console.log(character);
-      dispatch(submitCharacter(CharacterService.validateCharacter(character)));
-    });
+      character.name = name;
+      console.log(character);
+      history.push('/dashboard');
+      CharacterService.validateCharacter(character).then((character) => {
+        dispatch(submitCharacter(character));
+      })
   };
 
   const onNext = () => {
-    dispatch(
-      setEquipment(charID, {
-        choices: equipmentSelection,
-        set: equipmentList,
-      })
-    );
+    console.log("EQUIPMENT", character.equipment)
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
@@ -458,7 +458,12 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentList).then(
         equipmentWDetails => {
           setEquipmentList(equipmentWDetails);
-          console.log('equipment', equipmentWDetails);
+          console.log('INITIAL EQUIPMENT', equipmentWDetails);
+          dispatch(
+            setEquipment(charID, {
+              set: equipmentList,
+            })
+          );
         }
       )
     );
@@ -466,7 +471,7 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentOptions).then(
         equipmentWDetails => {
           setEquipmentOptions(equipmentWDetails);
-          console.log('options', equipmentWDetails);
+          console.log('EQUIPMENT OPTIONS', equipmentWDetails);
         }
       )
     );
@@ -521,19 +526,25 @@ export const Equipment = ({ charID, setPage }) => {
                 setEquipmentSelection={setEquipmentSelection}
                 equipmentSelection={equipmentSelection}
                 className={className}
+                dispatch={dispatch}
               />
             );
           })}
           {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}
-          <button
+          {character.class?.spellcasting?.level<=1 && (
+            <button className="text-uppercase btn-primary btn-lg px-5 btn-floating" onClick={onNext}>
+              OK
+            </button>
+          )}
+          {!(character.class?.spellcasting?.level<=1) && (
+            <button
             className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-            data-toggle={!character.class?.spellcasting && 'modal'}
-            data-target={!character.class?.spellcasting && '#nameModalEq'}
-            onClick={character.class?.spellcasting && onNext}
-          >
+            data-toggle={'modal'}
+            data-target={'#nameModalEq'}
+            >
             OK
-          </button>
-
+            </button>
+          )}
           <div
             className="modal fade"
             id="nameModalEq"

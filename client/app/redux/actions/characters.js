@@ -25,7 +25,7 @@ import { v4 as uuidv4 } from 'uuid';
 import CharacterService from '../services/character.service';
 
 export const submitCharacter = characterInfo => dispatch => {
-  console.log(characterInfo);
+  console.log("SUBMIT CHARACTER", characterInfo);
 
   //! temporarily add to redux before the database to test redux
   dispatch({

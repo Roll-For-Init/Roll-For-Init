@@ -31,11 +31,23 @@ const makeEquipmentDesc = async (item, itemDetails) => {
   ) {
     desc = {
       category: `${itemDetails.category_range} Weapon`,
-      damage: `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`,
+      damage: {
+        damage_type: itemDetails.damage.damage_type.name,
+        damage_dice: itemDetails.damage.damage_dice
+      },
       cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
       weight: itemDetails.weight,
       desc: itemDetails.properties.map(prop => prop.name).join(', '),
     };
+    if(itemDetails.two_handed_damage != undefined) {
+        desc.damage.two_handed = {
+            damage_type: itemDetails.two_handed_damage.damage_type.name,
+            damage_dice: itemDetails.two_handed_damage.damage_dice
+        }
+    }
+    if (itemDetails.range != undefined) {
+        desc.range = itemDetails.range;
+      }  
   } else if (itemDetails.equipment_category.index == 'armor') {
     let armorClassDeets = itemDetails.armor_class;
     let ac = armorClassDeets.dex_bonus
@@ -63,7 +75,7 @@ const makeEquipmentDesc = async (item, itemDetails) => {
       desc: null,
     };
     let keys = Object.keys(itemDetails);
-    for (key in keys) {
+    for (let key in keys) {
       if (key.includes('category') && !key.includes('equipment')) {
         desc.category =
           typeof itemDetails[key] == 'string'
@@ -75,13 +87,25 @@ const makeEquipmentDesc = async (item, itemDetails) => {
     if (itemDetails.weapon_category != undefined)
       desc.category = `${itemDetails.category_range} Weapon`;
     if (itemDetails.damage != undefined)
-      desc.damage = `${itemDetails.damage.damage_dice} ${itemDetails.damage.damage_type.name}`;
+      desc.damage = {
+          damage_type: itemDetails.damage.damage_type.name,
+          damage_dice: itemDetails.damage.damage_dice
+      }
+      if(itemDetails.two_handed_damage != undefined) {
+          desc.damage.two_handed = {
+              damage_type: itemDetails.two_handed_damage.damage_type.name,
+              damage_dice: itemDetails.two_handed_damage.damage_dice
+          }
+      }
     if (itemDetails.quantity != undefined) desc.quantity = itemDetails.quantity;
     if (itemDetails.cost != undefined)
       desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
     if (itemDetails.weight != undefined) desc.weight = itemDetails.weight;
     if (itemDetails.special != undefined)
       desc.special = itemDetails.special.join(' ');
+    if (itemDetails.range != undefined) {
+      desc.range = itemDetails.range;
+    }
     if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
     else if (itemDetails.properties != undefined)
       desc.desc = itemDetails.properties.map(prop => prop.name).join(', ');
@@ -169,6 +193,10 @@ const optionsHelper = async (container, options, key) => {
   } else if (options.type.toLowerCase().includes('language')) {
     optionSet.header = `extra ${options.type}`;
     optionSet.type = options.type;
+  }
+  else if (options.type.toLowerCase().includes('prof') && !options.from[0].index.toLowerCase().includes('skill')) {
+    optionSet.type = options.type;
+    optionSet.header = 'tool';
   } else {
     optionSet.header = options.type.replace('_', ' ');
     optionSet.type = options.type;
@@ -350,7 +378,9 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
       }
     }
   });
-  return Promise.all(promises);
+  return Promise.all(promises).then(() => {
+      raceContainer.sub = subrace;
+  });
 };
 
 const getRaceMiscDescriptions = async race => {
@@ -606,7 +636,7 @@ const classCaller = async classPointer => {
 
 const getClassDescriptions = async theClass => {
   let promises = [];
-  for (optionSet of theClass.options) {
+  for (let optionSet of theClass.options) {
     optionSet.options.forEach(option => {
       if (!option.hasOwnProperty('url')) {
         return;
