@@ -84,37 +84,37 @@ const Buttons = ({ page, onPageChange, charRace, charClass, raceIconsOffWhite, r
             >
               {name}
               {name === 'race' && charRace !== null && (
-              <div className="button-icon-container">
-                <img
-                  className="button-icon"
-                  src={
-                    page.name === name
-                      ? raceIconsOffWhite[
-                          `${charRace.index.toLowerCase()}.png`
-                        ]
-                      : raceIconsMedBlue[
-                          `${charRace.index.toLowerCase()}.png`
-                        ]
-                  }
-                />
-              </div>
-            )}
-            {name === 'class' && charClass !== null && (
-              <div className="button-icon-container">
-                <img
-                  className="button-icon"
-                  src={
-                    page.name === name
-                      ? classIconsOffWhite[
-                          `${charClass.index.toLowerCase()}.png`
-                        ]
-                      : classIconsMedBlue[
-                          `${charClass.index.toLowerCase()}.png`
-                        ]
-                  }
-                />
-              </div>
-            )}
+                <div className="button-icon-container">
+                  <img
+                    className="button-icon"
+                    src={
+                      page.name === name
+                        ? raceIconsOffWhite[
+                            `${charRace.index.toLowerCase()}.png`
+                          ]
+                        : raceIconsMedBlue[
+                            `${charRace.index.toLowerCase()}.png`
+                          ]
+                    }
+                  />
+                </div>
+              )}
+              {name === 'class' && charClass !== null && (
+                <div className="button-icon-container">
+                  <img
+                    className="button-icon"
+                    src={
+                      page.name === name
+                        ? classIconsOffWhite[
+                            `${charClass.index.toLowerCase()}.png`
+                          ]
+                        : classIconsMedBlue[
+                            `${charClass.index.toLowerCase()}.png`
+                          ]
+                    }
+                  />
+                </div>
+              )}
             </button>
           );
         })}

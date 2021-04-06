@@ -38,6 +38,9 @@ export const Background = ({ charID, setPage }) => {
         })
         .then(bg => {
           let equipment = { equipment: bg.starting_equipment };
+          if (bg.other_equipment) {
+            equipment.equipment = equipment.equipment.concat(bg.other_equipment)
+          }
           dispatch(setBackground(charID, equipment));
           dispatch(
             setBackground(charID, { equipment_options: bg.equipment_options })
@@ -230,44 +233,42 @@ export const Background = ({ charID, setPage }) => {
               <div className="card content-card card-title">
                 <h4>Background Options</h4>
               </div>
-              <div className="choice-container">
-                {selectionBg[0].options.map((option, index) => {
-                  return (
-                    <div className="dd-container" style={{width:'100%'}} key={index}>
-                      <Dropdown
-                     ddLabel={`${option.header}`}
-                     title={`Choose ${option.choose}`}
-                     items={option.options}
-                     selectLimit={option.choose}
-                     multiSelect={option.choose > 1}
-                     selection={
-                       userChoices[
-                         `${option.header
-                           .toLowerCase()
-                           .replace(' ', '-')}-${option.type}-${index}`
-                       ]
-                     }
-                     setSelection={setUserChoices}
-                     classname="dd-choice"
-                     stateKey={`${option.header
-                       .toLowerCase()
-                       .replace(' ', '-')}-${option.type}-${index}`}
-                      key={index}
-                      />
-                    </div>
+              {selectionBg[0].options.map((option, index) => {
+                return (
+                  <div className="dd-container" style={{width:'100%'}} key={index}>
+                    <Dropdown
+                      ddLabel={`${option.header}`}
+                      title={`Choose ${option.choose}`}
+                      items={option.options}
+                      selectLimit={option.choose}
+                      multiSelect={option.choose > 1}
+                      selection={
+                        userChoices[
+                          `${option.header
+                            .toLowerCase()
+                            .replace(' ', '-')}-${option.type}-${index}`
+                        ]
+                      }
+                      setSelection={setUserChoices}
+                      classname="dd-choice"
+                      stateKey={`${option.header
+                        .toLowerCase()
+                        .replace(' ', '-')}-${option.type}-${index}`}
+                        key={index}
+                    />
+                  </div>
 
-                  );
-                })}
-              </div>
+                );
+              })}
             </div>
           )}
-          <div className="card translucent-card">
-            <div className="card content-card card-title">
-              <h4>Proficiencies</h4>
-            </div>
-            {selectionBg[0].index === 'custom' && (
-              <div className="choice-container mb-0">
-                <>
+          {(selectionBg[0].index === 'custom' || selectionBg[0].proficiencies.size) &&
+            <div className="card translucent-card">
+              <div className="card content-card card-title">
+                <h4>Proficiencies</h4>
+              </div>
+              {selectionBg[0].index === 'custom' && (
+                <div className="dd-container" style={{width:'100%'}}>
                   <Dropdown
                     ddLabel="Extra Skills"
                     title="Choose 2"
@@ -286,12 +287,10 @@ export const Background = ({ charID, setPage }) => {
                     setSelection={setSelectionSk2}
                     classname="choice"
                   /> */}
-                </>
-              </div>
-            )}
-            <div className="choice-container mb-0">
+                </div>
+              )}
               {selectionBg[0].index === 'custom' && (
-                <>
+                <div className="dd-container" style={{width:'100%'}}>
                   <Dropdown
                     ddLabel="Tools &#38; Languages"
                     title="Choose 2"
@@ -330,7 +329,7 @@ export const Background = ({ charID, setPage }) => {
                     setSelection={setSelectionTlLg2}
                     classname="choice"
                   /> */}
-                </>
+                </div>
               )}
               {selectionBg[0].index !== 'custom' && (
                 <div className="card content-card description-card mb-0">
@@ -355,7 +354,7 @@ export const Background = ({ charID, setPage }) => {
                 </div>
               )}
             </div>
-          </div>
+          }
           <div className="card translucent-card">
             <div className="card content-card card-title">
               <h4>Background Feature</h4>
