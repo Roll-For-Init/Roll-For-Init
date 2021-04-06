@@ -325,7 +325,8 @@ const StatsCard = ({initiative, ac, speed}) => {
     </div>
   );
 };
-const ManualEntryModal = ({name, thePrompt, buttonText, submitFunction}) => {
+/*TODO: why won't it work in component?*/
+const ManualEntryModal = ({name, thePrompt, buttonText, submitFunction}) => { 
   const [value, setValue] = useState(null);
 
   return (
@@ -375,12 +376,11 @@ const ManualEntryModal = ({name, thePrompt, buttonText, submitFunction}) => {
 
 const HitPointsCard = ({health, hit_dice, charID}) => {
   const dispatch = useDispatch();
-  const lowerHealth = (amt) => {
-    let newHealth = {current: health.current - amt};
+  const changeHealth = (amt) => {
+    let newHealth = {current: (health.current + amt)};
     dispatch(setUpdate(charID, 'health', newHealth))
   }
   const [value, setValue] = useState(null);
-
 
   return (
     <>
@@ -408,7 +408,8 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
             data-target={'#nameModalDmg'}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-success text-uppercase text-center align-middle">Heal</button>
+            <button className="btn btn-success text-uppercase text-center align-middle" data-toggle={'modal'}
+            data-target={'#nameModalHeal'}>Heal</button>
           </div>
         </div>
         </div>
@@ -455,10 +456,51 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
           </div>
           <button
             className="text-uppercase btn-primary modal-button"
-            onClick={() => lowerHealth(value)}
+            onClick={() => {changeHealth((0-value)); setValue(null);}}
             data-dismiss="modal"
           >
             OW!
+          </button>
+        </div>
+      </div>
+    </div>
+    <div
+      className="modal fade"
+      id="nameModalHeal"
+      role="dialog"
+      aria-labelledby="chooseHeal"
+      aria-hidden="true"
+    >
+      <div className="modal-dialog modal-dialog-centered" role="document">
+        <div className="modal-content">
+          <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>How much health?</h5>
+          </div>
+          <div className="card content-card name-card">
+            <FloatingLabel
+              id="name"
+              name="name"
+              placeholder="Amt"
+              type="number"
+              min="0"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </div>
+          <button
+            className="text-uppercase btn-primary modal-button"
+            onClick={() => {changeHealth(value); setValue(null);}}
+            data-dismiss="modal"
+          >
+            Ah...
           </button>
         </div>
       </div>
