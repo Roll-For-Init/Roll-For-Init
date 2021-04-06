@@ -12,7 +12,8 @@ import {
   SET_EQUIPMENT,
   SET_SPELLS,
   SET_PAGE,
-  SET_UPDATE
+  SET_UPDATE,
+  SET_ARRAY_UPDATE
 } from '../actions/types';
 
 const initialCharacter = {
@@ -115,6 +116,11 @@ const character = (state = initialCharacter, action, charID) => {
             ...state,
             [payload.attribute]: {...state[payload.attribute], ...payload.updated}
         }
+    case SET_ARRAY_UPDATE:
+        return {
+            ...state,
+            [payload.attribute]: payload.updated
+        }
     default:
       return state;
   }
@@ -195,6 +201,11 @@ export default function(state = initialState, action) {
           ...state,
           [payload.charID]: character(state[payload.charID], action, payload),
         };
+    case SET_ARRAY_UPDATE:
+        return {
+                ...state,
+                [payload.charID]: character(state[payload.charID], action, payload),
+        }
     default:
       return state;
   }

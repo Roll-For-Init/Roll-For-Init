@@ -18,7 +18,8 @@ import {
   SET_SPELLS,
   SET_PAGE,
   SET_EQUIPMENT,
-  SET_UPDATE
+  SET_UPDATE,
+  SET_ARRAY_UPDATE
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -165,4 +166,9 @@ export const setEquipment = (charID, equipment) => dispatch => {
 export const setUpdate = (charID, attribute, updated) => dispatch => {
     console.log('UPDATE_SHEET', charID, attribute, updated);
     dispatch({type: SET_UPDATE, payload: {charID, attribute, updated}});
+}
+
+export const setArrayUpdate = (charID, attribute, updated) => dispatch => {
+    console.log('UPDATE_ARRAY_SHEET', charID, attribute, updated);
+    dispatch({type: SET_ARRAY_UPDATE, payload:{charID, attribute, updated}})
 }

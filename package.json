@@ -67,6 +67,7 @@
     "postcss-loader": "^5.0.0",
     "promise": "^8.1.0",
     "react": "^16.14.0",
+    "react-bootstrap4-modal": "^1.7.5",
     "react-dom": "^16.14.0",
     "react-dropdown": "^1.9.2",
     "react-dropzone": "^11.3.1",

@@ -1,10 +1,12 @@
-import React, {useState}  from 'react';
+import React, {useEffect, useState, useReducer}  from 'react';
+import ReactDOM from 'react-dom'
 import { useSelector, useDispatch } from 'react-redux';
 import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
-import { setUpdate} from '../../redux/actions/characters';
+import { setUpdate, setArrayUpdate} from '../../redux/actions/characters';
 import './styles.scss';
 import FloatingLabel from 'floating-label-react';
+import Modal from 'react-bootstrap4-modal';
 
 import {D20, StarOutline} from '../../utils/svgLibrary';
 
@@ -31,6 +33,8 @@ const skillScores = {
   persuasion: 'cha'
 }
 
+const charConditions = ['Blinded','Charmed','Deafened','Exhaustion','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious'];
+
 
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
@@ -42,7 +46,7 @@ export const DashBoard = () => {
 
   return (
     character.level ?
-    (<div className="dashboard">
+    (<div id="dashboard" className="dashboard">
       <Header />
       <div className="toolbar fixed-top">
         <div className="subheader py-1 px-3 pt-2">
@@ -136,7 +140,7 @@ export const DashBoard = () => {
                       <HitPointsCard health={character.health} hit_dice={character.hit_dice} charID={charID}/>
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
-                <ExtraStatsCard conditions={character.conditions} defenses={character.defenses}/>
+                <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
               </div>
             </div>
             <div className="pinned row px-2">
@@ -325,24 +329,22 @@ const StatsCard = ({initiative, ac, speed}) => {
     </div>
   );
 };
+const Portal = ({children}) => {
+  console.log(children)
+  return ReactDOM.createPortal(children, document.getElementById('dashboard'));
+};
 /*TODO: why won't it work in component?*/
-const ManualEntryModal = ({name, thePrompt, buttonText, submitFunction}) => { 
+const ManualEntryModal = ({name, showModal, setShowModal, placeholder, thePrompt, buttonText, submitFunction, modifier}) => { 
   const [value, setValue] = useState(null);
-
+  
   return (
-    <div
-      className="modal fade"
-      id={`#nameModal${name}`}
-      role="dialog"
-      aria-labelledby={thePrompt}
-      aria-hidden="true"
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
     >
-      <div className="modal-dialog modal-dialog-centered" role="document">
-        <div className="modal-content">
           <button
             type="button"
             className="close"
-            data-dismiss="modal"
+            onClick={() => setShowModal(false)}
             aria-label="Close"
           >
             <i className="bi bi-x"></i>
@@ -352,9 +354,9 @@ const ManualEntryModal = ({name, thePrompt, buttonText, submitFunction}) => {
           </div>
           <div className="card content-card name-card">
             <FloatingLabel
-              id="name"
-              name="name"
-              placeholder="Name"
+              id={placeholder}
+              name={placeholder}
+              placeholder={placeholder}
               type="number"
               min="0"
               value={value}
@@ -363,24 +365,27 @@ const ManualEntryModal = ({name, thePrompt, buttonText, submitFunction}) => {
           </div>
           <button
             className="text-uppercase btn-primary modal-button"
-            onClick={() => submitFunction(value)}
+            onClick={() => {submitFunction(value*Number.parseInt(modifier)); setShowModal(false)}}
             data-dismiss="modal"
           >
             {buttonText}
           </button>
-        </div>
-      </div>
-    </div>
+    </Modal>
+    </Portal>
   )
 }
 
 const HitPointsCard = ({health, hit_dice, charID}) => {
   const dispatch = useDispatch();
+
+  const [showDmg, setShowDmg] = useState(false);
+  const [showHealth, setShowHealth] = useState(false);
+
   const changeHealth = (amt) => {
+    amt = Number.parseInt(amt)
     let newHealth = {current: (health.current + amt)};
     dispatch(setUpdate(charID, 'health', newHealth))
   }
-  const [value, setValue] = useState(null);
 
   return (
     <>
@@ -404,12 +409,10 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
         </div>
         <div className="row px-3 m-0 mt-2">
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-alert text-uppercase text-center align-middle" data-toggle={'modal'}
-            data-target={'#nameModalDmg'}>Damage</button>
+            <button className="btn btn-alert text-uppercase text-center align-middle" onClick={() => setShowDmg(true)}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-success text-uppercase text-center align-middle" data-toggle={'modal'}
-            data-target={'#nameModalHeal'}>Heal</button>
+            <button className="btn btn-success text-uppercase text-center align-middle" onClick={() => setShowHealth(true)}>Heal</button>
           </div>
         </div>
         </div>
@@ -423,105 +426,106 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
         </div>
       </div>
     </div>
-    <div
-      className="modal fade"
-      id="nameModalDmg"
-      role="dialog"
-      aria-labelledby="chooseDamage"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-dialog-centered" role="document">
-        <div className="modal-content">
-          <button
-            type="button"
-            className="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <i className="bi bi-x"></i>
-          </button>
-          <div className="modal-sect pb-0">
-            <h5>How much damage?</h5>
-          </div>
-          <div className="card content-card name-card">
-            <FloatingLabel
-              id="name"
-              name="name"
-              placeholder="Amt"
-              type="number"
-              min="0"
-              value={value}
-              onChange={e => setValue(e.target.value)}
-            />
-          </div>
-          <button
-            className="text-uppercase btn-primary modal-button"
-            onClick={() => {changeHealth((0-value)); setValue(null);}}
-            data-dismiss="modal"
-          >
-            OW!
-          </button>
-        </div>
-      </div>
-    </div>
-    <div
-      className="modal fade"
-      id="nameModalHeal"
-      role="dialog"
-      aria-labelledby="chooseHeal"
-      aria-hidden="true"
-    >
-      <div className="modal-dialog modal-dialog-centered" role="document">
-        <div className="modal-content">
-          <button
-            type="button"
-            className="close"
-            data-dismiss="modal"
-            aria-label="Close"
-          >
-            <i className="bi bi-x"></i>
-          </button>
-          <div className="modal-sect pb-0">
-            <h5>How much health?</h5>
-          </div>
-          <div className="card content-card name-card">
-            <FloatingLabel
-              id="name"
-              name="name"
-              placeholder="Amt"
-              type="number"
-              min="0"
-              value={value}
-              onChange={e => setValue(e.target.value)}
-            />
-          </div>
-          <button
-            className="text-uppercase btn-primary modal-button"
-            onClick={() => {changeHealth(value); setValue(null);}}
-            data-dismiss="modal"
-          >
-            Ah...
-          </button>
-        </div>
-      </div>
-    </div>
-    {/*<ManualEntryModal name="Dmg" thePrompt= "How much damage?" buttonText="OW!" submitFunction={lowerHealth}/>*/}
+    {showDmg && <ManualEntryModal name={`DmgModal`} showModal={showDmg} setShowModal={setShowDmg} placeholder="Amt" thePrompt="How much damage?" buttonText="OW!" submitFunction={changeHealth} modifier="-1"/>}
+    {showHealth && <ManualEntryModal name={`HealthModal`} showModal={showHealth} setShowModal={setShowHealth} placeholder="Amt" thePrompt="How much healing?" buttonText="Ah..." submitFunction={changeHealth} modifier="1"/>}
     </>
   );
 };
 
-const ExtraStatsCard = ({conditions, defenses}) => {
-  const addCondition = () => {
+const PromptedModal = ({name, thePrompt, buttonText, showModal, setShowModal, submitFunction, options}) => {
+  
+  return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>{thePrompt}</h5>
+          </div>
+          <table className='table modal-table'>
+              <tr>
+                { 
+              console.log(options.length)}
+            {options.slice(0, Math.ceil(options.length/2)).map((option, index) => {
+              return(
+                <td key={`condition-${index}`}>
+                <button
+                  type="button"
+                  className={'btn btn-primary m-1'
+                  }
+                  onClick={() => {submitFunction(option); setShowModal(false)}}
+                >
+                  {option}
+              </button>
+              </td>
+              )
+            })}
+            </tr>
+          <tr>
+            {options.slice(Math.ceil(options.length/2), options.length).map((option, index) => {
+              return(
+                <td key={`condition-${index}`}
+                >
+                  <button
+                    type="button"
+                    className={'btn btn-primary m-1'
+                    }
+                    onClick={() => {submitFunction(option); setShowModal(false)}}
+                  >
+                    {option}
+                </button>
+              </td>
+              )
+            })}
+          </tr>
+        </table>
 
+    </Modal>
+    </Portal>
+  )
+}
+
+const ExtraStatsCard = ({charID, conditions, defenses}) => {
+  const dispatch = useDispatch();
+  const reducer = (state, item) => {
+    let push = item.push;
+    item = item.item;
+    console.log(state, item);
+    let newState;
+    if(push) {state.push(item);
+      newState = state;
+    }
+    else newState = state.splice(state.indexOf(item), 1);
+    dispatch(setArrayUpdate(charID, 'conditions', newState));
+    console.log("NEW STATE", newState);
+    return newState;
+  };
+
+  const [showAdd, setShowAdd] = useState(false);
+  const [conditionList, setConditionList] = useReducer(reducer, conditions);
+
+  const addCondition = (condition) => {
+    setConditionList({item: condition, push: true});
+  }
+  const removeCondition = (condition) => {
+    setConditionList({item: condition, push: false})
   }
   return (
+    <>
     <div className="card translucent-card short-card extra-stats">
       <div className="card content-card description-card px-1">
         <h6 className="text-uppercase text-center m-0">Conditions</h6>
         {conditions.map((condition, index) => {
-          return (<button className="btn-outline-primary" key={`condition-${index}`}>{condition}</button>)
+          return (<button className="btn-outline-primary" onClick={() => removeCondition(condition)} key={`condition-${index}`}>{condition}</button>)
         })}
-        <button className="btn-outline-success" onClick={addCondition}>{/*<input className='form-control'/>*/}<span className="green">+</span>Add condition</button>
+        <button className="btn-outline-success" onClick={() => {setShowAdd(true)}}>{/*<input className='form-control'/>*/}<span className="green">+</span>Add condition</button>
       </div>
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Defenses</h6>
@@ -532,6 +536,8 @@ const ExtraStatsCard = ({conditions, defenses}) => {
         </ul>
       </div>
     </div>
+    {showAdd && <PromptedModal name={`ConditionModal`} thePrompt="Add Condition" buttonText="Add Condition" showModal={showAdd} setShowModal={setShowAdd} submitFunction={addCondition} options={charConditions}/>}
+    </>
   );
 };
 

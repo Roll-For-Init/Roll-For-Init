@@ -43,6 +43,7 @@ export const UPDATE_GAME_FAIL = 'UPDATE_GAME_FAIL';
 export const DELETE_GAME_SUCCESS = 'DELETE_GAME_SUCCESS';
 export const DELETE_GAME_FAIL = 'DELETE_GAME_FAIL';
 export const SET_UPDATE = 'SET_UPDATE';
+export const SET_ARRAY_UPDATE = 'SET_ARRAY_UPDATE'
 
 // ---------------------------  Alerts --------------------------- //
 export const SET_ALERT = 'SET_ALERT';

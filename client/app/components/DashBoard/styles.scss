@@ -365,4 +365,28 @@
     padding: 10px 20px;
     margin: 20px auto 0 auto;
   }
+  .modal-dialog {
+      max-width: auto;
+      width: auto;
+  }
+  .modal-table {
+      margin-bottom: 0;
+      margin-left: auto;
+      margin-right: auto;
+      width: 1px;
+      &>tr {
+          display: table-cell;
+          border: none;
+          margin: 0;
+          padding: 1px;
+          vertical-align: top;
+          &>td {
+            display: block;
+            border: none;
+            margin: 0;
+            padding: 1px;
+        }
+  
+      }
+  }
 }
