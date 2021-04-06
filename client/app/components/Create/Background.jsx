@@ -162,6 +162,7 @@ export const Background = ({ charID, setPage }) => {
     setPage({ index: 4, name: 'description' });
     window.scrollTo(0, 0);
   };
+  const skill = ['animal handling', 'acrobatics', 'elvish'];
 
   return (
     <div className="background">
@@ -241,7 +242,10 @@ export const Background = ({ charID, setPage }) => {
                     <Dropdown
                       ddLabel={`${option.header}`}
                       title={`Choose ${option.choose}`}
-                      items={option.options}
+                      items={option.options.filter(
+                        item =>
+                          !skill.includes(item.name.toString().toLowerCase())
+                      )}
                       selectLimit={option.choose}
                       multiSelect={option.choose > 1}
                       selection={
@@ -271,7 +275,10 @@ export const Background = ({ charID, setPage }) => {
                 <Dropdown
                   ddLabel="Extra Skills"
                   title="Choose 2"
-                  items={[...skills]}
+                  items={[...skills].filter(
+                    item => !skill.includes(item.name.toString().toLowerCase())
+                  )}
+                  // items={[...skills]}
                   selection={selectionSk1}
                   multiSelect
                   selectLimit={2}
@@ -295,32 +302,16 @@ export const Background = ({ charID, setPage }) => {
                       ...kits,
                       ...landVehicles,
                       ...waterVehicles,
-                    ]}
+                    ].filter(
+                      item =>
+                        !skill.includes(item.name.toString().toLowerCase())
+                    )}
                     selection={selectionTlLg1}
                     multiSelect
                     selectLimit={2}
                     setSelection={setSelectionTlLg1}
                     classname="dd-choice"
                   />
-                  {/* <Dropdown
-                    ddLabel="Tool or Language"
-                    title="Choose 1"
-                    items={[
-                      ...languages,
-                      ...artisansTools,
-                      ...gamingSets,
-                      ...musicalInstruments,
-                      ...otherTools,
-                      ...kits,
-                      ...landVehicles,
-                      ...mountsVehicles,
-                      ...drawnVehicles,
-                      ...waterVehicles,
-                    ]}
-                    selection={selectionTlLg2}
-                    setSelection={setSelectionTlLg2}
-                    classname="choice"
-                  /> */}
                 </div>
               )}
               {selectionBg[0].index !== 'custom' && (

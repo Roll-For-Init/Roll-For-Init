@@ -209,7 +209,7 @@ const LandingPage = () => {
                 {({ getRootProps, getInputProps }) => (
                   <section>
                     <div
-                      className="card content-card drag-drop-card mb-0"
+                      className="card content-card drag-drop-card mb-0 mt-0"
                       {...getRootProps()}
                     >
                       <button className="btn btn-primary btm-buttons upload-buttons">

@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAbilities } from '../../redux/actions';
 // import CharacterService from '../../redux/services/character.service';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
 
 export const Abilities = ({ charID, setPage }) => {
   const dispatch = useDispatch();
@@ -353,10 +354,81 @@ const PointBuyCard = ({
     setChoices(parseInt(event.target.value));
   };
 
+  const [isAbilityPopoverOpen, setAbilityPopoverOpen] = useState(false);
+
+  const abilitiesToSkills = {
+    strength: ['athletics'],
+    dexterity: ['acrobatics', 'sleight of hand', 'stealth'],
+    intelligence: ['arcana', 'history', 'investigation', 'nature', 'religion'],
+    wisdom: [
+      'animal handling',
+      'insight',
+      'medicine',
+      'perception',
+      'survival',
+    ],
+    charisma: ['deception', 'intimidation', 'performance', 'persuasion'],
+  };
+
+  const abilitiesToSkills2 = {
+    strength: 'Athletics',
+    dexterity: 'Acrobatics, Sleight of Hand, and Stealth',
+    intelligence: 'Arcana, History, Investigation, Nature, and Religion',
+    wisdom: 'Animal Handling, Insight, Medicine, Perception, and Survival',
+    charisma: 'Deception, Intimidation, Performance, and Persuasion',
+  };
+
+  //const getSkillsFromAbility = ability => abilitiesToSkills[ability].join(', ');
+  const getSkillSFromAbility = ability => abilitiesToSkills2[ability];
+
   return (
     <div className="card point-card">
       <div className="card content-card card-title">
-        <h4>{title}</h4>
+        <div className="same-line">
+          <Popover
+            isOpen={isAbilityPopoverOpen}
+            positions={['left', 'top', 'bottom']}
+            padding={15}
+            //containerParent=?
+            boundaryInset={10}
+            onClickOutside={() => setAbilityPopoverOpen(false)}
+            content={({ position, childRect, popoverRect }) => (
+              <ArrowContainer
+                position={position}
+                childRect={childRect}
+                popoverRect={popoverRect}
+                arrowColor={'#f6efe4'}
+                arrowSize={10}
+                className="popover-arrow-container"
+                arrowClassName="popover-arrow"
+              >
+                <div
+                  className="card content-card description-card popover-card"
+                  style={{ maxWidth: '250px' }}
+                  //onClick={() => setIsPopoverOpen(!isSpeedPopoverOpen)}
+                >
+                  <p>
+                    {title.toString().toLowerCase() === 'constitution'
+                      ? `Your ${title} measures your endurance and is used to help keep you live.`
+                      : `Your ${title} determines your skill level at ${getSkillSFromAbility(
+                          title.toString().toLowerCase()
+                        )}. `}
+                    {title.toString().toLowerCase() === 'strength' &&
+                      'Strength, along with Dexterity, is used for weapon attacks.'}
+                    {title.toString().toLowerCase() === 'dexterity' &&
+                      'Dexterity, along with Strength, is used for weapon attacks.'}
+                  </p>
+                </div>
+              </ArrowContainer>
+            )}
+          >
+            <i
+              className="bi bi-info-circle info-icon ml-0"
+              onClick={() => setAbilityPopoverOpen(!isAbilityPopoverOpen)}
+            ></i>
+          </Popover>
+          <h4>{title}</h4>
+        </div>
       </div>
       <div>
         <h1 className="points-header">

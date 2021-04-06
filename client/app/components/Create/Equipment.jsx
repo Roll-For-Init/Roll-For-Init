@@ -27,6 +27,7 @@ const EquipmentItem = ({
       return mapObj[matched.toLowerCase()];
     });
   }
+  const skill = ['lyre', 'acrobatics', 'elvish'];
 
   return (
     <>
@@ -50,7 +51,10 @@ const EquipmentItem = ({
             ddLabel=""
             hideLabel
             title={`Choose ${equipment.choose}`}
-            items={[...equipment.from]}
+            //items={[...equipment.from]}
+            items={[...equipment.from].filter(
+              item => !skill.includes(item.name.toString().toLowerCase())
+            )}
             width="100%"
             multiSelect={equipment.choose > 1}
             selectLimit={equipment.choose}
@@ -346,7 +350,7 @@ const EquipmentList = ({
         },
       })
     );
-    console.log("EQUIPMENT ITEM", selectedCard);
+    console.log('EQUIPMENT ITEM', selectedCard);
   }, [selectedCard]);
 
   return (
@@ -416,17 +420,17 @@ export const Equipment = ({ charID, setPage }) => {
   const history = useHistory();
 
   const validateAndStore = () => {
-      if (character.equipment == null) {
-        //crimes i'm sorry couldn't get it working otherwise
-        character.equipment = {
-          choices: equipmentSelection,
-          set: equipmentList,
-        };
-      }
-      console.log(character);
-      CharacterService.createCharacter(
-        CharacterService.validateCharacter(character)
-      );
+    if (character.equipment == null) {
+      //crimes i'm sorry couldn't get it working otherwise
+      character.equipment = {
+        choices: equipmentSelection,
+        set: equipmentList,
+      };
+    }
+    console.log(character);
+    CharacterService.createCharacter(
+      CharacterService.validateCharacter(character)
+    );
     history.push('/dashboard');
   };
 
@@ -450,7 +454,7 @@ export const Equipment = ({ charID, setPage }) => {
           console.log('equipment', equipmentWDetails);
           dispatch(
             setEquipment(charID, {
-              set: equipmentWDetails
+              set: equipmentWDetails,
             })
           );
         }
@@ -486,7 +490,7 @@ export const Equipment = ({ charID, setPage }) => {
             style={{ paddingBottom: '10px' }}
           >
             <div className="card content-card card-title">
-              <h4>Starting Equipment</h4>
+              <h4>Base Equipment</h4>
             </div>
             <Masonry
               breakpointCols={breakpointColumnsObj}

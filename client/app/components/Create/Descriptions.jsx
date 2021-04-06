@@ -9,6 +9,7 @@ import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 import { setDescription } from '../../redux/actions';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
 
 export const Descriptions = ({ charID, setPage }) => {
   const dispatch = useDispatch();
@@ -170,6 +171,10 @@ export const Descriptions = ({ charID, setPage }) => {
     window.scrollTo(0, 0);
   };
 
+  const [isIdealsPopoverOpen, setIdealsPopoverOpen] = useState(false);
+  const [isBondsPopoverOpen, setBondsPopoverOpen] = useState(false);
+  const [isFlawsPopoverOpen, setFlawsPopoverOpen] = useState(false);
+
   return (
     <div className="background">
       <div className="mx-auto d-none d-md-flex title-back-wrapper">
@@ -199,6 +204,8 @@ export const Descriptions = ({ charID, setPage }) => {
             title="Choose 1"
             items={alignments}
             width="80%"
+            popover
+            popoverText="Alignments help guide your character's personality and behaviors. Lawful characters respect authority and follow the laws of the land. Chaotic characters, on the other hand, represent the polar opposite of Lawful ones. They live by their own rules and ignore society's expectations. Neutral characters sit somewhere in between. They are neither compelled to strictly follow rules, nor are they compelled to break them."
             selection={selectionAl}
             setSelection={setSelectionAl}
           />

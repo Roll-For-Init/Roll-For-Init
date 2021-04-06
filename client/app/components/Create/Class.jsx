@@ -3,9 +3,9 @@ import React, { useEffect, useState, useReducer } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import CharacterService from '../../redux/services/character.service';
 // import { clearSelectedInfo, getClassInfo } from '../../redux/actions';
-import poop from '../../../public/assets/imgs/icons/off-white/class/barbarian.png';
 import Dropdown from '../shared/Dropdown';
 import { setClass } from '../../redux/actions';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
 
 const Class = ({ charID, setPage }) => {
   const dispatch = useDispatch();
@@ -50,13 +50,13 @@ const Class = ({ charID, setPage }) => {
             {classes &&
               classes.map((theClass, idx) => (
                 <div className="icon-card-container" key={idx}>
-                  <div className="card icon-card-label">
-                    <div
-                      className="card icon-card"
-                      onClick={() =>
-                        selectClass({ index: theClass.name, url: theClass.url })
-                      }
-                    >
+                  <div
+                    className="card icon-card-label"
+                    onClick={() =>
+                      selectClass({ index: theClass.name, url: theClass.url })
+                    }
+                  >
+                    <div className="card icon-card">
                       <img
                         className="card-icon"
                         src={classIconsOffWhite[`${theClass.index}.png`]}
@@ -117,13 +117,22 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           setClass(charID, { equipment_options: theClass.equipment_options })
         );
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
-        dispatch(setClass(charID, {spellcasting: theClass.spellcasting===null ? null : {...theClass.spellcasting, ...theClass.main.spellcasting}}))
-        dispatch(setClass(charID, {subclass: theClass.subclass}))
-        dispatch(setClass(charID, {features: theClass.features}))
-        dispatch(setClass(charID, {saving_throws: theClass.main.saving_throws}))
-        dispatch(setClass(charID, {hit_die: theClass.main.hit_die}))
-        dispatch(setClass(charID, {level: 1}))
-        dispatch(setClass(charID, {levels: theClass.levels}))
+        dispatch(
+          setClass(charID, {
+            spellcasting:
+              theClass.spellcasting === null
+                ? null
+                : { ...theClass.spellcasting, ...theClass.main.spellcasting },
+          })
+        );
+        dispatch(setClass(charID, { subclass: theClass.subclass }));
+        dispatch(setClass(charID, { features: theClass.features }));
+        dispatch(
+          setClass(charID, { saving_throws: theClass.main.saving_throws })
+        );
+        dispatch(setClass(charID, { hit_die: theClass.main.hit_die }));
+        dispatch(setClass(charID, { level: 1 }));
+        dispatch(setClass(charID, { levels: theClass.levels }));
       });
   }, []);
 
@@ -132,6 +141,20 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
     clearClass();
     window.scrollTo(0, 0);
   };
+
+  const [isHitDiePopoverOpen, setHitDiePopoverOpen] = useState(false);
+
+  const skill = ['animal handling', 'acrobatics'];
+  const hitDieDictionary = [
+    { die: '6', text: 'less than' },
+    { die: '8', text: 'average compared to' },
+    { die: '10', text: 'more than' },
+    { die: '12', text: 'better than all' },
+  ];
+
+  const getDieText = die =>
+    hitDieDictionary.find(entry => entry.die === die.toString()).text;
+
   if (classInfo) {
     const { main, features, options, proficiencies, subclass } = classInfo;
     return (
@@ -161,7 +184,47 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
           </div>
           <div>
             <div className="w-auto d-inline-block card content-card floating-card mb-0">
-              Hit Die - {main.hit_die}
+              <div className="same-line mb-0">
+                <Popover
+                  isOpen={isHitDiePopoverOpen}
+                  positions={['left', 'top', 'bottom']}
+                  padding={15}
+                  //containerParent=?
+                  boundaryInset={10}
+                  onClickOutside={() => setHitDiePopoverOpen(false)}
+                  content={({ position, childRect, popoverRect }) => (
+                    <ArrowContainer
+                      position={position}
+                      childRect={childRect}
+                      popoverRect={popoverRect}
+                      arrowColor={'#f6efe4'}
+                      arrowSize={10}
+                      className="popover-arrow-container"
+                      arrowClassName="popover-arrow"
+                    >
+                      <div
+                        className="card content-card description-card popover-card"
+                        style={{ maxWidth: '250px' }}
+                        //onClick={() => setIsPopoverOpen(!isSizePopoverOpen)}
+                      >
+                        <p>
+                          {`Your hit die determines how much extra health you gain on
+                          level up, as well as how much you can recover in a
+                          short rest. ${main.hit_die} is ${getDieText(
+                            main.hit_die
+                          )} other classes.`}
+                        </p>
+                      </div>
+                    </ArrowContainer>
+                  )}
+                >
+                  <i
+                    className="bi bi-info-circle info-icon ml-0"
+                    onClick={() => setHitDiePopoverOpen(!isHitDiePopoverOpen)}
+                  ></i>
+                </Popover>
+                <span>Hit Die - {main.hit_die}</span>
+              </div>
             </div>
             <div className="w-auto d-inline-block card content-card floating-card mb-0">
               SAVING THROWS -{' '}
@@ -180,51 +243,104 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             <>
               {options.map((option, index) => {
                 return (
-                  <div className="dd-container" key={index}>
-                    <Dropdown
-                    ddLabel={`${option.header}`}
-                    title={`Choose ${option.choose}`}
-                    items={option.options}
-                    selectLimit={option.choose}
-                    multiSelect={option.choose > 1}
-                    selection={
-                      userChoices[
-                        `${option.header
+                  <>
+                    <div className="dd-container" key={index}>
+                      <Dropdown
+                        ddLabel={`${option.header}`}
+                        title={`Choose ${option.choose}`}
+                        items={option.options.filter(
+                          item =>
+                            !skill.includes(item.name.toString().toLowerCase())
+                        )}
+                        selectLimit={option.choose}
+                        multiSelect={option.choose > 1}
+                        selection={
+                          userChoices[
+                            `${option.header.toLowerCase().replace(' ', '-')}-${
+                              option.type
+                            }-${index}`
+                          ]
+                        }
+                        setSelection={setUserChoices}
+                        popover={Array.isArray(option.desc)}
+                        popoverText={option.desc?.map(desc => (
+                          <p key={desc}>{desc}</p>
+                        ))}
+                        classname="dd-choice"
+                        stateKey={`${option.header
                           .toLowerCase()
-                          .replace(' ', '-')}-${option.type}-${index}`
-                      ]
-                    }
-                    setSelection={setUserChoices}
-                    classname="dd-choice"
-                    stateKey={`${option.header
-                      .toLowerCase()
-                      .replace(' ', '-')}-${option.type}-${index}`}
-                    />
-                  </div>
+                          .replace(' ', '-')}-${option.type}-${index}`}
+                      />
+                    </div>
+                    {Array.isArray(option.desc) &&
+                      userChoices[
+                        `${option.header.toLowerCase().replace(' ', '-')}-${
+                          option.type
+                        }-${index}`
+                      ] && (
+                        <div className="card content-card description-card mb-0">
+                          {userChoices[
+                            `${option.header.toLowerCase().replace(' ', '-')}-${
+                              option.type
+                            }-${index}`
+                          ].map(
+                            choice =>
+                              Array.isArray(choice.desc) && <p>{choice.desc}</p>
+                          )}
+                        </div>
+                      )}
+                  </>
                 );
               })}
               {subclass?.subclass_options?.map((option, index) => {
                 return (
-                  <Dropdown
-                    ddLabel={`${option.header} (${subclass.name})`}
-                    title={`Choose ${option.choose}`}
-                    items={option.options}
-                    selectLimit={option.choose}
-                    multiSelect={option.choose > 1}
-                    selection={
-                      userChoices[
-                        `${option.header
+                  <>
+                    <div className="dd-container" key={index}>
+                      <Dropdown
+                        ddLabel={`${option.header} (${subclass.name})`}
+                        title={`Choose ${option.choose}`}
+                        items={option.options.filter(
+                          item =>
+                            !skill.includes(item.name.toString().toLowerCase())
+                        )}
+                        selectLimit={option.choose}
+                        multiSelect={option.choose > 1}
+                        selection={
+                          userChoices[
+                            `${option.header.toLowerCase().replace(' ', '-')}-${
+                              option.type
+                            }-${index}`
+                          ]
+                        }
+                        setSelection={setUserChoices}
+                        popover={Array.isArray(option.desc)}
+                        popoverText={option.desc?.map(desc => (
+                          <p key={desc}>{desc}</p>
+                        ))}
+                        classname="choice"
+                        stateKey={`${option.header
                           .toLowerCase()
-                          .replace(' ', '-')}-${option.type}-${index}`
-                      ]
-                    }
-                    setSelection={setUserChoices}
-                    classname="choice"
-                    stateKey={`${option.header
-                      .toLowerCase()
-                      .replace(' ', '-')}-${option.type}-${index}`}
-                    key={index}
-                  />
+                          .replace(' ', '-')}-${option.type}-${index}`}
+                      />
+                    </div>
+                    {Array.isArray(option.desc) &&
+                      userChoices[
+                        `${option.header.toLowerCase().replace(' ', '-')}-${
+                          option.type
+                        }-${index}`
+                      ] && (
+                        <div className="card content-card description-card mb-0">
+                          {userChoices[
+                            `${option.header.toLowerCase().replace(' ', '-')}-${
+                              option.type
+                            }-${index}`
+                          ].map(
+                            choice =>
+                              Array.isArray(choice.desc) && <p>{choice.desc}</p>
+                          )}
+                        </div>
+                      )}
+                  </>
                 );
               })}
             </>
@@ -235,17 +351,20 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             Starting Proficiencies
           </h4>
           <div className="card content-card description-card mb-0">
-            {Object.entries(proficiencies).map(prof => (
-                prof[1].length > 0 && <p className="text-capitalize" key={prof[0]}>
-                <strong className="small-caps">{prof[0]}</strong> –{' '}
-                {prof[1].map((item, idx) => (
-                  <React.Fragment key={idx}>
-                    {item}
-                    {idx < prof[1].length - 1 && ', '}
-                  </React.Fragment>
-                ))}
-              </p>
-            ))}
+            {Object.entries(proficiencies).map(
+              prof =>
+                prof[1].length > 0 && (
+                  <p className="text-capitalize" key={prof[0]}>
+                    <strong className="small-caps">{prof[0]}</strong> –{' '}
+                    {prof[1].map((item, idx) => (
+                      <React.Fragment key={idx}>
+                        {item}
+                        {idx < prof[1].length - 1 && ', '}
+                      </React.Fragment>
+                    ))}
+                  </p>
+                )
+            )}
           </div>
         </div>
         {features.length > 0 && (

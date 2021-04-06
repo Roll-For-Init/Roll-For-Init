@@ -7,54 +7,6 @@ import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import { Popover, ArrowContainer } from 'react-tiny-popover';
 
-// const RaceButton = ({ race, setRace, idx }) => {
-//   const hasSubraces = race.subraces.length > 0;
-
-//   const handleClick = () => {
-//     if (!hasSubraces) {
-//       setRace();
-//     }
-//   };
-
-//   const handleSubClick = subrace => {
-//     setRace(subrace);
-//   };
-
-//   return (
-//     <div className="w-100 h-auto">
-//       <button
-//         className={
-//           hasSubraces
-//             ? 'btn btn-secondary btn-lg m-0 mb-3 options dropdown-toggle'
-//             : 'btn btn-secondary btn-lg m-0 mb-3 options'
-//         }
-//         type="button"
-//         id={`dropdownMenuButton1${idx}`}
-//         data-toggle={hasSubraces ? 'dropdown' : ''}
-//         onClick={() => handleClick()}
-//         aria-expanded="true"
-//       >
-//         {race.name}
-//       </button>
-//       <div
-//         className="dropdown-menu m-0 p-0"
-//         aria-labelledby={`dropdownMenuButton1${idx}`}
-//       >
-//         {hasSubraces &&
-//           race.subraces.map((subrace, idx) => (
-//             <button
-//               key={idx}
-//               className="w-100 m-0 border-0 shadow-none text-center text-uppercase options-dropdown"
-//               onClick={() => handleSubClick(subrace)}
-//             >
-//               {subrace.name}
-//             </button>
-//           ))}
-//       </div>
-//     </div>
-//   );
-// };
-
 const Loading = () => {
   return 'LOADING';
 };
@@ -63,7 +15,7 @@ const Race = ({ charID, setPage }) => {
   const dispatch = useDispatch();
   const [races, setRaces] = useState(null);
   const [viewRace, setViewRace] = useState(false);
-  const [currentRace, setCurrentRace] = useState(null)
+  const [currentRace, setCurrentRace] = useState(null);
 
   const character = useSelector(state => state.characters[charID]);
 
@@ -74,12 +26,11 @@ const Race = ({ charID, setPage }) => {
   //pass in an object of the fields to edit i.e. {index: INDEX} or {choiceA: CHOICE}
   //access with character.race.choiceA
   const selectRace = race => {
-    setCurrentRace(race)
-    if(race.subrace) {
-      let racewsubrace = {...race, ...{subrace: race.subrace.index}};
+    setCurrentRace(race);
+    if (race.subrace) {
+      let racewsubrace = { ...race, ...{ subrace: race.subrace.index } };
       dispatch(setRace(charID, racewsubrace));
-    }
-    else {
+    } else {
       dispatch(setRace(charID, race));
     }
     setViewRace(true);
@@ -144,20 +95,20 @@ const Race = ({ charID, setPage }) => {
                         <>
                           {subrace && (
                             <div className="icon-card-container" key={idx}>
-                              <div className="card icon-card-label">
-                                <div
-                                  className="card icon-card"
-                                  onClick={() =>
-                                    selectRace({
-                                      index: race.name,
-                                      url: race.url,
-                                      subrace: {
-                                        index: subrace.name,
-                                        url: subrace.url,
-                                      },
-                                    })
-                                  }
-                                >
+                              <div
+                                className="card icon-card-label"
+                                onClick={() =>
+                                  selectRace({
+                                    index: race.name,
+                                    url: race.url,
+                                    subrace: {
+                                      index: subrace.name,
+                                      url: subrace.url,
+                                    },
+                                  })
+                                }
+                              >
+                                <div className="card icon-card">
                                   <img
                                     className="card-icon"
                                     src={raceIconsOffWhite[`${race.index}.png`]}
@@ -170,40 +121,20 @@ const Race = ({ charID, setPage }) => {
                         </>
                       ))}
                     </>
-                    // <RaceButton
-                    //   race={race}
-                    //   setRace={subrace =>
-                    //     subrace
-                    //       ? selectRace({
-                    //           index: race.name,
-                    //           url: race.url,
-                    //           subrace: {
-                    //             index: subrace.name,
-                    //             url: subrace.url,
-                    //           },
-                    //         })
-                    //       : selectRace({
-                    //           index: race.name,
-                    //           url: race.url,
-                    //         })
-                    //   }
-                    //   key={idx}
-                    //   idx={idx}
-                    // />
                   );
                 else if (race)
                   return (
                     <div className="icon-card-container" key={idx}>
-                      <div className="card icon-card-label">
-                        <div
-                          className="card icon-card"
-                          onClick={() =>
-                            selectRace({
-                              index: race.name,
-                              url: race.url,
-                            })
-                          }
-                        >
+                      <div
+                        className="card icon-card-label"
+                        onClick={() =>
+                          selectRace({
+                            index: race.name,
+                            url: race.url,
+                          })
+                        }
+                      >
+                        <div className="card icon-card">
                           <img
                             className="card-icon"
                             src={raceIconsOffWhite[`${race.index}.png`]}
@@ -230,11 +161,87 @@ const Race = ({ charID, setPage }) => {
 };
 
 const BasicInfoCard = ({ speed, size }) => {
+  const [isSpeedPopoverOpen, setSpeedPopoverOpen] = useState(false);
+  const [isSizePopoverOpen, setSizePopoverOpen] = useState(false);
+
   return (
     <div className="w-auto d-inline-block card content-card floating-card mb-0">
-      Speed: {speed}
-      <br />
-      Size: {size}
+      <div className="same-line">
+        <span>Speed: {speed}</span>
+        <Popover
+          isOpen={isSpeedPopoverOpen}
+          positions={['right', 'top', 'bottom']}
+          padding={15}
+          //containerParent=?
+          boundaryInset={10}
+          onClickOutside={() => setSpeedPopoverOpen(false)}
+          content={({ position, childRect, popoverRect }) => (
+            <ArrowContainer
+              position={position}
+              childRect={childRect}
+              popoverRect={popoverRect}
+              arrowColor={'#f6efe4'}
+              arrowSize={10}
+              className="popover-arrow-container"
+              arrowClassName="popover-arrow"
+            >
+              <div
+                className="card content-card description-card popover-card"
+                style={{ maxWidth: '250px' }}
+                //onClick={() => setIsPopoverOpen(!isSpeedPopoverOpen)}
+              >
+                <p>How far you can move in one round of combat, in feet.</p>
+              </div>
+            </ArrowContainer>
+          )}
+        >
+          <i
+            className="bi bi-info-circle info-icon mr-0"
+            onClick={() => setSpeedPopoverOpen(!isSpeedPopoverOpen)}
+          ></i>
+        </Popover>
+      </div>
+      <div className="same-line mb-0">
+        <span>Size: {size}</span>
+        {console.log(size)}
+        {size.toLowerCase() === 'small' && (
+          <Popover
+            isOpen={isSizePopoverOpen}
+            positions={['right', 'top', 'bottom']}
+            padding={15}
+            //containerParent=?
+            boundaryInset={10}
+            onClickOutside={() => setSizePopoverOpen(false)}
+            content={({ position, childRect, popoverRect }) => (
+              <ArrowContainer
+                position={position}
+                childRect={childRect}
+                popoverRect={popoverRect}
+                arrowColor={'#f6efe4'}
+                arrowSize={10}
+                className="popover-arrow-container"
+                arrowClassName="popover-arrow"
+              >
+                <div
+                  className="card content-card description-card popover-card"
+                  style={{ maxWidth: '250px' }}
+                  //onClick={() => setIsPopoverOpen(!isSizePopoverOpen)}
+                >
+                  <p>
+                    Your carrying capacity is halved, and you have disadvantage
+                    with heavy weapons.
+                  </p>
+                </div>
+              </ArrowContainer>
+            )}
+          >
+            <i
+              className="bi bi-info-circle info-icon mr-0"
+              onClick={() => setSizePopoverOpen(!isSizePopoverOpen)}
+            ></i>
+          </Popover>
+        )}
+      </div>
     </div>
   );
 };
@@ -356,6 +363,11 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch, currRace }) => {
     window.scrollTo(0, 0);
   };
 
+  const [isProfPopoverOpen, setProfPopoverOpen] = useState(false);
+  const [isLanguagePopoverOpen, setLanguagePopoverOpen] = useState(false);
+
+  const skill = ['animal handling', 'acrobatics'];
+
   return raceInfo ? (
     <>
       <div className="d-none d-md-flex title-back-wrapper">
@@ -399,12 +411,15 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch, currRace }) => {
           <h4 className="card content-card card-title">Race Options</h4>
           {raceInfo.options.map((option, index) => {
             return (
-              <div className="dd-container" key={index}>
-                <div className="same-line mb-0">
+              <>
+                <div className="dd-container" key={index}>
                   <Dropdown
                     ddLabel={`${option.header}`}
                     title={`Choose ${option.choose}`}
-                    items={option.options}
+                    items={option.options.filter(
+                      item =>
+                        !skill.includes(item.name.toString().toLowerCase())
+                    )}
                     width="100%"
                     selectLimit={option.choose}
                     multiSelect={option.choose > 1}
@@ -416,13 +431,34 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch, currRace }) => {
                       ]
                     }
                     setSelection={setUserChoices}
+                    popover={Array.isArray(option.desc)}
+                    popoverText={option.desc?.map(desc => (
+                      <p key={desc}>{desc}</p>
+                    ))}
                     classname="dd-choice"
                     stateKey={`${option.header
                       .toLowerCase()
                       .replace(' ', '-')}-${option.type}-${index}`}
                   />
                 </div>
-              </div>
+                {Array.isArray(option.desc) &&
+                  userChoices[
+                    `${option.header.toLowerCase().replace(' ', '-')}-${
+                      option.type
+                    }-${index}`
+                  ] && (
+                    <div className="card content-card description-card mb-0">
+                      {userChoices[
+                        `${option.header.toLowerCase().replace(' ', '-')}-${
+                          option.type
+                        }-${index}`
+                      ].map(
+                        choice =>
+                          Array.isArray(choice.desc) && <p>{choice.desc}</p>
+                      )}
+                    </div>
+                  )}
+              </>
             );
           })}
         </div>
@@ -430,21 +466,101 @@ const RaceDetails = ({ charID, setPage, clearRace, dispatch, currRace }) => {
       {raceInfo.profCount > 0 && (
         <div className="card translucent-card">
           <div className="card content-card card-title">
-            <h4>Starting Proficiencies</h4>
+            <div className="same-line mb-0">
+              <Popover
+                isOpen={isProfPopoverOpen}
+                positions={['left', 'top', 'bottom']}
+                padding={15}
+                //containerParent=?
+                boundaryInset={10}
+                onClickOutside={() => setProfPopoverOpen(false)}
+                content={({ position, childRect, popoverRect }) => (
+                  <ArrowContainer
+                    position={position}
+                    childRect={childRect}
+                    popoverRect={popoverRect}
+                    arrowColor={'#f6efe4'}
+                    arrowSize={10}
+                    className="popover-arrow-container"
+                    arrowClassName="popover-arrow"
+                  >
+                    <div
+                      className="card content-card description-card popover-card"
+                      style={{ maxWidth: '250px' }}
+                      //onClick={() => setIsPopoverOpen(!isSpeedPopoverOpen)}
+                    >
+                      <p>
+                        You can add your proficiency bonus, which increases with
+                        every level, to a roll you have proficiency in. You are
+                        far more likely to succeed in the areas listed below
+                      </p>
+                    </div>
+                  </ArrowContainer>
+                )}
+              >
+                <i
+                  className="bi bi-info-circle info-icon ml-0"
+                  onClick={() => setProfPopoverOpen(!isProfPopoverOpen)}
+                ></i>
+              </Popover>
+              <h4>Starting Proficiencies</h4>
+            </div>
           </div>
           <div className="card content-card description-card mb-0">
             {//console.log(Object.values(raceInfo.proficiencies))
             Object.keys(raceInfo.proficiencies).map(key => {
               return (
                 raceInfo.proficiencies[key].length > 0 && (
-                  <p className="text-capitalize">
-                    <strong className="small-caps">{key}</strong> -{' '}
-                    {raceInfo.proficiencies[key].map((prof, index) => {
-                      if (raceInfo.proficiencies[key].length === index + 1)
-                        return `${prof}`;
-                      else return `${prof}, `;
-                    })}
-                  </p>
+                  <div className="same-line mb-0">
+                    {key.toString().toLowerCase() === 'languages' && (
+                      <Popover
+                        isOpen={isLanguagePopoverOpen}
+                        positions={['left', 'top', 'bottom']}
+                        padding={15}
+                        //containerParent=?
+                        boundaryInset={10}
+                        onClickOutside={() => setLanguagePopoverOpen(false)}
+                        content={({ position, childRect, popoverRect }) => (
+                          <ArrowContainer
+                            position={position}
+                            childRect={childRect}
+                            popoverRect={popoverRect}
+                            arrowColor={'#f6efe4'}
+                            arrowSize={10}
+                            className="popover-arrow-container"
+                            arrowClassName="popover-arrow"
+                          >
+                            <div
+                              className="card content-card description-card popover-card"
+                              style={{ maxWidth: '250px' }}
+                              //onClick={() => setIsPopoverOpen(!isSpeedPopoverOpen)}
+                            >
+                              <p>
+                                Languages do not have to be rolled for; a
+                                proficiency means that you can read, write, and
+                                speak these languages.
+                              </p>
+                            </div>
+                          </ArrowContainer>
+                        )}
+                      >
+                        <i
+                          className="bi bi-info-circle info-icon ml-0"
+                          onClick={() =>
+                            setLanguagePopoverOpen(!isLanguagePopoverOpen)
+                          }
+                        ></i>
+                      </Popover>
+                    )}
+                    <p className="text-capitalize" style={{ width: '100%' }}>
+                      <strong className="small-caps">{key}</strong> -{' '}
+                      {raceInfo.proficiencies[key].map((prof, index) => {
+                        if (raceInfo.proficiencies[key].length === index + 1)
+                          return `${prof}`;
+                        else return `${prof}, `;
+                      })}
+                    </p>
+                  </div>
                 )
               );
             })}

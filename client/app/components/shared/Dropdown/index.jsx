@@ -101,8 +101,7 @@ function Dropdown({
               positions={['left', 'top', 'bottom']}
               padding={15}
               //containerParent=?
-              //reposition
-              //boundaryInset={10}
+              boundaryInset={10}
               onClickOutside={() => setIsPopoverOpen(false)}
               content={({ position, childRect, popoverRect }) => (
                 <ArrowContainer
@@ -117,7 +116,7 @@ function Dropdown({
                   <div
                     className="card content-card description-card popover-card"
                     style={{ maxWidth: '250px' }}
-                    onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+                    //onClick={() => setIsPopoverOpen(!isPopoverOpen)}
                   >
                     <p>{popoverText}</p>
                   </div>
@@ -125,7 +124,7 @@ function Dropdown({
               )}
             >
               <i
-                className="bi bi-info-circle info-icon"
+                className="bi bi-info-circle info-icon ml-0"
                 onClick={() => setIsPopoverOpen(!isPopoverOpen)}
               ></i>
             </Popover>
@@ -153,7 +152,6 @@ function Dropdown({
         </div>
       </div>
       {open && (
-        // <ul className="dd-list shadow-card scroll">
         <ul className={`dd-list ${classname && classname} shadow-card scroll`}>
           {items.map(item => (
             <li className="dd-list-item" key={item.index}>

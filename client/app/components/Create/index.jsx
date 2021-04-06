@@ -49,6 +49,8 @@ useEffect(() => {
 }, []);
 */
 
+  const [totalProficiencies, setTotalProficiencies] = useState(null);
+
   const getPage = page => {
     switch (page.name) {
       case 'race':
@@ -243,8 +245,8 @@ useEffect(() => {
         {
           index: 'tiefling',
           info:
-            'Tieflings have a fearsome reputation for their cunning and silver tongues. However, they aren’t all as their demonic heritage suggests; with high Intelligence and Charisma, they are staunch allies as Paladins, Bards, Warlocks, and Sorcerers.'
-        }
+            'Tieflings have a fearsome reputation for their cunning and silver tongues. However, they aren’t all as their demonic heritage suggests; with high Intelligence and Charisma, they are staunch allies as Paladins, Bards, Warlocks, and Sorcerers.',
+        },
       ],
     },
     {
@@ -351,30 +353,11 @@ useEffect(() => {
   const charEquipment = useSelector(
     state => state.characters[charID].equipment
   );
+  const charSpells = useSelector(state => state.characters[charID].spells);
 
   return (
     <div className="row position-relative" style={{ top: '45px' }}>
       <div className="col-3 d-none d-md-block side-bar overflow-auto">
-        {/* <div className="side-bar-icon-container">
-          {charRace !== null && (
-            <div className="card content-card side-bar-icon-card">
-              <div className="same-line">
-                {charRace !== null && (
-                  <img
-                    className="side-bar-icon"
-                    src={raceIconsMedBlue['dragonborn.png']}
-                  />
-                )}
-                {charClass !== null && (
-                  <img
-                    className="side-bar-icon"
-                    src={classIconsMedBlue['bard.png']}
-                  />
-                )}
-              </div>
-            </div>
-          )}
-        </div> */}
         <div className="btn-group-vertical w-100" role="group">
           {buttonNames.map((name, idx) => {
             let classname = 'btn btn-lg btn-secondary menu-button';
@@ -519,24 +502,49 @@ useEffect(() => {
               {page.name === 'background' && <p>{fluffText[2].contents}</p>}
               {page.name === 'description' && <p>{fluffText[3].contents}</p>}
               {page.name === 'equipment' && charEquipment !== null && (
-                <>
-                {charEquipment.set && charEquipment.set.map((equip, index) => {
-                  return(<p key={`equipset-${index}`}>{equip.name}</p>)
-                })}
-                {charEquipment.choices && Object.keys(charEquipment.choices).map((equipment, index) => {
-                  let equip = charEquipment.choices ? charEquipment.choices[equipment] : null;
-                  if(equip) {
-                    if(equip.equipment?.name) return(<p key={`equipchoice-${index}`}>{equip?.equipment?.name}</p>)
-                    else {
-                      if(equip.selection) return Object.keys(equip.selection).map((selection) => {
-                        return equip.selection[selection].map((item, index) => {
-                          return(<p key={`equipselect-${index}`}>{item.name}</p>)
-                        })
-                      })
-                    }
-                  }
-                })}
-                </>
+                <ul className="shortlist">
+                  <h6 className="card-subtitle small-caps">
+                    Starting Equipment
+                  </h6>
+                  {charEquipment.set &&
+                    charEquipment.set.map((equip, idx) => {
+                      return (
+                        <li key={`equip-set-${idx}`}>
+                          <p>{equip.name}</p>
+                        </li>
+                      );
+                    })}
+                  {charEquipment.choices &&
+                    Object.keys(charEquipment.choices).map((equipment, idx) => {
+                      let equip = charEquipment.choices
+                        ? charEquipment.choices[equipment]
+                        : null;
+                      if (equip) {
+                        if (equip.equipment?.name)
+                          return (
+                            <li key={`equip-choice-${idx}`}>
+                              <p>{equip?.equipment?.name}</p>
+                            </li>
+                          );
+                        else {
+                          if (equip.selection)
+                            return Object.keys(equip.selection).map(
+                              selection => {
+                                return equip.selection[selection].map(
+                                  (item, idx) => {
+                                    return (
+                                      <li key={`equip-select-${idx}`}>
+                                        <p>{item.name}</p>
+                                      </li>
+                                    );
+                                  }
+                                );
+                              }
+                            );
+                        }
+                      }
+                    })}
+                </ul>
               )}
             </div>
           )}

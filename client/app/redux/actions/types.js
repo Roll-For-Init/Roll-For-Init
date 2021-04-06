@@ -32,7 +32,6 @@ export const SET_ABILITIES = 'SET_ABILITIES';
 export const SET_EQUIPMENT = 'SET_EQUIPMENT';
 export const SET_SPELLS = 'SET_SPELLS';
 
-
 // ---------------------------  Game --------------------------- //
 export const CREATE_GAME_SUCCESS = 'CREATE_GAME_SUCCESS';
 export const CREATE_GAME_FAIL = 'CREATE_GAME_FAIL';
