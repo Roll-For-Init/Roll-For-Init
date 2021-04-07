@@ -464,7 +464,7 @@ const PageViewer = ({ charID}) => {
           </div>
           {charRace !== null && (
             <div className="card content-card side-bar-card scroll">
-              {page.name === 'race' && charRace !== null && (
+              {character.page.name === 'race' && charRace !== null && (
                 <p>
                   {console.log(fluffText[0], charRace)}
                   {
@@ -478,7 +478,7 @@ const PageViewer = ({ charID}) => {
                   }
                 </p>
               )}
-              {page.name === 'class' && charClass !== null && (
+              {character.page.name === 'class' && charClass !== null && (
                 <p>
                   {
                     fluffText[1].contents.find(
@@ -488,7 +488,7 @@ const PageViewer = ({ charID}) => {
                   }
                 </p>
               )}
-              {page.name === 'abilities' && charClass !== null && (
+              {character.page.name === 'abilities' && charClass !== null && (
                 <p>
                   {`To specialize or to diversify--this is a dilemma many an
                   adventurer has faced. While ${
@@ -504,9 +504,9 @@ const PageViewer = ({ charID}) => {
                   hurts.`}
                 </p>
               )}
-              {page.name === 'background' && <p>{fluffText[2].contents}</p>}
-              {page.name === 'description' && <p>{fluffText[3].contents}</p>}
-              {page.name === 'equipment' && charEquipment !== null && (
+              {character.page.name === 'background' && <p>{fluffText[2].contents}</p>}
+              {character.page.name === 'description' && <p>{fluffText[3].contents}</p>}
+              {character.page.name === 'equipment' && charEquipment !== null && (
                 <ul className="shortlist">
                   <h6 className="card-subtitle small-caps">
                     Starting Equipment
@@ -515,7 +515,7 @@ const PageViewer = ({ charID}) => {
                     charEquipment.set.map((equip, idx) => {
                       return (
                         <li key={`equip-set-${idx}`}>
-                          <p>{equip.name}</p>
+                          <p>{equip.equipment.name}</p>
                         </li>
                       );
                     })}

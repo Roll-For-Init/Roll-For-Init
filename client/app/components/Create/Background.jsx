@@ -269,28 +269,28 @@ export const Background = ({ charID, setPage }) => {
               })}
             </div>
           )}
-          {(selectionBg[0].index === 'custom' || selectionBg[0].proficiencies.size) &&
-          <div className="card translucent-card">
-            <div className="card content-card card-title">
-              <h4>Proficiencies</h4>
-            </div>
-            {selectionBg[0].index === 'custom' && (
-              <div className="dd-container">
-                <Dropdown
-                  ddLabel="Extra Skills"
-                  title="Choose 2"
-                  items={[...skills].filter(
-                    item => !skill.includes(item.name.toString().toLowerCase())
-                  )}
-                  // items={[...skills]}
-                  selection={selectionSk1}
-                  multiSelect
-                  selectLimit={2}
-                  setSelection={setSelectionSk1}
-                  classname="dd-choice"
-                />
+          {(selectionBg[0].index === 'custom' || selectionBg[0].proficiencies?.size) &&
+            <div className="card translucent-card">
+              <div className="card content-card card-title">
+                <h4>Proficiencies</h4>
               </div>
-            )}
+              {selectionBg[0].index === 'custom' && (
+                <div className="dd-container">
+                  <Dropdown
+                    ddLabel="Extra Skills"
+                    title="Choose 2"
+                    items={[...skills].filter(
+                      item => !skill.includes(item.name.toString().toLowerCase())
+                    )}
+                    // items={[...skills]}
+                    selection={selectionSk1}
+                    multiSelect
+                    selectLimit={2}
+                    setSelection={setSelectionSk1}
+                    classname="dd-choice"
+                  />
+                </div>
+              )}
               {selectionBg[0].index === 'custom' && (
                 <div className="dd-container">
                   <Dropdown

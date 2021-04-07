@@ -457,7 +457,7 @@ const PointBuyCard = ({
         </h1>
       </div>
       {bonus > 0 && (
-        <div className="p-1 card content-card description-card text-center">
+        <div className="py-1 px-2 card content-card description-card text-center w-auto">
           <p className="text-capitalize">Racial Bonus: +{bonus}</p>
         </div>
       )}
