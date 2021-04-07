@@ -24,14 +24,25 @@ import { v4 as uuidv4 } from 'uuid';
 
 import CharacterService from '../services/character.service';
 
-export const submitCharacter = characterInfo => dispatch => {
-  console.log("SUBMIT CHARACTER", characterInfo);
-
-  //! temporarily add to redux before the database to test redux
+export const submitExistingCharacter = characterInfo => dispatch => {
+  console.log('SUBMIT CHARACTER', characterInfo);
   dispatch({
     type: SUBMIT_CHARACTER_SUCCESS,
-    payload: characterInfo,
+    payload: characterInfo[1],
   });
+  let user = JSON.parse(localStorage.getItem('state'));
+  console.log('user', user);
+  user.characters = {
+    ...user.characters,
+    [characterInfo[0]]: characterInfo[1],
+  };
+  console.log('user', user.characters);
+  localStorage.setItem('user', JSON.stringify(user));
+};
+
+export const submitCharacter = characterInfo => dispatch => {
+  console.log('SUBMIT CHARACTER', characterInfo);
+
   return CharacterService.createCharacter(characterInfo).then(
     res => {
       dispatch({

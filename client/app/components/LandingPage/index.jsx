@@ -6,7 +6,7 @@ import Dropzone from 'react-dropzone';
 import charPlaceholder from '../../../public/assets/imgs/char-placeholder.png';
 import './styles.scss';
 import { PropTypes } from 'prop-types';
-import { setCurrentCharacter } from '../../redux/actions';
+import { setCurrentCharacter, submitExistingCharacter } from '../../redux/actions';
 
 const DraftCharacterCard = ({ character }) => {
   const dispatch = useDispatch();
@@ -240,8 +240,13 @@ const LandingPage = () => {
   // const { isLoggedIn } = useSelector(state => state.auth);
 
   const history = useHistory();
+  const dispatch = useDispatch();
 
-  function handleClick() {
+  function handleClick(character) {
+    const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
+    if (!characters[charID]) {
+      dispatch(submitExistingCharacter(character));
+    }
     history.push('/dashboard');
   }
 
@@ -268,17 +273,6 @@ const LandingPage = () => {
       /\.(png)$/
     )
   );
-
-  const exampleCharacters = [
-    {
-      firstname: 'Glorbin',
-      lastname: 'Shmoo',
-      race: 'elf',
-      class: 'barbarian',
-      level: '2',
-      portraitsrc: charPlaceholder,
-    },
-  ];
 
   return (
     <div className="container landing">
@@ -315,24 +309,21 @@ const LandingPage = () => {
         </div>
       ) : (
           <div className="character-container">
-            {console.log(characters)}
             <div className="card translucent-card mt-0">
             {Object.entries(characters).map((char, idx) => {
-              console.log(char[1]);
               const charInfo = char[1];
               return (
                 <div
                   className="card content-card character-card"
                   key={idx}
-                  onClick={handleClick}
+                  onClick={() => handleClick(char)}
                 >
                   <div className="same-line mb-0">
                     <span className="same-line mb-0">
                       {charInfo.portrait.name === "No file chosen" ?
                         <img
                           className="portrait-icon"
-                          src={exampleCharacters[0].portraitsrc}
-                          alt={exampleCharacters[0].portraitsrc}
+                          src={charPlaceholder}
                           width="70"
                           height="70"
                         />
@@ -346,7 +337,7 @@ const LandingPage = () => {
                         />}
                       <div className="info-container">
                         <p className="character-name">{`${charInfo.name}`}</p>
-                        <p className="character-info">{`${charInfo.race.name} ${charInfo.class.name} ${charInfo.level}`}</p>
+                        <p className="character-info">{`${charInfo.race.name} ${charInfo.class[0].name} ${charInfo.level}`}</p>
                       </div>
                     </span>
                     <span className="same-line mb-0">
