@@ -9,7 +9,9 @@ import Descriptions from './Descriptions';
 import Equipment from './Equipment';
 import Spells from './Spells';
 import MobileMenu from './MobileMenu';
-import { startCharacter } from '../../redux/actions/';
+
+import { startCharacter, setPage } from '../../redux/actions/';
+
 import './styles.scss';
 import Header from '../shared/Header';
 import { Link } from 'react-router-dom';
@@ -29,61 +31,120 @@ const Loading = () => {
   return <React.Fragment>LOADING_CHARACTER</React.Fragment>;
 };
 
+const Page = ({ page, setCharPage, charID }) => {
+  let currentPage;
+  switch (page.name) {
+    case 'race':
+      currentPage = <Race setPage={setCharPage} charID={charID} />;
+      break;
+    case 'class':
+      currentPage = <Class setPage={setCharPage} charID={charID} />;
+      break;
+    case 'abilities':
+      currentPage = <Abilities setPage={setCharPage} charID={charID} />;
+      break;
+    case 'background':
+      currentPage = <Background setPage={setCharPage} charID={charID} />;
+      break;
+    case 'description':
+      currentPage = <Descriptions setPage={setCharPage} charID={charID} />;
+      break;
+    case 'equipment':
+      currentPage = <Equipment setPage={setCharPage} charID={charID} />;
+      break;
+    case 'spells':
+      currentPage = <Spells setPage={setCharPage} charID={charID} />;
+      break;
+  }
+  return (
+    <div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">
+      {currentPage}
+    </div>
+  );
+};
+
+const Buttons = ({
+  page,
+  onPageChange,
+  charRace,
+  charClass,
+  raceIconsOffWhite,
+  raceIconsMedBlue,
+  classIconsOffWhite,
+  classIconsMedBlue,
+}) => {
+  return (
+    page && (
+      <React.Fragment>
+        {buttonNames.map((name, idx) => {
+          let classname = 'btn btn-lg btn-secondary menu-button';
+          if (page.name === name) {
+            classname = 'btn btn-lg btn-primary menu-button active';
+          }
+          return (
+            <button
+              key={name}
+              type="button"
+              className={classname}
+              disabled={page.index < idx}
+              onClick={() => {
+                page.index > idx && onPageChange(name, idx);
+              }}
+            >
+              {name}
+              {name === 'race' && charRace !== null && (
+                <div className="button-icon-container">
+                  <img
+                    className="button-icon"
+                    src={
+                      page.name === name
+                        ? raceIconsOffWhite[
+                            `${charRace.index.toLowerCase()}.png`
+                          ]
+                        : raceIconsMedBlue[
+                            `${charRace.index.toLowerCase()}.png`
+                          ]
+                    }
+                  />
+                </div>
+              )}
+              {name === 'class' && charClass !== null && (
+                <div className="button-icon-container">
+                  <img
+                    className="button-icon"
+                    src={
+                      page.name === name
+                        ? classIconsOffWhite[
+                            `${charClass.index.toLowerCase()}.png`
+                          ]
+                        : classIconsMedBlue[
+                            `${charClass.index.toLowerCase()}.png`
+                          ]
+                    }
+                  />
+                </div>
+              )}
+            </button>
+          );
+        })}
+      </React.Fragment>
+    )
+  );
+};
+
 const PageViewer = ({ charID }) => {
-  let pages;
   const character = useSelector(state => state.characters[charID]);
-  const [page, setPage] = useState({ name: 'race', index: 0 });
+
+  const dispatch = useDispatch();
+  const setCharPage = (name, index) => {
+    dispatch(setPage(charID, { ...name, ...index }));
+  };
 
   const onPageChange = (page, index) => {
-    setPage({ name: page, index: index });
+    const payload = { name: page, index: index };
+    dispatch(setPage(charID, payload));
     window.scrollTo(0, 0);
   };
-  /*FOR DEBUGGING ONLY 
-useEffect(() => {
-  console.log("in useeffect");
-  const fetchData = async () => {
-    let apiData = {dummy: "stupid"}
-    apiData = await backgroundCaller("/api/backgrounds/acolyte");
-  }
-  fetchData();
-}, []);
-*/
-
-  const [totalProficiencies, setTotalProficiencies] = useState(null);
-
-  const getPage = page => {
-    switch (page.name) {
-      case 'race':
-        pages = <Race setPage={setPage} page={page} charID={charID} />;
-        break;
-      case 'class':
-        pages = <Class setPage={setPage} page={page} charID={charID} />;
-        break;
-      case 'abilities':
-        pages = <Abilities setPage={setPage} page={page} charID={charID} />;
-        break;
-      case 'background':
-        pages = <Background setPage={setPage} page={page} charID={charID} />;
-        break;
-      case 'description':
-        pages = <Descriptions setPage={setPage} page={page} charID={charID} />;
-        break;
-      case 'equipment':
-        pages = <Equipment setPage={setPage} page={page} charID={charID} />;
-        break;
-      case 'spells':
-        pages = <Spells setPage={setPage} page={page} charID={charID} />;
-        break;
-    }
-  };
-
-  const [currentPage, setCurrentPage] = useState(getPage(page));
-
-  useEffect(() => {
-    console.log('page', charID);
-    let nextPage = getPage(page);
-    setCurrentPage(nextPage);
-  }, [page]);
 
   function importAll(r) {
     let images = {};
@@ -355,73 +416,32 @@ useEffect(() => {
   );
   const charSpells = useSelector(state => state.characters[charID].spells);
 
-  return (
+  return character ? (
     <div className="row position-relative" style={{ top: '45px' }}>
       <div className="col-3 d-none d-md-block side-bar overflow-auto">
         <div className="btn-group-vertical w-100" role="group">
-          {buttonNames.map((name, idx) => {
-            let classname = 'btn btn-lg btn-secondary menu-button';
-            if (page.name === name) {
-              classname = 'btn btn-lg btn-primary menu-button active';
-            }
-            return (
-              <button
-                key={name}
-                type="button"
-                className={classname}
-                disabled={page.index < idx}
-                onClick={() => {
-                  page.index > idx && onPageChange(name, idx);
-                }}
-              >
-                {name}
-                {name === 'race' && charRace !== null && (
-                  <div className="button-icon-container">
-                    <img
-                      className="button-icon"
-                      src={
-                        page.name === name
-                          ? raceIconsOffWhite[
-                              `${charRace.index.toLowerCase()}.png`
-                            ]
-                          : raceIconsMedBlue[
-                              `${charRace.index.toLowerCase()}.png`
-                            ]
-                      }
-                    />
-                  </div>
-                )}
-                {name === 'class' && charClass !== null && (
-                  <div className="button-icon-container">
-                    <img
-                      className="button-icon"
-                      src={
-                        page.name === name
-                          ? classIconsOffWhite[
-                              `${charClass.index.toLowerCase()}.png`
-                            ]
-                          : classIconsMedBlue[
-                              `${charClass.index.toLowerCase()}.png`
-                            ]
-                      }
-                    />
-                  </div>
-                )}
-              </button>
-            );
-          })}
-          {character.class?.spellcasting && (
+          <Buttons
+            page={character.page}
+            onPageChange={onPageChange}
+            charRace={charRace}
+            charClass={charClass}
+            raceIconsOffWhite={raceIconsOffWhite}
+            raceIconsMedBlue={raceIconsMedBlue}
+            classIconsOffWhite={classIconsOffWhite}
+            classIconsMedBlue={classIconsMedBlue}
+          />
+          {character.class?.spellcasting?.level <= 1 && (
             <button
               key="spells"
               type="button"
               className={
-                page.name === 'spells'
+                character.page.name === 'spells'
                   ? 'btn btn-lg btn-primary menu-button active'
                   : 'btn btn-lg btn-secondary menu-button'
               }
-              disabled={page.index < 6}
+              disabled={character.page.index < 6}
               onClick={() => {
-                page.index > 6 && onPageChange('spells', 6);
+                character.page.index >= 6 && onPageChange('spells', 6);
               }}
             >
               spells
@@ -552,14 +572,22 @@ useEffect(() => {
       </div>
       <MobileMenu
         buttonNames={buttonNames}
-        page={page}
-        pages={pages}
+        page={character.page}
         setPage={setPage}
         charID={charID}
       />
-      <div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">
-        {charID ? pages : <Loading />}
-      </div>
+      <Page
+        page={character.page}
+        setCharPage={setCharPage}
+        charID={charID}
+        raceIconsOffWhite={raceIconsOffWhite}
+        raceIconsMedBlue={raceIconsMedBlue}
+        classIconsOffWhite={classIconsOffWhite}
+        classIconsMedBlue={classIconsMedBlue}
+      />
+      {/*<div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">
+        {/*charID ? character.page : <Loading />}
+      </div>*/}
       {/* <div className="col-3 p-4 container overflow-auto">
       {selectedInfo ? (
         <SidePanel />
@@ -572,25 +600,31 @@ useEffect(() => {
       )}
     </div> */}
     </div>
+  ) : (
+    <Loading />
   );
 };
 
 const Create = () => {
+  const { current_character } = useSelector(state => state.app);
   const dispatch = useDispatch();
 
-  const [charID, setCharID] = useState('');
-
   useEffect(() => {
-    const uuid = dispatch(startCharacter());
-    setCharID(uuid);
-    console.log(uuid);
+    let uuid = current_character;
+    if (!uuid) {
+      uuid = dispatch(startCharacter());
+    }
   }, []);
 
   return (
     <div className="create">
       <Header />
       <div className="container-fluid">
-        {charID ? <PageViewer charID={charID} /> : 'NOCHAR'}
+        {current_character ? (
+          <PageViewer charID={current_character} />
+        ) : (
+          'NOCHAR'
+        )}
       </div>
     </div>
   );

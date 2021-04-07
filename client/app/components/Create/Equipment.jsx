@@ -7,7 +7,7 @@ import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
 import FloatingLabel from 'floating-label-react';
 import { useHistory } from 'react-router-dom';
-import { setEquipment } from '../../redux/actions';
+import { setEquipment, submitCharacter } from '../../redux/actions';
 import { Link } from 'react-router-dom';
 
 const EquipmentItem = ({
@@ -17,6 +17,7 @@ const EquipmentItem = ({
   dropdown = false,
   className,
   stateKey,
+  noButton = false,
 }) => {
   const mapObj = { ', monk': '', monk: '' };
   // const [selection, setSelection] = useState(null)
@@ -31,7 +32,11 @@ const EquipmentItem = ({
 
   return (
     <>
-      <div className="equipment-card-title same-line">
+      <div
+        className={
+          noButton ? 'equipment-card-title' : 'equipment-card-title same-line'
+        }
+      >
         {dropdown ? (
           <h5>{equipment.header}</h5>
         ) : (
@@ -66,104 +71,132 @@ const EquipmentItem = ({
         </>
       ) : (
         <>
-          <hr />
-          <div className="equipment-card-body">
-            {equipment.desc.category && (
-              <i className="equipment-item-info">{equipment.desc.category}</i>
-            )}
-            {equipment.desc.damage && (
-              <p className="equipment-item">
-                Damage:&nbsp;
-                <i className="equipment-item-info">{equipment.desc.damage}</i>
-              </p>
-            )}
-            {equipment.desc.cost && (
-              <>
-                {equipment.desc.weight ? (
-                  <p className="same-line">
-                    <span className="equipment-item">
-                      Cost:&nbsp;
-                      <i className="equipment-item-info">
-                        {equipment.desc.cost}
-                      </i>
-                    </span>
-                    <span className="equipment-item">
-                      Weight:&nbsp;
-                      <i className="equipment-item-info">
-                        {equipment.desc.weight}
-                      </i>
-                    </span>
-                  </p>
-                ) : (
-                  <p className="equipment-item">
-                    Cost:&nbsp;
-                    <i className="equipment-item-info">{equipment.desc.cost}</i>
-                  </p>
-                )}
-              </>
-            )}
-            {Array.isArray(equipment.desc.contents) && (
-              <>
-                Contents:&nbsp;
-                {Object.keys(equipment.desc.contents)
-                  .map(function(k) {
-                    return equipment.desc.contents[k].item.name;
-                  })
-                  .join(', ')}
-              </>
-            )}
-            {equipment.desc.special && (
-              <>
-                {Array.isArray(equipment.desc.special) ? (
-                  <>
-                    <hr />
-                    <ReactReadMoreReadLess
-                      charLimit={250}
-                      readMoreText="Show more"
-                      readLessText="Show less"
-                      readMoreClassName="read-more-less--more"
-                      readLessClassName="read-more-less--less"
-                    >
-                      {equipment.desc.special.join('\n')}
-                    </ReactReadMoreReadLess>
-                  </>
-                ) : (
-                  <>
-                    {`${equipment.desc.special}`}
-                    {className !== undefined &&
-                    className.toLowerCase() !== 'monk'
-                      ? replaceAll(equipment.desc.desc, mapObj)
-                      : equipment.desc.desc && <br />}
-                  </>
-                )}
-              </>
-            )}
-            {equipment.desc.desc && (
-              <>
-                {Array.isArray(equipment.desc.desc) ? (
-                  <>
-                    <hr />
-                    <ReactReadMoreReadLess
-                      charLimit={250}
-                      readMoreText="Show more"
-                      readLessText="Show less"
-                      readMoreClassName="read-more-less--more"
-                      readLessClassName="read-more-less--less"
-                    >
-                      {equipment.desc.desc.join('\n')}
-                    </ReactReadMoreReadLess>
-                  </>
-                ) : (
+          {equipment.desc && (
+            <>
+              <hr />
+              <div className="equipment-card-body">
+                {equipment.desc.category && (
                   <i className="equipment-item-info">
-                    {className !== undefined &&
-                    className.toLowerCase() !== 'monk'
-                      ? replaceAll(equipment.desc.desc, mapObj)
-                      : equipment.desc.desc}
+                    {equipment.desc.category}
                   </i>
                 )}
-              </>
-            )}
-          </div>
+                {equipment.desc.damage && (
+                  <p className="equipment-item">
+                    Damage:&nbsp;
+                    <i className="equipment-item-info">
+                      {`${equipment.desc.damage.damage_dice} ${equipment.desc.damage.damage_type}`}
+                      {equipment.desc.damage.two_handed
+                        ? ` one-handed, `
+                        : null}
+                    </i>
+                    {equipment.desc.damage.two_handed && (
+                      <i className="equipment-item-info">{`${equipment.desc.damage.two_handed.damage_dice} ${equipment.desc.damage.two_handed.damage_type} (two-handed)`}</i>
+                    )}
+                  </p>
+                )}
+                {equipment.desc.range && (
+                  <p className="equipment-item">
+                    Range:&nbsp;
+                    <i className="equipment-item-info">{`${
+                      equipment.desc.range.normal
+                    }${
+                      equipment.desc.range.long
+                        ? `/${equipment.desc.range.long}`
+                        : ``
+                    }`}</i>
+                  </p>
+                )}
+                {equipment.desc.cost && (
+                  <>
+                    {equipment.desc.weight ? (
+                      <p className="same-line">
+                        <span className="equipment-item">
+                          Cost:&nbsp;
+                          <i className="equipment-item-info">
+                            {equipment.desc.cost}
+                          </i>
+                        </span>
+                        <span className="equipment-item">
+                          Weight:&nbsp;
+                          <i className="equipment-item-info">
+                            {equipment.desc.weight}
+                          </i>
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="equipment-item">
+                        Cost:&nbsp;
+                        <i className="equipment-item-info">
+                          {equipment.desc.cost}
+                        </i>
+                      </p>
+                    )}
+                  </>
+                )}
+                {Array.isArray(equipment.desc.contents) && (
+                  <>
+                    Contents:&nbsp;
+                    {Object.keys(equipment.desc.contents)
+                      .map(function(k) {
+                        return equipment.desc.contents[k].item.name;
+                      })
+                      .join(', ')}
+                  </>
+                )}
+                {equipment.desc.special && (
+                  <>
+                    {Array.isArray(equipment.desc.special) ? (
+                      <>
+                        <hr />
+                        <ReactReadMoreReadLess
+                          charLimit={250}
+                          readMoreText="Show more"
+                          readLessText="Show less"
+                          readMoreClassName="read-more-less--more"
+                          readLessClassName="read-more-less--less"
+                        >
+                          {equipment.desc.special.join('\n')}
+                        </ReactReadMoreReadLess>
+                      </>
+                    ) : (
+                      <>
+                        {`${equipment.desc.special}`}
+                        {className !== undefined &&
+                        className.toLowerCase() !== 'monk'
+                          ? replaceAll(equipment.desc.desc, mapObj)
+                          : equipment.desc.desc && <br />}
+                      </>
+                    )}
+                  </>
+                )}
+                {equipment.desc.desc && (
+                  <>
+                    {Array.isArray(equipment.desc.desc) ? (
+                      <>
+                        <hr />
+                        <ReactReadMoreReadLess
+                          charLimit={250}
+                          readMoreText="Show more"
+                          readLessText="Show less"
+                          readMoreClassName="read-more-less--more"
+                          readLessClassName="read-more-less--less"
+                        >
+                          {equipment.desc.desc.join('\n')}
+                        </ReactReadMoreReadLess>
+                      </>
+                    ) : (
+                      <i className="equipment-item-info">
+                        {className !== undefined &&
+                        className.toLowerCase() !== 'monk'
+                          ? replaceAll(equipment.desc.desc, mapObj)
+                          : equipment.desc.desc}
+                      </i>
+                    )}
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
     </>
@@ -324,8 +357,8 @@ const EquipmentList = ({
   className,
   charID,
   theKey,
-  setEquipmentSelection,
   equipmentSelection,
+  setEquipmentSelection,
   dispatch,
 }) => {
   //const equipmentList = [].concat.apply([], Object.values(equipmentItems));
@@ -346,11 +379,12 @@ const EquipmentList = ({
     dispatch(
       setEquipment(charID, {
         choices: {
+          ...equipmentSelection,
           [theKey]: selectedCard,
         },
       })
     );
-    console.log('EQUIPMENT ITEM', selectedCard);
+    //console.log("EQUIPMENT ITEM", equipmentItem);
   }, [selectedCard]);
 
   return (
@@ -417,8 +451,6 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
-  const history = useHistory();
-
   const validateAndStore = () => {
     if (character.equipment == null) {
       //crimes i'm sorry couldn't get it working otherwise
@@ -427,20 +459,16 @@ export const Equipment = ({ charID, setPage }) => {
         set: equipmentList,
       };
     }
+    character.name = name;
     console.log(character);
-    CharacterService.createCharacter(
-      CharacterService.validateCharacter(character)
-    );
+    CharacterService.validateCharacter(character).then(character => {
+      dispatch(submitCharacter(character));
+    });
     history.push('/dashboard');
   };
 
   const onNext = () => {
-    dispatch(
-      setEquipment(charID, {
-        choices: equipmentSelection,
-        set: equipmentList,
-      })
-    );
+    console.log('EQUIPMENT', character.equipment);
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
@@ -451,10 +479,10 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentList).then(
         equipmentWDetails => {
           setEquipmentList(equipmentWDetails);
-          console.log('equipment', equipmentWDetails);
+          console.log('INITIAL EQUIPMENT', equipmentWDetails);
           dispatch(
             setEquipment(charID, {
-              set: equipmentWDetails,
+              set: equipmentList,
             })
           );
         }
@@ -464,7 +492,7 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentOptions).then(
         equipmentWDetails => {
           setEquipmentOptions(equipmentWDetails);
-          console.log('options', equipmentWDetails);
+          console.log('EQUIPMENT OPTIONS', equipmentWDetails);
         }
       )
     );
@@ -503,6 +531,7 @@ export const Equipment = ({ charID, setPage }) => {
                     <EquipmentItem
                       equipment={equipmentItem}
                       className={className}
+                      noButton={true}
                     />
                   </div>
                 );
@@ -524,14 +553,23 @@ export const Equipment = ({ charID, setPage }) => {
             );
           })}
           {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}
-          <button
-            className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-            data-toggle={!character.class?.spellcasting && 'modal'}
-            data-target={!character.class?.spellcasting && '#nameModalEq'}
-            onClick={character.class?.spellcasting && onNext}
-          >
-            OK
-          </button>
+          {character.class?.spellcasting?.level <= 1 && (
+            <button
+              className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+              onClick={onNext}
+            >
+              OK
+            </button>
+          )}
+          {!(character.class?.spellcasting?.level <= 1) && (
+            <button
+              className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+              data-toggle={'modal'}
+              data-target={'#nameModalEq'}
+            >
+              OK
+            </button>
+          )}
           <div
             className="modal fade"
             id="nameModalEq"

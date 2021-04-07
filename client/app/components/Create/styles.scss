@@ -358,6 +358,7 @@
   font-variant: small-caps;
   display: inline-block;
   margin-top: 0px;
+  text-align: center;
 
   h4 {
     margin: 0;
@@ -398,7 +399,7 @@
   @media (min-width: 768px) {
     display: flex;
     justify-content: center;
-    margin-bottom: 5px;
+    margin-top: 5px;
   }
 }
 
@@ -458,17 +459,18 @@
   padding: 10px;
   text-align: left;
   color: $dark-blue;
+  transition: border .3s, box-shadow .3s;
   &.selected-card {
-    border: 3px solid $green;
-    -webkit-box-shadow: 0 0 5px 1px $green;
-    -moz-box-shadow: 0 0 5px 1px $green;
-    box-shadow: 0 0 5px 1px $green;
+    border: 3px solid $medium-green;
+    -webkit-box-shadow: 0 0 5px 1px $medium-green;
+    -moz-box-shadow: 0 0 5px 1px $medium-green;
+    box-shadow: 0 0 5px 1px $medium-green;
   }
   .equipment-card-title {
     line-height: 1;
     color: $dark-blue;
     h5 {
-      margin-bottom: 6px;
+      margin-bottom: 0px;
     }
   }
   .equipment-card-body {
@@ -519,7 +521,7 @@ hr {
 }
 
 .same-line {
-  margin: 0;
+  margin: 0 4.5rem 0 0;
   color: $dark-blue;
   display: flex;
   justify-content: space-between;
@@ -931,34 +933,44 @@ hr {
 
 .btn-card {
   position: absolute;
-  top: 10px;
+  top: 5px;
   right: 10px;
-  color: $medium-green;
+  color: $dark-blue;
   font-size: 1rem;
-  max-width: 70px;
+  max-width: 4.25rem;
   margin: 0 0px 10px 0px;
   padding: 5px;
   box-shadow: none;
   line-height: 1;
   max-height: 1.67rem;
+  border-radius: 8px;
 }
 .btn-outline-success {
+  border: 3px solid $medium-green !important;
   &:hover {
-    background-color: $medium-green;
+    background-color: $medium-off-white;
+    color: $dark-blue;
   }
-  &:focus {
-    color: $off-white;
-    background-color: $dark-green;
+  &:focus,
+  &:active {
+    color: $white;
+    background-color: $dark-green !important;
+    border: 3px solid $dark-green !important;
   }
 }
 .btn-clicked {
-  color: $off-white;
+  color: white;
   background-color: $medium-green;
+  border: 3px solid $medium-green !important;
   &:hover {
-    color: $off-white;
+    color: white;
+    background-color: $dark-green;
+    border: 3px solid $dark-green !important;
   }
-  &:focus {
-    color: $off-white;
+  &:focus,
+  &:active {
+    color: $dark-blue;
+    background-color: $off-white;
   }
 }
 

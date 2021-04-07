@@ -11,11 +11,12 @@ import {
   SET_ABILITIES,
   SET_EQUIPMENT,
   SET_SPELLS,
+  SET_PAGE,
 } from '../actions/types';
 
 const initialCharacter = {
   race: null, //.ability_bonuses, .proficiencies, .choices{equipment: , proficiencies,  etc...}, .description {summary, physical, age}
-  class: null/*{
+  class: null /*{
     //.choices{equipment: ,proficiencies:,  etc...}, .equipment, .proficiencies
     spellcasting: {
       cantrips_known: 0,
@@ -32,6 +33,7 @@ const initialCharacter = {
   equipment: null,
   spells: null,
   submitted: false,
+  page: { name: 'race', index: 0 },
 };
 
 const character = (state = initialCharacter, action, charID) => {
@@ -45,6 +47,11 @@ const character = (state = initialCharacter, action, charID) => {
   const { type, payload } = action;
 
   switch (type) {
+    case CREATE_CHARACTER:
+      return {
+        ...state,
+        charID: payload.charID,
+      };
     case SET_RACE:
       return {
         ...state,
@@ -85,14 +92,22 @@ const character = (state = initialCharacter, action, charID) => {
         abilities: { ...state.abilities, ...payload.abilities },
       };
     case SET_EQUIPMENT:
-        return {
-            ...state,
-            equipment: {...state.equipment, ...payload.equipment }
-        }
+      return {
+        ...state,
+        equipment: { ...state.equipment, ...payload.equipment },
+      };
     case SET_SPELLS:
       return {
         ...state,
         spells: { ...state.spells, ...payload.spells },
+      };
+    case SET_PAGE:
+      return {
+        ...state,
+        page: {
+          name: payload.page.name,
+          index: Math.max(payload.page.index, state.page.index),
+        },
       };
     default:
       return state;
@@ -106,9 +121,10 @@ export default function(state = initialState, action) {
 
   switch (type) {
     case SUBMIT_CHARACTER_SUCCESS:
+      console.log('REDUCER', payload);
       return {
         ...state,
-        [payload.name]: payload,
+        [payload.charID]: payload,
       };
     case SUBMIT_CHARACTER_FAIL:
       return {
@@ -124,6 +140,10 @@ export default function(state = initialState, action) {
         ...state,
       };
     case CREATE_CHARACTER:
+      return {
+        ...state,
+        [payload.charID]: character(state[payload.charID], action, payload),
+      };
     case SET_RACE:
       return {
         ...state,
@@ -149,12 +169,17 @@ export default function(state = initialState, action) {
         ...state,
         [payload.charID]: character(state[payload.charID], action, payload),
       };
-      case SET_EQUIPMENT:
-        return {
-          ...state,
-          [payload.charID]: character(state[payload.charID], action, payload),
-        };
+    case SET_EQUIPMENT:
+      return {
+        ...state,
+        [payload.charID]: character(state[payload.charID], action, payload),
+      };
     case SET_SPELLS:
+      return {
+        ...state,
+        [payload.charID]: character(state[payload.charID], action, payload),
+      };
+    case SET_PAGE:
       return {
         ...state,
         [payload.charID]: character(state[payload.charID], action, payload),

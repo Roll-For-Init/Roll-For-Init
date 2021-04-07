@@ -38,6 +38,11 @@ export const Background = ({ charID, setPage }) => {
         })
         .then(bg => {
           let equipment = { equipment: bg.starting_equipment };
+          if (bg.other_equipment) {
+            equipment.equipment = equipment.equipment.concat(
+              bg.other_equipment
+            );
+          }
           dispatch(setBackground(charID, equipment));
           dispatch(
             setBackground(charID, { equipment_options: bg.equipment_options })
@@ -266,82 +271,86 @@ export const Background = ({ charID, setPage }) => {
               })}
             </div>
           )}
-          <div className="card translucent-card">
-            <div className="card content-card card-title">
-              <h4>Proficiencies</h4>
-            </div>
-            {selectionBg[0].index === 'custom' && (
-              <div className="dd-container">
-                <Dropdown
-                  ddLabel="Extra Skills"
-                  title="Choose 2"
-                  items={[...skills].filter(
-                    item => !skill.includes(item.name.toString().toLowerCase())
-                  )}
-                  // items={[...skills]}
-                  selection={selectionSk1}
-                  multiSelect
-                  selectLimit={2}
-                  setSelection={setSelectionSk1}
-                  classname="dd-choice"
-                />
+          {(selectionBg[0].index === 'custom' ||
+            selectionBg[0].proficiencies.size) && (
+            <div className="card translucent-card">
+              <div className="card content-card card-title">
+                <h4>Proficiencies</h4>
               </div>
-            )}
-            <>
               {selectionBg[0].index === 'custom' && (
                 <div className="dd-container">
                   <Dropdown
-                    ddLabel="Tools &#38; Languages"
+                    ddLabel="Extra Skills"
                     title="Choose 2"
-                    items={[
-                      ...languages,
-                      ...artisansTools,
-                      ...gamingSets,
-                      ...musicalInstruments,
-                      ...otherTools,
-                      ...kits,
-                      ...landVehicles,
-                      ...waterVehicles,
-                    ].filter(
+                    items={[...skills].filter(
                       item =>
                         !skill.includes(item.name.toString().toLowerCase())
                     )}
-                    selection={selectionTlLg1}
+                    // items={[...skills]}
+                    selection={selectionSk1}
                     multiSelect
                     selectLimit={2}
-                    setSelection={setSelectionTlLg1}
+                    setSelection={setSelectionSk1}
                     classname="dd-choice"
                   />
                 </div>
               )}
-              {selectionBg[0].index !== 'custom' && (
-                <div className="card content-card description-card mb-0">
-                  <p>
-                    {Object.keys(selectionBg[0].proficiencies).map(key => {
-                      return (
-                        selectionBg[0].proficiencies[key].length > 0 && (
-                          <p className="text-capitalize" key={key}>
-                            <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
-                            -{' '}
-                            {selectionBg[0].proficiencies[key].map(
-                              (prof, index) => {
-                                if (
-                                  selectionBg[0].proficiencies[key].length ===
-                                  index + 1
-                                )
-                                  return `${prof}`;
-                                else return `${prof}, `;
-                              }
-                            )}
-                          </p>
-                        )
-                      );
-                    })}
-                  </p>
-                </div>
-              )}
-            </>
-          </div>
+              <div>
+                {selectionBg[0].index === 'custom' && (
+                  <div className="dd-container">
+                    <Dropdown
+                      ddLabel="Tools &#38; Languages"
+                      title="Choose 2"
+                      items={[
+                        ...languages,
+                        ...artisansTools,
+                        ...gamingSets,
+                        ...musicalInstruments,
+                        ...otherTools,
+                        ...kits,
+                        ...landVehicles,
+                        ...waterVehicles,
+                      ].filter(
+                        item =>
+                          !skill.includes(item.name.toString().toLowerCase())
+                      )}
+                      selection={selectionTlLg1}
+                      multiSelect
+                      selectLimit={2}
+                      setSelection={setSelectionTlLg1}
+                      classname="dd-choice"
+                    />
+                  </div>
+                )}
+                {selectionBg[0].index !== 'custom' && (
+                  <div className="card content-card description-card mb-0">
+                    <p>
+                      {Object.keys(selectionBg[0].proficiencies).map(key => {
+                        return (
+                          selectionBg[0].proficiencies[key].length > 0 && (
+                            <p className="text-capitalize" key={key}>
+                              <strong className="small-caps">{`Extra ${key}`}</strong>{' '}
+                              -{' '}
+                              {selectionBg[0].proficiencies[key].map(
+                                (prof, index) => {
+                                  if (
+                                    selectionBg[0].proficiencies[key].length ===
+                                    index + 1
+                                  )
+                                    return `${prof}`;
+                                  else return `${prof}, `;
+                                }
+                              )}
+                            </p>
+                          )
+                        );
+                      })}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          )}
           <div className="card translucent-card">
             <div className="card content-card card-title">
               <h4>Background Feature</h4>

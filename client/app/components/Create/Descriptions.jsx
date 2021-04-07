@@ -54,7 +54,7 @@ export const Descriptions = ({ charID, setPage }) => {
     CharacterService.getIndexedList('alignments').then(list => {
       setAlignments(list);
     });
-    console.log(race);
+    console.log('RACE', race);
   }, []);
 
   const [userChoices, setUserChoices] = useReducer(reducer, {});
@@ -270,7 +270,7 @@ export const Descriptions = ({ charID, setPage }) => {
         <div className="card content-card description-card">
           <p>{race.description.size}</p>
         </div>
-        <div className="choice-container">
+        <div className="choice-container mb-1 mt-0">
           <div className="card content-card physical-card choice">
             <FloatingLabel
               id="height"
