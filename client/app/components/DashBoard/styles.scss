@@ -316,6 +316,13 @@
       color: $blue !important;
     }
 }
+.wrapper-button {
+    margin: 3px auto auto;
+    padding: 0;
+    display: block;
+    background-color: transparent;
+    box-shadow: none;
+}
 
   .list-item {
     display: inline-block;
