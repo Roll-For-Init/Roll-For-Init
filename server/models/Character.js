@@ -509,7 +509,8 @@ const CharacterSchema = new Schema({ //Add class specific slots
       proficiency: Boolean,
       modifier: Number,     
       advantage: Number
-    },
+    }
+  },
     defenses: {
       advantage: Number, // if advantage is -1, 0, or 1
       resistances: [{ name: String }],
@@ -525,7 +526,6 @@ const CharacterSchema = new Schema({ //Add class specific slots
       type: Boolean,
       default: false,
     },
-  },
   ac: Number,
   armor: [
     {

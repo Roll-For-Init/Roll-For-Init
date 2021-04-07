@@ -1,9 +1,16 @@
-import React  from 'react';
-import { useSelector, /*useDispatch*/ } from 'react-redux';
+import React, {useEffect, useState, useReducer}  from 'react';
+import ReactDOM from 'react-dom'
+import { useSelector, useDispatch } from 'react-redux';
 import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
+import { setUpdate, setArrayUpdate} from '../../redux/actions/characters';
 import './styles.scss';
-import {D20, StarOutline} from '../../utils/svgLibrary';
+import FloatingLabel from 'floating-label-react';
+import Modal from 'react-bootstrap4-modal';
+import EditableLabel from 'react-inline-editing';
+
+
+import {D20, StarOutline, StarFilled} from '../../utils/svgLibrary';
 
 //swap race class icons with white
 
@@ -28,18 +35,20 @@ const skillScores = {
   persuasion: 'cha'
 }
 
+const charConditions = ['Blinded','Charmed','Deafened','Exhaustion','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious'];
+
+
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
   console.log(user);
   
   const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
-
   const character = useSelector(state => state.characters[charID]);
   console.log(character);
 
   return (
     character.level ?
-    (<div className="dashboard">
+    (<div id="dashboard" className="dashboard">
       <Header />
       <div className="toolbar fixed-top">
         <div className="subheader py-1 px-3 pt-2">
@@ -129,11 +138,11 @@ export const DashBoard = () => {
           <div className="col-xl-7 px-0">
             <div className="row">
               <div className="col-sm-8 px-2">
-                      <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed}/>
-                      <HitPointsCard health={character.health} hit_dice={character.hit_dice}/>
+                      <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed} charID={charID}/>
+                      <HitPointsCard health={character.health} hit_dice={character.hit_dice} charID={charID}/>
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
-                <ExtraStatsCard conditions={character.conditions} defenses={character.defenses}/>
+                <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
               </div>
             </div>
             <div className="pinned row px-2">
@@ -257,7 +266,7 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
       <div className="card content-card description-card">
         {Object.entries(misc_proficiencies).map(misc_proficiency => {
           return (
-            <p className="text-capitalize" key={misc_proficiency[0]}>
+            misc_proficiency[1].length > 0 ? <p className="text-capitalize" key={misc_proficiency[0]}>
                 <span className="small-caps">{misc_proficiency[0]}</span> –{' '}
                 {misc_proficiency[1].map((item, idx) => (
                   <React.Fragment key={idx}>
@@ -266,6 +275,8 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
                   </React.Fragment>
                 ))}
             </p>
+            :
+            null
           );
         })}
       </div>
@@ -286,7 +297,15 @@ const SensesCard = ({perception, insight, investigation}) => {
   );
 };
 
-const StatsCard = ({initiative, ac, speed}) => {
+const StatsCard = ({initiative, ac, speed, charID}) => {
+  const [inspiration, setInspiration] = useState(false);
+  const dispatch = useDispatch();
+
+  const toggleInspiration = () => {
+    dispatch(setArrayUpdate(charID, 'inspiration', !inspiration))
+    setInspiration(!inspiration);
+  }
+
   return (
     <div className="stats-card">
     <div className="card translucent-card">
@@ -300,7 +319,11 @@ const StatsCard = ({initiative, ac, speed}) => {
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card">
             <h6 className="text-uppercase m-0 text-center">Inspiration</h6>
-            <StarOutline style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/>
+            {!inspiration ?
+              <button className='wrapper-button' onClick={toggleInspiration}><StarOutline style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/></button>
+              :
+              <button className='wrapper-button' onClick={toggleInspiration}><StarFilled style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/></button>
+            }
           </div>
         </div>
         <div className="col-sm px-2 py-1">
@@ -320,33 +343,145 @@ const StatsCard = ({initiative, ac, speed}) => {
     </div>
   );
 };
-
-const HitPointsCard = ({health, hit_dice}) => {
+const Portal = ({children}) => {
+  console.log(children)
+  return ReactDOM.createPortal(children, document.getElementById('dashboard'));
+};
+/*TODO: why won't it work in component?*/
+const ManualEntryModal = ({name, showModal, setShowModal, placeholder, thePrompt, buttonText, submitFunction, modifier}) => { 
+  const [value, setValue] = useState(null);
+  
   return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>{thePrompt}</h5>
+          </div>
+          <div className="card content-card name-card">
+            <FloatingLabel
+              id={placeholder}
+              name={placeholder}
+              placeholder={placeholder}
+              type="number"
+              min="0"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </div>
+          <button
+            className="text-uppercase btn-primary modal-button"
+            onClick={() => {submitFunction(value*Number.parseInt(modifier)); setShowModal(false)}}
+            data-dismiss="modal"
+          >
+            {buttonText}
+          </button>
+    </Modal>
+    </Portal>
+  )
+}
+
+const HitPointsCard = ({health, hit_dice, charID}) => {
+  const dispatch = useDispatch();
+
+  const [showDmg, setShowDmg] = useState(false);
+  const [showHealth, setShowHealth] = useState(false);
+  const [showSaves, setShowSaves] = useState(false);
+
+  const changeHealth = (amt) => {
+    amt = Number.parseInt(amt)
+    if(amt < 0 && health.temp > 0) {
+      let newAmt = amt + health.temp;
+      let newTemp = health.temp + amt;
+      dispatch(setUpdate(charID, 'health', {temp: newTemp}))
+      if(newAmt < 0) {
+        amt = newAmt
+      }
+    }
+    let newHealth = health.current+amt;
+    if(newHealth <= 0) setShowSaves(true);
+    else if(newHealth >health.max) newHealth = health.max;
+    let newState = {current: newHealth};
+
+    dispatch(setUpdate(charID, 'health', newState))
+  }
+
+  return (
+    <>
     <div className="hit-points card translucent-card long-card">
       <div className="row px-3">
         <div className="col-sm-7 px-2 py-1">
-        <h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Points</h6>
-        <div className="row p-0 m-0">
-          <div className="col-sm-8 px-1 py-0">
-            <div className="card content-card description-card my-0 mr-2 ml-0">
-              <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
+        {!showSaves ? 
+          (<><h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Points</h6>
+          <div className="row p-0 m-0">
+            <div className="col-sm-8 px-1 py-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0">
+                <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
+              </div>
+              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
             </div>
-            <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
-          </div>
-          <div className="col-sm-4 px-1 py-0">
-            <div className="card content-card description-card my-0 mr-2 ml-0">
-              <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
+            <div className="col-sm-4 px-1 py-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0">
+              {/*<EditableLabel text={health.temp}
+                labelClassName='text-uppercase text-center m-0'
+                inputClassName='text-uppercase text-center m-0'
+                inputWidth='200px'
+                inputHeight='25px'
+                inputMaxLength='50'
+                labelFontWeight='bold'
+                inputFontWeight='bold'
+                //onFocus={this._handleFocus}
+                //onFocusOut={this._handleFocusOut}
+        />*/}
+                <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
+              </div>
+              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
             </div>
-            <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
-          </div>
-        </div>
+          </div></>)
+          :
+          (
+            <><h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Death Saves</h6>
+          <div className="row p-0 m-0">
+            <div className="col-sm-8 px-1 py-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0">
+                <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
+              </div>
+              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
+            </div>
+            <div className="col-sm-4 px-1 py-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0">
+              {/*<EditableLabel text={health.temp}
+                labelClassName='text-uppercase text-center m-0'
+                inputClassName='text-uppercase text-center m-0'
+                inputWidth='200px'
+                inputHeight='25px'
+                inputMaxLength='50'
+                labelFontWeight='bold'
+                inputFontWeight='bold'
+                //onFocus={this._handleFocus}
+                //onFocusOut={this._handleFocusOut}
+          />*/}
+                <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
+              </div>
+              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
+            </div>
+          </div></>
+          )
+        }
         <div className="row px-3 m-0 mt-2">
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-alert text-uppercase text-center align-middle">Damage</button>
+            <button className="btn btn-alert text-uppercase text-center align-middle" onClick={() => setShowDmg(true)}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-success text-uppercase text-center align-middle">Heal</button>
+            <button className="btn btn-success text-uppercase text-center align-middle" onClick={() => setShowHealth(true)}>Heal</button>
           </div>
         </div>
         </div>
@@ -360,18 +495,106 @@ const HitPointsCard = ({health, hit_dice}) => {
         </div>
       </div>
     </div>
+    {showDmg && <ManualEntryModal name={`DmgModal`} showModal={showDmg} setShowModal={setShowDmg} placeholder="Amt" thePrompt="How much damage?" buttonText="OW!" submitFunction={changeHealth} modifier="-1"/>}
+    {showHealth && <ManualEntryModal name={`HealthModal`} showModal={showHealth} setShowModal={setShowHealth} placeholder="Amt" thePrompt="How much healing?" buttonText="Ah..." submitFunction={changeHealth} modifier="1"/>}
+    </>
   );
 };
 
-const ExtraStatsCard = ({conditions, defenses}) => {
+const PromptedModal = ({name, thePrompt, buttonText, showModal, setShowModal, submitFunction, options}) => {
+  
   return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>{thePrompt}</h5>
+          </div>
+          <table className='table modal-table'>
+              <tr>
+                { 
+              console.log(options.length)}
+            {options.slice(0, Math.ceil(options.length/2)).map((option, index) => {
+              return(
+                <td key={`condition-${index}`}>
+                <button
+                  type="button"
+                  className={'btn btn-primary m-1'
+                  }
+                  onClick={() => {submitFunction(option); setShowModal(false)}}
+                >
+                  {option}
+              </button>
+              </td>
+              )
+            })}
+            </tr>
+          <tr>
+            {options.slice(Math.ceil(options.length/2), options.length).map((option, index) => {
+              return(
+                <td key={`condition-${index}`}
+                >
+                  <button
+                    type="button"
+                    className={'btn btn-primary m-1'
+                    }
+                    onClick={() => {submitFunction(option); setShowModal(false)}}
+                  >
+                    {option}
+                </button>
+              </td>
+              )
+            })}
+          </tr>
+        </table>
+
+    </Modal>
+    </Portal>
+  )
+}
+
+const ExtraStatsCard = ({charID, conditions, defenses}) => {
+  const dispatch = useDispatch();
+  const reducer = (state, item) => {
+    let push = item.push;
+    item = item.item;
+    console.log(state, item);
+    let newState;
+    if(push) {state.push(item);
+      newState = state;
+    }
+    else newState = state.splice(state.indexOf(item), 1);
+    dispatch(setArrayUpdate(charID, 'conditions', newState));
+    console.log("NEW STATE", newState);
+    return newState;
+  };
+
+  const [showAdd, setShowAdd] = useState(false);
+  const [conditionList, setConditionList] = useReducer(reducer, conditions);
+
+  const addCondition = (condition) => {
+    setConditionList({item: condition, push: true});
+  }
+  const removeCondition = (condition) => {
+    setConditionList({item: condition, push: false})
+  }
+  return (
+    <>
     <div className="card translucent-card short-card extra-stats">
       <div className="card content-card description-card px-1">
         <h6 className="text-uppercase text-center m-0">Conditions</h6>
         {conditions.map((condition, index) => {
-          return (<button className="btn-outline-primary" key={`condition-${index}`}>{condition}</button>)
+          return (<button className="btn-outline-primary" onClick={() => removeCondition(condition)} key={`condition-${index}`}>{condition}</button>)
         })}
-        <button className="btn-outline-success"><span className="green">+</span> Add condition</button>
+        <button className="btn-outline-success" onClick={() => {setShowAdd(true)}}>{/*<input className='form-control'/>*/}<span className="green">+</span>Add condition</button>
       </div>
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Defenses</h6>
@@ -382,6 +605,8 @@ const ExtraStatsCard = ({conditions, defenses}) => {
         </ul>
       </div>
     </div>
+    {showAdd && <PromptedModal name={`ConditionModal`} thePrompt="Add Condition" buttonText="Add Condition" showModal={showAdd} setShowModal={setShowAdd} submitFunction={addCondition} options={charConditions}/>}
+    </>
   );
 };
 
