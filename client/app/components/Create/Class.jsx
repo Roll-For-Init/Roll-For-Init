@@ -229,7 +229,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                 <span>Hit Die - {main.hit_die}</span>
               </div>
             </div>
-            <div className="w-auto d-inline-block card content-card floating-card mb-0">
+            {/* <div className="w-auto d-inline-block card content-card floating-card mb-0">
               SAVING THROWS -{' '}
               {main.saving_throws.map((throws, idx) => (
                 <small key={idx}>
@@ -237,7 +237,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                   {idx < main.saving_throws.length - 1 && ', '}
                 </small>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
         {options.length > 0 && (
