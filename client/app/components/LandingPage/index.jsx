@@ -310,7 +310,9 @@ const LandingPage = () => {
       ) : (
           <div className="character-container">
             <div className="card translucent-card mt-0">
-            {Object.entries(characters).map((char, idx) => {
+              {Object.entries(characters).length === 0 ?
+                <div>No Characters Created Yet</div>
+                : Object.entries(characters).map((char, idx) => {
               const charInfo = char[1];
               return (
                 <div
@@ -320,7 +322,7 @@ const LandingPage = () => {
                 >
                   <div className="same-line mb-0">
                     <span className="same-line mb-0">
-                      {charInfo.portrait.name === "No file chosen" ?
+                      {charInfo.portrait?.name === "No file chosen" ?
                         <img
                           className="portrait-icon"
                           src={charPlaceholder}
@@ -330,25 +332,25 @@ const LandingPage = () => {
                         :
                         <img
                           className="portrait-icon"
-                          src={charInfo.portrait.name}
-                          alt={charInfo.portrait.name}
+                          src={charInfo.portrait?.name}
+                          alt={charInfo.portrait?.name}
                           width="70"
                           height="70"
                         />}
                       <div className="info-container">
-                        <p className="character-name">{`${charInfo.name}`}</p>
-                        <p className="character-info">{`${charInfo.race.name} ${charInfo.class[0].name} ${charInfo.level}`}</p>
+                        <p className="character-name">{`${charInfo?.name}`}</p>
+                        <p className="character-info">{`${charInfo.race?.name} ${charInfo.class[0]?.name} ${charInfo.level}`}</p>
                       </div>
                     </span>
                     <span className="same-line mb-0">
                       <div className="icon-container">
                         <img
                           className="character-icon"
-                          src={raceIcons[`${charInfo.race.name?.toLowerCase()}.png`]}
+                          src={raceIcons[`${charInfo.race?.name?.toLowerCase()}.png`]}
                         />
                         <img
                           className="character-icon"
-                          src={classIcons[`${charInfo.class[0].name?.toLowerCase()}.png`]}
+                          src={classIcons[`${charInfo.class[0]?.name?.toLowerCase()}.png`]}
                         />
                       </div>
                     </span>
