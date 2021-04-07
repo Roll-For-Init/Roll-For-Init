@@ -17,6 +17,7 @@ const EquipmentItem = ({
   dropdown = false,
   className,
   stateKey,
+  noButton=false
 }) => {
   const mapObj = { ', monk': '', monk: '' };
   // const [selection, setSelection] = useState(null)
@@ -27,10 +28,11 @@ const EquipmentItem = ({
       return mapObj[matched.toLowerCase()];
     });
   }
+  const skill = ['lyre', 'acrobatics', 'elvish'];
 
   return (
     <>
-      <div className="equipment-card-title same-line">
+      <div className={noButton ? "equipment-card-title" : "equipment-card-title same-line"}>
         {dropdown ? (
           <h5>{equipment.header}</h5>
         ) : (
@@ -50,7 +52,10 @@ const EquipmentItem = ({
             ddLabel=""
             hideLabel
             title={`Choose ${equipment.choose}`}
-            items={[...equipment.from]}
+            //items={[...equipment.from]}
+            items={[...equipment.from].filter(
+              item => !skill.includes(item.name.toString().toLowerCase())
+            )}
             width="100%"
             multiSelect={equipment.choose > 1}
             selectLimit={equipment.choose}
@@ -62,111 +67,115 @@ const EquipmentItem = ({
         </>
       ) : (
         <>
-          <hr />
-          <div className="equipment-card-body">
-            {equipment.desc.category && (
-              <i className="equipment-item-info">{equipment.desc.category}</i>
-            )}
-            {equipment.desc.damage && (
-              <p className="equipment-item">
-                Damage:&nbsp;
-                <i className="equipment-item-info">{`${equipment.desc.damage.damage_dice} ${equipment.desc.damage.damage_type}`}{equipment.desc.damage.two_handed ? ` one-handed, ` : null}</i>
-                {equipment.desc.damage.two_handed && (<i className="equipment-item-info">{`${equipment.desc.damage.two_handed.damage_dice} ${equipment.desc.damage.two_handed.damage_type} (two-handed)`}</i>)}
-              </p>
-            )}
-            {equipment.desc.range && (
-                <p className="equipment-item">
-                Range:&nbsp;
-                <i className="equipment-item-info">{`${equipment.desc.range.normal}${equipment.desc.range.long ? `/${equipment.desc.range.long}` : ``}`}</i>
-              </p>
-            )}
-            {equipment.desc.cost && (
-              <>
-                {equipment.desc.weight ? (
-                  <p className="same-line">
-                    <span className="equipment-item">
-                      Cost:&nbsp;
-                      <i className="equipment-item-info">
-                        {equipment.desc.cost}
-                      </i>
-                    </span>
-                    <span className="equipment-item">
-                      Weight:&nbsp;
-                      <i className="equipment-item-info">
-                        {equipment.desc.weight}
-                      </i>
-                    </span>
-                  </p>
-                ) : (
+          {equipment.desc && (
+            <>
+              <hr />
+              <div className="equipment-card-body">
+                {equipment.desc.category && (
+                  <i className="equipment-item-info">{equipment.desc.category}</i>
+                )}
+                {equipment.desc.damage && (
                   <p className="equipment-item">
-                    Cost:&nbsp;
-                    <i className="equipment-item-info">{equipment.desc.cost}</i>
+                    Damage:&nbsp;
+                    <i className="equipment-item-info">{`${equipment.desc.damage.damage_dice} ${equipment.desc.damage.damage_type}`}{equipment.desc.damage.two_handed ? ` one-handed, ` : null}</i>
+                    {equipment.desc.damage.two_handed && (<i className="equipment-item-info">{`${equipment.desc.damage.two_handed.damage_dice} ${equipment.desc.damage.two_handed.damage_type} (two-handed)`}</i>)}
                   </p>
                 )}
-              </>
-            )}
-            {Array.isArray(equipment.desc.contents) && (
-              <>
-                Contents:&nbsp;
-                {Object.keys(equipment.desc.contents)
-                  .map(function(k) {
-                    return equipment.desc.contents[k].item.name;
-                  })
-                  .join(', ')}
-              </>
-            )}
-            {equipment.desc.special && (
-              <>
-                {Array.isArray(equipment.desc.special) ? (
+                {equipment.desc.range && (
+                    <p className="equipment-item">
+                    Range:&nbsp;
+                    <i className="equipment-item-info">{`${equipment.desc.range.normal}${equipment.desc.range.long ? `/${equipment.desc.range.long}` : ``}`}</i>
+                  </p>
+                )}
+                {equipment.desc.cost && (
                   <>
-                    <hr />
-                    <ReactReadMoreReadLess
-                      charLimit={250}
-                      readMoreText="Show more"
-                      readLessText="Show less"
-                      readMoreClassName="read-more-less--more"
-                      readLessClassName="read-more-less--less"
-                    >
-                      {equipment.desc.special.join('\n')}
-                    </ReactReadMoreReadLess>
-                  </>
-                ) : (
-                  <>
-                    {`${equipment.desc.special}`}
-                    {className !== undefined &&
-                    className.toLowerCase() !== 'monk'
-                      ? replaceAll(equipment.desc.desc, mapObj)
-                      : equipment.desc.desc && <br />}
+                    {equipment.desc.weight ? (
+                      <p className="same-line">
+                        <span className="equipment-item">
+                          Cost:&nbsp;
+                          <i className="equipment-item-info">
+                            {equipment.desc.cost}
+                          </i>
+                        </span>
+                        <span className="equipment-item">
+                          Weight:&nbsp;
+                          <i className="equipment-item-info">
+                            {equipment.desc.weight}
+                          </i>
+                        </span>
+                      </p>
+                    ) : (
+                      <p className="equipment-item">
+                        Cost:&nbsp;
+                        <i className="equipment-item-info">{equipment.desc.cost}</i>
+                      </p>
+                    )}
                   </>
                 )}
-              </>
-            )}
-            {equipment.desc.desc && (
-              <>
-                {Array.isArray(equipment.desc.desc) ? (
+                {Array.isArray(equipment.desc.contents) && (
                   <>
-                    <hr />
-                    <ReactReadMoreReadLess
-                      charLimit={250}
-                      readMoreText="Show more"
-                      readLessText="Show less"
-                      readMoreClassName="read-more-less--more"
-                      readLessClassName="read-more-less--less"
-                    >
-                      {equipment.desc.desc.join('\n')}
-                    </ReactReadMoreReadLess>
+                    Contents:&nbsp;
+                    {Object.keys(equipment.desc.contents)
+                      .map(function(k) {
+                        return equipment.desc.contents[k].item.name;
+                      })
+                      .join(', ')}
                   </>
-                ) : (
-                  <i className="equipment-item-info">
-                    {className !== undefined &&
-                    className.toLowerCase() !== 'monk'
-                      ? replaceAll(equipment.desc.desc, mapObj)
-                      : equipment.desc.desc}
-                  </i>
                 )}
-              </>
-            )}
-          </div>
+                {equipment.desc.special && (
+                  <>
+                    {Array.isArray(equipment.desc.special) ? (
+                      <>
+                        <hr />
+                        <ReactReadMoreReadLess
+                          charLimit={250}
+                          readMoreText="Show more"
+                          readLessText="Show less"
+                          readMoreClassName="read-more-less--more"
+                          readLessClassName="read-more-less--less"
+                        >
+                          {equipment.desc.special.join('\n')}
+                        </ReactReadMoreReadLess>
+                      </>
+                    ) : (
+                      <>
+                        {`${equipment.desc.special}`}
+                        {className !== undefined &&
+                        className.toLowerCase() !== 'monk'
+                          ? replaceAll(equipment.desc.desc, mapObj)
+                          : equipment.desc.desc && <br />}
+                      </>
+                    )}
+                  </>
+                )}
+                {equipment.desc.desc && (
+                  <>
+                    {Array.isArray(equipment.desc.desc) ? (
+                      <>
+                        <hr />
+                        <ReactReadMoreReadLess
+                          charLimit={250}
+                          readMoreText="Show more"
+                          readLessText="Show less"
+                          readMoreClassName="read-more-less--more"
+                          readLessClassName="read-more-less--less"
+                        >
+                          {equipment.desc.desc.join('\n')}
+                        </ReactReadMoreReadLess>
+                      </>
+                    ) : (
+                      <i className="equipment-item-info">
+                        {className !== undefined &&
+                        className.toLowerCase() !== 'monk'
+                          ? replaceAll(equipment.desc.desc, mapObj)
+                          : equipment.desc.desc}
+                      </i>
+                    )}
+                  </>
+                )}
+              </div>
+            </>
+          )}
         </>
       )}
     </>
@@ -346,6 +355,11 @@ const EquipmentList = ({
     default: 2,
     767: 1,
   };
+  // useEffect(() => {
+  //   setEquipmentSelection({ [theKey]: selectedCard });
+  //   //console.log("EQUIPMENT ITEM", equipmentItem);
+  // }, [selectedCard]);
+
   useEffect(() => {
     setEquipmentSelection({ [theKey]: selectedCard });
     dispatch(
@@ -423,6 +437,8 @@ export const Equipment = ({ charID, setPage }) => {
     );
   };
 
+  const history = useHistory();
+
   const validateAndStore = () => {
       if (character.equipment == null) {
         //crimes i'm sorry couldn't get it working otherwise
@@ -444,8 +460,6 @@ export const Equipment = ({ charID, setPage }) => {
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
-
-  const history = useHistory();
 
   const onFinish = () => {
     validateAndStore();
@@ -497,7 +511,7 @@ export const Equipment = ({ charID, setPage }) => {
             style={{ paddingBottom: '10px' }}
           >
             <div className="card content-card card-title">
-              <h4>Starting Equipment</h4>
+              <h4>Base Equipment</h4>
             </div>
             <Masonry
               breakpointCols={breakpointColumnsObj}
@@ -510,6 +524,7 @@ export const Equipment = ({ charID, setPage }) => {
                     <EquipmentItem
                       equipment={equipmentItem}
                       className={className}
+                      noButton={true}
                     />
                   </div>
                 );
@@ -565,7 +580,7 @@ export const Equipment = ({ charID, setPage }) => {
                 <div className="modal-sect pb-0">
                   <h5>Name Your Character</h5>
                 </div>
-                <div className="card content-card name-card">
+                <div className="card content-card modal-name-card">
                   <FloatingLabel
                     id="name"
                     name="name"
@@ -577,7 +592,7 @@ export const Equipment = ({ charID, setPage }) => {
                 </div>
                 <button
                   className="text-uppercase btn-primary modal-button"
-                  onClick={onFinish}
+                  onClick={validateAndStore}
                   data-dismiss="modal"
                 >
                   FINISH
