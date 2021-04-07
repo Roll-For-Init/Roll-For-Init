@@ -54,7 +54,7 @@ export const Descriptions = ({ charID, setPage }) => {
     CharacterService.getIndexedList('alignments').then(list => {
       setAlignments(list);
     });
-    console.log(race);
+    console.log("RACE", race);
   }, []);
 
   const [userChoices, setUserChoices] = useReducer(reducer, {});

@@ -7,7 +7,7 @@ import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
 import FloatingLabel from 'floating-label-react';
 import { useHistory } from 'react-router-dom';
-import { setEquipment } from '../../redux/actions';
+import { setEquipment, submitCharacter } from '../../redux/actions';
 import { Link } from 'react-router-dom';
 
 const EquipmentItem = ({
@@ -74,7 +74,14 @@ const EquipmentItem = ({
             {equipment.desc.damage && (
               <p className="equipment-item">
                 Damage:&nbsp;
-                <i className="equipment-item-info">{equipment.desc.damage}</i>
+                <i className="equipment-item-info">{`${equipment.desc.damage.damage_dice} ${equipment.desc.damage.damage_type}`}{equipment.desc.damage.two_handed ? ` one-handed, ` : null}</i>
+                {equipment.desc.damage.two_handed && (<i className="equipment-item-info">{`${equipment.desc.damage.two_handed.damage_dice} ${equipment.desc.damage.two_handed.damage_type} (two-handed)`}</i>)}
+              </p>
+            )}
+            {equipment.desc.range && (
+                <p className="equipment-item">
+                Range:&nbsp;
+                <i className="equipment-item-info">{`${equipment.desc.range.normal}${equipment.desc.range.long ? `/${equipment.desc.range.long}` : ``}`}</i>
               </p>
             )}
             {equipment.desc.cost && (
@@ -324,10 +331,17 @@ const EquipmentList = ({
   className,
   charID,
   theKey,
+  equipmentSelection, 
   setEquipmentSelection,
-  equipmentSelection,
-  dispatch,
+  dispatch
 }) => {
+  // either store the equipment list here, and then select from that list
+  // based on the key of the selected card (+1 since the first index is just the header)
+  // or do it in equipment card, where each card stores all of its own equipment
+  // doing it in equipmentlist is probably better, but im not sure
+  // either way, they would have to be concatenated in the main equipment component,
+  // but it would probably be best to wait until the user goes to the next page, so
+  // it doesn't have to be updated every time they change their selection?
   //const equipmentList = [].concat.apply([], Object.values(equipmentItems));
   //console.log(equipmentList);
   const [selectedCard, setSelectedCard] = useState(null);
@@ -346,11 +360,12 @@ const EquipmentList = ({
     dispatch(
       setEquipment(charID, {
         choices: {
-          [theKey]: selectedCard,
-        },
+          ...equipmentSelection, 
+          [theKey]: selectedCard
+        }
       })
     );
-    console.log('EQUIPMENT ITEM', selectedCard);
+    //console.log("EQUIPMENT ITEM", equipmentItem);
   }, [selectedCard]);
 
   return (
@@ -420,29 +435,32 @@ export const Equipment = ({ charID, setPage }) => {
   const history = useHistory();
 
   const validateAndStore = () => {
-    if (character.equipment == null) {
-      //crimes i'm sorry couldn't get it working otherwise
-      character.equipment = {
-        choices: equipmentSelection,
-        set: equipmentList,
-      };
-    }
-    console.log(character);
-    CharacterService.createCharacter(
-      CharacterService.validateCharacter(character)
-    );
-    history.push('/dashboard');
+      if (character.equipment == null) {
+        //crimes i'm sorry couldn't get it working otherwise
+        character.equipment = {
+          choices: equipmentSelection,
+          set: equipmentList,
+        };
+      }
+      character.name = name;
+      console.log(character);
+      history.push('/dashboard');
+      CharacterService.validateCharacter(character).then((character) => {
+        dispatch(submitCharacter(character));
+      })
   };
 
   const onNext = () => {
-    dispatch(
-      setEquipment(charID, {
-        choices: equipmentSelection,
-        set: equipmentList,
-      })
-    );
+    console.log("EQUIPMENT", character.equipment)
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
+  };
+
+  const history = useHistory();
+
+  const onFinish = () => {
+    validateAndStore();
+    history.push('/dashboard');
   };
 
   useEffect(() => {
@@ -451,10 +469,10 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentList).then(
         equipmentWDetails => {
           setEquipmentList(equipmentWDetails);
-          console.log('equipment', equipmentWDetails);
+          console.log('INITIAL EQUIPMENT', equipmentWDetails);
           dispatch(
             setEquipment(charID, {
-              set: equipmentWDetails,
+              set: equipmentList,
             })
           );
         }
@@ -464,7 +482,7 @@ export const Equipment = ({ charID, setPage }) => {
       CharacterService.getEquipmentDetails(equipmentOptions).then(
         equipmentWDetails => {
           setEquipmentOptions(equipmentWDetails);
-          console.log('options', equipmentWDetails);
+          console.log('EQUIPMENT OPTIONS', equipmentWDetails);
         }
       )
     );
@@ -524,14 +542,20 @@ export const Equipment = ({ charID, setPage }) => {
             );
           })}
           {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}
-          <button
+          {character.class?.spellcasting?.level<=1 && (
+            <button className="text-uppercase btn-primary btn-lg px-5 btn-floating" onClick={onNext}>
+              OK
+            </button>
+          )}
+          {!(character.class?.spellcasting?.level<=1) && (
+            <button
             className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-            data-toggle={!character.class?.spellcasting && 'modal'}
-            data-target={!character.class?.spellcasting && '#nameModalEq'}
-            onClick={character.class?.spellcasting && onNext}
-          >
+            data-toggle={'modal'}
+            data-target={'#nameModalEq'}
+            >
             OK
-          </button>
+            </button>
+          )}
           <div
             className="modal fade"
             id="nameModalEq"

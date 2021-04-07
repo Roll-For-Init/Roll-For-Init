@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSpells } from '../../redux/actions/characters';
+import { setSpells, submitCharacter } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
 import Masonry from 'react-masonry-css';
@@ -155,21 +155,27 @@ SpellList.propTypes = {
 };
 
 export const Spells = ({ charID, setPage }) => {
+  const history = useHistory();
+
   const onNext = () => {
     setPage({ index: 5, name: 'spells' });
     window.scrollTo(0, 0);
   };
 
   const character = useSelector(state => state.characters[charID]);
-  console.log(character);
   const [spellChoices, setSpellChoices] = useState(null);
   const dispatch = useDispatch();
 
   const [name, setName] = useState('');
 
+  let druid1;
+  /*ADDRESS: NOT FLEXIBLE */
+  if(character?.class?.index.toLowerCase() === 'druid') {
+    druid1 = character.abilities['4'].modifier +1;
+  }
   const limit = {
-    0: character.class.spellcasting.cantrips_known,
-    1: character.class.spellcasting.spells_known,
+    0: character?.class?.spellcasting?.cantrips_known,
+    1: druid1 ? (druid1 > 0 ? druid1 : 1) : character?.class?.spellcasting?.spells_known,
   };
 
   const getKnownSpells = level => {
@@ -222,20 +228,22 @@ export const Spells = ({ charID, setPage }) => {
   const history = useHistory();
 
   const validateAndStore = () => {
+    // console.log(character);
+    character.name = name;
     console.log(character);
-    CharacterService.createCharacter(
-      CharacterService.validateCharacter(character)
-    );
     history.push('/dashboard');
+    CharacterService.validateCharacter(character).then((character) => {
+      dispatch(submitCharacter(character));
+    })
   };
 
   useEffect(() => {
     if (!character.class.index) return;
+
     CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
       dispatch(setSpells(charID, { cards: cards }));
     });
-    console.log(character);
   }, []);
 
   return (

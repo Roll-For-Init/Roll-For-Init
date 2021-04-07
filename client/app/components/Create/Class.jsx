@@ -15,6 +15,9 @@ const Class = ({ charID, setPage }) => {
   const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
+    if (character?.class?.index) {
+      setViewClass(true);
+    }
     CharacterService.getIndexedList('classes').then(list => setClasses(list));
   }, []);
 

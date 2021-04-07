@@ -15,16 +15,13 @@ const CharacterSchema = new Schema({ //Add class specific slots
   },
   race: {
     name: String,
-    description: {
-        age: String,
-        size: String,
-        summary: [String]
-    }
+    subrace: String
   },
   class: [
     {
       name: String,
-      levels: Number
+      levels: Number,
+      subclass: String
     }
   ],
   features: [
@@ -530,13 +527,30 @@ const CharacterSchema = new Schema({ //Add class specific slots
     },
   },
   ac: Number,
-  equipped_armor: [
+  armor: [
     {
       name: String,
-      description: String,
+      category: String,
+      desc: String,
+      equipped: Boolean,
       armor_type: String,        // e.g. light, medium, heavy
-      base_ac: Number,
-      modifier: String,    // modifier is max +2 bonus?
+      armor_class: {
+        base: Number,
+        dex_bonus: Boolean,
+        max_bonus: Number
+      },
+      str_minimum: Number,
+      stealth_disadvantage: Boolean,
+      proficiency: Boolean,
+      weight: Number,
+      cost: {
+        amount: Number,
+        denomination: String        // e.g. "gp", "sp", etc.
+      },
+      pinned: {
+        type: Boolean,
+        default: false
+      }
       /*mechanics: [
         {
           skill: String,
@@ -567,39 +581,59 @@ const CharacterSchema = new Schema({ //Add class specific slots
     weapons: [
       {
         name: String,
-        attack_type: String,
+        category: String,
+        description: String,
+        range: {
+          normal: Number,
+          long: Number
+        },
         damage_type: String,
         damage_dice: String,
-        modifier: Number,
-        ammunition: {
-          current: Number,
-          max: Number
+        two_handed_damage_dice: String,
+        proficiency: Boolean, 
+        weight: Number,
+        quantity: Number,
+        cost: {
+          amount: Number,
+          denomination: String        // e.g. "gp", "sp", etc.
+        },
+        properties: [{ name: String }],
+        pinned: {
+            type: Boolean,
+            default: false
         }
+        //attack_bonus: Number,
+        //damage_bonus: Number
+        // ammunition: {
+        //   current: Number,
+        //   max: Number
+        // }
       }
     ],
-    magic_weapons: [
-      {
-        name: String,
-        attack_type: String,
-        damage_type: String,
-        damage_dice: String,
-        modifier: Number,
-        ammunition: {
-          current: Number,
-          max: Number
-        }/*,
-        mechanics: [
-          {
-            skill: String,
-            stat: Number,
-            is_active: {
-              type: Boolean,
-              default: false
-            }  
-          }
-        ]*/
-      }
-    ]
+    // magic_weapons: [
+    //   {
+    //     name: String,
+    //     attack_type: String,
+    //     damage_type: String,
+    //     damage_dice: String,
+    //     modifier: Number,
+    //     // ammunition: {
+    //     //   current: Number,
+    //     //   max: Number
+    //     // }
+    //     /*,
+    //     mechanics: [
+    //       {
+    //         skill: String,
+    //         stat: Number,
+    //         is_active: {
+    //           type: Boolean,
+    //           default: false
+    //         }  
+    //       }
+    //     ]*/
+    //   }
+    // ]
   },
   spells: {
     slots: [{
@@ -626,7 +660,11 @@ const CharacterSchema = new Schema({ //Add class specific slots
             damage: {
                 damage_type: String, 
                 damage_at_slot_level: {}
-            }      
+            },  
+            pinned: {
+                type: Boolean,
+                default: false
+            } 
         }
     ]
     /*
@@ -678,6 +716,10 @@ const CharacterSchema = new Schema({ //Add class specific slots
         amount: Number,
         denomination: String        // e.g. "gp", "sp", etc.
       },
+      pinned: {
+        type: Boolean,
+        default: false
+      }
       /*
       mechanics: [
         {
@@ -700,7 +742,11 @@ const CharacterSchema = new Schema({ //Add class specific slots
     other: [
       {
         name: String,
-        value: Number
+        value: Number,
+        pinned: {
+            type: Boolean,
+            default: false
+        }
       }
     ]
   },
