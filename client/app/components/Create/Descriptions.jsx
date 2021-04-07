@@ -270,7 +270,7 @@ export const Descriptions = ({ charID, setPage }) => {
         <div className="card content-card description-card">
           <p>{race.description.size}</p>
         </div>
-        <div className="choice-container">
+        <div className="choice-container mb-1 mt-0">
           <div className="card content-card physical-card choice">
             <FloatingLabel
               id="height"
@@ -316,7 +316,7 @@ export const Descriptions = ({ charID, setPage }) => {
             onChange={e => setAge(e.target.value)}
           />
         </div>
-        <div className="choice-container mb-0">
+        <div className="choice-container my-0">
           <div className="card content-card physical-card choice mb-0">
             <FloatingLabel
               id="eyes"

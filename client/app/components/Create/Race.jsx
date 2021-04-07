@@ -595,20 +595,24 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
                 </p>
                 {trait.table && (
                   <table>
-                    <tr>
-                      {trait.table.header.map(item => {
-                        return <th key={item}>{item}</th>;
+                    <thead>
+                      <tr>
+                        {trait.table.header.map(item => {
+                          return <th key={item}>{item}</th>;
+                        })}
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {trait.table.rows.map(row => {
+                        return (
+                          <tr key={row}>
+                            {row.map(item => {
+                              return <td key={item}>{item}</td>;
+                            })}
+                          </tr>
+                        );
                       })}
-                    </tr>
-                    {trait.table.rows.map(row => {
-                      return (
-                        <tr key={row}>
-                          {row.map(item => {
-                            return <td key={item}>{item}</td>;
-                          })}
-                        </tr>
-                      );
-                    })}
+                    </tbody>
                   </table>
                 )}
               </div>

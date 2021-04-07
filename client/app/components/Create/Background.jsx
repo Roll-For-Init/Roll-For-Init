@@ -38,6 +38,9 @@ export const Background = ({ charID, setPage }) => {
         })
         .then(bg => {
           let equipment = { equipment: bg.starting_equipment };
+          if (bg.other_equipment) {
+            equipment.equipment = equipment.equipment.concat(bg.other_equipment)
+          }
           dispatch(setBackground(charID, equipment));
           dispatch(
             setBackground(charID, { equipment_options: bg.equipment_options })
@@ -266,6 +269,7 @@ export const Background = ({ charID, setPage }) => {
               })}
             </div>
           )}
+          {(selectionBg[0].index === 'custom' || selectionBg[0].proficiencies.size) &&
           <div className="card translucent-card">
             <div className="card content-card card-title">
               <h4>Proficiencies</h4>
@@ -287,7 +291,6 @@ export const Background = ({ charID, setPage }) => {
                 />
               </div>
             )}
-            <>
               {selectionBg[0].index === 'custom' && (
                 <div className="dd-container">
                   <Dropdown
@@ -340,8 +343,8 @@ export const Background = ({ charID, setPage }) => {
                   </p>
                 </div>
               )}
-            </>
-          </div>
+            </div>
+          }
           <div className="card translucent-card">
             <div className="card content-card card-title">
               <h4>Background Feature</h4>

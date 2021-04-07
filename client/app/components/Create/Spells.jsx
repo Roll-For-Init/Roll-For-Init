@@ -225,8 +225,6 @@ export const Spells = ({ charID, setPage }) => {
     dispatch(setSpells(charID, payload));
   };
 
-  const history = useHistory();
-
   const validateAndStore = () => {
     // console.log(character);
     character.name = name;
