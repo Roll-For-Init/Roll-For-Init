@@ -190,6 +190,7 @@ const optionsHelper = async (container, options, key) => {
       ? options.header
       : options.type.replace('_', ' ');
     optionSet.type = 'trait';
+    if(options.desc) optionSet.desc = options.desc;
   } else if (options.type.toLowerCase().includes('language')) {
     optionSet.header = `extra ${options.type}`;
     optionSet.type = options.type;
@@ -637,6 +638,23 @@ const classCaller = async classPointer => {
 const getClassDescriptions = async theClass => {
   let promises = [];
   for (let optionSet of theClass.options) {
+    optionSet.options.forEach(option => {
+      if (!option.hasOwnProperty('url')) {
+        return;
+      }
+      promises.push(
+        axios
+          .get(option.url)
+          .then(optionDetails => {
+            optionDetails = optionDetails.data;
+            if (optionDetails.desc) option.desc = optionDetails.desc;
+            else option.desc = placeholderDescription;
+          })
+          .catch(err => console.error(err))
+      );
+    });
+  }
+  for (let optionSet of theClass.subclass.subclass_options) {
     optionSet.options.forEach(option => {
       if (!option.hasOwnProperty('url')) {
         return;

@@ -294,7 +294,7 @@ export const Spells = ({ charID, setPage }) => {
                 <div className="modal-sect pb-0">
                   <h5>Name Your Character</h5>
                 </div>
-                <div className="card content-card name-card">
+                <div className="card content-card modal-name-card">
                   <FloatingLabel
                     id="name"
                     name="name"

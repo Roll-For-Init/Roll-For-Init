@@ -9,6 +9,7 @@ import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
 import { setDescription } from '../../redux/actions';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
 
 export const Descriptions = ({ charID, setPage }) => {
   const dispatch = useDispatch();
@@ -151,9 +152,9 @@ export const Descriptions = ({ charID, setPage }) => {
         personality_traits: personality,
         ideals: ideals,
         bonds: bonds,
-        flaws: flaws, 
+        flaws: flaws,
         backstory: backstory,
-        relationships: relationships
+        relationships: relationships,
       },
       physical_description: {
         height: height,
@@ -163,12 +164,16 @@ export const Descriptions = ({ charID, setPage }) => {
         skin: skin,
         hair: hair,
       },
-      portrait: {name: fileName}
-    }
+      portrait: { name: fileName },
+    };
     dispatch(setDescription(charID, description));
     setPage({ index: 5, name: 'equipment' });
     window.scrollTo(0, 0);
   };
+
+  const [isIdealsPopoverOpen, setIdealsPopoverOpen] = useState(false);
+  const [isBondsPopoverOpen, setBondsPopoverOpen] = useState(false);
+  const [isFlawsPopoverOpen, setFlawsPopoverOpen] = useState(false);
 
   return (
     <div className="background">
@@ -181,78 +186,91 @@ export const Descriptions = ({ charID, setPage }) => {
           <h4>Personality</h4>
         </div>
         <div className="card content-card description-card">
-          <ReactReadMoreReadLess
-            charLimit={250}
-            readMoreText="Show more"
-            readLessText="Show less"
-            readMoreClassName="read-more-less--more"
-            readLessClassName="read-more-less--less"
-          >
-            {race.description.summary.join('\n')}
-          </ReactReadMoreReadLess>
+          <p>
+            <ReactReadMoreReadLess
+              charLimit={250}
+              readMoreText="Show more"
+              readLessText="Show less"
+              readMoreClassName="read-more-less--more"
+              readLessClassName="read-more-less--less"
+            >
+              {race.description.summary.join('\n')}
+            </ReactReadMoreReadLess>
+          </p>
         </div>
-        <Dropdown
-          ddLabel="Alignment"
-          title="Choose 1"
-          items={alignments}
-          width="80%"
-          selection={selectionAl}
-          setSelection={setSelectionAl}
-        />
-        <div className="card content-card description-card">
-          <FloatingLabel
-            component="textarea"
-            id="persTraits"
-            name="persTraits"
-            placeholder="Personality Traits"
-            type="text"
-            value={personality}
-            onChange={e => setPersonality(e.target.value)}
+        <div className="dd-container">
+          <Dropdown
+            ddLabel="Alignment"
+            title="Choose 1"
+            items={alignments}
+            width="80%"
+            popover
+            popoverText="Alignments help guide your character's personality and behaviors. Lawful characters respect authority and follow the laws of the land. Chaotic characters, on the other hand, represent the polar opposite of Lawful ones. They live by their own rules and ignore society's expectations. Neutral characters sit somewhere in between. They are neither compelled to strictly follow rules, nor are they compelled to break them."
+            selection={selectionAl}
+            setSelection={setSelectionAl}
           />
         </div>
         <div className="card content-card description-card">
-          <FloatingLabel
-            component="textarea"
-            id="ideals"
-            name="ideals"
-            placeholder="Ideals"
-            type="text"
-            value={ideals}
-            onChange={e => setIdeals(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="persTraits"
+              name="persTraits"
+              placeholder="Personality Traits"
+              type="text"
+              value={personality}
+              onChange={e => setPersonality(e.target.value)}
+            />
+          </p>
         </div>
         <div className="card content-card description-card">
-          <FloatingLabel
-            component="textarea"
-            id="bonds"
-            name="bonds"
-            placeholder="Bonds"
-            type="text"
-            value={bonds}
-            onChange={e => setBonds(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="ideals"
+              name="ideals"
+              placeholder="Ideals"
+              type="text"
+              value={ideals}
+              onChange={e => setIdeals(e.target.value)}
+            />
+          </p>
+        </div>
+        <div className="card content-card description-card">
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="bonds"
+              name="bonds"
+              placeholder="Bonds"
+              type="text"
+              value={bonds}
+              onChange={e => setBonds(e.target.value)}
+            />
+          </p>
         </div>
         <div className="card content-card description-card mb-0">
-          <FloatingLabel
-            component="textarea"
-            id="flaws"
-            name="flaws"
-            placeholder="Flaws"
-            type="text"
-            value={flaws}
-            onChange={e => setFlaws(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="flaws"
+              name="flaws"
+              placeholder="Flaws"
+              type="text"
+              value={flaws}
+              onChange={e => setFlaws(e.target.value)}
+            />
+          </p>
         </div>
       </div>
       <div className="card translucent-card">
-        {' '}
         <div className="card content-card card-title">
           <h4>Physical</h4>
         </div>
         <div className="card content-card description-card">
-          {race.description.size}
+          <p>{race.description.size}</p>
         </div>
-        <div className="choice-container">
+        <div className="choice-container mb-1 mt-0">
           <div className="card content-card physical-card choice">
             <FloatingLabel
               id="height"
@@ -276,15 +294,17 @@ export const Descriptions = ({ charID, setPage }) => {
           </div>
         </div>
         <div className="card content-card description-card mt-0">
-          <ReactReadMoreReadLess
-            charLimit={250}
-            readMoreText="Show more"
-            readLessText="Show less"
-            readMoreClassName="read-more-less--more"
-            readLessClassName="read-more-less--less"
-          >
-            {race.description.age}
-          </ReactReadMoreReadLess>
+          <p>
+            <ReactReadMoreReadLess
+              charLimit={250}
+              readMoreText="Show more"
+              readLessText="Show less"
+              readMoreClassName="read-more-less--more"
+              readLessClassName="read-more-less--less"
+            >
+              {race.description.age}
+            </ReactReadMoreReadLess>
+          </p>
         </div>
         <div className="card content-card physical-card">
           <FloatingLabel
@@ -296,8 +316,8 @@ export const Descriptions = ({ charID, setPage }) => {
             onChange={e => setAge(e.target.value)}
           />
         </div>
-        <div className="choice-container mb-0">
-          <div className="card content-card choice mb-0">
+        <div className="choice-container my-0">
+          <div className="card content-card physical-card choice mb-0">
             <FloatingLabel
               id="eyes"
               name="eyes"
@@ -307,7 +327,7 @@ export const Descriptions = ({ charID, setPage }) => {
               onChange={e => setEyes(e.target.value)}
             />
           </div>{' '}
-          <div className="card content-card choice mb-0">
+          <div className="card content-card physical-card choice mb-0">
             <FloatingLabel
               id="skin"
               name="skin"
@@ -317,7 +337,7 @@ export const Descriptions = ({ charID, setPage }) => {
               onChange={e => setSkin(e.target.value)}
             />
           </div>{' '}
-          <div className="card content-card choice mb-0">
+          <div className="card content-card physical-card choice mb-0">
             <FloatingLabel
               id="hair"
               name="hair"
@@ -349,7 +369,7 @@ export const Descriptions = ({ charID, setPage }) => {
           {({ getRootProps, getInputProps }) => (
             <section>
               <div
-                className="card content-card drag-drop-card mb-0"
+                className="card content-card drag-drop-card no-shadow mb-0"
                 {...getRootProps()}
               >
                 <button className="btn btn-primary btm-buttons upload-buttons">
@@ -369,26 +389,30 @@ export const Descriptions = ({ charID, setPage }) => {
           <h4>Other</h4>
         </div>
         <div className="card content-card description-card">
-          <FloatingLabel
-            component="textarea"
-            id="charBackstory"
-            name="charBackstory"
-            placeholder="Character Backstory"
-            type="text"
-            value={backstory}
-            onChange={e => setBackstory(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="charBackstory"
+              name="charBackstory"
+              placeholder="Character Backstory"
+              type="text"
+              value={backstory}
+              onChange={e => setBackstory(e.target.value)}
+            />
+          </p>
         </div>
         <div className="card content-card description-card mb-0">
-          <FloatingLabel
-            component="textarea"
-            id="relationships"
-            name="relationships"
-            placeholder="Relationships"
-            type="text"
-            value={relationships}
-            onChange={e => setRelationships(e.target.value)}
-          />
+          <p>
+            <FloatingLabel
+              component="textarea"
+              id="relationships"
+              name="relationships"
+              placeholder="Relationships"
+              type="text"
+              value={relationships}
+              onChange={e => setRelationships(e.target.value)}
+            />
+          </p>
         </div>
       </div>
       <button
