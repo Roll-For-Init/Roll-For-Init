@@ -237,6 +237,8 @@ CharacterSection.propTypes = {
 
 const LandingPage = () => {
   const { auth, characters } = useSelector(state => state);
+  // const { isLoggedIn } = useSelector(state => state.auth);
+
   const history = useHistory();
 
   function handleClick() {
@@ -276,26 +278,8 @@ const LandingPage = () => {
       level: '2',
       portraitsrc: charPlaceholder,
     },
-    {
-      firstname: 'Xorglum',
-      lastname: 'Lightbeard',
-      race: 'gnome',
-      class: 'cleric',
-      level: '4',
-      portraitsrc: charPlaceholder,
-    },
-    {
-      firstname: 'Rooaar',
-      lastname: 'Graaagggh',
-      race: 'half-orc',
-      class: 'rogue',
-      level: '8',
-      portraitsrc: charPlaceholder,
-    },
   ];
 
-  const { isLoggedIn } = useSelector(state => state.auth);
-  // const isLoggedIn = true;
   return (
     <div className="container landing">
       <div className="filler-space"></div>
@@ -330,9 +314,12 @@ const LandingPage = () => {
           </Link>
         </div>
       ) : (
-        <div className="character-container">
-          <div className="card translucent-card mt-0">
-            {exampleCharacters.map((character, idx) => {
+          <div className="character-container">
+            {console.log(characters)}
+            <div className="card translucent-card mt-0">
+            {Object.entries(characters).map((char, idx) => {
+              console.log(char[1]);
+              const charInfo = char[1];
               return (
                 <div
                   className="card content-card character-card"
@@ -341,33 +328,43 @@ const LandingPage = () => {
                 >
                   <div className="same-line mb-0">
                     <span className="same-line mb-0">
-                      <img
-                        className="portrait-icon"
-                        src={character.portraitsrc}
-                        width="70"
-                        height="70"
-                      />
+                      {charInfo.portrait.name === "No file chosen" ?
+                        <img
+                          className="portrait-icon"
+                          src={exampleCharacters[0].portraitsrc}
+                          alt={exampleCharacters[0].portraitsrc}
+                          width="70"
+                          height="70"
+                        />
+                        :
+                        <img
+                          className="portrait-icon"
+                          src={charInfo.portrait.name}
+                          alt={charInfo.portrait.name}
+                          width="70"
+                          height="70"
+                        />}
                       <div className="info-container">
-                        <p className="character-name">{`${character.firstname}`}</p>
-                        <p className="character-info">{`${character.race} ${character.class} ${character.level}`}</p>
+                        <p className="character-name">{`${charInfo.name}`}</p>
+                        <p className="character-info">{`${charInfo.race.name} ${charInfo.class.name} ${charInfo.level}`}</p>
                       </div>
                     </span>
                     <span className="same-line mb-0">
                       <div className="icon-container">
                         <img
                           className="character-icon"
-                          src={raceIcons[`${character.race}.png`]}
+                          src={raceIcons[`${charInfo.race.name?.toLowerCase()}.png`]}
                         />
                         <img
                           className="character-icon"
-                          src={classIcons[`${character.class}.png`]}
+                          src={classIcons[`${charInfo.class[0].name?.toLowerCase()}.png`]}
                         />
                       </div>
                     </span>
                   </div>
                 </div>
               );
-            })}
+              })}
           </div>
         </div>
       )}
