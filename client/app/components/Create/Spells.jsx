@@ -147,7 +147,7 @@ SpellList.propTypes = {
 
 export const Spells = ({ charID, setPage }) => {
   const onNext = () => {
-    setPage({ index: 5, name: 'spells' });
+    setPage({ index: 5, name: 'pdf create' });
     window.scrollTo(0, 0);
   };
 

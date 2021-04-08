@@ -9,7 +9,7 @@ import Descriptions from './Descriptions';
 import Equipment from './Equipment';
 import Spells from './Spells';
 import MobileMenu from './MobileMenu';
-import PDFCreate from './PDFCreate';
+import PDFCreate from './PDFCreate'
 
 import { startCharacter } from '../../redux/actions/';
 
@@ -20,13 +20,13 @@ import { Link } from 'react-router-dom';
 //import {backgroundCaller} from '../apiCaller';
 
 const buttonNames = [
+  'pdf create',
   'race',
   'class',
   'abilities',
   'background',
   'description',
   'equipment',
-  'pdf create',
 ];
 
 const Loading = () => {
@@ -73,12 +73,11 @@ useEffect(() => {
       case 'equipment':
         pages = <Equipment setPage={setPage} page={page} charID={charID} />;
         break;
-      case 'pdf create':
-          pages = <PDFCreate setPage={setPage} page={page} charID = {charID}/>;
-          break;
-        /*
       case 'spells':
         pages = <Spells setPage={setPage} page={page} charID={charID} />;
+        break;
+      case 'pdf create':
+        pages = <PDFCreate setPage={setPage} page={page} charID = {charID}/>;
         break;
     }
   };
@@ -107,7 +106,8 @@ useEffect(() => {
                 className={classname}
                 disabled={page.index < idx}
                 onClick={() => {
-                  page.index > idx && onPageChange(name, idx);
+                  //page.index > idx && 
+                  onPageChange(name, idx);
                 }}
               >
                 {name}
