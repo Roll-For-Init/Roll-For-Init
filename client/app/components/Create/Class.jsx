@@ -84,19 +84,20 @@ const Class = ({ charID, setPage }) => {
 };
 
 const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
+  const theClass = useSelector(state => state.characters[charID].class);
+  const [classInfo, setClassInfo] = useState(undefined);
+
   const reducer = (state, newProp) => {
     let newState = { ...state, ...newProp };
     dispatch(setClass(charID, { choices: newState }));
     return newState;
   };
 
-  const theClass = useSelector(state => state.characters[charID].class);
-
   //See background for an example! Make sure to include a key in the dropdown
-  const [userChoices, setUserChoices] = useReducer(reducer, {});
-  const [classInfo, setClassInfo] = useState(undefined);
-  const [selection1, setSelection1] = useState([]);
-  const [selection2, setSelection2] = useState([]);
+  const [userChoices, setUserChoices] = useReducer(
+    reducer,
+    theClass?.choices ?? {}
+  );
 
   useEffect(() => {
     CharacterService.getClassInfo(theClass)
@@ -137,7 +138,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         dispatch(setClass(charID, { level: 1 }));
         dispatch(setClass(charID, { levels: theClass.levels }));
       });
-  }, []);
+  }, [theClass.index]);
 
   const onNext = () => {
     setPage({ index: 2, name: 'abilities' });

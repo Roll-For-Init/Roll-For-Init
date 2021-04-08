@@ -253,17 +253,6 @@ const AbilityBonusCard = ({ ability_bonuses }) => {
   );
 };
 
-/*
-const abilityBonusProps = {
-  bonus: PropTypes.number.isRequired,
-  ability_score: PropTypes.shape({
-    index: PropTypes.string.isRequired,
-    full_name: PropTypes.string,
-    name: PropTypes.string,
-  }),
-};
-AbilityBonusCard.propTypes = { ...abilityBonusProps };
-*/
 const AbilityBonuses = ({ ability_bonuses }) => {
   return (
     <React.Fragment>
@@ -271,21 +260,16 @@ const AbilityBonuses = ({ ability_bonuses }) => {
     </React.Fragment>
   );
 };
-/*
-AbilityBonuses.propTypes = {
-  ability_bonuses: PropTypes.arrayOf(
-    PropTypes.shape({
-      ...abilityBonusProps,
-    })
-  ),
-};
-*/
+
 const RaceDetails = ({ charID, clearRace, dispatch }) => {
+  const { race } = useSelector(state => state.characters[charID]);
+  const [raceInfo, setRaceInfo] = useState(undefined);
+
   const reducer = (state, newProp) => {
     let key = Object.keys(newProp)[0];
-    if(key.includes("ability")) {
+    if (key.includes('ability')) {
       let bonus = parseInt(key.charAt(1));
-      for(let item of newProp[key]) {
+      for (let item of newProp[key]) {
         item.bonus = bonus;
       }
     }
@@ -294,10 +278,10 @@ const RaceDetails = ({ charID, clearRace, dispatch }) => {
     return newState;
   };
 
-  const [userChoices, setUserChoices] = useReducer(reducer, {});
-  const { race } = useSelector(state => state.characters[charID]);
-
-  const [raceInfo, setRaceInfo] = useState(undefined);
+  const [userChoices, setUserChoices] = useReducer(
+    reducer,
+    race?.choices ?? {}
+  );
 
   useEffect(() => {
     CharacterService.getRaceInfo(race)
@@ -319,28 +303,27 @@ const RaceDetails = ({ charID, clearRace, dispatch }) => {
           ? race.main.ability_bonuses.concat(race.sub.ability_bonuses)
           : race.main.ability_bonuses;
         let allTraits = race.sub
-        ? race.main.traits.concat(race.sub.racial_traits)
-        : race.main.traits;
+          ? race.main.traits.concat(race.sub.racial_traits)
+          : race.main.traits;
         let theDescription = {
           summary: [race.main.alignment, race.sub?.desc],
           age: race.main.age,
           size: race.main.size_description,
         };
 
-        dispatch(setRace(charID, 
-          { ability_bonuses: abilityBonuses,
+        dispatch(
+          setRace(charID, {
+            ability_bonuses: abilityBonuses,
             proficiencies: race.proficiencies,
             traits: allTraits,
             subrace: race.sub?.name,
-            description: theDescription, 
+            description: theDescription,
             size: race.main.size,
-            speed: race.main.speed
-          }));
+            speed: race.main.speed,
+          })
+        );
       });
-  }, []);
-
-  const [selection1, setSelection1] = useState([]);
-  const [selection2, setSelection2] = useState([]);
+  }, [race.index]);
 
   const onNext = () => {
     dispatch(setPage(charID, { index: 1, name: 'class' }));
@@ -401,16 +384,16 @@ const RaceDetails = ({ charID, clearRace, dispatch }) => {
                   multiSelect={option.choose > 1}
                   selection={
                     userChoices[
-                      `${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${option.type}-${index}`
+                      `${option.header.toLowerCase().replace(' ', '-')}-${
+                        option.type
+                      }-${index}`
                     ]
                   }
                   setSelection={setUserChoices}
                   classname="dd-choice"
-                  stateKey={`${option.header
-                    .toLowerCase()
-                    .replace(' ', '-')}-${option.type}-${index}`}
+                  stateKey={`${option.header.toLowerCase().replace(' ', '-')}-${
+                    option.type
+                  }-${index}`}
                 />
               </div>
             );
@@ -426,14 +409,16 @@ const RaceDetails = ({ charID, clearRace, dispatch }) => {
             {//console.log(Object.values(raceInfo.proficiencies))
             Object.keys(raceInfo.proficiencies).map(key => {
               return (
-                raceInfo.proficiencies[key].length > 0 && <p className="text-capitalize">
-                  <strong className="small-caps">{key}</strong> -{' '}
-                  {raceInfo.proficiencies[key].map((prof, index) => {
-                    if (raceInfo.proficiencies[key].length === index + 1)
-                      return `${prof}`;
-                    else return `${prof}, `;
-                  })}
-                </p>
+                raceInfo.proficiencies[key].length > 0 && (
+                  <p className="text-capitalize">
+                    <strong className="small-caps">{key}</strong> -{' '}
+                    {raceInfo.proficiencies[key].map((prof, index) => {
+                      if (raceInfo.proficiencies[key].length === index + 1)
+                        return `${prof}`;
+                      else return `${prof}, `;
+                    })}
+                  </p>
+                )
               );
             })}
           </div>
