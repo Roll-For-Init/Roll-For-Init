@@ -6,7 +6,7 @@
   flex-wrap: nowrap;
   max-width: 500px;
   width: 100%;
-  margin: 5px auto;
+  margin: 0 auto;
   text-transform: capitalize;
   position: relative;
   .dd-label {
@@ -26,7 +26,7 @@
   }
   .dd-header {
     transition: 0.15s;
-    box-shadow: -1px 1px 2px rgba(0, 0%, 0%, 67%);
+    box-shadow: -1px 0px 2px rgba(0, 0%, 0%, 67%);
     display: flex;
     flex-direction: row;
     z-index: 1;
@@ -43,7 +43,8 @@
     }
     &.eq-card {
       box-shadow: none;
-      border: 1px solid $maroon;
+      border: 1.5px solid $maroon;
+      margin-top: 5px;
     }
     &__title {
       flex: 1;
@@ -71,9 +72,13 @@
     border: 3px solid $maroon;
     border-radius: 8px;
     max-height: 19.5rem;
+    background-color: $off-white;
     &.eq-card {
       box-shadow: none;
-      border: 1px solid $maroon;
+      border: 1.5px solid $maroon;
+      &.scroll::-webkit-scrollbar-track {
+        margin: 1px 0;
+      }
     }
     li {
       list-style-type: none;
@@ -81,7 +86,10 @@
       button {
         color: $dark-blue;
         display: flex;
+        flex-direction: row;
         justify-content: space-between;
+        align-items: center;
+        margin: auto;
         background-color: $off-white;
         font-size: 16px;
         padding: 5px 10px;
@@ -89,8 +97,11 @@
         border-bottom: 1px solid rgb(0, 0, 0);
         width: 100%;
         text-align: left;
-        margin: 0 auto;
         text-transform: none;
+
+        h5 {
+          margin: 4px auto;
+        }
 
         &.selected {
           background-color: $medium-off-white;
@@ -112,7 +123,7 @@
   overflow: auto;
 }
 .scroll::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 .scroll::-webkit-scrollbar-track {
   border-radius: 0px 5px 5px 0px;

@@ -1,10 +1,21 @@
-const axios = require('axios').default;
-
-import { racePointerList } from './constants';
-import apiCaller from '../../components/apiCaller';
+const axios = require('axios');
+const apiCaller = require('../../utils/apiCaller');
+const {parseEquipment, fillModel} = require('../../utils/characterValidator');
 
 const API_URL = '/api/';
 
+const validateCharacter = async characterData => {
+    console.log(characterData.equipment);
+    console.log(characterData.class.proficiencies);
+    console.log(characterData.race.proficiencies);
+    console.log(characterData.background.proficiencies);
+    console.log(characterData.class.proficiencies.Armor.concat(characterData.race.proficiencies.Armor).concat(characterData.background.proficiencies.Armor))
+    let equipment = await parseEquipment(characterData.equipment, characterData.class.proficiencies.Weapons.concat(characterData.race.proficiencies.Weapons).concat(characterData.background.proficiencies.Weapons), characterData.class.proficiencies.Armor.concat(characterData.race.proficiencies.Armor).concat(characterData.background.proficiencies.Armor));
+    console.log(equipment);
+    return await fillModel(equipment, characterData).then((validatedCharacter) => {
+        return validatedCharacter
+    });    
+}
 const createCharacter = characterData => {
   return axios.post(API_URL + 'characters/create', characterData);
 };
@@ -29,24 +40,10 @@ const getSubList = (url) => {
     return axios.get(`${API_URL}${url}`).then((items) => {
         return items.data;
     })
-}
+};
 
-//Leave out index to get all race objects
 const getRaceInfo = (race) => {
     return apiCaller.propogateRacePointer(race);
-    /*
-  if (index) {
-    const racePointer = list.find(
-      racePointer => racePointer.index === index
-    );
-    return apiCaller.propogateRacePointer(racePointer);
-  } else {
-    let raceInfoList = [];
-    for (let racePointer of racePointerList) {
-      raceInfoList.push(apiCaller.propogateRacePointer(racePointer));
-    }
-    return raceInfoList;
-  }*/
 };
 const getRaceDetails = (race) => {
     return apiCaller.getRaceMiscDescriptions(race);
@@ -70,25 +67,28 @@ const getAbilityScoreInfo = abilityScore => {
 
 const getEquipmentDetails = equipment => {
   return apiCaller.equipmentDetails(equipment);
-}
+};
 const getSpells = (theClass, levels) => {
     let url = `${API_URL}classes/${theClass.index.toLowerCase()}/levels/`;
     let subclassSpells = theClass.subclass && theClass.subclass_spells ? theClass.subclass.subclass_spells : [];
     return apiCaller.getSpellCards(levels, url, subclassSpells);
-}
-
-export default {
-  createCharacter,
-  updateCharacter,
-  deleteCharacter,
-  getIndexedList,
-  getSubList,
-  getRaceInfo,
-  getClassInfo,
-  getBackgroundInfo,
-  getAbilityScoreInfo,
-  getRaceDetails,
-  getClassDetails,
-  getEquipmentDetails,
-  getSpells
 };
+const getLevel = (theClass, level) => {
+    return axios.get(API_URL + 'classes/' + theClass + 'levels/' + level);
+};
+
+export default { validateCharacter,
+    createCharacter,
+    updateCharacter,
+    deleteCharacter,
+    getIndexedList,
+    getSubList,
+    getRaceInfo,
+    getClassInfo,
+    getBackgroundInfo,
+    getAbilityScoreInfo,
+    getRaceDetails,
+    getClassDetails,
+    getEquipmentDetails,
+    getSpells,
+    getLevel }

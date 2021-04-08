@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { setAbilities } from '../../redux/actions';
 // import CharacterService from '../../redux/services/character.service';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
 
 export const Abilities = ({ charID, setPage }) => {
   const dispatch = useDispatch();
@@ -68,14 +69,30 @@ export const Abilities = ({ charID, setPage }) => {
         const ability = charInfo.race.ability_bonuses.find(
           abil => abil.ability_score.index === item.short_name
         );
-        if (ability) {
+        let ability2 = null;
+        for (let key in charInfo.race.choices) {
+          //assumes u can only choose an ability score ONCE
+          if (key.includes('ability')) {
+            //assumes u can only modify an ability ONCE
+            ability2 = charInfo.race.choices[key].find(
+              abil => abil.index === item.short_name
+            );
+          }
+        }
+        if (ability || ability2) {
           return {
-            name: ability.ability_score.full_name,
-            short_name: ability.ability_score.index,
+            name: ability
+              ? ability.ability_score.full_name
+              : ability2.full_name,
+            short_name: ability ? ability.ability_score.index : ability2.index,
             points: 10,
-            bonus: ability.bonus,
+            bonus: ability
+              ? ability.bonus + (ability2 ? ability2.bonus : 0)
+              : ability2.bonus,
             modifier: 0,
-            finalScore: 10 + ability.bonus,
+            finalScore: ability
+              ? 10 + ability.bonus + (ability2 ? ability2.bonus : 0)
+              : 10 + ability2.bonus,
           };
         } else {
           return item;
@@ -104,7 +121,11 @@ export const Abilities = ({ charID, setPage }) => {
           }
         }
       });
-      if (abilityCards.some(ab => { return (ab.points < 8 || ab.points > 15); })) {
+      if (
+        abilityCards.some(ab => {
+          return ab.points < 8 || ab.points > 15;
+        })
+      ) {
         tempTotal = Infinity;
       }
     }
@@ -113,7 +134,9 @@ export const Abilities = ({ charID, setPage }) => {
 
   const onNext = () => {
     // setSelectedAbilities({ index: race.name, url: race.url });
+    console.log('ONNEXT', abilityCards);
     dispatch(setAbilities(charID, abilityCards));
+    console.log("ABILITIES", abilityCards);
     setPage({ index: 3, name: 'background' });
     window.scrollTo(0, 0);
   };
@@ -134,8 +157,8 @@ export const Abilities = ({ charID, setPage }) => {
       allTotals.push({
         dice: dice,
         total: total,
-        droppedIndex: dice.indexOf(min)
-      })
+        droppedIndex: dice.indexOf(min),
+      });
     }
     setDiceTotals(allTotals);
   };
@@ -153,7 +176,7 @@ export const Abilities = ({ charID, setPage }) => {
             'Rolled: Click the button below to generate a set of 6 scores using the rolled method and assign those scores to your abilities. Alternatively, roll dice yourself according to your abilities. Alternatively, roll dice yourself according to the following rules and input the scores yourself. Roll 4d6 and add the highest 3 numbers to generate each score. Do this 6 times and assign the values to your abilites.',
           ]}
         />
-        <div className="container-fluid w-75 mx-auto">
+        <div className="container-fluid mx-auto">
           <DiceRoll onDiceRoll={onDiceRoll} diceTotals={diceTotals} />
           <div className="row">
             {abilityCards &&
@@ -191,7 +214,7 @@ export const Abilities = ({ charID, setPage }) => {
 const BasicInfoCard = ({ content }) => {
   return (
     <div className="card translucent-card">
-      <div className="w-auto d-inline-block card content-card floating-card">
+      <div className="w-auto d-inline-block card content-card description-card mt-0 mb-0">
         {content.map((cont, idx) => (
           <p key={idx} className="m-0 text-left">
             {cont}
@@ -207,10 +230,7 @@ const DiceRoll = ({ onDiceRoll, diceTotals }) => {
     <div>
       <div className="row">
         <div className="col">
-          <button
-            className="btn-primary btn-lg mt-0 px-5"
-            onClick={onDiceRoll}
-          >
+          <button className="btn-primary btn-lg mt-0 px-5" onClick={onDiceRoll}>
             Roll Scores
           </button>
         </div>
@@ -220,13 +240,27 @@ const DiceRoll = ({ onDiceRoll, diceTotals }) => {
           <div className="card translucent-card dice-roll-card">
             <div className="container-fluid">
               <div className="row row-cols-3">
-                {diceTotals.map(dice => {
+                {diceTotals.map((dice, idx) => {
                   return (
-                    <div className="col px-1">
-                      <div className="d-inline-block card content-card floating-card w-100 mx-0 px-0">
+                    <div className="col px-1" key={idx}>
+                      <div className="d-inline-block card content-card floating-card indie-dice-card w-100 mx-0 px-0">
                         <div className="dice">
                           {dice.dice.map((d, idx) => {
-                            return <div className={(idx === dice.droppedIndex ? "dropped" : "")}>{d}</div>
+                            return (
+                              <div
+                                // className={
+                                //   idx === dice.droppedIndex ? 'dropped' : ''
+                                // }
+                                key={idx}
+                              >
+                                {/* {d} */}
+                                <i
+                                  className={`${
+                                    idx === dice.droppedIndex ? 'dropped' : ''
+                                  } df-solid-small-dot-d6-${d}`}
+                                ></i>
+                              </div>
+                            );
                           })}
                         </div>
                         <h4> = {dice.total}</h4>
@@ -320,10 +354,81 @@ const PointBuyCard = ({
     setChoices(parseInt(event.target.value));
   };
 
+  const [isAbilityPopoverOpen, setAbilityPopoverOpen] = useState(false);
+
+  const abilitiesToSkills = {
+    strength: ['athletics'],
+    dexterity: ['acrobatics', 'sleight of hand', 'stealth'],
+    intelligence: ['arcana', 'history', 'investigation', 'nature', 'religion'],
+    wisdom: [
+      'animal handling',
+      'insight',
+      'medicine',
+      'perception',
+      'survival',
+    ],
+    charisma: ['deception', 'intimidation', 'performance', 'persuasion'],
+  };
+
+  const abilitiesToSkills2 = {
+    strength: 'Athletics',
+    dexterity: 'Acrobatics, Sleight of Hand, and Stealth',
+    intelligence: 'Arcana, History, Investigation, Nature, and Religion',
+    wisdom: 'Animal Handling, Insight, Medicine, Perception, and Survival',
+    charisma: 'Deception, Intimidation, Performance, and Persuasion',
+  };
+
+  //const getSkillsFromAbility = ability => abilitiesToSkills[ability].join(', ');
+  const getSkillSFromAbility = ability => abilitiesToSkills2[ability];
+
   return (
     <div className="card point-card">
       <div className="card content-card card-title">
-        <h4>{title}</h4>
+        <div className="same-line">
+          <Popover
+            isOpen={isAbilityPopoverOpen}
+            positions={['left', 'top', 'bottom']}
+            padding={15}
+            //containerParent=?
+            boundaryInset={10}
+            onClickOutside={() => setAbilityPopoverOpen(false)}
+            content={({ position, childRect, popoverRect }) => (
+              <ArrowContainer
+                position={position}
+                childRect={childRect}
+                popoverRect={popoverRect}
+                arrowColor={'#f6efe4'}
+                arrowSize={10}
+                className="popover-arrow-container"
+                arrowClassName="popover-arrow"
+              >
+                <div
+                  className="card content-card description-card popover-card"
+                  style={{ maxWidth: '250px' }}
+                  //onClick={() => setIsPopoverOpen(!isSpeedPopoverOpen)}
+                >
+                  <p>
+                    {title.toString().toLowerCase() === 'constitution'
+                      ? `Your ${title} measures your endurance and is used to help keep you live.`
+                      : `Your ${title} determines your skill level at ${getSkillSFromAbility(
+                          title.toString().toLowerCase()
+                        )}. `}
+                    {title.toString().toLowerCase() === 'strength' &&
+                      'Strength, along with Dexterity, is used for weapon attacks.'}
+                    {title.toString().toLowerCase() === 'dexterity' &&
+                      'Dexterity, along with Strength, is used for weapon attacks.'}
+                  </p>
+                </div>
+              </ArrowContainer>
+            )}
+          >
+            <i
+              className="bi bi-info-circle info-icon ml-0"
+              onClick={() => setAbilityPopoverOpen(!isAbilityPopoverOpen)}
+            ></i>
+          </Popover>
+          <h4>{title}</h4>
+        </div>
       </div>
       <div>
         <h1 className="points-header">
@@ -352,11 +457,11 @@ const PointBuyCard = ({
         </h1>
       </div>
       {bonus > 0 && (
-        <div className="p-1 card content-card description-card text-center">
+        <div className="py-1 px-2 card content-card description-card text-center w-auto">
           <p className="text-capitalize">Racial Bonus: +{bonus}</p>
         </div>
       )}
-      <div className="card content-card description-card fancy-card text-center">
+      <div className="card content-card description-card fancy-card text-center mb-0">
         <p className="text-capitalize">Final Score: </p>
         <h4 className="mb-0 text-capitalize">
           {finalScore} ({modifier >= 0 && '+'}
@@ -367,27 +472,27 @@ const PointBuyCard = ({
   );
 };
 
-const PointsRemainingCard = ({ pointsRemaining, }) => {
+const PointsRemainingCard = ({ pointsRemaining }) => {
   return (
     <div className="card translucent-card w-fit-content">
-      { (pointsRemaining === Infinity)
-        ?
-          <div className="d-flex">
-            <div className="card content-card warning-card">
-              <i className="bi bi-exclamation-triangle-fill text-warning icon"></i>
-              <h4 className="text">
-                You have scores above 15 or below 8, which is not allowed using point buy.
-              </h4>
-            </div>
+      {pointsRemaining === Infinity ? (
+        <div className="d-flex">
+          <div className="card content-card warning-card">
+            <i className="bi bi-exclamation-triangle-fill text-warning icon"></i>
+            <h4 className="text">
+              You have scores above 15 or below 8, which is not allowed using
+              point buy.
+            </h4>
           </div>
-        :
+        </div>
+      ) : (
         <div>
           <div>
             <div className="card content-card card-title mr-3">
               <h4>Points Remaining</h4>
             </div>
             <div className="card content-card card-title points-remaining-card mb-2">
-              { pointsRemaining < 0 && (
+              {pointsRemaining < 0 && (
                 <i className="bi bi-exclamation-triangle-fill text-warning icon"></i>
               )}
               <h4>{pointsRemaining}/27</h4>
@@ -454,7 +559,7 @@ const PointsRemainingCard = ({ pointsRemaining, }) => {
             </div>
           </div>
         </div>
-      }
+      )}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=IM+Fell+DW+Pica:ital@0;1&family=IM+Fell+English:ital@1&display=swap');
 @import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.0/font/bootstrap-icons.css');
+@import url('https://cdn.rawgit.com/fponticelli/dicefont/fc6b8c47/dist/dicefont/dicefont.css');
 @import 'client/app/variables';
 
 html {
@@ -16,16 +17,17 @@ body {
 
 body::-webkit-scrollbar {
   overflow: overlay;
-  width: 0.5em;
+  width: 10px;
 }
 
 body::-webkit-scrollbar-track {
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  //-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: #121212;
 }
 
 body::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  background-color: darkgrey;
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
 .title {
@@ -63,7 +65,7 @@ button {
 }
 
 .btn-primary {
-  transition: .15s;
+  transition: 0.15s;
   background-color: $blue;
   color: white;
   &:not([disabled]) {
@@ -87,7 +89,7 @@ button {
   }
 }
 .btn-secondary {
-  transition: .15s;
+  transition: 0.15s;
   background-color: $off-white;
   color: $dark-blue;
   &:not([disabled]) {

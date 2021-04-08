@@ -5,6 +5,7 @@ import CharacterService from '../../redux/services/character.service';
 // import { clearSelectedInfo, getClassInfo } from '../../redux/actions';
 import Dropdown from '../shared/Dropdown';
 import { setClass } from '../../redux/actions';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
 
 const Class = ({ charID, setPage }) => {
   const dispatch = useDispatch();
@@ -14,6 +15,9 @@ const Class = ({ charID, setPage }) => {
   const character = useSelector(state => state.characters[charID]);
 
   useEffect(() => {
+    if (character?.class?.index) {
+      setViewClass(true);
+    }
     CharacterService.getIndexedList('classes').then(list => setClasses(list));
   }, []);
 
@@ -22,6 +26,22 @@ const Class = ({ charID, setPage }) => {
     setViewClass(true);
   };
 
+  function importAll(r) {
+    let images = {};
+    r.keys().map((item, index) => {
+      images[item.replace('./', '')] = r(item);
+    });
+    return images;
+  }
+
+  const classIconsOffWhite = importAll(
+    require.context(
+      '../../../public/assets/imgs/icons/off-white/class',
+      false,
+      /\.(png)$/
+    )
+  );
+
   return (
     <div className="class position-relative">
       {!viewClass ? (
@@ -29,19 +49,24 @@ const Class = ({ charID, setPage }) => {
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Class</h2>
           </div>
-          <div className="dropdown btn-group-vertical w-100 mt-3">
+          <div className="icon-grid">
             {classes &&
               classes.map((theClass, idx) => (
-                <div className="w-100 h-auto" key={idx}>
-                  <button
-                    className="btn btn-secondary btn-lg m-0 mb-3 options"
-                    type="button"
+                <div className="icon-card-container" key={idx}>
+                  <div
+                    className="card icon-card-label"
                     onClick={() =>
                       selectClass({ index: theClass.name, url: theClass.url })
                     }
                   >
-                    {theClass.name}
-                  </button>
+                    <div className="card icon-card">
+                      <img
+                        className="card-icon"
+                        src={classIconsOffWhite[`${theClass.index}.png`]}
+                      />
+                    </div>
+                    <p>{theClass.name}</p>
+                  </div>
                 </div>
               ))}
           </div>
@@ -78,7 +103,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
       .then(
         theClass => {
           setClassInfo(theClass);
-          console.log("CLASS", theClass);
+          console.log('CLASS', theClass);
           return theClass;
         }
         /*error => {
@@ -91,10 +116,26 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
         });
         let equipment = { equipment: theClass.main.starting_equipment };
         dispatch(setClass(charID, equipment));
-        dispatch(setClass(charID, { equipment_options: theClass.equipment_options }));
+        dispatch(
+          setClass(charID, { equipment_options: theClass.equipment_options })
+        );
         dispatch(setClass(charID, { proficiencies: theClass.proficiencies }));
-        dispatch(setClass(charID, {spellcasting: theClass.spellcasting}))
-        dispatch(setClass(charID, {subclass: theClass.subclass}))
+        dispatch(
+          setClass(charID, {
+            spellcasting:
+              theClass.spellcasting === null
+                ? null
+                : { ...theClass.spellcasting, ...theClass.main.spellcasting },
+          })
+        );
+        dispatch(setClass(charID, { subclass: theClass.subclass }));
+        dispatch(setClass(charID, { features: theClass.features }));
+        dispatch(
+          setClass(charID, { saving_throws: theClass.main.saving_throws })
+        );
+        dispatch(setClass(charID, { hit_die: theClass.main.hit_die }));
+        dispatch(setClass(charID, { level: 1 }));
+        dispatch(setClass(charID, { levels: theClass.levels }));
       });
   }, []);
 
@@ -103,6 +144,20 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
     clearClass();
     window.scrollTo(0, 0);
   };
+
+  const [isHitDiePopoverOpen, setHitDiePopoverOpen] = useState(false);
+
+  const skill = ['animal handling', 'acrobatics'];
+  const hitDieDictionary = [
+    { die: '6', text: 'less than' },
+    { die: '8', text: 'average compared to' },
+    { die: '10', text: 'more than' },
+    { die: '12', text: 'better than all' },
+  ];
+
+  const getDieText = die =>
+    hitDieDictionary.find(entry => entry.die === die.toString()).text;
+
   if (classInfo) {
     const { main, features, options, proficiencies, subclass } = classInfo;
     return (
@@ -131,10 +186,50 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             <h4>{main.name}</h4>
           </div>
           <div>
-            <div className="w-auto d-inline-block card content-card floating-card">
-              Hit Die - {main.hit_die}
+            <div className="w-auto d-inline-block card content-card floating-card mb-0">
+              <div className="same-line mb-0">
+                <Popover
+                  isOpen={isHitDiePopoverOpen}
+                  positions={['left', 'top', 'bottom']}
+                  padding={15}
+                  //containerParent=?
+                  boundaryInset={10}
+                  onClickOutside={() => setHitDiePopoverOpen(false)}
+                  content={({ position, childRect, popoverRect }) => (
+                    <ArrowContainer
+                      position={position}
+                      childRect={childRect}
+                      popoverRect={popoverRect}
+                      arrowColor={'#f6efe4'}
+                      arrowSize={10}
+                      className="popover-arrow-container"
+                      arrowClassName="popover-arrow"
+                    >
+                      <div
+                        className="card content-card description-card popover-card"
+                        style={{ maxWidth: '250px' }}
+                        //onClick={() => setIsPopoverOpen(!isSizePopoverOpen)}
+                      >
+                        <p>
+                          {`Your hit die determines how much extra health you gain on
+                          level up, as well as how much you can recover in a
+                          short rest. ${main.hit_die} is ${getDieText(
+                            main.hit_die
+                          )} other classes.`}
+                        </p>
+                      </div>
+                    </ArrowContainer>
+                  )}
+                >
+                  <i
+                    className="bi bi-info-circle info-icon ml-0"
+                    onClick={() => setHitDiePopoverOpen(!isHitDiePopoverOpen)}
+                  ></i>
+                </Popover>
+                <span>Hit Die - {main.hit_die}</span>
+              </div>
             </div>
-            <div className="w-auto d-inline-block card content-card floating-card">
+            {/* <div className="w-auto d-inline-block card content-card floating-card mb-0">
               SAVING THROWS -{' '}
               {main.saving_throws.map((throws, idx) => (
                 <small key={idx}>
@@ -142,121 +237,189 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                   {idx < main.saving_throws.length - 1 && ', '}
                 </small>
               ))}
-            </div>
+            </div> */}
           </div>
         </div>
         {options.length > 0 && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Class Options</h4>
-            <div>
+            <>
               {options.map((option, index) => {
                 return (
-                  <Dropdown
-                      ddLabel={`${option.header}`}
-                      title={`Choose ${option.choose}`}
-                      items={option.options}
-                      selectLimit={option.choose}
-                      multiSelect={option.choose > 1}
-                      selection={
-                        userChoices[
-                          `${option.header
-                            .toLowerCase()
-                            .replace(' ', '-')}-${index}`
-                        ]
-                      }
-                      setSelection={setUserChoices}
-                      classname="choice"
-                      stateKey={`${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${index}`}
-                      key={index}
-                    />
+                  <>
+                    <div className="dd-container" key={index}>
+                      <Dropdown
+                        ddLabel={`${option.header}`}
+                        title={`Choose ${option.choose}`}
+                        items={option.options.filter(
+                          item =>
+                            !skill.includes(item.name.toString().toLowerCase())
+                        )}
+                        selectLimit={option.choose}
+                        multiSelect={option.choose > 1}
+                        selection={
+                          userChoices[
+                            `${option.header.toLowerCase().replace(' ', '-')}-${
+                              option.type
+                            }-${index}`
+                          ]
+                        }
+                        setSelection={setUserChoices}
+                        popover={Array.isArray(option.desc)}
+                        popoverText={option.desc?.map(desc => (
+                          <p key={desc}>{desc}</p>
+                        ))}
+                        classname="dd-choice"
+                        stateKey={`${option.header
+                          .toLowerCase()
+                          .replace(' ', '-')}-${option.type}-${index}`}
+                      />
+                    </div>
+                    {Array.isArray(option.desc) &&
+                      userChoices[
+                        `${option.header.toLowerCase().replace(' ', '-')}-${
+                          option.type
+                        }-${index}`
+                      ] && (
+                        <div className="card content-card description-card mb-0">
+                          {userChoices[
+                            `${option.header.toLowerCase().replace(' ', '-')}-${
+                              option.type
+                            }-${index}`
+                          ].map(
+                            choice =>
+                              Array.isArray(choice.desc) && <p>{choice.desc}</p>
+                          )}
+                        </div>
+                      )}
+                  </>
                 );
               })}
               {subclass?.subclass_options?.map((option, index) => {
                 return (
-                  <Dropdown
-                      ddLabel={`${option.header} (${subclass.name})`}
-                      title={`Choose ${option.choose}`}
-                      items={option.options}
-                      selectLimit={option.choose}
-                      multiSelect={option.choose > 1}
-                      selection={
-                        userChoices[
-                          `${option.header
-                            .toLowerCase()
-                            .replace(' ', '-')}-${index}`
-                        ]
-                      }
-                      setSelection={setUserChoices}
-                      classname="choice"
-                      stateKey={`${option.header
-                        .toLowerCase()
-                        .replace(' ', '-')}-${index}`}
-                      key={index}
-                    />
+                  <>
+                    <div className="dd-container" key={index}>
+                      <Dropdown
+                        ddLabel={`${option.header} (${subclass.name})`}
+                        title={`Choose ${option.choose}`}
+                        items={option.options.filter(
+                          item =>
+                            !skill.includes(item.name.toString().toLowerCase())
+                        )}
+                        selectLimit={option.choose}
+                        multiSelect={option.choose > 1}
+                        selection={
+                          userChoices[
+                            `${option.header.toLowerCase().replace(' ', '-')}-${
+                              option.type
+                            }-${index}`
+                          ]
+                        }
+                        setSelection={setUserChoices}
+                        popover={Array.isArray(option.desc)}
+                        popoverText={option.desc?.map(desc => (
+                          <p key={desc}>{desc}</p>
+                        ))}
+                        classname="choice"
+                        stateKey={`${option.header
+                          .toLowerCase()
+                          .replace(' ', '-')}-${option.type}-${index}`}
+                      />
+                    </div>
+                    {Array.isArray(option.desc) &&
+                      userChoices[
+                        `${option.header.toLowerCase().replace(' ', '-')}-${
+                          option.type
+                        }-${index}`
+                      ] && (
+                        <div className="card content-card description-card mb-0">
+                          {userChoices[
+                            `${option.header.toLowerCase().replace(' ', '-')}-${
+                              option.type
+                            }-${index}`
+                          ].map(
+                            choice =>
+                              Array.isArray(choice.desc) && <p>{choice.desc}</p>
+                          )}
+                        </div>
+                      )}
+                  </>
                 );
               })}
-            </div>
+            </>
           </div>
         )}
         <div className="card translucent-card">
           <h4 className="card content-card card-title">
             Starting Proficiencies
           </h4>
-          <div className="card content-card description-card">
-            {Object.entries(proficiencies).map(prof => (
-              <p className="text-capitalize" key={prof[0]}>
-                <strong className="small-caps">{prof[0]}</strong> –{' '}
-                {prof[1].map((item, idx) => (
-                  <React.Fragment key={idx}>
-                    {item}
-                    {idx < prof[1].length - 1 && ', '}
-                  </React.Fragment>
-                ))}
-              </p>
-            ))}
+          <div className="card content-card description-card mb-0">
+            {Object.entries(proficiencies).map(
+              prof =>
+                prof[1].length > 0 && (
+                  <p className="text-capitalize" key={prof[0]}>
+                    <strong className="small-caps">{prof[0]}</strong> –{' '}
+                    {prof[1].map((item, idx) => (
+                      <React.Fragment key={idx}>
+                        {item}
+                        {idx < prof[1].length - 1 && ', '}
+                      </React.Fragment>
+                    ))}
+                  </p>
+                )
+            )}
           </div>
         </div>
         {features.length > 0 && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Level 1 Features</h4>
-            {features.map(feature => {
-              return (
-              <div
-                className="card content-card description-card"
-                key={feature.index}
-              >
-                <h5 className="text-center">{feature.name}</h5>
-                {feature.desc.map(desc => (
-                  <p key={desc}>{desc}</p>
-                ))}
-              </div>
-            )})}
-            {subclass?.subclass_features?.map((feature, index) => {
+            {features.map((feature, idx, arr) => {
               return (
                 <div
-                  className="card content-card description-card"
+                  className={`card content-card description-card ${
+                    subclass?.subclass_features
+                      ? 'mb-0'
+                      : idx === arr.length - 1 && 'mb-0'
+                  }`}
                   key={feature.index}
                 >
-                  <h5 className="text-center">{`${feature.name} (${subclass.name})`} </h5>
+                  <h5 className="card-subtitle small-caps">{feature.name}</h5>
                   {feature.desc.map(desc => (
                     <p key={desc}>{desc}</p>
                   ))}
-                  <p key={`subclass-${index}`}>{`Note: Only the ${main.name} subclass ${subclass.name} is available in this app.`} </p>
                 </div>
-            )})}
+              );
+            })}
+            {subclass?.subclass_features?.map((feature, index) => {
+              return (
+                <div
+                  className="card content-card description-card mb-0"
+                  key={feature.index}
+                >
+                  <h5 className="card-subtitle small-caps">
+                    {`${feature.name} (${subclass.name})`}{' '}
+                  </h5>
+                  {feature.desc.map(desc => (
+                    <p key={desc}>{desc}</p>
+                  ))}
+                  <p key={`subclass-${index}`}>
+                    {`Note: Only the ${main.name} subclass ${subclass.name} is available in this app.`}{' '}
+                  </p>
+                </div>
+              );
+            })}
           </div>
         )}
         {main.spellcasting && (
           <div className="card translucent-card">
             <h4 className="card content-card card-title">Spellcasting</h4>
-            {main.spellcasting.info.map(spell => (
+            {main.spellcasting.info.map((spell, idx, arr) => (
               <div
-                className="card content-card description-card"
+                className={`card content-card description-card ${idx ===
+                  arr.length - 1 && 'mb-0'}`}
                 key={spell.name}
               >
-                <h5 className="text-center">{spell.name}</h5>
+                <h5 className="card-subtitle small-caps">{spell.name}</h5>
                 {spell.desc.map(desc => (
                   <p key={desc}>{desc}</p>
                 ))}

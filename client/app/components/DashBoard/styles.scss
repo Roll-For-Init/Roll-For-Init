@@ -1,0 +1,399 @@
+@import 'client/app/variables';
+
+.dashboard {
+  /******* header *******/
+
+  .toolbar {
+    width: 100%;
+    margin-top: 44px;
+    //position:fixed;
+    .header {
+      height: 45px;
+      .navbar {
+        text-align: center;
+        margin: 0;
+        background-color: #333;
+        box-shadow: 0px 1px 2px rgb(0 0 0 / 67%);
+        z-index: 100;
+        position: relative;
+        width: 100%;
+        display: flex;
+        justify-content: center;
+        padding: 0px;
+      }
+    }
+    .subheader {
+      min-height: 60px;
+      background-color: $maroon;
+      z-index: 100;
+      top: 0;
+      width: 100%;
+      padding-top: 5px;
+      h2,
+      h5 {
+        color: white;
+        width: fit-content;
+        display: inline-block;
+        margin-right: 2.5rem;
+        margin-bottom: 0;
+        letter-spacing: .96px;
+        height:100%;
+        vertical-align: middle;
+      }
+      h2 {
+          font-size: 2.5rem;
+      }
+    }
+    .button-icon {
+        max-width: 43px;
+        max-height: 25px;
+        margin-right: 8px;
+        margin-bottom: 5px;
+      }
+  }
+
+   /******* button bar *******/
+   .btn-primary, .btn-secondary {
+       margin: auto;
+       margin-right: 20px;
+       width: auto;
+       padding: {
+           left: 8px;
+           right: 8px;
+           top: 2px;
+           bottom: 2px;
+       }
+       border-radius: 8px;
+       font-size: 1.15rem;
+       letter-spacing: 1.92px;
+
+   }
+
+  /******* cards *******/
+
+  .translucent-card {
+    padding-top: 10px;
+    padding-bottom: 10px;
+    margin: 20px auto;
+  }
+
+  .description-card {
+    border: 0px;
+  }
+
+  .short-card {
+    width: auto;
+    font-size: .9rem;
+  }
+  .small-caps {
+      font-size: 1.2rem;
+  }
+
+  .abilities {
+      .container-fluid {
+          padding-left: 10%;
+          padding-right: 10%;
+      }
+      .col-4 {
+          padding-left: 10px;
+          padding-right: 10px;
+          flex: 0 0 33%;
+          max-width: 33%;
+      }
+      .description-card {
+          padding: 5px;
+          width: 100%;
+      }
+      .ability-score {
+          background-color: $dark-off-white;
+          font-size: 1.25rem;
+          font-weight: bold;
+          padding: 0;
+          border-top-left-radius: 0;
+          border-top-right-radius: 0;
+          margin-left: 12%;
+          z-index: 1;
+          margin-top: -2px !important;
+      }
+      .ability-bonus {
+          box-shadow: 1px 1px 3px $dark-maroon;
+          z-index: 2;
+      }
+  }
+  .extra-stats {
+      ul {
+          padding-left: 1rem;
+          margin-bottom: 0;
+          &:last-child {
+              margin-bottom: 0;
+          }
+          li {
+              span {
+                  margin-left: -5px;
+              }
+          }
+      }
+  }
+  .skills {
+    .px-5 {
+        padding-left: 2.5rem !important;
+        padding-right: 2.5rem !important;
+        
+    }
+  }
+
+
+  /******* layuot *******/
+  @media (min-width: 1200px) {
+    .col-xl-5 {
+        -ms-flex: 0 0 48%;
+        flex: 0 0 48%;
+        max-width: 48%;
+    }
+    .col-xl-7 {
+        -ms-flex: 0 0 52%;
+        flex: 0 0 52%;
+        max-width: 52%;
+    }
+  }
+    @media (min-width: 576px) {
+        .col-sm-7 {
+            -ms-flex: 0 0 55%;
+            flex: 0 0 55%;
+            max-width: 55%;
+        }
+        .col-sm-5 {
+            -ms-flex: 0 0 45%;
+            flex: 0 0 45%;
+            max-width: 45%;
+        }
+        .col-sm-8 {
+            -ms-flex: 0 0 70%;
+            flex: 0 0 70%;
+            max-width: 70%;
+        }
+        .col-sm-4 {
+            -ms-flex: 0 0 30%;
+            flex: 0 0 30%;
+            max-width: 30%;
+        }
+    }
+    .row {
+        margin-right: 0;
+        margin-left: 0;
+    }
+  
+  /******* titles *******/
+
+  .card-title {
+    color: white;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1.44px;
+    margin: 0px;
+    padding: 0px;
+    text-align: center;
+  }
+
+  .proficiency-title {
+    background-color: white;
+    width: fit-content;
+    background-color: $off-white;
+    font-size: 16px;
+  }
+
+  .hit-points {
+      .content-card {
+        padding-top: .2rem;
+        padding-bottom: .2rem;
+      }
+      .btn-success {
+        background-color: $dark-green;
+        border: none;
+        box-shadow: none;
+        font-size: 1rem;
+        padding: 2px 5px;
+        max-height: 1.67rem;
+        line-height: 1;
+        flex-grow: 0;
+        width: auto;
+        margin: auto; 
+        display: block;
+      }
+      .btn-alert {
+        background-color: $desat-red;
+        border: none;
+        box-shadow: none;
+        font-size: 1rem;
+        padding: 2px 5px;
+        max-height: 1.67rem;
+        line-height: 1;
+        flex-grow: 0;
+        width: auto;
+        margin: auto;
+        display: block;   
+        color: white;
+      }
+  }
+
+  .pinned {
+      .translucent-card {
+          max-width: 100%;
+      }
+  }
+
+
+  /******* tables *******/
+  .maincol {
+    .table {
+        margin-bottom: 0;
+    }
+    td {
+        padding: {
+            top: 0;
+            bottom: 0;
+            left: .15rem;
+            right: .15rem;
+        }
+    }
+  }
+  .pinned {
+    .table {
+        margin-bottom: 0;
+        margin-top: -5px;
+        
+    }
+    td {
+        padding: {
+            left: .45rem;
+            right: .45rem;
+            top: .15rem;
+            bottom: .15rem;
+        }
+        vertical-align: top;
+
+    }
+    tr {
+        padding: 0;
+    }
+
+  }
+  /******* buttons *******/
+  .btn-outline-success {
+    border: {
+      style: solid !important;
+      color: $green !important;
+      width: 2px !important;
+      radius: 8px;
+    }
+    color: $dark-blue;
+    box-shadow: none;
+    float: left;
+    font-size: 1rem;
+    padding: 2px 5px;
+    max-height: 1.67rem;
+    line-height: 1;
+    flex-grow: 0;
+    margin: auto 0px;
+    background-color: transparent;
+    margin: 2px;
+
+    &:hover,
+    &:active {
+      background-color: $medium-off-white;
+    }
+    span {
+        color: $dark-green;
+    }
+    input {
+        border: none;
+        background-color: transparent;
+    }
+}
+.btn-outline-primary {
+    @extend .btn-outline-success;
+    border: {
+      color: $blue !important;
+    }
+}
+.wrapper-button {
+    margin: 3px auto auto;
+    padding: 0;
+    display: block;
+    background-color: transparent;
+    box-shadow: none;
+}
+
+  .list-item {
+    display: inline-block;
+  }
+
+  label {
+    margin: 0px;
+  }
+
+  .skills-points {
+    text-align: center;
+  }
+  
+  input[type='radio']:after {
+    width: 13px;
+    height: 13px;
+    border-radius: 15px;
+    top: -4px;
+    left: 0px;
+    position: relative;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+    background-color: inherit;
+    border: 1px solid gray;
+  }
+
+  input[type='radio']:checked:after {
+    width: 13px;
+    height: 13px;
+    border-radius: 15px;
+    top: -4px;
+    left: 0px;
+    position: relative;
+    background-color: #000;
+    content: '';
+    display: inline-block;
+    visibility: visible;
+  }
+
+  div {
+    color: $dark-blue !important;
+  }
+  .modal-button {
+    font-size: 1.25rem;
+    max-width: 300px;
+    padding: 10px 20px;
+    margin: 20px auto 0 auto;
+  }
+  .modal-dialog {
+      max-width: auto;
+      width: auto;
+  }
+  .modal-table {
+      margin-bottom: 0;
+      margin-left: auto;
+      margin-right: auto;
+      width: 1px;
+      &>tr {
+          display: table-cell;
+          border: none;
+          margin: 0;
+          padding: 1px;
+          vertical-align: top;
+          &>td {
+            display: block;
+            border: none;
+            margin: 0;
+            padding: 1px;
+        }
+  
+      }
+  }
+}

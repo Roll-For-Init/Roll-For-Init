@@ -10,8 +10,8 @@ router.use('/users', require('./users.js'));
 router.use('/pdf', require('./pdf.js'));
 
 
-// Auth required to access API beyond designated routes in /users above
-router.use(authenticateUser);
+// Auth required to access API beyond designated routes in /users above - REEVALUATE
+//router.use(authenticateUser);
 
 router.use('/characters', require('./characters.js'));
 

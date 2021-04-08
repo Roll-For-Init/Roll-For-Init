@@ -1,11 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import CharacterService from '../../redux/services/character.service';
 import { useSelector, useDispatch } from 'react-redux';
-import { setSpells } from '../../redux/actions/characters';
+import { setSpells, submitCharacter } from '../../redux/actions/characters';
 import { PropTypes } from 'prop-types';
 import ReactReadMoreReadLess from 'react-read-more-read-less';
+import Masonry from 'react-masonry-css';
+import FloatingLabel from 'floating-label-react';
+import { useHistory } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-
+import axios from 'axios';
 
 /**
  * FOR DEACTIVATING SELECT BUTTONS: you will have to target all spell card children that are NOT selected,
@@ -52,10 +55,8 @@ const SpellCard = ({ spell, selected, toggleSelected, level }) => {
       <hr className="solid" />
       <div className="spell-desc">
         <p>
-          {spell.level === 0
-            ? 'cantrip'
-            : `level ${spell.level}`}
-          {spell.ritual && (<em> (ritual)</em>)}
+          {spell.level === 0 ? 'cantrip' : `level ${spell.level}`}
+          {spell.ritual && <em> (ritual)</em>}
           <span>
             <em>{spell.school.name.toLowerCase()}</em>
           </span>
@@ -67,7 +68,10 @@ const SpellCard = ({ spell, selected, toggleSelected, level }) => {
           Range: <em>{spell.range}</em>
         </p>
         <p>
-          Components: <em>{`${spell.components.join(', ')} ${spell.material ? `(${spell.material})` : ``}`}</em>
+          Components:{' '}
+          <em>{`${spell.components.join(', ')} ${
+            spell.material ? `(${spell.material})` : ``
+          }`}</em>
         </p>
         <p>
           Duration:{' '}
@@ -107,32 +111,37 @@ const SpellList = ({ spells, known, level, limit, toggleSelected }) => {
     return known.includes(spell.index);
   };
 
+  const breakpointColumnsObj = {
+    default: 2,
+    767: 1,
+  };
+
   return (
-    <div className="card translucent-card">
+    <div className="card translucent-card" style={{ paddingBottom: '10px' }}>
       <div className="card content-card card-title">
-        <h6>
+        <h5 className="mb-0">
           {level == 0 ? 'Cantrips' : level == 1 ? 'Level 1 Spells' : 'Spells'} -
           Choose {limit}
-        </h6>
+        </h5>
       </div>
       {spells !== undefined && (
-        <div className="spell-custom-container">
-          <div className="container">
-            <div className="card-columns">
-              {spells.map((spell, idx) => {
-                return (
-                  <SpellCard
-                    selected={isSelected(spell)}
-                    spell={spell}
-                    key={idx}
-                    level={level}
-                    toggleSelected={() => toggleSelected(spell.index)}
-                  />
-                );
-              })}
-            </div>
-          </div>
-        </div>
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column"
+        >
+          {spells.map((spell, idx) => {
+            return (
+              <SpellCard
+                selected={isSelected(spell)}
+                spell={spell}
+                key={idx}
+                level={level}
+                toggleSelected={() => toggleSelected(spell.index)}
+              />
+            );
+          })}
+        </Masonry>
       )}
     </div>
   );
@@ -146,19 +155,27 @@ SpellList.propTypes = {
 };
 
 export const Spells = ({ charID, setPage }) => {
+  const history = useHistory();
+
   const onNext = () => {
-    setPage({ index: 5, name: 'pdf create' });
+    setPage({ index: 5, name: 'spells' });
     window.scrollTo(0, 0);
   };
 
   const character = useSelector(state => state.characters[charID]);
-  console.log(character);
   const [spellChoices, setSpellChoices] = useState(null);
   const dispatch = useDispatch();
 
+  const [name, setName] = useState('');
+
+  let druid1;
+  /*ADDRESS: NOT FLEXIBLE */
+  if(character?.class?.index.toLowerCase() === 'druid') {
+    druid1 = character.abilities['4'].modifier +1;
+  }
   const limit = {
-    0: character.class.spellcasting.cantrips_known,
-    1: character.class.spellcasting.spells_known,
+    0: character?.class?.spellcasting?.cantrips_known,
+    1: druid1 ? (druid1 > 0 ? druid1 : 1) : character?.class?.spellcasting?.spells_known,
   };
 
   const getKnownSpells = level => {
@@ -173,11 +190,14 @@ export const Spells = ({ charID, setPage }) => {
   const toggleSelected = (level, index) => {
     var known = getKnownSpells(level);
     var payload = null;
-    if (known?.length >= limit[level]-1) {
+    if (known?.length >= limit[level] - 1) {
       let unselected = document.getElementsByName(level);
       for (let i = 0; i < unselected.length; i++) {
-        if(unselected[i].className.includes('btn-outline-success')) {
-          unselected[i].className = unselected[i].className.replace('btn-outline-success', 'btn-inactive');
+        if (unselected[i].className.includes('btn-outline-success')) {
+          unselected[i].className = unselected[i].className.replace(
+            'btn-outline-success',
+            'btn-inactive'
+          );
         }
       }
     }
@@ -186,68 +206,118 @@ export const Spells = ({ charID, setPage }) => {
     } else if (known.includes(index)) {
       payload = { [level]: [...known.filter(spell => spell != index)] };
       dispatch(setSpells(payload));
-      if(known.length === limit[level]) {
+      if (known.length === limit[level]) {
         let unselected = document.getElementsByName(level);
         for (let i = 0; i < unselected.length; i++) {
-          if(unselected[i].className.includes('btn-inactive')) {
-            unselected[i].className = unselected[i].className.replace('btn-inactive', 'btn-outline-success');
+          if (unselected[i].className.includes('btn-inactive')) {
+            unselected[i].className = unselected[i].className.replace(
+              'btn-inactive',
+              'btn-outline-success'
+            );
           }
         }
-     }
+      }
     } else if (known.length < limit[level]) {
       payload = { [level]: [...known, index] };
-    }
-    else {
+    } else {
       return;
     }
     dispatch(setSpells(charID, payload));
   };
 
+  const validateAndStore = () => {
+    // console.log(character);
+    character.name = name;
+    console.log(character);
+    history.push('/dashboard');
+    CharacterService.validateCharacter(character).then((character) => {
+      dispatch(submitCharacter(character));
+    })
+  };
+
   useEffect(() => {
     if (!character.class.index) return;
-    CharacterService.getSpells(character.class, [
-      0,
-      1,
-    ]).then(cards => {
+
+    CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
+      dispatch(setSpells(charID, { cards: cards }));
     });
-    console.log(character);
   }, []);
 
   return (
     <div className="background">
-      {(spellChoices != null && spellChoices != undefined) ? (
+      {spellChoices != null && spellChoices != undefined ? (
         <>
-      <div className="mx-auto d-none d-md-flex title-back-wrapper">
-        <h2 className="title-card p-4">Spells</h2>
-      </div>
-        <>
-          {[0, 1].map(level => {
-            const currentKey = Object.keys(spellChoices)[level];
-            const list = spellChoices[currentKey];
-            return (
-              <SpellList
-                key={level}
-                level={level}
-                limit={limit[level]}
-                spells={list}
-                known={getKnownSpells(level)}
-                toggleSelected={index => toggleSelected(level, index)}
-              />
-            );
-          })}
+          <div className="mx-auto d-none d-md-flex title-back-wrapper">
+            <h2 className="title-card p-4">Spells</h2>
+          </div>
+          <>
+            {[0, 1].map(level => {
+              const currentKey = Object.keys(spellChoices)[level];
+              const list = spellChoices[currentKey];
+              return (
+                <SpellList
+                  key={level}
+                  level={level}
+                  limit={limit[level]}
+                  spells={list}
+                  known={getKnownSpells(level)}
+                  toggleSelected={index => toggleSelected(level, index)}
+                />
+              );
+            })}
+          </>
+          <button
+            className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+            data-toggle={'modal'}
+            data-target={'#nameModalSp'}
+          >
+            OK
+          </button>
+          <div
+            className="modal fade"
+            id="nameModalSp"
+            role="dialog"
+            aria-labelledby="chooseName"
+            aria-hidden="true"
+          >
+            <div className="modal-dialog modal-dialog-centered" role="document">
+              <div className="modal-content">
+                <button
+                  type="button"
+                  className="close"
+                  data-dismiss="modal"
+                  aria-label="Close"
+                >
+                  <i className="bi bi-x"></i>
+                </button>
+                <div className="modal-sect pb-0">
+                  <h5>Name Your Character</h5>
+                </div>
+                <div className="card content-card modal-name-card">
+                  <FloatingLabel
+                    id="name"
+                    name="name"
+                    placeholder="Name"
+                    type="text"
+                    value={name}
+                    onChange={e => setName(e.target.value)}
+                  />
+                </div>
+                <button
+                  className="text-uppercase btn-primary modal-button"
+                  onClick={validateAndStore}
+                  data-dismiss="modal"
+                >
+                  FINISH
+                </button>
+              </div>
+            </div>
+          </div>
         </>
-      <Link to="/dashboard">
-      <button
-        className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-      >
-        Finish
-      </button>
-      </Link>
-      </>
-      ):
-      <>Loading</>}
-
+      ) : (
+        <>Loading</>
+      )}
     </div>
   );
 };

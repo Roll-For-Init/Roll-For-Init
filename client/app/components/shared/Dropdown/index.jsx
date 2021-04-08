@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import onClickOutside from 'react-onclickoutside';
+import { Popover, ArrowContainer } from 'react-tiny-popover';
+
 import './styles.scss';
 
 function Dropdown({
@@ -9,7 +11,9 @@ function Dropdown({
   items,
   width,
   multiSelect = false,
-  selectLimit = 2,
+  popover = false,
+  popoverText,
+  selectLimit = 1,
   selection,
   setSelection,
   classname,
@@ -41,9 +45,9 @@ function Dropdown({
             select[stateKey] = [...selection, item];
             setSelection(select);
           } else setSelection([...selection, item]);
-        if(selection.length +1 == selectLimit) {
-          toggle(!open);
-        }
+          if (selection.length + 1 == selectLimit) {
+            toggle(!open);
+          }
         }
       }
     } else {
@@ -57,7 +61,7 @@ function Dropdown({
           select[stateKey] = [...selectionAfterRemoval];
           setSelection(select);
         } else setSelection([...selectionAfterRemoval]);
-        if(selectionAfterRemoval.length >= selectLimit) toggle(!open);
+        if (selectionAfterRemoval.length >= selectLimit) toggle(!open);
       } else {
         toggle(!open);
       }
@@ -76,7 +80,7 @@ function Dropdown({
       updatedTitle = `Choose ${selectLimit}`;
     }
     setTitle(updatedTitle);
-  },[selection])
+  }, [selection]);
 
   function isItemInSelection(item) {
     if (selection.some(current => current.index === item.index)) {
@@ -85,10 +89,46 @@ function Dropdown({
     return false;
   }
 
+  const [isPopoverOpen, setIsPopoverOpen] = useState(false);
+
   return (
     <div className="dd-wrapper" style={{ width: width }}>
       {!hideLabel && (
         <div className={classname ? 'dd-label ' + classname : 'dd-label'}>
+          {popover && (
+            <Popover
+              isOpen={isPopoverOpen}
+              positions={['left', 'top', 'bottom']}
+              padding={15}
+              //containerParent=?
+              boundaryInset={10}
+              onClickOutside={() => setIsPopoverOpen(false)}
+              content={({ position, childRect, popoverRect }) => (
+                <ArrowContainer
+                  position={position}
+                  childRect={childRect}
+                  popoverRect={popoverRect}
+                  arrowColor={'#f6efe4'}
+                  arrowSize={10}
+                  className="popover-arrow-container"
+                  arrowClassName="popover-arrow"
+                >
+                  <div
+                    className="card content-card description-card popover-card"
+                    style={{ maxWidth: '250px' }}
+                    //onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+                  >
+                    <p>{popoverText}</p>
+                  </div>
+                </ArrowContainer>
+              )}
+            >
+              <i
+                className="bi bi-info-circle info-icon ml-0"
+                onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+              ></i>
+            </Popover>
+          )}
           {ddLabel}
         </div>
       )}
@@ -112,7 +152,6 @@ function Dropdown({
         </div>
       </div>
       {open && (
-        // <ul className="dd-list shadow-card scroll">
         <ul className={`dd-list ${classname && classname} shadow-card scroll`}>
           {items.map(item => (
             <li className="dd-list-item" key={item.index}>
