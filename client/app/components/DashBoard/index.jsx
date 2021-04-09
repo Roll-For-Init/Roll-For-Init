@@ -10,7 +10,7 @@ import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-inline-editing';
 
 
-import {D20, StarOutline, StarFilled} from '../../utils/svgLibrary';
+import {D20, FancyStar} from '../../utils/svgLibrary';
 
 //swap race class icons with white
 
@@ -329,9 +329,9 @@ const StatsCard = ({initiative, ac, speed, charID}) => {
           <div className="card content-card description-card text-center">
             <h6 className="text-uppercase m-0">Inspiration</h6>
             {!inspiration ?
-              <button className='wrapper-button' onClick={toggleInspiration}><StarOutline /></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><FancyStar className="star-outline"/></button>
               :
-              <button className='wrapper-button' onClick={toggleInspiration}><StarFilled /></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><FancyStar className="star-filled"/></button>
             }
           </div>
         </div>

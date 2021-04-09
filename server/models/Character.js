@@ -28,6 +28,10 @@ const CharacterSchema = new Schema({ //Add class specific slots
       {
           name: String,
           description: String,
+          pinned: {
+            type: Boolean,
+            default: false
+          }
           /*
           charges: {
               current: Number,
@@ -289,6 +293,10 @@ const CharacterSchema = new Schema({ //Add class specific slots
           charges: {
               current: Number,
               max: Number
+          },
+          pinned: {
+            type: Boolean,
+            default: false
           }
       }
       /*
