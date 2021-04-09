@@ -168,14 +168,14 @@ export const Spells = ({ charID, setPage }) => {
 
   const [name, setName] = useState('');
 
-  let druid1;
-  /*ADDRESS: NOT FLEXIBLE */
-  if(character?.class?.index.toLowerCase() === 'druid') {
-    druid1 = character.abilities['4'].modifier +1;
-  }
+  // let druid1;
+  // /*ADDRESS: NOT FLEXIBLE */
+  // if(character?.class?.index.toLowerCase() === 'druid') {
+  //   druid1 = character.abilities['4'].modifier +1;
+  // }
   const limit = {
     0: character?.class?.spellcasting?.cantrips_known,
-    1: druid1 ? (druid1 > 0 ? druid1 : 1) : character?.class?.spellcasting?.spells_known,
+    1: character?.class?.spellcasting?.spells_known
   };
 
   const getKnownSpells = level => {
@@ -240,6 +240,9 @@ export const Spells = ({ charID, setPage }) => {
 
     CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
+      if (!limit[1]) {
+        dispatch(setSpells(charID, { 1: cards.level1.map(s => s.index) }));
+      }
       dispatch(setSpells(charID, { cards: cards }));
     });
   }, []);
@@ -256,6 +259,7 @@ export const Spells = ({ charID, setPage }) => {
               const currentKey = Object.keys(spellChoices)[level];
               const list = spellChoices[currentKey];
               return (
+                limit[level] ?
                 <SpellList
                   key={level}
                   level={level}
@@ -264,6 +268,8 @@ export const Spells = ({ charID, setPage }) => {
                   known={getKnownSpells(level)}
                   toggleSelected={index => toggleSelected(level, index)}
                 />
+                :
+                <></>
               );
             })}
           </>
