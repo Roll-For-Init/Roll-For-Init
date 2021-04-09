@@ -21,8 +21,8 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
     for(let item of items.set) {
         if(item.equipment) {
-            let costAmt = item.equipment.desc.cost.match(/\d+/g)
-            let denom =  item.equipment.desc.cost.match(/[a-zA-Z]+/g);
+            let costAmt = item.equipment.desc?.cost.match(/\d+/g)
+            let denom =  item.equipment.desc?.cost.match(/[a-zA-Z]+/g);
             item = {
                 ...item.equipment.desc,
                 cost: {
@@ -34,8 +34,8 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
             }
         }
         else {
-            let costAmt = item.desc.cost.match(/\d+/g)
-            let denom =  item.desc.cost.match(/[a-zA-Z]+/g);
+            let costAmt = item.desc?.cost.match(/\d+/g)
+            let denom =  item.desc?.cost.match(/[a-zA-Z]+/g);
 
             item = {
                 ...item.desc,
@@ -243,7 +243,6 @@ const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies)
             dex_bonus: item.dex_bonus,
             max_bonus: item.max_bonus
         }
-        //console.log(armorProficiencies, item);
         if(armorProficiencies.find(armor=> armor.toLowerCase().includes(item.category.toLowerCase()))) item.proficiency = true;
         else if(armorProficiencies.includes('All armor') && !item.category.toLowerCase().includes('shield')) item.proficiency=true;
         else if(armorProficiencies.includes('Shields') && item.category.toLowerCase().includes('shield')) item.proficiency = true;
@@ -421,7 +420,6 @@ const levelSorter = async (charClass, charLevel) => {
 }
 
 const spellsPopulator = (spells) => {
-    //console.log(spells);
     const cards = [[],[],[],[],[],[],[], [], []];
     for (let i = 0; i < 9; i++) {
         let key;
