@@ -21,8 +21,8 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
     for(let item of items.set) {
         if(item.equipment) {
-            let costAmt = item.equipment.desc?.cost.match(/\d+/g)
-            let denom =  item.equipment.desc?.cost.match(/[a-zA-Z]+/g);
+            let costAmt = item.equipment.desc ? item.equipment.desc.cost.match(/\d+/g) : 0;
+            let denom =  item.equipment.desc ? item.equipment.desc.cost.match(/[a-zA-Z]+/g) : "";
             item = {
                 ...item.equipment.desc,
                 cost: {
@@ -34,8 +34,8 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
             }
         }
         else {
-            let costAmt = item.desc?.cost.match(/\d+/g)
-            let denom =  item.desc?.cost.match(/[a-zA-Z]+/g);
+            let costAmt = item.desc ? item.desc.cost.match(/\d+/g) : 0;
+            let denom =  item.desc ? item.desc.cost.match(/[a-zA-Z]+/g) : "";
 
             item = {
                 ...item.desc,
