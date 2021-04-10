@@ -7,7 +7,7 @@ import { setUpdate, setArrayUpdate} from '../../redux/actions/characters';
 import './styles.scss';
 import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
-import EditableLabel from 'react-inline-editing';
+import EditableLabel from 'react-editable-label';
 
 
 import {D20, StarOutline, StarFilled} from '../../utils/svgLibrary';
@@ -397,32 +397,43 @@ const ManualEntryModal = ({name, showModal, setShowModal, placeholder, thePrompt
     </Portal>
   )
 }
-
 const HitPointsCard = ({health, hit_dice, charID}) => {
   const dispatch = useDispatch();
 
   const [showDmg, setShowDmg] = useState(false);
   const [showHealth, setShowHealth] = useState(false);
   const [showSaves, setShowSaves] = useState(false);
+  const [temp, setTemp] = useState(health.temp)
 
+  const updateTemp = (amt) => {
+    amt = Number.parseInt(amt);
+    console.log(amt);
+    dispatch(setUpdate(charID, 'health', {temp: amt}));
+    setTemp(amt)
+  }
   const changeHealth = (amt) => {
     amt = Number.parseInt(amt)
     if(amt < 0 && health.temp > 0) {
       let newAmt = amt + health.temp;
       let newTemp = health.temp + amt;
+      if(newTemp<0) newTemp = 0;
       dispatch(setUpdate(charID, 'health', {temp: newTemp}))
       if(newAmt < 0) {
         amt = newAmt
       }
+      else {
+        amt = 0;
+      }
+      setTemp(newTemp);
     }
     let newHealth = health.current+amt;
+    console.log(newHealth);
     if(newHealth <= 0) setShowSaves(true);
     else if(newHealth >health.max) newHealth = health.max;
     let newState = {current: newHealth};
 
     dispatch(setUpdate(charID, 'health', newState))
   }
-
   return (
     <>
     <div className="hit-points card translucent-card long-card">
@@ -438,20 +449,17 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
             </div>
             <div className="col-sm-4 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0">
-              {/*<EditableLabel text={health.temp}
-                labelClassName='text-uppercase text-center m-0'
-                inputClassName='text-uppercase text-center m-0'
-                inputWidth='200px'
-                inputHeight='25px'
-                inputMaxLength='50'
-                labelFontWeight='bold'
-                inputFontWeight='bold'
+            <EditableLabel 
+                key={`temp-${temp}`}
+                initialValue={health.temp}
+                labelClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center hover-effect"
+                inputClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center"
+                save={(value) => {updateTemp(value)}}
+                min='0'
+                max='999'
                 //onFocus={this._handleFocus}
                 //onFocusOut={this._handleFocusOut}
-        />*/}
-                <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
-              </div>
+    />                {/*<h3 className="text-uppercase text-center m-0">{health.temp}</h3>*/}
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
             </div>
           </div></>)
@@ -466,19 +474,18 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
             </div>
             <div className="col-sm-4 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0">
-              {/*<EditableLabel text={health.temp}
-                labelClassName='text-uppercase text-center m-0'
-                inputClassName='text-uppercase text-center m-0'
-                inputWidth='200px'
-                inputHeight='25px'
-                inputMaxLength='50'
-                labelFontWeight='bold'
-                inputFontWeight='bold'
+              <div className="card content-card description-card my-0 mr-2 ml-0 hover-effect">
+              <EditableLabel 
+                ref={tempRef}
+                initialValue={health.temp}
+                labelClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center hover-effect"
+                inputClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center"
+                save={(value) => {updateTemp(value)}}
+                min='0'
+                max='999'
                 //onFocus={this._handleFocus}
                 //onFocusOut={this._handleFocusOut}
-          />*/}
-                <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
+    />                {/*<h3 className="text-uppercase text-center m-0">{health.temp}</h3>*/}
               </div>
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
             </div>
@@ -490,7 +497,7 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
             <button className="btn btn-alert text-uppercase text-center align-middle" onClick={() => setShowDmg(true)}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-success text-uppercase text-center align-middle mr-0" onClick={() => setShowHealth(true)}>Heal</button>
+            <button className="btn btn-success text-uppercase text-center align-middle" onClick={() => setShowHealth(true)}>Heal</button>
           </div>
         </div>
         </div>

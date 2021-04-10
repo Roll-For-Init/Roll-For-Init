@@ -1,8 +1,17 @@
 @import 'client/app/variables';
 
 .dashboard {
+    .hover-effect {
+        &:hover {
+            background-color: $dark-off-white;
+
+        }
+    }
   /******* header *******/
 
+  .h3 {
+    font-size: 1.75rem !important;
+  }
   .toolbar {
     width: 100%;
     margin-top: 44px;
