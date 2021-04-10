@@ -41,6 +41,7 @@ export const Background = ({ charID, setPage }) => {
           if (bg.other_equipment) {
             equipment.equipment = equipment.equipment.concat(bg.other_equipment)
           }
+          equipment.equipment.push({...bg.starting_currency, category: 'currency'});
           dispatch(setBackground(charID, equipment));
           dispatch(
             setBackground(charID, { equipment_options: bg.equipment_options })
@@ -53,7 +54,6 @@ export const Background = ({ charID, setPage }) => {
             flaws: bg.flaws,
           };
           dispatch(setBackground(charID, { description: personality }));
-          dispatch(setBackground(charID, {currency: bg.starting_currency}));
           dispatch(setBackground(charID, {feature: bg.feature}));
         });
     }
