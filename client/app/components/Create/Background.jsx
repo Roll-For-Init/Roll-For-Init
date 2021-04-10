@@ -50,6 +50,8 @@ export const Background = ({ charID, setPage }) => {
             flaws: bg.flaws,
           };
           dispatch(setBackground(charID, { description: personality }));
+          dispatch(setBackground(charID, {currency: bg.starting_currency}));
+          dispatch(setBackground(charID, {feature: bg.feature}));
         });
     }
   };
