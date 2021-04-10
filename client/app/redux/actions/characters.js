@@ -2,6 +2,7 @@ import {
   SUBMIT_CHARACTER_SUCCESS,
   SUBMIT_CHARACTER_FAIL,
   CREATE_CHARACTER,
+  SET_CURRENT_CHARACTER,
   CREATE_CHARACTER_SUCCESS,
   CREATE_CHARACTER_FAIL,
   UPDATE_CHARACTER_SUCCESS,
@@ -15,7 +16,10 @@ import {
   SET_DESCRIPTION,
   SET_ABILITIES,
   SET_SPELLS,
+  SET_PAGE,
   SET_EQUIPMENT,
+  SET_UPDATE,
+  SET_ARRAY_UPDATE
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -23,6 +27,13 @@ import { v4 as uuidv4 } from 'uuid';
 import CharacterService from '../services/character.service';
 
 export const submitCharacter = characterInfo => dispatch => {
+  console.log("SUBMIT CHARACTER", characterInfo);
+
+  //! temporarily add to redux before the database to test redux
+  dispatch({
+    type: SUBMIT_CHARACTER_SUCCESS,
+    payload: characterInfo,
+  });
   return CharacterService.createCharacter(characterInfo).then(
     res => {
       dispatch({
@@ -106,6 +117,10 @@ export const startCharacter = () => dispatch => {
     type: CREATE_CHARACTER,
     payload: { charID: uuid },
   });
+  dispatch({
+    type: SET_CURRENT_CHARACTER,
+    payload: { charID: uuid },
+  });
   return uuid;
 };
 
@@ -139,7 +154,21 @@ export const setSpells = (charID, spells) => dispatch => {
   dispatch({ type: SET_SPELLS, payload: { charID, spells } });
 };
 
+export const setPage = (charID, page) => dispatch => {
+  console.log('SET_PAGE', charID, page);
+  dispatch({ type: SET_PAGE, payload: { charID, page } });
+};
 export const setEquipment = (charID, equipment) => dispatch => {
-    console.log('SET_EQUIPMENT', charID, equipment);
-    dispatch({type: SET_EQUIPMENT, payload: {charID, equipment}})
+  console.log('SET_EQUIPMENT', charID, equipment);
+  dispatch({ type: SET_EQUIPMENT, payload: { charID, equipment } });
+};
+
+export const setUpdate = (charID, attribute, updated) => dispatch => {
+    console.log('UPDATE_SHEET', charID, attribute, updated);
+    dispatch({type: SET_UPDATE, payload: {charID, attribute, updated}});
+}
+
+export const setArrayUpdate = (charID, attribute, updated) => dispatch => {
+    console.log('UPDATE_ARRAY_SHEET', charID, attribute, updated);
+    dispatch({type: SET_ARRAY_UPDATE, payload:{charID, attribute, updated}})
 }

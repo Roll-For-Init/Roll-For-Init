@@ -1,10 +1,17 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, {useEffect, useState, useReducer}  from 'react';
+import ReactDOM from 'react-dom'
 import { useSelector, useDispatch } from 'react-redux';
 import Header from '../shared/Header';
 //import classIcon from '../../../public/assets/imgs/icons/off-white/class/rogue.png'
+import { setUpdate, setArrayUpdate} from '../../redux/actions/characters';
 import './styles.scss';
-import {D20, StarOutline} from '../../utils/svgLibrary';
+import FloatingLabel from 'floating-label-react';
+import Modal from 'react-bootstrap4-modal';
+import EditableLabel from 'react-inline-editing';
+
+
+import {D20, StarOutline, StarFilled} from '../../utils/svgLibrary';
+
 //swap race class icons with white
 
 const skillScores = {
@@ -28,245 +35,59 @@ const skillScores = {
   persuasion: 'cha'
 }
 
-const TEMP_DATA = {
-  name: 'Liir Thropp',
-  level: 2,
-  experience: {
-    current: 647,
-    threshhold: 960,
-  },
-  race: {
-    name: 'Halfling',
-    description: 'BLAH BLAH BLAH',
-  },
-  class: [
-    {
-      name: 'Rogue',
-      levels: 2,
-    },
-  ],
-  misc_proficiencies: {
-    armor: [{ name: 'Light Armor' }],
-    weapons: [
-      { name: 'Crossbows' },
-      { name: 'Hand' },
-      { name: 'Longswords' },
-      { name: 'Rapiers' },
-      { name: 'Shortswords' },
-      { name: 'Simple Weapons' },
-    ],
-    tools: [{ name: "Thieve's Tools" }],
-    languages: [{ name: 'Common' }, { name: 'Halfling' }],
-  },
-  ability_scores: {
-    str: {
-      score: 9,
-      modifier: 2,
-      advantage: -1,
-    },
-    dex: {
-      score: 16,
-      modifier: 4,
-      advantage: 3,
-    },
-    con: {
-      score: 10,
-      modifier: 1,
-      advantage: 1,
-    },
-    int: {
-      score: 5,
-      modifier: -1,
-      advantage: -3,
-    },
-    wis: {
-      score: 11,
-      modifier: 3,
-      advantage: 0,
-    },
-    cha: {
-      score: 14,
-      modifier: 3,
-      advantage: 2,
-    },
-  },
-  saving_throws: {
-    Strength: {
-      proficiency: false,
-      modifier: -1,
-      advantage: 0,
-    },
-    Dexterity: {
-      proficiency: true,
-      modifier: 5,
-      advantage: 0,
-    },
-    Constitution: {
-      proficiency: true,
-      modifier: 1,
-      advantage: 0,
-    },
-    Intelligence: {
-      proficiency: true,
-      modifier: -1,
-      advantage: 0,
-    },
-    Wisdom: {
-      proficiency: true,
-      modifier: 0,
-      advantage: 0,
-    },
-    Charisma: {
-      proficiency: true,
-      modifier: 2,
-      advantage: 0,
-    },
-  },
-  skills: {
-    // should these skills have an associated ability, or are we getting that from the api?
-    acrobatics: {
-      proficiency: false,
-      modifier: 5,
-      advantage: 0,
-    },
-    animal_handling: {
-      proficiency: false,
-      modifier: 0,
-      advantage: 0,
-    },
-    arcana: {
-      proficiency: false,
-      modifier: -3,
-      advantage: 0,
-    },
-    athletics: {
-      proficiency: false,
-      modifier: -1,
-      advantage: 0,
-    },
-    deception: {
-      proficiency: true,
-      modifier: 4,
-      advantage: 0,
-    },
-    history: {
-      proficiency: false,
-      modifier: -3,
-      advantage: 0,
-    },
-    insight: {
-      proficiency: false,
-      modifier: 0,
-      advantage: 0,
-    },
-    intimidation: {
-      proficiency: false,
-      modifier: 4,
-      advantage: 0,
-    },
-    investigation: {
-      proficiency: true,
-      modifier: -3,
-      advantage: 0,
-    },
-    medicine: {
-      proficiency: false,
-      modifier: 0,
-      advantage: 0,
-    },
-    nature: {
-      proficiency: false,
-      modifier: -3,
-      advantage: 0,
-    },
-    perception: {
-      proficiency: false,
-      modifier: 2,
-      advantage: 0,
-    },
-    performance: {
-      proficiency: true,
-      modifier: 2,
-      advantage: 0,
-    },
-    persuasion: {
-      proficiency: false,
-      modifier: -4,
-      advantage: 0,
-    },
-    religion: {
-      proficiency: false,
-      modifier: 3,
-      advantage: 0,
-    },
-    sleight_of_hand: {
-      proficiency: false,
-      modifier: 5,
-      advantage: 0,
-    },
-    stealth: {
-      proficiency: false,
-      modifier: 5,
-      advantage: 0,
-    },
-    survival: {
-      proficiency: false,
-      modifier: 0,
-      advantage: 0,
-    },
-  },
-  conditions: ['Blinded', 'Prone']
+const charConditions = ['Blinded','Charmed','Deafened','Exhaustion','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious'];
+
+const fullAbScore = {
+  cha: 'Charisma',
+  int: 'Intelligence',
+  str: 'Strength',
+  wis: 'Wisdom',
+  dex: 'Dexterity',
+  con: 'Constitution',
 };
 
+
 export const DashBoard = () => {
-  const {
-    name,
-    level,
-    experience,
-    race,
-    misc_proficiencies,
-    ability_scores,
-    saving_throws,
-    skills,
-  } = TEMP_DATA;
   const user = useSelector(state => state.user);
   console.log(user);
-
-  const character = useSelector(state => state.characters);
-  console.log(character);
   
+  const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
+  const character = useSelector(state => state.characters[charID]);
+  console.log(character);
+
   return (
-    <div className="dashboard">
+    character.level ?
+    (<div id="dashboard" className="dashboard">
       <Header />
       <div className="toolbar fixed-top">
         <div className="subheader py-1 px-3 pt-2">
-          <h2 className="small-caps mr-5">Liir Thropp</h2>
+          <h2 className="small-caps mr-5">{character.name}</h2>
           <span className="ml-2">
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
-                src={require(`../../../public/assets/imgs/icons/white/class/${TEMP_DATA.class[0].name.toLowerCase()}.png`)}
+                src={require(`../../../public/assets/imgs/icons/white/class/${character.class[0].name.toLowerCase()}.png`)}
               />
-              Rogue
+              {character.class[0].name}
             </h5>
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
-                src={require(`../../../public/assets/imgs/icons/white/race/${TEMP_DATA.race.name.toLowerCase()}.png`)}
+                src={require(`../../../public/assets/imgs/icons/white/race/${character.race.name.toLowerCase().replaceAll('-','_')}.png`)}
               />
-              Halfling
+              {character.race.subrace ? character.race.subrace : character.race.name}
             </h5>
-            <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;2</span></h5>
+            <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;{character.level}</span></h5>
             <span className="m-0 align-top">
               <table style={{display: 'inline-table'}}>
                 <tbody>
                   <tr>
                   <span className="card content-card description-card m-0 p-1 w-auto">
-                  <h6 className="text-uppercase text-center m-0 px-4">647 XP</h6>
+                  <h6 className="text-uppercase text-center m-0 px-4">{character.experience.current} XP</h6>
                   </span>
                   </tr>
                   <tr>
-                  <h6 className="text-uppercase text-center text-white m-0 w-auto"><small className="text-uppercase text-white">Next Level: 900</small></h6>
+                  <h6 className="text-uppercase text-center text-white m-0 w-auto"><small className="text-uppercase text-white">Next Level: {character.experience.threshold}</small></h6>
                   </tr>
                 </tbody>
               </table>
@@ -283,7 +104,7 @@ export const DashBoard = () => {
             </p>
           );
         })} */}
-      <div style={{paddingTop: '105px'}}>
+      <div style={{paddingTop: '125px'}}>
       <div className="container-fluid px-5 py-4">
         <div className="row position-relative no-gutters mb-2" >
           <div className="w-100">
@@ -312,30 +133,30 @@ export const DashBoard = () => {
         <div className="row">
           <div className="col-xl-5 px-0 maincol">
             <div className="row">
-              <div className="col-sm-7 pl-0 pr-2">
-                  <AbilitiesCard ability_scores={ability_scores} />
-                  <SavingThrowsCard saving_throws={saving_throws} />
-                  <ProficienciesCard misc_proficiencies={misc_proficiencies} />
+              <div className="col-sm-6 pl-0 pr-2">
+                  <AbilitiesCard ability_scores={character.ability_scores} />
+                  <SavingThrowsCard saving_throws={character.saving_throws} />
+                  <ProficienciesCard misc_proficiencies={character.misc_proficiencies} />
               </div>
-              <div className="col-sm-5 px-2">
-                      <SkillsCard skills={skills} />
-                      <SensesCard />
+              <div className="col-sm-6 px-2">
+                      <SkillsCard skills={character.skills} proficiency={character.proficiency_bonus}/>
+                      <SensesCard perception={character.skills.perception.modifier} insight={character.skills.insight.modifier} investigation={character.skills.investigation.modifier}/>
               </div>
             </div>
           </div>
           <div className="col-xl-7 px-0">
             <div className="row">
               <div className="col-sm-8 px-2">
-                      <StatsCard />
-                      <HitPointsCard />
+                      <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed} charID={charID}/>
+                      <HitPointsCard health={character.health} hit_dice={character.hit_dice} charID={charID}/>
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
-                <ExtraStatsCard />
+                <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
               </div>
             </div>
             <div className="pinned row px-2">
               <div className="col-12 px-0">
-                <SpellsAndPinned />
+                <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus}/>
 
               </div>
             </div>
@@ -344,21 +165,22 @@ export const DashBoard = () => {
       </div>
       {/* </div> */}
     </div>
-    </div>
+    </div>)
+    :
+    <>Loading...</>
   );
 };
 
 const AbilitiesCard = ({ ability_scores }) => {
-  console.log(ability_scores);
 
   return (
     <div className="abilities card translucent-card">
       <h5 className="card-title">Abilities</h5>
       <div className="container-fluid">
         <div className="row">
-          {Object.entries(ability_scores).map(ability => {
+          {Object.entries(ability_scores).map((ability, index) => {
             return (
-              <div className="ability-grid col-4">
+              <div key={`ability-${index}`} className="ability-grid col-4">
                 <div>
                   <div
                   className="card content-card description-card ability-bonus mb-0"
@@ -403,7 +225,7 @@ const SavingThrowsCard = ({ saving_throws }) => {
                     {saving_throw[1].modifier >= 0 && '+'}
                     {saving_throw[1].modifier}{' '}
                   </td>
-                  <td>{saving_throw[0]}</td>
+                  <td>{fullAbScore[saving_throw[0]]}</td>
                 </tr>
               );
             })}
@@ -414,13 +236,13 @@ const SavingThrowsCard = ({ saving_throws }) => {
   );
 };
 
-const SkillsCard = ({ skills }) => {
+const SkillsCard = ({ skills, proficiency }) => {
   return (
     <div className="skills">
       <h4 className="translucent-card proficiency-title text-uppercase">
-        Proficiency bonus: +2
+        Proficiency bonus: +{proficiency}
       </h4>
-      <div className="card translucent-card px-5">
+      <div className="card translucent-card">
         <h5 className="card-title">Skills</h5>
         <div className="card content-card description-card">
         <table className="table table-borderless table-sm">
@@ -453,15 +275,17 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
       <div className="card content-card description-card">
         {Object.entries(misc_proficiencies).map(misc_proficiency => {
           return (
-            <p className="text-capitalize" key={misc_proficiency[0]}>
+            misc_proficiency[1].length > 0 ? <p className="text-capitalize" key={misc_proficiency[0]}>
                 <span className="small-caps">{misc_proficiency[0]}</span> –{' '}
                 {misc_proficiency[1].map((item, idx) => (
                   <React.Fragment key={idx}>
-                    {item.name}
+                    {item}
                     {idx < misc_proficiency[1].length - 1 && ', '}
                   </React.Fragment>
                 ))}
             </p>
+            :
+            null
           );
         })}
       </div>
@@ -469,46 +293,58 @@ const ProficienciesCard = ({ misc_proficiencies }) => {
   );
 };
 
-const SensesCard = () => {
+const SensesCard = ({perception, insight, investigation}) => {
   return (
     <div className="card translucent-card">
       <h5 className="card-title">Senses</h5>
       <div className="card content-card description-card">
-        <div>Passive Perception (WIS): 12</div>
-        <div>Passive Insight (WIS): 10</div>
-        <div>Passive Investigation (INT): 7</div>
+        <div>Passive Perception (WIS): {10+perception}</div>
+        <div>Passive Insight (WIS): {10+insight}</div>
+        <div>Passive Investigation (INT): {10+investigation}</div>
       </div>
     </div>
   );
 };
 
-const StatsCard = () => {
+const StatsCard = ({initiative, ac, speed, charID}) => {
+  const [inspiration, setInspiration] = useState(false);
+  const dispatch = useDispatch();
+
+  const toggleInspiration = () => {
+    dispatch(setArrayUpdate(charID, 'inspiration', !inspiration))
+    setInspiration(!inspiration);
+  }
+
   return (
     <div className="stats-card">
     <div className="card translucent-card">
-      <div className="row">
+      <div className="row misc-stats">
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Initiative</h6>
-            <h2 className="text-uppercase text-center m-0">+4</h2>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Initiative</h6>
+            <h2 className="text-uppercase m-0">{initiative < 0 ? `-${initiative}` : `+${initiative}`}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Inspiration</h6>
-            <StarOutline style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Inspiration</h6>
+            {!inspiration ?
+              <button className='wrapper-button' onClick={toggleInspiration}><StarOutline /></button>
+              :
+              <button className='wrapper-button' onClick={toggleInspiration}><StarFilled /></button>
+            }
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card px-4">
-            <h6 className="text-uppercase m-0 text-center">AC</h6>
-            <h2 className="text-uppercase text-center m-0">15</h2>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">AC</h6>
+            <h2 className="text-uppercase text-center m-0">{ac}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Speed</h6>
-            <h2 className="text-uppercase text-center m-0">30</h2>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Speed</h6>
+            <h2 className="text-uppercase text-center m-0">{speed}</h2>
           </div>
         </div>
       </div>
@@ -516,73 +352,277 @@ const StatsCard = () => {
     </div>
   );
 };
-
-const HitPointsCard = () => {
+const Portal = ({children}) => {
+  console.log(children)
+  return ReactDOM.createPortal(children, document.getElementById('dashboard'));
+};
+/*TODO: why won't it work in component?*/
+const ManualEntryModal = ({name, showModal, setShowModal, placeholder, thePrompt, buttonText, submitFunction, modifier}) => { 
+  const [value, setValue] = useState(null);
+  
   return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>{thePrompt}</h5>
+          </div>
+          <div className="card content-card name-card">
+            <FloatingLabel
+              id={placeholder}
+              name={placeholder}
+              placeholder={placeholder}
+              type="number"
+              min="0"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </div>
+          <button
+            className="text-uppercase btn-primary modal-button"
+            onClick={() => {submitFunction(value*Number.parseInt(modifier)); setShowModal(false)}}
+            data-dismiss="modal"
+          >
+            {buttonText}
+          </button>
+    </Modal>
+    </Portal>
+  )
+}
+
+const HitPointsCard = ({health, hit_dice, charID}) => {
+  const dispatch = useDispatch();
+
+  const [showDmg, setShowDmg] = useState(false);
+  const [showHealth, setShowHealth] = useState(false);
+  const [showSaves, setShowSaves] = useState(false);
+
+  const changeHealth = (amt) => {
+    amt = Number.parseInt(amt)
+    if(amt < 0 && health.temp > 0) {
+      let newAmt = amt + health.temp;
+      let newTemp = health.temp + amt;
+      dispatch(setUpdate(charID, 'health', {temp: newTemp}))
+      if(newAmt < 0) {
+        amt = newAmt
+      }
+    }
+    let newHealth = health.current+amt;
+    if(newHealth <= 0) setShowSaves(true);
+    else if(newHealth >health.max) newHealth = health.max;
+    let newState = {current: newHealth};
+
+    dispatch(setUpdate(charID, 'health', newState))
+  }
+
+  return (
+    <>
     <div className="hit-points card translucent-card long-card">
-      <div className="row px-3">
-        <div className="col-sm-7 px-2 py-1">
-        <h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Points</h6>
-        <div className="row p-0 m-0">
-          <div className="col-sm-8 px-1 py-0">
-            <div className="card content-card description-card my-0 mr-2 ml-0">
-              <h3 className="text-uppercase text-center m-0">4/10</h3>
+      <div className="row">
+        <div className="col-sm-7 px-3">
+        {!showSaves ? 
+          (<><h6 className="mb-1 card-title d-block">Hit Points</h6>
+          <div className="row p-0 m-0">
+            <div className="col-sm-8 px-1 py-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0">
+                <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
+              </div>
+              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
             </div>
-            <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
-          </div>
-          <div className="col-sm-4 px-1 py-0">
-            <div className="card content-card description-card my-0 mr-2 ml-0">
-              <h3 className="text-uppercase text-center m-0">0</h3>
+            <div className="col-sm-4 px-1 py-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0">
+              {/*<EditableLabel text={health.temp}
+                labelClassName='text-uppercase text-center m-0'
+                inputClassName='text-uppercase text-center m-0'
+                inputWidth='200px'
+                inputHeight='25px'
+                inputMaxLength='50'
+                labelFontWeight='bold'
+                inputFontWeight='bold'
+                //onFocus={this._handleFocus}
+                //onFocusOut={this._handleFocusOut}
+        />*/}
+                <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
+              </div>
+              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
             </div>
-            <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
-          </div>
-        </div>
-        <div className="row px-3 m-0 mt-2">
+          </div></>)
+          :
+          (
+            <><h6 className="mb-1 card-title d-block">Death Saves</h6>
+          <div className="row p-0 m-0">
+            <div className="col-sm-8 px-1 py-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0">
+                <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
+              </div>
+              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
+            </div>
+            <div className="col-sm-4 px-1 py-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0">
+              {/*<EditableLabel text={health.temp}
+                labelClassName='text-uppercase text-center m-0'
+                inputClassName='text-uppercase text-center m-0'
+                inputWidth='200px'
+                inputHeight='25px'
+                inputMaxLength='50'
+                labelFontWeight='bold'
+                inputFontWeight='bold'
+                //onFocus={this._handleFocus}
+                //onFocusOut={this._handleFocusOut}
+          />*/}
+                <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
+              </div>
+              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
+            </div>
+          </div></>
+          )
+        }
+        <div className="row m-0 mt-2">
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-alert text-uppercase text-center align-middle">Damage</button>
+            <button className="btn btn-alert text-uppercase text-center align-middle" onClick={() => setShowDmg(true)}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-success text-uppercase text-center align-middle">Heal</button>
+            <button className="btn btn-success text-uppercase text-center align-middle mr-0" onClick={() => setShowHealth(true)}>Heal</button>
           </div>
         </div>
         </div>
-        <div className="col-sm-5 px-2 pl-5 py-1">
-        <h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Dice</h6>
+        <div className="col-sm-5 px-3">
+        <h6 className="mb-1 card-title d-block">Hit Dice</h6>
 
           <div className="card content-card description-card my-0 mr-0">
-            <h3 className="text-uppercase text-center m-0">2d8</h3>
+            <h3 className="text-uppercase text-center m-0">{hit_dice[0].current}d{hit_dice[0].type}</h3>
           </div>
-          <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Max: 2d8</small></h6>
+          <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Max: {hit_dice[0].max}d{hit_dice[0].type}</small></h6>
         </div>
       </div>
     </div>
+    {showDmg && <ManualEntryModal name={`DmgModal`} showModal={showDmg} setShowModal={setShowDmg} placeholder="Amt" thePrompt="How much damage?" buttonText="OW!" submitFunction={changeHealth} modifier="-1"/>}
+    {showHealth && <ManualEntryModal name={`HealthModal`} showModal={showHealth} setShowModal={setShowHealth} placeholder="Amt" thePrompt="How much healing?" buttonText="Ah..." submitFunction={changeHealth} modifier="1"/>}
+    </>
   );
 };
 
-const ExtraStatsCard = () => {
+const PromptedModal = ({name, thePrompt, buttonText, showModal, setShowModal, submitFunction, options}) => {
+  
   return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>{thePrompt}</h5>
+          </div>
+          <table className='table modal-table'>
+              <tr>
+                { 
+              console.log(options.length)}
+            {options.slice(0, Math.ceil(options.length/2)).map((option, index) => {
+              return(
+                <td key={`condition-${index}`}>
+                <button
+                  type="button"
+                  className={'btn btn-primary m-1'
+                  }
+                  onClick={() => {submitFunction(option); setShowModal(false)}}
+                >
+                  {option}
+              </button>
+              </td>
+              )
+            })}
+            </tr>
+          <tr>
+            {options.slice(Math.ceil(options.length/2), options.length).map((option, index) => {
+              return(
+                <td key={`condition-${index}`}
+                >
+                  <button
+                    type="button"
+                    className={'btn btn-primary m-1'
+                    }
+                    onClick={() => {submitFunction(option); setShowModal(false)}}
+                  >
+                    {option}
+                </button>
+              </td>
+              )
+            })}
+          </tr>
+        </table>
+
+    </Modal>
+    </Portal>
+  )
+}
+
+const ExtraStatsCard = ({charID, conditions, defenses}) => {
+  const dispatch = useDispatch();
+  const reducer = (state, item) => {
+    let push = item.push;
+    item = item.item;
+    console.log(state, item);
+    let newState;
+    if(push) {state.push(item);
+      newState = state;
+    }
+    else newState = state.splice(state.indexOf(item), 1);
+    dispatch(setArrayUpdate(charID, 'conditions', newState));
+    console.log("NEW STATE", newState);
+    return newState;
+  };
+
+  const [showAdd, setShowAdd] = useState(false);
+  const [conditionList, setConditionList] = useReducer(reducer, conditions);
+
+  const addCondition = (condition) => {
+    setConditionList({item: condition, push: true});
+  }
+  const removeCondition = (condition) => {
+    setConditionList({item: condition, push: false})
+  }
+  return (
+    <>
     <div className="card translucent-card short-card extra-stats">
       <div className="card content-card description-card px-1">
         <h6 className="text-uppercase text-center m-0">Conditions</h6>
-        {TEMP_DATA.conditions.map((condition, index) => {
-          return (<button className="btn-outline-primary" key={`condition-${index}`}>{condition}</button>)
+        {conditions.map((condition, index) => {
+          return (<button className="btn-outline-primary" onClick={() => removeCondition(condition)} key={`condition-${index}`}>{condition}</button>)
         })}
-        <button className="btn-outline-success"><span className="green">+</span> Add condition</button>
+        <button className="btn-outline-success" onClick={() => {setShowAdd(true)}}>{/*<input className='form-control'/>*/}<span className="green">+</span>Add condition</button>
       </div>
       <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Defenses</h6>
         <ul>
-          <li><span>Resistant to fire damage</span></li>
+          {defenses.resistances.map((defense, index) => {
+            return (<li key={`defense-${index}`}><span>Resistant to {defense} damage</span></li>)
+          })}
         </ul>
       </div>
     </div>
+    {showAdd && <PromptedModal name={`ConditionModal`} thePrompt="Add Condition" buttonText="Add Condition" showModal={showAdd} setShowModal={setShowAdd} submitFunction={addCondition} options={charConditions}/>}
+    </>
   );
 };
 
-const SpellsAndPinned = () => {
+const SpellsAndPinned = ({spells, modifier, proficiency}) => {
   return (
   <div className="card translucent-card w-100 mx-0">
-    <div className="row px-5">
+    {spells != null && (<div className="row px-5">
       <div>
         <div className="card content-card description-card p-1">
         <h6 className="text-uppercase text-center m-0">Spellcasting</h6>
@@ -590,13 +630,13 @@ const SpellsAndPinned = () => {
           <tbody>
             <tr>
           <td>
-            <h5 className="text-uppercase text-center m-0">+4<super><small>(Wis)</small></super></h5>
+            <h5 className="text-uppercase text-center m-0">{modifier >= 0 ? `+${modifier}` : `-${modifier}`}<super><small>({spells.casting_ability})</small></super></h5>
           </td>
           <td>
-            <h5 className="text-uppercase text-center m-0">15</h5>
+            <h5 className="text-uppercase text-center m-0">{8+modifier+proficiency}</h5>
           </td>
           <td>
-            <h5 className="text-uppercase text-center m-0">+6</h5>
+            <h5 className="text-uppercase text-center m-0">{modifier+proficiency >= 0 ? `+${modifier+proficiency}` : `-${modifier+proficiency}`}</h5>
           </td>
           </tr>
           <tr>
@@ -610,30 +650,49 @@ const SpellsAndPinned = () => {
       </div>
       <div className="ml-auto">
         <div className="card content-card description-card pb-0">
+                      {/*SPELL SLOTS TBD*/}
         <h6 className="text-uppercase text-center m-0">Spell Slots</h6>
         <table className="table table-borderless table-sm">
           <tbody>
             <tr>
-          <td>
-            <h5 className="text-uppercase text-center m-0"><span>&#9679;&#9679;&#9675;&#9675;</span></h5>
-          </td>
-          <td>
-            <h5 className="text-uppercase text-center m-0">&#9675;&#9675;&#9675;</h5>
-          </td>
-          <td>
-            <h5 className="text-uppercase text-center m-0">&#9675;&#9675;</h5>
-          </td>
+          {spells.slots.map((slot) => {
+            return (
+              slot.max > 0 ? <td key={slot.max}>
+              <h5 className="text-uppercase text-center m-0"><span>
+                {[...Array(slot.current)].map(() => {
+                  return (
+                    <>&#9679;</>
+                  )
+                })}
+                {[...Array(slot.max)].map(() => {
+                  return (
+                    <>&#9675;</>
+                  )
+                })}
+              </span></h5>
+              </td>
+              : 
+              null
+            )      
+          })}
+          
           </tr>
           <tr>
-          <td><h4 className="text-uppercase text-center m-0">1</h4></td>
-          <td><h4 className="text-uppercase text-center m-0">2</h4></td>
-          <td><h4 className="text-uppercase text-center m-0">3</h4></td>
+          {spells.slots.map((slot, index) => {
+            return (
+              slot.max > 0 ? <td>
+                <h4 className="text-uppercase text-center m-0">{index+1}</h4>
+              </td>
+              : 
+              null
+            )      
+          })}
           </tr>
           </tbody>
         </table>
       </div>
       </div>
-    </div>
+    </div>)}
     <div className="row">
 
     </div>

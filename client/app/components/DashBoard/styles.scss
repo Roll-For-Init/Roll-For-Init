@@ -91,8 +91,7 @@
 
   .abilities {
       .container-fluid {
-          padding-left: 10%;
-          padding-right: 10%;
+          padding: 0;
       }
       .col-4 {
           padding-left: 10px;
@@ -189,17 +188,17 @@
     color: white;
     font-size: 1rem;
     text-transform: uppercase;
-    letter-spacing: 1.44px;
+    letter-spacing: 0.1rem;
     margin: 0px;
     padding: 0px;
     text-align: center;
   }
 
   .proficiency-title {
-    background-color: white;
     width: fit-content;
     background-color: $off-white;
-    font-size: 16px;
+    font-size: 1rem;
+    padding: 10px;
   }
 
   .hit-points {
@@ -247,6 +246,7 @@
   .maincol {
     .table {
         margin-bottom: 0;
+        color: $dark-blue;
     }
     td {
         padding: {
@@ -305,12 +305,74 @@
     span {
         color: $dark-green;
     }
+    input {
+        border: none;
+        background-color: transparent;
+    }
 }
 .btn-outline-primary {
     @extend .btn-outline-success;
     border: {
       color: $blue !important;
     }
+}
+.wrapper-button {
+    margin: auto auto;
+    padding: 0;
+    display: block;
+    background-color: transparent;
+    box-shadow: none;
+    padding-top: .2rem;
+    padding-bottom: .2rem;
+
+    svg {
+      margin: auto;
+      display: block;
+      height: 2rem;
+      path {
+        transition: .15s;
+      }
+
+      &.star-filled {
+        path {
+          fill: $dark-blue;
+        }
+        &:hover path {
+          fill: $very-dark-blue;
+        }
+        &:active path {
+          fill: $dark-blue-disabled;
+        }
+      }
+      &.star-outline {
+        path.outline {
+          fill: $dark-blue-disabled;
+        }
+        path.fill {
+          fill: transparent;
+        }
+        &:hover {
+          path.outline {
+            fill: $dark-blue-disabled;
+          }
+          path.fill {
+            fill: $dark-blue-disabled;
+          }
+        }
+        &:active {
+          path.outline {
+            fill: $very-dark-blue;
+          }
+          path.fill {
+            fill: $very-dark-blue;
+          }
+        }
+      }
+    }
+}
+
+.misc-stats h2 {
+  height: 2.4rem;
 }
 
   .list-item {
@@ -354,5 +416,35 @@
 
   div {
     color: $dark-blue !important;
+  }
+  .modal-button {
+    font-size: 1.25rem;
+    max-width: 300px;
+    padding: 10px 20px;
+    margin: 20px auto 0 auto;
+  }
+  .modal-dialog {
+      max-width: auto;
+      width: auto;
+  }
+  .modal-table {
+      margin-bottom: 0;
+      margin-left: auto;
+      margin-right: auto;
+      width: 1px;
+      &>tr {
+          display: table-cell;
+          border: none;
+          margin: 0;
+          padding: 1px;
+          vertical-align: top;
+          &>td {
+            display: block;
+            border: none;
+            margin: 0;
+            padding: 1px;
+        }
+  
+      }
   }
 }

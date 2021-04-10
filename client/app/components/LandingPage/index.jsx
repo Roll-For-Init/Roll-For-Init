@@ -1,11 +1,32 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Link, useHistory } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import { Link, Redirect, useHistory } from 'react-router-dom';
+import Upload from '../Upload';
 import Dropzone from 'react-dropzone';
 import charPlaceholder from '../../../public/assets/imgs/char-placeholder.png';
 import './styles.scss';
+import { PropTypes } from 'prop-types';
+import { setCurrentCharacter } from '../../redux/actions';
 
-const LandingPage = () => {
+const DraftCharacterCard = ({ character }) => {
+  const dispatch = useDispatch();
+  const handleClick = () => {
+    dispatch(setCurrentCharacter(character.charID));
+  };
+  return (
+    <Link to="/create">
+      <button
+        onClick={handleClick}
+        type="button"
+        className="btn btn-secondary btn-lg top-buttons"
+      >
+        Level 1 {character?.race?.index} { character?.class?.index }
+      </button>
+    </Link>
+  );
+};
+
+const UploadCharacter = () => {
   const maxImageSize = 10000000; // bytes
   const acceptedFileTypes = 'application/pdf';
   const characterLimit = 28;
@@ -79,6 +100,143 @@ const LandingPage = () => {
     }
   };
 
+  return (
+    <>
+      <div
+        className="modal fade"
+        id="uploadModal"
+        role="dialog"
+        aria-labelledby="characterUpload"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content">
+            <div className="modal-sect pb-0">
+              <h5>Upload a Character</h5>
+            </div>
+            <div className="modal-sect">
+              <p>Please upload your Roll For Init PDF character sheet.</p>
+            </div>
+            <Dropzone
+              onDrop={handleOnDrop}
+              accept="application/pdf"
+              multiple={false}
+              maxSize={maxImageSize}
+            >
+              {({ getRootProps, getInputProps }) => (
+                <section>
+                  <div
+                    className="card content-card drag-drop-card mb-0 mt-0"
+                    {...getRootProps()}
+                  >
+                    <button className="btn btn-primary btm-buttons upload-buttons">
+                      Choose File
+                    </button>
+                    <input {...getInputProps()} />
+                    <p className="upload-file-name">{fileName}</p>
+                  </div>
+                </section>
+              )}
+            </Dropzone>
+            {errors !== '' && <p className="error-msg">{errors}</p>}
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+const FinishCharacter = ({ characters }) => {
+  if (
+    characters === null ||
+    characters === undefined ||
+    characters?.length === 0
+  )
+    return;
+
+  return (
+    <>
+      <button
+        type="button"
+        className="btn btn-secondary btn-lg top-buttons"
+        data-toggle="modal"
+        data-target="#finishModal"
+      >
+        Finish Existing Character
+      </button>
+      <div
+        className="modal fade"
+        id="finishModal"
+        role="dialog"
+        aria-labelledby="characterFinish"
+        aria-hidden="true"
+      >
+        <div className="modal-dialog modal-dialog-centered" role="document">
+          <div className="modal-content">
+            <div className="modal-sect pb-0">
+              <h5>Character Drafts</h5>
+            </div>
+            <div className="modal-sect">
+              {Object.keys(characters).map((key, idx) => {
+                return (
+                  <DraftCharacterCard key={idx} character={characters[key]} />
+                );
+              })}
+            </div>
+          </div>
+        </div>
+      </div>
+    </>
+  );
+};
+
+const CharacterSection = ({ characters }) => {
+  const dispatch = useDispatch();
+  const handleClick = () => {
+    dispatch(setCurrentCharacter(null));
+  };
+  return (
+    <>
+    {/*<FinishCharacter characters={characters} />*/}
+    <div className="d-grid gap-2">
+        <Link to="/create">
+          <button
+            type="button"
+            className="btn btn-secondary btn-lg top-buttons"
+            onClick={handleClick}
+          >
+            Create New Character
+          </button>
+        </Link>
+        {/*
+        <Link to="/upload">
+          <button
+            type="button"
+            className="btn btn-secondary btn-lg top-buttons"
+          >
+            Upload Existing Character
+          </button>
+        </Link>*/}
+        <button
+          type="button"
+          className="btn btn-secondary btn-lg top-buttons"
+          data-toggle="modal"
+          data-target="#uploadModal"
+        >
+          Upload Existing Character
+        </button>
+        <UploadCharacter />
+    </div>
+    </>
+  );
+};
+const characterPropTypes = PropTypes.shape({});
+CharacterSection.propTypes = {
+  characters: PropTypes.objectOf(characterPropTypes),
+};
+
+const LandingPage = () => {
+  const { auth, characters } = useSelector(state => state);
   const history = useHistory();
 
   function handleClick() {
@@ -109,7 +267,7 @@ const LandingPage = () => {
     )
   );
 
-  const characters = [
+  const exampleCharacters = [
     {
       firstname: 'Glorbin',
       lastname: 'Shmoo',
@@ -151,82 +309,8 @@ const LandingPage = () => {
         </div>
         <div className="col-1 col-md"></div>
       </div>
-      <div className="d-grid gap-2">
-        <Link to="/create">
-          <button
-            type="button"
-            className="btn btn-secondary btn-lg top-buttons"
-          >
-            Create New Character
-          </button>
-        </Link>
-        {/*
-        <Link to="/upload">
-          <button
-            type="button"
-            className="btn btn-secondary btn-lg top-buttons"
-          >
-            Upload Existing Character
-          </button>
-        </Link>*/}
-        <button
-          type="button"
-          className="btn btn-secondary btn-lg top-buttons"
-          data-toggle="modal"
-          data-target="#uploadModal"
-        >
-          Upload Existing Character
-        </button>
-        <div
-          className="modal fade"
-          id="uploadModal"
-          role="dialog"
-          aria-labelledby="characterUpload"
-          aria-hidden="true"
-        >
-          <div className="modal-dialog modal-dialog-centered" role="document">
-            <div className="modal-content">
-              <button
-                type="button"
-                className="close"
-                data-dismiss="modal"
-                aria-label="Close"
-              >
-                <i className="bi bi-x"></i>
-              </button>
-              <div className="modal-sect pb-0">
-                <h5>Upload a Character</h5>
-              </div>
-              <div className="modal-sect">
-                <p>Please upload your Roll For Init PDF character sheet.</p>
-              </div>
-              <Dropzone
-                onDrop={handleOnDrop}
-                accept="application/pdf"
-                multiple={false}
-                maxSize={maxImageSize}
-              >
-                {({ getRootProps, getInputProps }) => (
-                  <section>
-                    <div
-                      className="card content-card drag-drop-card mb-0"
-                      {...getRootProps()}
-                    >
-                      <button className="btn btn-primary btm-buttons upload-buttons">
-                        Choose File
-                      </button>
-                      <input {...getInputProps()} />
-                      <p className="upload-file-name">{fileName}</p>
-                    </div>
-                  </section>
-                )}
-              </Dropzone>
-              {errors !== '' && <p className="error-msg">{errors}</p>}
-            </div>
-          </div>
-        </div>
-      </div>
-      {isLoggedIn !== true ? (
+      <CharacterSection characters={characters} />
+      {auth.isLoggedIn !== true ? (
         <div className="d-grid gap-6 btm-button-container">
           <Link to="/login">
             <button
@@ -248,7 +332,7 @@ const LandingPage = () => {
       ) : (
         <div className="character-container">
           <div className="card translucent-card mt-0">
-            {characters.map((character, idx) => {
+            {exampleCharacters.map((character, idx) => {
               return (
                 <div
                   className="card content-card character-card"
