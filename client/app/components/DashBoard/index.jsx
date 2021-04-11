@@ -45,6 +45,8 @@ const fullAbScore = {
   con: 'Constitution',
 };
 
+const preparedSpells = ['wizard', 'cleric', 'druid'];
+
 
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
@@ -175,7 +177,7 @@ export const DashBoard = () => {
 const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots, charID, health}) => {
   const [spellsRecovered, setSpellsRecovered] = useState(0);
   const [healthRecovered, setHealthRecovered] = useState(0);
-  const [numHitDice, setNumHitDice] = useState(hitDice);
+  const [numHitDice, setNumHitDice] = useState(hitDice[0].current);
 
   const dispatch = useDispatch();
 
@@ -184,7 +186,7 @@ const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots
     let newHitDice = hitDice;
     newHitDice[0].current -= 1;
     dispatch(setArrayUpdate(charID, 'hit_dice', newHitDice))
-    setNumHitDice(hitDice-1);
+    setNumHitDice(numHitDice-1);
     setHealthRecovered(recovered+con);
     let newHealth = health.current + recovered + con;
     if(newHealth > health.max) newHealth = health.max;
@@ -211,6 +213,8 @@ const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots
       dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
     }
   }, [])
+
+  
 
   return (
     <Portal>
