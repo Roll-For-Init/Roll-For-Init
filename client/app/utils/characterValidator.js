@@ -41,18 +41,41 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
       let costAmt = item.desc.cost.match(/\d+/g);
       let denom = item.desc.cost.match(/[a-zA-Z]+/g);
 
-      item = {
-        ...item.desc,
-        cost: {
-          amount: costAmt,
-          denomination: denom,
-        },
-        name: item.name,
-        quantity: item.quantity ? 1 : item.quantity,
-      };
-    }
+      for (let item of items.set) {
+        console.log(item);
+        if (!(item.desc || item.equipment?.desc)) {
+          equipment.inventory.push(item);
+          continue;
+        }
+        if (item.equipment) {
+          let costAmt = item.equipment.desc
+            ? item.equipment.desc.cost.match(/\d+/g)
+            : 0;
+          let denom = item.equipment.desc
+            ? item.equipment.desc.cost.match(/[a-zA-Z]+/g)
+            : '';
+          item = {
+            ...item.equipment.desc,
+            cost: {
+              amount: costAmt,
+              denomination: denom,
+            },
+            name: item.equipment.name,
+            quantity: item.quantity ? 1 : item.quantity,
+          };
+        } else {
+          let costAmt = item.desc ? item.desc.cost.match(/\d+/g) : 0;
+          let denom = item.desc ? item.desc.cost.match(/[a-zA-Z]+/g) : '';
 
-    sortEquipment(equipment, item, weaponProficiencies, armorProficiencies);
+          sortEquipment(
+            equipment,
+            item,
+            weaponProficiencies,
+            armorProficiencies
+          );
+        }
+      }
+    }
   }
 
   for (let key in items.choices) {
@@ -316,7 +339,6 @@ const sortEquipment = (
       dex_bonus: item.dex_bonus,
       max_bonus: item.max_bonus,
     };
-    //console.log(armorProficiencies, item);
     if (
       armorProficiencies.find(armor =>
         armor.toLowerCase().includes(item.category.toLowerCase())
@@ -539,7 +561,6 @@ const levelSorter = async (charClass, charLevel) => {
 };
 
 const spellsPopulator = spells => {
-  //console.log(spells);
   const cards = [[], [], [], [], [], [], [], [], []];
   for (let i = 0; i < 9; i++) {
     let key;
