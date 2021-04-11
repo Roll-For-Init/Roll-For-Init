@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { setAbilities } from '../../redux/actions';
 // import CharacterService from '../../redux/services/character.service';
 import { Popover, ArrowContainer } from 'react-tiny-popover';
-import { floor } from 'lodash-es';
 
 export const Abilities = ({ charID, setPage }) => {
   const dispatch = useDispatch();
