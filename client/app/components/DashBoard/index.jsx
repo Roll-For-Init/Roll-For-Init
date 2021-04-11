@@ -59,6 +59,7 @@ export const DashBoard = () => {
     character.level ?
     (<div id="dashboard" className="dashboard">
       <Header />
+      {showShortRest && <ShortRest showModal={showShortRest} setShowModal={setShowShortRest} hitDice={character.hit_dice} con={character.ability_scores.con.modifier} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
       <div className="toolbar fixed-top">
         <div className="subheader py-1 px-3 pt-2">
           <h2 className="small-caps mr-5">{character.name}</h2>
@@ -121,7 +122,7 @@ export const DashBoard = () => {
               <button className="text-uppercase btn btn-primary">Features</button>
             </div>
             <div className="float-right w-auto d-inline-block">
-              <button className="text-uppercase btn btn-secondary mx-2">
+              <button onClick={() => setShowShortRest(true)} className="text-uppercase btn btn-secondary mx-2">
                 Short Rest
               </button>
               <button className="text-uppercase btn btn-secondary mx-2">
@@ -171,15 +172,46 @@ export const DashBoard = () => {
   );
 };
 
-const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots}) => {
+const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots, charID, health}) => {
   const [spellsRecovered, setSpellsRecovered] = useState(0);
   const [healthRecovered, setHealthRecovered] = useState(0);
   const [numHitDice, setNumHitDice] = useState(hitDice);
 
+  const dispatch = useDispatch();
+
   const rollDie = () => {
-
-
+    let recovered = Math.floor(Math.random()*(hitDice[0].type)+1);
+    let newHitDice = hitDice;
+    newHitDice[0].current -= 1;
+    dispatch(setArrayUpdate(charID, 'hit_dice', newHitDice))
+    setNumHitDice(hitDice-1);
+    setHealthRecovered(recovered+con);
+    let newHealth = health.current + recovered + con;
+    if(newHealth > health.max) newHealth = health.max;
+    let newState = {current: newHealth};
+    dispatch(setUpdate(charID, 'health', newState))
   }
+
+  useEffect(() => { /*TEMP : coded for level 1 only */
+    if(charClass.toLowerCase() === "warlock") {
+      let recovered = 0;
+      let newSlots = spellSlots;
+      for(let slot of newSlots) {
+        if(slot.max <= 0) break;
+        recovered+=(slot.max-slot.current);
+        slot.current = slot.max;
+      }
+      setSpellsRecovered(recovered)
+      dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+    }
+    if(charClass.toLowerCase() === "wizard") {
+      setSpellsRecovered(1);
+      let newSlots = spellSlots;
+      newSlots[1].current = newSlots[1].current + 1;
+      dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+    }
+  }, [])
+
   return (
     <Portal>
     <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
@@ -193,25 +225,23 @@ const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots
             <i className="bi bi-x"></i>
           </button>
           <div className="modal-sect pb-0">
-            <h5>A	short	rest	is	a	period	of	downtime,	at	least	1	hour	
-long,	during	which	a	character	does	nothing	more	
-strenuous	than	eating,	drinking,	reading,	and	
-tending	to	wounds.</h5>
+            <h5>A	short	rest	is	a	period	of	downtime,	at	least	1	hour long,	during	which	a	character	does	nothing	more 
+              strenuous	than	eating,	drinking,	reading, and tending to wounds.</h5>
           </div>
-          {spellSlots && spellsRecovered && (
-            <h5>You have recovered {spellsRecovered} spell slots.</h5>
+          {spellSlots && spellsRecovered > 0 && (
+            <div className="modal-sect pb-0"><h5>You have recovered {spellsRecovered} spell slots.</h5></div>
           )}
-          {healthRecovered && (
-            <h5>You have recovered {healthRecovered} health.</h5>
+          {healthRecovered > 0 && (
+            <div className="modal-sect pb-0"><h5>You have recovered {healthRecovered} health.</h5></div>
           )}
-          {numHitDice ? <button
+          {numHitDice > 0 ? <button
             className="text-uppercase btn-primary modal-button"
-            onClick={() => {rollDie(); setShowModal(false)}}
+            onClick={() => {rollDie()}}
             data-dismiss="modal"
           >
             Roll Hit Die
           </button> : (
-            <h5>You have no more hit dice. Take a long rest to recover them as well as your health and spell slots.</h5>
+            <div className="modal-sect pb-0"><h5>You have no more hit dice. Take a long rest to recover them as well as your health and spell slots.</h5></div>
           )}
     </Modal>
     </Portal>
