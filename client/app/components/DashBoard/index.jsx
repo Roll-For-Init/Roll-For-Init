@@ -9,8 +9,7 @@ import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-editable-label';
 
-
-import {D20, StarOutline, StarFilled} from '../../utils/svgLibrary';
+import {D20, StarOutline, StarFilled, CircleSlot} from '../../utils/svgLibrary';
 
 //swap race class icons with white
 
@@ -54,6 +53,7 @@ export const DashBoard = () => {
   const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
   const character = useSelector(state => state.characters[charID]);
   console.log(character);
+  const [showShortRest, setShowShortRest] = useState(false);
 
   return (
     character.level ?
@@ -170,6 +170,53 @@ export const DashBoard = () => {
     <>Loading...</>
   );
 };
+
+const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots}) => {
+  const [spellsRecovered, setSpellsRecovered] = useState(0);
+  const [healthRecovered, setHealthRecovered] = useState(0);
+  const [numHitDice, setNumHitDice] = useState(hitDice);
+
+  const rollDie = () => {
+
+
+  }
+  return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>A	short	rest	is	a	period	of	downtime,	at	least	1	hour	
+long,	during	which	a	character	does	nothing	more	
+strenuous	than	eating,	drinking,	reading,	and	
+tending	to	wounds.</h5>
+          </div>
+          {spellSlots && spellsRecovered && (
+            <h5>You have recovered {spellsRecovered} spell slots.</h5>
+          )}
+          {healthRecovered && (
+            <h5>You have recovered {healthRecovered} health.</h5>
+          )}
+          {numHitDice ? <button
+            className="text-uppercase btn-primary modal-button"
+            onClick={() => {rollDie(); setShowModal(false)}}
+            data-dismiss="modal"
+          >
+            Roll Hit Die
+          </button> : (
+            <h5>You have no more hit dice. Take a long rest to recover them as well as your health and spell slots.</h5>
+          )}
+    </Modal>
+    </Portal>
+  )
+}
 
 const AbilitiesCard = ({ ability_scores }) => {
 
@@ -656,27 +703,24 @@ const SpellsAndPinned = ({spells, modifier, proficiency}) => {
       </div>
       </div>
       <div className="ml-auto">
-        <div className="card content-card description-card pb-0">
-                      {/*SPELL SLOTS TBD*/}
+        <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Spell Slots</h6>
         <table className="table table-borderless table-sm">
           <tbody>
             <tr>
           {spells.slots.map((slot) => {
             return (
-              slot.max > 0 ? <td key={slot.max}>
-              <h5 className="text-uppercase text-center m-0"><span>
-                {[...Array(slot.current)].map(() => {
+              slot.max > 0 ? <td key={slot.max} className='pb-0'>
+                {[...Array(slot.current)].map((slot, index) => {
                   return (
-                    <>&#9679;</>
+                    <button key={`used-${index}`}className='wrapper-button-inline pb-0'><CircleSlot className='circle-outline mx-1' width='20px' height='20px'/></button>
                   )
                 })}
-                {[...Array(slot.max)].map(() => {
+                {[...Array(slot.max - slot.current)].map((slot, index) => {
                   return (
-                    <>&#9675;</>
+                    <button key={`unused-${index}`}className='wrapper-button-inline'><CircleSlot className='circle-filled mx-1' width='20px' height='20px'/></button>
                   )
                 })}
-              </span></h5>
               </td>
               : 
               null
@@ -687,8 +731,8 @@ const SpellsAndPinned = ({spells, modifier, proficiency}) => {
           <tr>
           {spells.slots.map((slot, index) => {
             return (
-              slot.max > 0 ? <td>
-                <h4 className="text-uppercase text-center m-0">{index+1}</h4>
+              slot.max > 0 ? <td className="py-0">
+                <h4 className="text-uppercase text-center m-0 line-height-small">{index+1}</h4>
               </td>
               : 
               null

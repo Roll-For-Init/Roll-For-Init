@@ -1,6 +1,24 @@
 @import 'client/app/variables';
 
 .dashboard {
+    .line-height-small {
+        line-height: 1rem;
+    }
+    .spell-slot {
+        background-color: transparent;
+        margin: 0;
+        border: none;
+        padding: 0;
+        box-shadow: none;
+        &.used::after {
+            content: '●';
+            margin: 0;
+        }
+        &.unused::after {
+            content: '○';
+            margin: 0;
+        }
+    }
     .hover-effect {
         &:hover {
             background-color: $dark-off-white;
@@ -325,6 +343,7 @@
       color: $blue !important;
     }
 }
+
 .wrapper-button {
     margin: auto auto;
     padding: 0;
@@ -377,9 +396,52 @@
           }
         }
       }
+      &.circle-filled {
+        circle {
+            fill: $dark-blue;
+          }
+          &:hover circle {
+            fill: $very-dark-blue;
+          }
+          &:active circle {
+            fill: $dark-blue-disabled;
+          }
+      }
+      &.circle-outline {
+        circle.outline {
+            stroke: $dark-blue-disabled;
+            fill: transparent;
+          }
+          circle.fill {
+            fill: transparent;
+          }
+          &:hover {
+            circle.outline {
+              stroke: $dark-blue-disabled;
+            }
+            circle.fill {
+              fill: $dark-blue-disabled;
+            }
+          }
+          &:active {
+            circle.outline {
+              stroke: $very-dark-blue;
+            }
+            circle.fill {
+              fill: $very-dark-blue;
+            }
+          }
+      }
     }
 }
-
+.wrapper-button-inline {
+    @extend .wrapper-button;
+    margin: 0;
+    svg {
+        height: auto;
+    }
+    display: inline;
+}
 .misc-stats h2 {
   height: 2.4rem;
 }
