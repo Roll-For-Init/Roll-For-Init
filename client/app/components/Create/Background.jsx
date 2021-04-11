@@ -147,6 +147,7 @@ export const Background = ({ charID, setPage }) => {
           Tools: [],
           Languages: [],
           Skills: [...selectionSk1],
+          Armor: []
         },
         name: bgName,
         desc: bgDesc,
