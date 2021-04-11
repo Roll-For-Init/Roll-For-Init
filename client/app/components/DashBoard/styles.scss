@@ -440,7 +440,8 @@
     svg {
         height: auto;
     }
-    display: inline;
+    display: inline-block;
+    padding-right: 3px;
 }
 .misc-stats h2 {
   height: 2.4rem;

@@ -156,7 +156,7 @@ export const DashBoard = () => {
             </div>
             <div className="pinned row px-2">
               <div className="col-12 px-0">
-                <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus}/>
+                <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID}/>
 
               </div>
             </div>
@@ -673,7 +673,22 @@ const ExtraStatsCard = ({charID, conditions, defenses}) => {
   );
 };
 
-const SpellsAndPinned = ({spells, modifier, proficiency}) => {
+const SpellsAndPinned = ({spells, modifier, proficiency, charID}) => {
+  const dispatch = useDispatch();
+
+  const spendSpell = (level) => {
+    let newSlots = spells.slots;
+    let newCurrent = spells.slots[level].current -1;
+    newSlots[level].current = newCurrent;
+    dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+  }
+  const unspendSpell = (level) => {
+    let newSlots = spells.slots;
+    let newCurrent = spells.slots[level].current +1;
+    newSlots[level].current = newCurrent;
+    dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+  }
+
   return (
   <div className="card translucent-card w-100 mx-0">
     {spells != null && (<div className="row px-5">
@@ -708,17 +723,17 @@ const SpellsAndPinned = ({spells, modifier, proficiency}) => {
         <table className="table table-borderless table-sm">
           <tbody>
             <tr>
-          {spells.slots.map((slot) => {
+          {spells.slots.map((slot, spellLevel) => {
             return (
-              slot.max > 0 ? <td key={slot.max} className='pb-0'>
-                {[...Array(slot.current)].map((slot, index) => {
-                  return (
-                    <button key={`used-${index}`}className='wrapper-button-inline pb-0'><CircleSlot className='circle-outline mx-1' width='20px' height='20px'/></button>
-                  )
-                })}
+              spellLevel > 0 && slot.max > 0 ? <td key={slot.max} className='pb-0 text-center'>
                 {[...Array(slot.max - slot.current)].map((slot, index) => {
                   return (
-                    <button key={`unused-${index}`}className='wrapper-button-inline'><CircleSlot className='circle-filled mx-1' width='20px' height='20px'/></button>
+                    <button onClick={() => unspendSpell(spellLevel)} key={`used-${index}`}className='wrapper-button-inline pb-0'><CircleSlot className='circle-filled mx-1' width='20px' height='20px'/></button>
+                  )
+                })}
+                {[...Array(slot.current)].map((slot, index) => {
+                  return (
+                    <button onClick={() => spendSpell(spellLevel)} key={`unused-${index}`}className='wrapper-button-inline pb-0'><CircleSlot className='circle-outline mx-1' width='20px' height='20px'/></button>
                   )
                 })}
               </td>
@@ -731,8 +746,8 @@ const SpellsAndPinned = ({spells, modifier, proficiency}) => {
           <tr>
           {spells.slots.map((slot, index) => {
             return (
-              slot.max > 0 ? <td className="py-0">
-                <h4 className="text-uppercase text-center m-0 line-height-small">{index+1}</h4>
+              index > 0 && slot.max > 0 ? <td className="py-0">
+                <h4 className="text-uppercase text-center m-0 line-height-small">{index}</h4>
               </td>
               : 
               null
