@@ -362,6 +362,7 @@ const CharacterSchema = new Schema({ //Add class specific slots
   ],
   background: {
     name: String,
+    description: String
     /*
     features: [
       {

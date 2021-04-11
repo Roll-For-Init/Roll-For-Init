@@ -739,7 +739,7 @@ const getAlignments = async () => {
 const equipmentDetails = async equipment => {
   const promises = [];
   let result;
-  if (equipment[0].equipment) {
+  if (equipment[0]?.equipment) {
     result = equipment.map(theItem => {
       let item = theItem.equipment;
       if (item.hasOwnProperty('url')) {
