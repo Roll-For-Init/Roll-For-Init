@@ -739,15 +739,25 @@ const getAlignments = async () => {
 const equipmentDetails = async equipment => {
   const promises = [];
   let result;
+  console.log(equipment);
   if (equipment[0]?.equipment) {
     result = equipment.map(theItem => {
-      let item = theItem.equipment;
-      if (item.hasOwnProperty('url')) {
+      if(theItem.category && theItem.category == 'currency') {
+          return {
+              equipment: {
+                ...theItem,
+              name: `${theItem.quantity} ${theItem.unit}`
+              },
+              quantity: 1
+          }
+      }
+      let item = theItem;
+      if (item.equipment.hasOwnProperty('url')) {
         promises.push(
-          axios.get(item.url).then(itemDetails => {
+          axios.get(item.equipment.url).then(itemDetails => {
             itemDetails = itemDetails.data;
             makeEquipmentDesc(item, itemDetails).then(desc => {
-              item.desc = desc;
+              item.equipment.desc = desc;
             });
             return item;
           })
@@ -772,7 +782,8 @@ const equipmentDetails = async equipment => {
       }
       return item;
     });
-  } else {
+  }
+  else {
     result = equipment.map(theItem => {
       theItem.from = theItem.from.map(item => {
         if (item.hasOwnProperty('url')) {

@@ -20,7 +20,18 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
     }
 
     for(let item of items.set) {
-        if(item.equipment) {
+        console.log(item);
+        if(item.equipment?.unit) {
+            item={
+                ...item.equipment
+            };
+        }
+        else if(!(item.desc || item.equipment?.desc)) {
+            item.equipment ? equipment.inventory.push({...item.equipment, quantity: item.quantity})
+            : equipment.inventory.push(item);
+            continue;
+        }
+        else if(item.equipment) {
             let costAmt = item.equipment.desc ? item.equipment.desc.cost.match(/\d+/g) : 0;
             let denom =  item.equipment.desc ? item.equipment.desc.cost.match(/[a-zA-Z]+/g) : "";
             item = {
@@ -54,6 +65,11 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
     for(let key in items.choices) {
         let item = items.choices[key];
+        console.log(item);
+        if(!(item.desc || item.equipment?.desc)) {
+            equipment.inventory.push(item);
+            continue;
+        }
         if(Array.isArray(item.equipment)) {
             for(let choice of item.equipment) {
                 if(choice.index != undefined) {
@@ -164,7 +180,7 @@ const fillModel = async (equipment, character) => { //will probably need a separ
                 levels: character.class.level,
                 subclass: character.class.subclass ? character.class.subclass.name : null
             }],
-            features: character.class.features.concat(userSelections.feature).concat(subclassFeatures), 
+            features: character.class.features.concat(userSelections.feature).concat(subclassFeatures).concat([character.background.feature]), 
             traits: character.race.traits.concat(userSelections.trait).concat(subraceTraits), 
             background: {
                 name: character.background.name,
@@ -224,6 +240,7 @@ const fillModel = async (equipment, character) => { //will probably need a separ
 }
 
 const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies) => {
+    console.log(item);
     let category = item.category ? item.category.toLowerCase() : 'pack';
     if(category.includes("weapon")) {
         item.pinned = false;
@@ -256,8 +273,8 @@ const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies)
         equipment.equipped_armor.push(item);
     }
     else if (category.includes("currency")) {
-        let separated = item.cost.match(/[a-z]+|[^a-z]+/gi);
-        equipment.treasure[separated[1]] += separated[0];
+       
+        equipment.treasure[item.unit] += item.quantity;
     }
     else if (category.includes("treasure")) {
         item.pinned = false;
@@ -283,7 +300,7 @@ const sortChoices = (choices, parent) => {
         let choice = parent[key1];
         //console.log(choice);
         for(let item of choice) {
-            if(item && typeof item=== 'object') {
+            if(item && typeof item=== 'object' && !(category.includes('feature') || category.includes('trait'))) {
                 //console.log(item.name);
                 item = item.name;
             }
