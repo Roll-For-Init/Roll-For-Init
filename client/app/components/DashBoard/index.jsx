@@ -37,6 +37,15 @@ const skillScores = {
 
 const charConditions = ['Blinded','Charmed','Deafened','Exhaustion','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious'];
 
+const fullAbScore = {
+  cha: 'Charisma',
+  int: 'Intelligence',
+  str: 'Strength',
+  wis: 'Wisdom',
+  dex: 'Dexterity',
+  con: 'Constitution',
+};
+
 
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
@@ -95,7 +104,7 @@ export const DashBoard = () => {
             </p>
           );
         })} */}
-      <div style={{paddingTop: '105px'}}>
+      <div style={{paddingTop: '125px'}}>
       <div className="container-fluid px-5 py-4">
         <div className="row position-relative no-gutters mb-2" >
           <div className="w-100">
@@ -124,12 +133,12 @@ export const DashBoard = () => {
         <div className="row">
           <div className="col-xl-5 px-0 maincol">
             <div className="row">
-              <div className="col-sm-7 pl-0 pr-2">
+              <div className="col-sm-6 pl-0 pr-2">
                   <AbilitiesCard ability_scores={character.ability_scores} />
                   <SavingThrowsCard saving_throws={character.saving_throws} />
                   <ProficienciesCard misc_proficiencies={character.misc_proficiencies} />
               </div>
-              <div className="col-sm-5 px-2">
+              <div className="col-sm-6 px-2">
                       <SkillsCard skills={character.skills} proficiency={character.proficiency_bonus}/>
                       <SensesCard perception={character.skills.perception.modifier} insight={character.skills.insight.modifier} investigation={character.skills.investigation.modifier}/>
               </div>
@@ -216,7 +225,7 @@ const SavingThrowsCard = ({ saving_throws }) => {
                     {saving_throw[1].modifier >= 0 && '+'}
                     {saving_throw[1].modifier}{' '}
                   </td>
-                  <td>{saving_throw[0]}</td>
+                  <td>{fullAbScore[saving_throw[0]]}</td>
                 </tr>
               );
             })}
@@ -233,7 +242,7 @@ const SkillsCard = ({ skills, proficiency }) => {
       <h4 className="translucent-card proficiency-title text-uppercase">
         Proficiency bonus: +{proficiency}
       </h4>
-      <div className="card translucent-card px-5">
+      <div className="card translucent-card">
         <h5 className="card-title">Skills</h5>
         <div className="card content-card description-card">
         <table className="table table-borderless table-sm">
@@ -309,32 +318,32 @@ const StatsCard = ({initiative, ac, speed, charID}) => {
   return (
     <div className="stats-card">
     <div className="card translucent-card">
-      <div className="row">
+      <div className="row misc-stats">
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Initiative</h6>
-            <h2 className="text-uppercase text-center m-0">{initiative < 0 ? `-${initiative}` : `+${initiative}`}</h2>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Initiative</h6>
+            <h2 className="text-uppercase m-0">{initiative < 0 ? `-${initiative}` : `+${initiative}`}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Inspiration</h6>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Inspiration</h6>
             {!inspiration ?
-              <button className='wrapper-button' onClick={toggleInspiration}><StarOutline style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><StarOutline /></button>
               :
-              <button className='wrapper-button' onClick={toggleInspiration}><StarFilled style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><StarFilled /></button>
             }
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card px-4">
-            <h6 className="text-uppercase m-0 text-center">AC</h6>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">AC</h6>
             <h2 className="text-uppercase text-center m-0">{ac}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Speed</h6>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Speed</h6>
             <h2 className="text-uppercase text-center m-0">{speed}</h2>
           </div>
         </div>
@@ -417,10 +426,10 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
   return (
     <>
     <div className="hit-points card translucent-card long-card">
-      <div className="row px-3">
-        <div className="col-sm-7 px-2 py-1">
+      <div className="row">
+        <div className="col-sm-7 px-3">
         {!showSaves ? 
-          (<><h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Points</h6>
+          (<><h6 className="mb-1 card-title d-block">Hit Points</h6>
           <div className="row p-0 m-0">
             <div className="col-sm-8 px-1 py-0">
               <div className="card content-card description-card my-0 mr-2 ml-0">
@@ -448,7 +457,7 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
           </div></>)
           :
           (
-            <><h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Death Saves</h6>
+            <><h6 className="mb-1 card-title d-block">Death Saves</h6>
           <div className="row p-0 m-0">
             <div className="col-sm-8 px-1 py-0">
               <div className="card content-card description-card my-0 mr-2 ml-0">
@@ -476,17 +485,17 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
           </div></>
           )
         }
-        <div className="row px-3 m-0 mt-2">
+        <div className="row m-0 mt-2">
           <div className="col-sm px-1 py-0">
             <button className="btn btn-alert text-uppercase text-center align-middle" onClick={() => setShowDmg(true)}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-success text-uppercase text-center align-middle" onClick={() => setShowHealth(true)}>Heal</button>
+            <button className="btn btn-success text-uppercase text-center align-middle mr-0" onClick={() => setShowHealth(true)}>Heal</button>
           </div>
         </div>
         </div>
-        <div className="col-sm-5 px-2 pl-5 py-1">
-        <h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Dice</h6>
+        <div className="col-sm-5 px-3">
+        <h6 className="mb-1 card-title d-block">Hit Dice</h6>
 
           <div className="card content-card description-card my-0 mr-0">
             <h3 className="text-uppercase text-center m-0">{hit_dice[0].current}d{hit_dice[0].type}</h3>

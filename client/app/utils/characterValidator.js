@@ -20,8 +20,8 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
   };
 
   for (let item of items.set) {
-    if (!(item.equipment.desc || item.desc)) {
-      item = { name: name };
+    console.log(item);
+    if (!(item.desc || (item.equipment && item.equipment.desc))) {
       equipment.inventory.push(item);
       continue;
     }
@@ -57,6 +57,11 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
   for (let key in items.choices) {
     let item = items.choices[key];
+    console.log(item);
+    if (!(item.desc || (item.equipment && item.equipment.desc))) {
+      equipment.inventory.push(item);
+      continue;
+    }
     if (Array.isArray(item.equipment)) {
       for (let choice of item.equipment) {
         if (choice.index != undefined) {
@@ -282,6 +287,7 @@ const sortEquipment = (
   weaponProficiencies,
   armorProficiencies
 ) => {
+  console.log(item);
   let category = item.category ? item.category.toLowerCase() : 'pack';
   if (category.includes('weapon')) {
     item.pinned = false;
@@ -364,7 +370,11 @@ const sortChoices = (choices, parent) => {
     let choice = parent[key1];
     //console.log(choice);
     for (let item of choice) {
-      if (item && typeof item === 'object') {
+      if (
+        item &&
+        typeof item === 'object' &&
+        !(category.includes('feature') || category.includes('trait'))
+      ) {
         //console.log(item.name);
         item = item.name;
       }
