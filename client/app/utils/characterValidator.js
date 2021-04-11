@@ -21,11 +21,17 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
     for(let item of items.set) {
         console.log(item);
-        if(!(item.desc || item.equipment?.desc)) {
-            equipment.inventory.push(item);
+        if(item.equipment?.unit) {
+            item={
+                ...item.equipment
+            };
+        }
+        else if(!(item.desc || item.equipment?.desc)) {
+            item.equipment ? equipment.inventory.push({...item.equipment, quantity: item.quantity})
+            : equipment.inventory.push(item);
             continue;
         }
-        if(item.equipment) {
+        else if(item.equipment) {
             let costAmt = item.equipment.desc ? item.equipment.desc.cost.match(/\d+/g) : 0;
             let denom =  item.equipment.desc ? item.equipment.desc.cost.match(/[a-zA-Z]+/g) : "";
             item = {
@@ -174,7 +180,7 @@ const fillModel = async (equipment, character) => { //will probably need a separ
                 levels: character.class.level,
                 subclass: character.class.subclass ? character.class.subclass.name : null
             }],
-            features: character.class.features.concat(userSelections.feature).concat(subclassFeatures), 
+            features: character.class.features.concat(userSelections.feature).concat(subclassFeatures).concat([character.background.feature]), 
             traits: character.race.traits.concat(userSelections.trait).concat(subraceTraits), 
             background: {
                 name: character.background.name,
@@ -266,8 +272,8 @@ const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies)
         equipment.equipped_armor.push(item);
     }
     else if (category.includes("currency")) {
-        let separated = item.cost.match(/[a-z]+|[^a-z]+/gi);
-        equipment.treasure[separated[1]] += separated[0];
+       
+        equipment.treasure[item.unit] += item.quantity;
     }
     else if (category.includes("treasure")) {
         item.pinned = false;

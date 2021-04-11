@@ -38,8 +38,12 @@ const EquipmentItem = ({
         ) : (
           <>
             {equipment.quantity > 1 ? (
+              equipment.equipment ? <h5>{`${equipment.equipment.name} (${equipment.quantity})`}</h5> 
+              :
               <h5>{`${equipment.name} (${equipment.quantity})`}</h5>
             ) : (
+              equipment.equipment ? <h5>{equipment.equipment.name}</h5>
+              :
               <h5>{equipment.name}</h5>
             )}
           </>
@@ -475,7 +479,7 @@ export const Equipment = ({ charID, setPage }) => {
           console.log('INITIAL EQUIPMENT', equipmentWDetails);
           dispatch(
             setEquipment(charID, {
-              set: equipmentList,
+              set: equipmentWDetails,
             })
           );
         }
