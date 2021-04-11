@@ -43,7 +43,7 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
       for (let item of items.set) {
         console.log(item);
-        if (!(item.desc || item.equipment?.desc)) {
+        if (!(item.desc || (item.equipment && item.equipment.desc))) {
           equipment.inventory.push(item);
           continue;
         }

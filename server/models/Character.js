@@ -29,7 +29,7 @@ const CharacterSchema = new Schema(
     features: [
       {
         name: String,
-        desc: [{ name: String }],
+        desc: [String],
         index: String,
         url: String,
         /*
@@ -291,9 +291,9 @@ const CharacterSchema = new Schema(
         index: String,
         name: String,
         url: String,
-        desc: [{ name: String }],
+        desc: [String],
         table: {
-          header: [{ name: String }],
+          header: [String],
           rows: [
             {
               name: [{ String }],
@@ -374,10 +374,10 @@ const CharacterSchema = new Schema(
     },
     proficiency_bonus: Number,
     misc_proficiencies: {
-      armor: [{ name: String }], //and desc?
-      weapons: [{ name: String }],
-      tools: [{ name: String }],
-      languages: [{ name: String }],
+      armor: [String], //and desc?
+      weapons: [String],
+      tools: [String],
+      languages: [String],
     },
     ability_scores: {
       str: {
@@ -579,14 +579,15 @@ const CharacterSchema = new Schema(
       max: Number,
       temp: Number,
     },
-    hit_dice: [
-      //for multiclassing
-      {
-        current: Number,
-        max: Number,
-        type: Number,
-      }, // '4d4", etc.
-    ],
+    hit_dice:
+      [
+        //for multiclassing
+        {
+          current: Number,
+          max: Number,
+          type: Number,
+        }, // '4d4", etc
+      ] | [Number],
     initiative_bonus: Number,
     attacks: {
       advantage: Number,
@@ -609,10 +610,10 @@ const CharacterSchema = new Schema(
           weight: Number,
           quantity: Number,
           cost: {
-            amount: Number,
-            denomination: String, // e.g. "gp", "sp", etc.
+            amount: [Number],
+            denomination: [String], // e.g. "gp", "sp", etc.
           },
-          properties: [{ name: String }],
+          properties: [String],
           pinned: {
             type: Boolean,
             default: false,
@@ -732,8 +733,8 @@ const CharacterSchema = new Schema(
           },
         ],
         cost: {
-          amount: Number,
-          denomination: String, // e.g. "gp", "sp", etc.
+          amount: [Number],
+          denomination: [String], // e.g. "gp", "sp", etc.
         },
         pinned: {
           type: Boolean,
@@ -772,7 +773,13 @@ const CharacterSchema = new Schema(
     walking_speed: Number,
     size: String, // "small", "medium"
     lore: {
-      alignment: String,
+      alignment: [
+        {
+          index: String,
+          name: String,
+          url: String,
+        },
+      ],
       personality_traits: String,
       ideals: String,
       bonds: String,
