@@ -133,7 +133,7 @@ export const Descriptions = ({ charID, setPage }) => {
         myFileItemReader.addEventListener(
           'load',
           () => {
-            console.log(myFileItemReader.result);
+            // console.log(myFileItemReader.result);
             const myResult = myFileItemReader.result;
             setCharPort(myResult);
           },

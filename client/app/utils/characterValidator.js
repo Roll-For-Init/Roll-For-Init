@@ -20,9 +20,20 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
     }
 
     for(let item of items.set) {
-        if(item.equipment) {
-            let costAmt = item.equipment.desc.cost.match(/\d+/g)
-            let denom =  item.equipment.desc.cost.match(/[a-zA-Z]+/g);
+        console.log(item);
+        if(item.equipment?.unit) {
+            item={
+                ...item.equipment
+            };
+        }
+        else if(!(item.desc || item.equipment?.desc)) {
+            item.equipment ? equipment.inventory.push({...item.equipment, quantity: item.quantity})
+            : equipment.inventory.push(item);
+            continue;
+        }
+        else if(item.equipment) {
+            let costAmt = item.equipment.desc ? item.equipment.desc.cost.match(/\d+/g) : 0;
+            let denom =  item.equipment.desc ? item.equipment.desc.cost.match(/[a-zA-Z]+/g) : "";
             item = {
                 ...item.equipment.desc,
                 cost: {
@@ -34,8 +45,8 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
             }
         }
         else {
-            let costAmt = item.desc.cost.match(/\d+/g)
-            let denom =  item.desc.cost.match(/[a-zA-Z]+/g);
+            let costAmt = item.desc ? item.desc.cost.match(/\d+/g) : 0;
+            let denom =  item.desc ? item.desc.cost.match(/[a-zA-Z]+/g) : "";
 
             item = {
                 ...item.desc,
@@ -54,6 +65,11 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
     for(let key in items.choices) {
         let item = items.choices[key];
+        console.log(item);
+        if(!(item.desc || item.equipment?.desc)) {
+            equipment.inventory.push(item);
+            continue;
+        }
         if(Array.isArray(item.equipment)) {
             for(let choice of item.equipment) {
                 if(choice.index != undefined) {
@@ -164,18 +180,19 @@ const fillModel = async (equipment, character) => { //will probably need a separ
                 levels: character.class.level,
                 subclass: character.class.subclass ? character.class.subclass.name : null
             }],
-            features: character.class.features.concat(userSelections.feature).concat(subclassFeatures), 
+            features: character.class.features.concat(userSelections.feature).concat(subclassFeatures).concat([character.background.feature]), 
             traits: character.race.traits.concat(userSelections.trait).concat(subraceTraits), 
             background: {
                 name: character.background.name,
+                description: Array.isArray(character.background.desc) ? character.background.desc.join('\n') : character.background.desc
             },
             class_specific: levelDetails.class_specific,
             proficiency_bonus: proficiency_bonus,
             misc_proficiencies: {
-                armor: character.class.proficiencies.Armor.concat(character.race.proficiencies.Armor).concat(character.background.proficiencies.Armor).concat(userSelections.armor),
-                weapons: character.class.proficiencies.Weapons.concat(character.race.proficiencies.Weapons).concat(character.background.proficiencies.Weapons).concat(userSelections.weapon),
-                tools: character.class.proficiencies.Tools.concat(character.race.proficiencies.Tools).concat(character.background.proficiencies.Tools).concat(userSelections.tool),
-                languages: character.class.proficiencies.Languages.concat(character.race.proficiencies.Languages).concat(character.background.proficiencies.Languages).concat(userSelections.language)
+                armor: [...character.class.proficiencies.Armor||[], ...character.race.proficiencies.Armor||[], ...character.background.proficiencies.Armor||[], ...userSelections.armor||[]],
+                weapons: [...character.class.proficiencies.Weapons||[], ...character.race.proficiencies.Weapons||[], ...character.background.proficiencies.Weapons||[], ...userSelections.weapon||[]],
+                tools: [...character.class.proficiencies.Tools||[], ...character.race.proficiencies.Tools||[], ...character.background.proficiencies.Tools||{}, ...userSelections.tool||[]],
+                languages: [...character.class.proficiencies.Languages||[], ...character.race.proficiencies.Languages||[], ...character.background.proficiencies.Languages||[], ...userSelections.language||[]]
             },
             ability_scores: ability_relevant.ability_scores,
             saving_throws: ability_relevant.saving_throws,
@@ -223,6 +240,7 @@ const fillModel = async (equipment, character) => { //will probably need a separ
 }
 
 const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies) => {
+    console.log(item);
     let category = item.category ? item.category.toLowerCase() : 'pack';
     if(category.includes("weapon")) {
         item.pinned = false;
@@ -243,7 +261,6 @@ const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies)
             dex_bonus: item.dex_bonus,
             max_bonus: item.max_bonus
         }
-        //console.log(armorProficiencies, item);
         if(armorProficiencies.find(armor=> armor.toLowerCase().includes(item.category.toLowerCase()))) item.proficiency = true;
         else if(armorProficiencies.includes('All armor') && !item.category.toLowerCase().includes('shield')) item.proficiency=true;
         else if(armorProficiencies.includes('Shields') && item.category.toLowerCase().includes('shield')) item.proficiency = true;
@@ -256,8 +273,8 @@ const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies)
         equipment.equipped_armor.push(item);
     }
     else if (category.includes("currency")) {
-        let separated = item.cost.match(/[a-z]+|[^a-z]+/gi);
-        equipment.treasure[separated[1]] += separated[0];
+       
+        equipment.treasure[item.unit] += item.quantity;
     }
     else if (category.includes("treasure")) {
         item.pinned = false;
@@ -283,7 +300,7 @@ const sortChoices = (choices, parent) => {
         let choice = parent[key1];
         //console.log(choice);
         for(let item of choice) {
-            if(item && typeof item=== 'object') {
+            if(item && typeof item=== 'object' && !(category.includes('feature') || category.includes('trait'))) {
                 //console.log(item.name);
                 item = item.name;
             }
@@ -330,7 +347,7 @@ const abilityScoreParser = (abilities, selections, proficiency, race, theclass) 
         for(let skill of skillScores[ability.short_name]) {
             //console.log(skill);
             let proficiencyExists = allSkillProfs.find(aSkill => aSkill.toLowerCase().replaceAll(' ', '_') === skill);
-            let expertise = selections.expertise.find(aExp => aExp.toLowerCase().substring(aExp.name.toLowerCase.indexOf(':')+2).replaceAll(' ', '_') === skill);
+            let expertise = selections.expertise.find(aExp => aExp.toLowerCase().substring(aExp.toLowerCase().indexOf(':')+2).replaceAll(' ', '_') === skill);
             scores.skills[skill] = {
                 proficiency: !proficiencyExists ? false : true,
                 modifier: !expertise ? ability.modifier + (!proficiencyExists ? 0 : proficiency) : ability.modifier + (proficiency * 2), 
@@ -421,7 +438,6 @@ const levelSorter = async (charClass, charLevel) => {
 }
 
 const spellsPopulator = (spells) => {
-    //console.log(spells);
     const cards = [[],[],[],[],[],[],[], [], []];
     for (let i = 0; i < 9; i++) {
         let key;

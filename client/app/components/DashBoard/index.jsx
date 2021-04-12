@@ -10,7 +10,7 @@ import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-inline-editing';
 
 
-import {D20, StarOutline, StarFilled} from '../../utils/svgLibrary';
+import {D20, FancyStar} from '../../utils/svgLibrary';
 
 //swap race class icons with white
 
@@ -37,6 +37,15 @@ const skillScores = {
 
 const charConditions = ['Blinded','Charmed','Deafened','Exhaustion','Frightened','Grappled','Incapacitated','Invisible','Paralyzed','Petrified','Poisoned','Prone','Restrained','Stunned','Unconscious'];
 
+const fullAbScore = {
+  cha: 'Charisma',
+  int: 'Intelligence',
+  str: 'Strength',
+  wis: 'Wisdom',
+  dex: 'Dexterity',
+  con: 'Constitution',
+};
+
 
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
@@ -51,9 +60,8 @@ export const DashBoard = () => {
     (<div id="dashboard" className="dashboard">
       <Header />
       <div className="toolbar fixed-top">
-        <div className="subheader py-1 px-3 pt-2">
+        <div className="subheader">
           <h2 className="small-caps mr-5">{character.name}</h2>
-          <span className="ml-2">
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
@@ -68,8 +76,11 @@ export const DashBoard = () => {
               />
               {character.race.subrace ? character.race.subrace : character.race.name}
             </h5>
-            <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;{character.level}</span></h5>
-            <span className="m-0 align-top">
+            <h5 className="text-uppercase mr-2" style={{paddingBottom:'0.3125rem'}}>Level <span style={{fontSize:'1.6rem'}}>{character.level}</span></h5>
+            <span className="card content-card description-card m-0 p-1 w-auto">
+              <h6 className="text-uppercase text-center m-0 px-4">{character.experience.current} XP</h6>
+            </span>
+            {/* <span className="m-0 align-top">
               <table style={{display: 'inline-table'}}>
                 <tbody>
                   <tr>
@@ -82,9 +93,8 @@ export const DashBoard = () => {
                   </tr>
                 </tbody>
               </table>
-            </span>
-            <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
-          </span>
+            </span> */}
+          <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
         </div>
       </div>
       {/* <div>
@@ -96,7 +106,9 @@ export const DashBoard = () => {
           );
         })} */}
       <div style={{paddingTop: '105px'}}>
-      <div className="container-fluid px-5 py-4">
+      
+      <div className="container-fluid px-5 py-3">
+      
         <div className="row position-relative no-gutters mb-2" >
           <div className="w-100">
             <div className="float-start w-auto d-inline-block">
@@ -124,12 +136,12 @@ export const DashBoard = () => {
         <div className="row">
           <div className="col-xl-5 px-0 maincol">
             <div className="row">
-              <div className="col-sm-7 pl-0 pr-2">
+              <div className="col-sm-6 pl-0 pr-2">
                   <AbilitiesCard ability_scores={character.ability_scores} />
                   <SavingThrowsCard saving_throws={character.saving_throws} />
                   <ProficienciesCard misc_proficiencies={character.misc_proficiencies} />
               </div>
-              <div className="col-sm-5 px-2">
+              <div className="col-sm-6 px-2">
                       <SkillsCard skills={character.skills} proficiency={character.proficiency_bonus}/>
                       <SensesCard perception={character.skills.perception.modifier} insight={character.skills.insight.modifier} investigation={character.skills.investigation.modifier}/>
               </div>
@@ -216,7 +228,7 @@ const SavingThrowsCard = ({ saving_throws }) => {
                     {saving_throw[1].modifier >= 0 && '+'}
                     {saving_throw[1].modifier}{' '}
                   </td>
-                  <td>{saving_throw[0]}</td>
+                  <td>{fullAbScore[saving_throw[0]]}</td>
                 </tr>
               );
             })}
@@ -233,7 +245,7 @@ const SkillsCard = ({ skills, proficiency }) => {
       <h4 className="translucent-card proficiency-title text-uppercase">
         Proficiency bonus: +{proficiency}
       </h4>
-      <div className="card translucent-card px-5">
+      <div className="card translucent-card">
         <h5 className="card-title">Skills</h5>
         <div className="card content-card description-card">
         <table className="table table-borderless table-sm">
@@ -309,32 +321,32 @@ const StatsCard = ({initiative, ac, speed, charID}) => {
   return (
     <div className="stats-card">
     <div className="card translucent-card">
-      <div className="row">
+      <div className="row misc-stats">
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Initiative</h6>
-            <h2 className="text-uppercase text-center m-0">{initiative < 0 ? `-${initiative}` : `+${initiative}`}</h2>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Initiative</h6>
+            <h2 className="text-uppercase m-0">{initiative < 0 ? `${initiative}` : `+${initiative}`}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Inspiration</h6>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Inspiration</h6>
             {!inspiration ?
-              <button className='wrapper-button' onClick={toggleInspiration}><StarOutline style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><FancyStar className="star-outline"/></button>
               :
-              <button className='wrapper-button' onClick={toggleInspiration}><StarFilled style={{margin:'auto', display:'block', marginTop:'3px'}} width='65'/></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><FancyStar className="star-filled"/></button>
             }
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card px-4">
-            <h6 className="text-uppercase m-0 text-center">AC</h6>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">AC</h6>
             <h2 className="text-uppercase text-center m-0">{ac}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
-          <div className="card content-card description-card">
-            <h6 className="text-uppercase m-0 text-center">Speed</h6>
+          <div className="card content-card description-card text-center">
+            <h6 className="text-uppercase m-0">Speed</h6>
             <h2 className="text-uppercase text-center m-0">{speed}</h2>
           </div>
         </div>
@@ -408,22 +420,35 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
     }
     let newHealth = health.current+amt;
     if(newHealth <= 0) setShowSaves(true);
-    else if(newHealth >health.max) newHealth = health.max;
+    else setShowSaves(false);
+    if(newHealth >health.max) newHealth = health.max;
     let newState = {current: newHealth};
 
     dispatch(setUpdate(charID, 'health', newState))
   }
 
+  const currentHealthClass = () => {
+    const healthPercent = health.current/health.max*100;
+    if (healthPercent >= 66) {
+      return "current-health green";
+    }
+    if (healthPercent <= 33) {
+      return "current-health red";
+    }
+    return "current-health yellow";
+  }
+
   return (
     <>
     <div className="hit-points card translucent-card long-card">
-      <div className="row px-3">
-        <div className="col-sm-7 px-2 py-1">
+      <div className="row">
+        <div className="col-sm-7 px-3">
         {!showSaves ? 
-          (<><h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Points</h6>
+          (<><h6 className="mb-1 card-title d-block">Hit Points</h6>
           <div className="row p-0 m-0">
             <div className="col-sm-8 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0 health-bar">
+                <div className={currentHealthClass()} style={{width: health.current/health.max*100 + "%"}}></div>
                 <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
               </div>
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
@@ -448,7 +473,7 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
           </div></>)
           :
           (
-            <><h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Death Saves</h6>
+            <><h6 className="mb-1 card-title d-block">Death Saves</h6>
           <div className="row p-0 m-0">
             <div className="col-sm-8 px-1 py-0">
               <div className="card content-card description-card my-0 mr-2 ml-0">
@@ -476,17 +501,17 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
           </div></>
           )
         }
-        <div className="row px-3 m-0 mt-2">
+        <div className="row m-0 mt-2">
           <div className="col-sm px-1 py-0">
             <button className="btn btn-alert text-uppercase text-center align-middle" onClick={() => setShowDmg(true)}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-success text-uppercase text-center align-middle" onClick={() => setShowHealth(true)}>Heal</button>
+            <button className="btn btn-success text-uppercase text-center align-middle mr-0" onClick={() => setShowHealth(true)}>Heal</button>
           </div>
         </div>
         </div>
-        <div className="col-sm-5 px-2 pl-5 py-1">
-        <h6 className="text-uppercase m-0 mb-1 text-white text-center align-top">Hit Dice</h6>
+        <div className="col-sm-5 px-3">
+        <h6 className="mb-1 card-title d-block">Hit Dice</h6>
 
           <div className="card content-card description-card my-0 mr-0">
             <h3 className="text-uppercase text-center m-0">{hit_dice[0].current}d{hit_dice[0].type}</h3>
