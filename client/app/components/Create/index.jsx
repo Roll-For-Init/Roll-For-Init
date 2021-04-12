@@ -9,7 +9,6 @@ import Descriptions from './Descriptions';
 import Equipment from './Equipment';
 import Spells from './Spells';
 import MobileMenu from './MobileMenu';
-import PDFCreate from './PDFCreate'
 
 import { startCharacter, setPage} from '../../redux/actions/';
 
