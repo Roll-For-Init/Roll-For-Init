@@ -64,7 +64,7 @@ export const DashBoard = () => {
     (<div id="dashboard" className="dashboard">
       <Header />
       {showShortRest && <ShortRest showModal={showShortRest} setShowModal={setShowShortRest} hitDice={character.hit_dice} con={character.ability_scores.con.modifier} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
-      {showExp && <ChangeExp exp={character.experience} showModal={showExp} setShowModal={setShowExp} charID={charID}/>}
+      {showExp && <ChangeExp exp={character.experience} showModal={showExp} setShowModal={setShowExp} charID={charID} setPercentage={setCurrentPercentage}/>}
       <div className="toolbar fixed-top">
         <div className="subheader py-1 px-3 pt-2">
           <h2 className="small-caps mr-5">{character.name}</h2>
@@ -91,7 +91,6 @@ export const DashBoard = () => {
                   <td className="card content-card description-card m-0 p-0 w-auto status-bar" style={{minWidth: '90px'}}>
                   <h6 className="unfilled on-top text-uppercase text-center p-1 m-0">{character.experience.current} XP</h6>
                   <div className={`filled blue ${currentPercentage==='100%' ? `full` : ``}`} style={{width: currentPercentage}}/>
-                  <div className="unfilled"/>
                   </td>
                   <td><button onClick={() => setShowExp(true)} className="text-uppercase btn btn-primary exp-add mr-0 ml-1" style={{boxShadow: 'none'}}>
                     +/-
@@ -184,20 +183,24 @@ export const DashBoard = () => {
   );
 };
 
-const ChangeExp = ({exp, showModal, setShowModal, charID}) => {
+const ChangeExp = ({exp, showModal, setShowModal, charID, setPercentage}) => {
   const [value, setValue] = useState(null);
-  const [nextLevel, setNextLevel] = useState(false);
+  const [nextLevel, setNextLevel] = useState(exp.current === exp.threshold ? true : false);
   const dispatch = useDispatch();
   const gainExp = () => {
     let newCurrent = exp.current + Number.parseInt(value);
     if(newCurrent >= exp.threshold) {
       newCurrent = exp.threshold;
+      console.log('in here');
       setNextLevel(true);
     }
+    setPercentage(`${newCurrent/exp.threshold*100}%`)
     dispatch(setUpdate(charID, 'experience', {current: newCurrent}))
   }
   const resetExp = () => {
     let newCurrent = 0;
+    setPercentage(`0%`);
+    setNextLevel(false);
     dispatch(setUpdate(charID, 'experience', {current: newCurrent}))
   }
 
@@ -229,13 +232,13 @@ const ChangeExp = ({exp, showModal, setShowModal, charID}) => {
           </div>
           {!nextLevel ? <button
             className="text-uppercase btn-primary modal-button"
-            onClick={() => {gainExp(); setShowModal(false)}}
+            onClick={() => {gainExp();}}
             data-dismiss="modal"
           >
             Gain Experience
           </button>
           :
-          <div className="card content-card name-card">
+          <div className="card content-card description-card">
             <h5>You've reached the next level. This application doesn't currently support characters past level 1, so please check back in the future for updates!</h5>
           </div>
           }
@@ -607,7 +610,6 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
               <div className='status-bar card content-card description-card p-0 my-0 mr-2 ml-0'>
                   <h3 className="unfilled on-top text-center mb-0">{health.current}/{health.max}</h3>
                   <div className={`filled green ${currentPercentage==='100%' ? `full` : ``}`} style={{width: currentPercentage}}/>
-                  <div className="unfilled"/>
               </div>
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
             </div>
