@@ -1,6 +1,38 @@
 @import 'client/app/variables';
 
 .dashboard {
+
+    .status-bar {
+        display: flex;
+        flex-flow: row nowrap;
+        padding: 0;
+        .on-top {
+            z-index: 5;
+        }
+        .filled, .unfilled {
+            box-sizing: border-box;
+            flex: none;
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        .full {
+            border-radius: 8px;
+        }
+        .filled {
+            margin-left: -100%;
+        }
+        .unfilled {
+            width:100%;
+            padding-top: .2rem;
+            padding-bottom: .2rem;
+        }
+        .green {
+            background-color: $green;
+        }
+        .blue {
+            background-color: $bright-blue;
+        }
+    }
     .line-height-small {
         line-height: 1rem;
     }
@@ -268,6 +300,13 @@
       }
   }
 
+  .btn-alert {
+    background-color: $desat-red;
+    border: none;
+    padding: 2px 5px;
+    color: white;
+  }
+
 
   /******* tables *******/
   .maincol {
@@ -443,6 +482,13 @@
     display: inline-block;
     padding-right: 3px;
 }
+.exp-add {
+    padding: 0;
+    padding-left: 2px;
+    padding-right: 2px;
+    vertical-align: top;
+    text-align: center;
+}
 .misc-stats h2 {
   height: 2.4rem;
 }
@@ -488,6 +534,11 @@
 
   div {
     color: $dark-blue !important;
+  }
+  .modal {
+      .btn-alert {
+          font-size: .75rem;
+      }
   }
   .modal-button {
     font-size: 1.25rem;
