@@ -54,7 +54,8 @@ export const Background = ({ charID, setPage }) => {
             flaws: bg.flaws,
           };
           dispatch(setBackground(charID, { description: personality }));
-          dispatch(setBackground(charID, {feature: bg.feature}));
+          dispatch(setBackground(charID, { desc: bg.desc }));
+          dispatch(setBackground(charID, { feature: bg.feature }));
         });
     }
   };
@@ -158,9 +159,9 @@ export const Background = ({ charID, setPage }) => {
       };
       for (let selection of selectionTlLg1) {
         if (selection.url.includes('language')) {
-          customBackground.proficiencies.Languages.push(selection);
+          customBackground.proficiencies.Languages.push(selection.name);
         } else {
-          customBackground.proficiencies.Tools.push(selection);
+          customBackground.proficiencies.Tools.push(selection.name);
         }
       }
       dispatch(setBackground(charID, customBackground));
@@ -305,9 +306,7 @@ export const Background = ({ charID, setPage }) => {
                       ...gamingSets,
                       ...musicalInstruments,
                       ...otherTools,
-                      ...kits,
-                      ...landVehicles,
-                      ...waterVehicles,
+                      ...kits
                     ].filter(
                       item =>
                         !skill.includes(item.name.toString().toLowerCase())

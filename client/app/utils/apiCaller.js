@@ -740,7 +740,7 @@ const equipmentDetails = async equipment => {
   const promises = [];
   let result;
   console.log(equipment);
-  if (equipment[0].equipment) {
+  if (equipment[0]?.equipment) {
     result = equipment.map(theItem => {
       if(theItem.category && theItem.category == 'currency') {
           return {

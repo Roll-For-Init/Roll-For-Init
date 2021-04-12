@@ -10,7 +10,7 @@ import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-inline-editing';
 
 
-import {D20, StarOutline, StarFilled} from '../../utils/svgLibrary';
+import {D20, FancyStar} from '../../utils/svgLibrary';
 
 //swap race class icons with white
 
@@ -60,9 +60,8 @@ export const DashBoard = () => {
     (<div id="dashboard" className="dashboard">
       <Header />
       <div className="toolbar fixed-top">
-        <div className="subheader py-1 px-3 pt-2">
+        <div className="subheader">
           <h2 className="small-caps mr-5">{character.name}</h2>
-          <span className="ml-2">
             <h5 className="text-uppercase">
               <img
                 className="button-icon"
@@ -77,8 +76,11 @@ export const DashBoard = () => {
               />
               {character.race.subrace ? character.race.subrace : character.race.name}
             </h5>
-            <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;{character.level}</span></h5>
-            <span className="m-0 align-top">
+            <h5 className="text-uppercase mr-2" style={{paddingBottom:'0.3125rem'}}>Level <span style={{fontSize:'1.6rem'}}>{character.level}</span></h5>
+            <span className="card content-card description-card m-0 p-1 w-auto">
+              <h6 className="text-uppercase text-center m-0 px-4">{character.experience.current} XP</h6>
+            </span>
+            {/* <span className="m-0 align-top">
               <table style={{display: 'inline-table'}}>
                 <tbody>
                   <tr>
@@ -91,9 +93,8 @@ export const DashBoard = () => {
                   </tr>
                 </tbody>
               </table>
-            </span>
-            <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
-          </span>
+            </span> */}
+          <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
         </div>
       </div>
       {/* <div>
@@ -104,8 +105,10 @@ export const DashBoard = () => {
             </p>
           );
         })} */}
-      <div style={{paddingTop: '125px'}}>
-      <div className="container-fluid px-5 py-4">
+      <div style={{paddingTop: '105px'}}>
+      
+      <div className="container-fluid px-5 py-3">
+      
         <div className="row position-relative no-gutters mb-2" >
           <div className="w-100">
             <div className="float-start w-auto d-inline-block">
@@ -322,16 +325,16 @@ const StatsCard = ({initiative, ac, speed, charID}) => {
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card text-center">
             <h6 className="text-uppercase m-0">Initiative</h6>
-            <h2 className="text-uppercase m-0">{initiative < 0 ? `-${initiative}` : `+${initiative}`}</h2>
+            <h2 className="text-uppercase m-0">{initiative < 0 ? `${initiative}` : `+${initiative}`}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card text-center">
             <h6 className="text-uppercase m-0">Inspiration</h6>
             {!inspiration ?
-              <button className='wrapper-button' onClick={toggleInspiration}><StarOutline /></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><FancyStar className="star-outline"/></button>
               :
-              <button className='wrapper-button' onClick={toggleInspiration}><StarFilled /></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><FancyStar className="star-filled"/></button>
             }
           </div>
         </div>
@@ -417,10 +420,22 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
     }
     let newHealth = health.current+amt;
     if(newHealth <= 0) setShowSaves(true);
-    else if(newHealth >health.max) newHealth = health.max;
+    else setShowSaves(false);
+    if(newHealth >health.max) newHealth = health.max;
     let newState = {current: newHealth};
 
     dispatch(setUpdate(charID, 'health', newState))
+  }
+
+  const currentHealthClass = () => {
+    const healthPercent = health.current/health.max*100;
+    if (healthPercent >= 66) {
+      return "current-health green";
+    }
+    if (healthPercent <= 33) {
+      return "current-health red";
+    }
+    return "current-health yellow";
   }
 
   return (
@@ -432,7 +447,8 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
           (<><h6 className="mb-1 card-title d-block">Hit Points</h6>
           <div className="row p-0 m-0">
             <div className="col-sm-8 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0">
+              <div className="card content-card description-card my-0 mr-2 ml-0 health-bar">
+                <div className={currentHealthClass()} style={{width: health.current/health.max*100 + "%"}}></div>
                 <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
               </div>
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>

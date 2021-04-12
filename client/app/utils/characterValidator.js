@@ -184,14 +184,15 @@ const fillModel = async (equipment, character) => { //will probably need a separ
             traits: character.race.traits.concat(userSelections.trait).concat(subraceTraits), 
             background: {
                 name: character.background.name,
+                description: Array.isArray(character.background.desc) ? character.background.desc.join('\n') : character.background.desc
             },
             class_specific: levelDetails.class_specific,
             proficiency_bonus: proficiency_bonus,
             misc_proficiencies: {
-                armor: character.class.proficiencies.Armor.concat(character.race.proficiencies.Armor).concat(character.background.proficiencies.Armor).concat(userSelections.armor),
-                weapons: character.class.proficiencies.Weapons.concat(character.race.proficiencies.Weapons).concat(character.background.proficiencies.Weapons).concat(userSelections.weapon),
-                tools: character.class.proficiencies.Tools.concat(character.race.proficiencies.Tools).concat(character.background.proficiencies.Tools).concat(userSelections.tool),
-                languages: character.class.proficiencies.Languages.concat(character.race.proficiencies.Languages).concat(character.background.proficiencies.Languages).concat(userSelections.language)
+                armor: [...character.class.proficiencies.Armor||[], ...character.race.proficiencies.Armor||[], ...character.background.proficiencies.Armor||[], ...userSelections.armor||[]],
+                weapons: [...character.class.proficiencies.Weapons||[], ...character.race.proficiencies.Weapons||[], ...character.background.proficiencies.Weapons||[], ...userSelections.weapon||[]],
+                tools: [...character.class.proficiencies.Tools||[], ...character.race.proficiencies.Tools||[], ...character.background.proficiencies.Tools||{}, ...userSelections.tool||[]],
+                languages: [...character.class.proficiencies.Languages||[], ...character.race.proficiencies.Languages||[], ...character.background.proficiencies.Languages||[], ...userSelections.language||[]]
             },
             ability_scores: ability_relevant.ability_scores,
             saving_throws: ability_relevant.saving_throws,
@@ -346,7 +347,7 @@ const abilityScoreParser = (abilities, selections, proficiency, race, theclass) 
         for(let skill of skillScores[ability.short_name]) {
             //console.log(skill);
             let proficiencyExists = allSkillProfs.find(aSkill => aSkill.toLowerCase().replaceAll(' ', '_') === skill);
-            let expertise = selections.expertise.find(aExp => aExp.toLowerCase().substring(aExp.name.toLowerCase.indexOf(':')+2).replaceAll(' ', '_') === skill);
+            let expertise = selections.expertise.find(aExp => aExp.toLowerCase().substring(aExp.toLowerCase().indexOf(':')+2).replaceAll(' ', '_') === skill);
             scores.skills[skill] = {
                 proficiency: !proficiencyExists ? false : true,
                 modifier: !expertise ? ability.modifier + (!proficiencyExists ? 0 : proficiency) : ability.modifier + (proficiency * 2), 

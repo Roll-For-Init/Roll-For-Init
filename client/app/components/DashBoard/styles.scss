@@ -23,12 +23,12 @@
       }
     }
     .subheader {
-      min-height: 60px;
+      height: 60px;
       background-color: $maroon;
       z-index: 100;
       top: 0;
       width: 100%;
-      padding-top: 5px;
+      padding: 5px 20px;
       h2,
       h5 {
         color: white;
@@ -37,37 +37,40 @@
         margin-right: 2.5rem;
         margin-bottom: 0;
         letter-spacing: .96px;
-        height:100%;
+        // height:100%;
         vertical-align: middle;
       }
       h2 {
           font-size: 2.5rem;
       }
+      svg {
+        margin-top: 2.5px;
+      }
     }
     .button-icon {
-        max-width: 43px;
-        max-height: 25px;
-        margin-right: 8px;
-        margin-bottom: 5px;
-      }
+      max-width: 43px;
+      max-height: 25px;
+      margin-right: 8px;
+      margin-bottom: 5px;
+    }
   }
 
-   /******* button bar *******/
-   .btn-primary, .btn-secondary {
-       margin: auto;
-       margin-right: 20px;
-       width: auto;
-       padding: {
-           left: 8px;
-           right: 8px;
-           top: 2px;
-           bottom: 2px;
-       }
-       border-radius: 8px;
-       font-size: 1.15rem;
-       letter-spacing: 1.92px;
+  /******* button bar *******/
+  .btn-primary, .btn-secondary {
+    margin: auto;
+    margin-right: 20px;
+    width: auto;
+    padding: {
+      left: 8px;
+      right: 8px;
+      top: 2px;
+      bottom: 2px;
+    }
+    border-radius: 8px;
+    font-size: 1.15rem;
+    letter-spacing: 1.92px;
 
-   }
+  }
 
   /******* cards *******/
 
@@ -90,48 +93,48 @@
   }
 
   .abilities {
-      .container-fluid {
-          padding: 0;
-      }
-      .col-4 {
-          padding-left: 10px;
-          padding-right: 10px;
-          flex: 0 0 33%;
-          max-width: 33%;
-      }
-      .description-card {
-          padding: 5px;
-          width: 100%;
-      }
-      .ability-score {
-          background-color: $dark-off-white;
-          font-size: 1.25rem;
-          font-weight: bold;
-          padding: 0;
-          border-top-left-radius: 0;
-          border-top-right-radius: 0;
-          margin-left: 12%;
-          z-index: 1;
-          margin-top: -2px !important;
-      }
-      .ability-bonus {
-          box-shadow: 1px 1px 3px $dark-maroon;
-          z-index: 2;
-      }
+    .container-fluid {
+      padding: 0;
+    }
+    .col-4 {
+      padding-left: 10px;
+      padding-right: 10px;
+      flex: 0 0 33%;
+      max-width: 33%;
+    }
+    .description-card {
+      padding: 5px;
+      width: 100%;
+    }
+    .ability-score {
+      background-color: $dark-off-white;
+      font-size: 1.25rem;
+      font-weight: bold;
+      padding: 0;
+      border-top-left-radius: 0;
+      border-top-right-radius: 0;
+      margin-left: 12%;
+      z-index: 1;
+      margin-top: -2px !important;
+    }
+    .ability-bonus {
+      box-shadow: 1px 1px 3px $dark-maroon;
+      z-index: 2;
+    }
   }
   .extra-stats {
-      ul {
-          padding-left: 1rem;
-          margin-bottom: 0;
-          &:last-child {
-              margin-bottom: 0;
-          }
-          li {
-              span {
-                  margin-left: -5px;
-              }
-          }
+    ul {
+      padding-left: 1rem;
+      margin-bottom: 0;
+      &:last-child {
+        margin-bottom: 0;
       }
+      li {
+        span {
+          margin-left: -5px;
+        }
+      }
+    }
   }
   .skills {
     .px-5 {
@@ -155,32 +158,32 @@
         max-width: 52%;
     }
   }
-    @media (min-width: 576px) {
-        .col-sm-7 {
-            -ms-flex: 0 0 55%;
-            flex: 0 0 55%;
-            max-width: 55%;
-        }
-        .col-sm-5 {
-            -ms-flex: 0 0 45%;
-            flex: 0 0 45%;
-            max-width: 45%;
-        }
-        .col-sm-8 {
-            -ms-flex: 0 0 70%;
-            flex: 0 0 70%;
-            max-width: 70%;
-        }
-        .col-sm-4 {
-            -ms-flex: 0 0 30%;
-            flex: 0 0 30%;
-            max-width: 30%;
-        }
+  @media (min-width: 576px) {
+    .col-sm-7 {
+      -ms-flex: 0 0 55%;
+      flex: 0 0 55%;
+      max-width: 55%;
     }
-    .row {
-        margin-right: 0;
-        margin-left: 0;
+    .col-sm-5 {
+      -ms-flex: 0 0 45%;
+      flex: 0 0 45%;
+      max-width: 45%;
     }
+    .col-sm-8 {
+      -ms-flex: 0 0 70%;
+      flex: 0 0 70%;
+      max-width: 70%;
+    }
+    .col-sm-4 {
+      -ms-flex: 0 0 30%;
+      flex: 0 0 30%;
+      max-width: 30%;
+    }
+  }
+  .row {
+    margin-right: 0;
+    margin-left: 0;
+  }
   
   /******* titles *******/
 
@@ -202,6 +205,30 @@
   }
 
   .hit-points {
+      .health-bar {
+        .current-health {
+          position: absolute;
+          top: 0;
+          left: 0;
+          height: 100%;
+          z-index: 10;
+          border-radius: 8px;
+          &.green {
+            background-color: $green;
+          }
+          &.yellow {
+            background-color: $yellow;
+          }
+          &.red {
+            background-color: $red;
+          }
+        }
+        h3 {
+          position: relative;
+          z-index: 20;
+          color: $very-dark-blue;
+        }
+      }
       .content-card {
         padding-top: .2rem;
         padding-bottom: .2rem;
@@ -241,12 +268,14 @@
       }
   }
 
+  .table {
+    color: $dark-blue;
+  }
 
   /******* tables *******/
   .maincol {
     .table {
         margin-bottom: 0;
-        color: $dark-blue;
     }
     td {
         padding: {
@@ -309,15 +338,15 @@
         border: none;
         background-color: transparent;
     }
-}
-.btn-outline-primary {
-    @extend .btn-outline-success;
-    border: {
-      color: $blue !important;
-    }
-}
-.wrapper-button {
-    margin: auto auto;
+  }
+  .btn-outline-primary {
+      @extend .btn-outline-success;
+      border: {
+        color: $blue !important;
+      }
+  }
+  .wrapper-button {
+    margin: auto;
     padding: 0;
     display: block;
     background-color: transparent;
@@ -334,46 +363,53 @@
       }
 
       &.star-filled {
-        path {
-          fill: $dark-blue;
+        .sparkles, .fill {
+          fill: $medium-blue;
         }
-        &:hover path {
-          fill: $very-dark-blue;
-        }
-        &:active path {
-          fill: $dark-blue-disabled;
-        }
-      }
-      &.star-outline {
-        path.outline {
-          fill: $dark-blue-disabled;
-        }
-        path.fill {
+        .outline {
           fill: transparent;
         }
         &:hover {
-          path.outline {
-            fill: $dark-blue-disabled;
-          }
-          path.fill {
-            fill: $dark-blue-disabled;
+          .sparkles, .fill {
+            fill: $dark-blue;
           }
         }
         &:active {
-          path.outline {
+          .sparkles, .fill {
             fill: $very-dark-blue;
           }
-          path.fill {
+        }
+      }
+      &.star-outline {
+        .sparkles, .outline {
+          fill: $dark-blue-disabled;
+        }
+        .fill {
+          fill: transparent;
+        }
+        &:hover {
+          .sparkles, .fill {
+            fill: $dark-blue-disabled;
+          }
+          .outline {
+            fill: transparent;
+          }
+        }
+        &:active {
+          .sparkles, .fill {
             fill: $very-dark-blue;
+          }
+          .outline {
+            fill: transparent;
           }
         }
       }
     }
-}
+  }
 
-.misc-stats h2 {
-  height: 2.4rem;
-}
+  .misc-stats h2 {
+    height: 2.4rem;
+  }
 
   .list-item {
     display: inline-block;
@@ -386,7 +422,7 @@
   .skills-points {
     text-align: center;
   }
-  
+
   input[type='radio']:after {
     width: 13px;
     height: 13px;
@@ -428,23 +464,132 @@
       width: auto;
   }
   .modal-table {
-      margin-bottom: 0;
-      margin-left: auto;
-      margin-right: auto;
-      width: 1px;
-      &>tr {
-          display: table-cell;
-          border: none;
-          margin: 0;
-          padding: 1px;
-          vertical-align: top;
-          &>td {
-            display: block;
-            border: none;
-            margin: 0;
-            padding: 1px;
-        }
-  
+    margin-bottom: 0;
+    margin-left: auto;
+    margin-right: auto;
+    width: 1px;
+    &>tr {
+      display: table-cell;
+      border: none;
+      margin: 0;
+      padding: 1px;
+      vertical-align: top;
+      &>td {
+        display: block;
+        border: none;
+        margin: 0;
+        padding: 1px;
       }
+    }
   }
+
+
+  .features-container {
+    .my-masonry-grid {
+      margin-left: -15px;
+    }
+    .my-masonry-grid_column {
+      padding-left: 15px;
+    }
+    .translucent-card {
+      max-width: 100%;
+      padding: 20px 25px 5px;
+      > h4 {
+        margin-bottom: 0;
+        text-align: center;
+        color: white;
+      }
+    }
+    .search-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .search-bar {
+      position: relative;
+      margin-bottom: 0;
+      i {
+        position: absolute;
+        top: 7.5px;
+        right: 10px;
+        color: $dark-blue-disabled;
+      }
+      input {
+        border: none !important;
+        font-size: inherit !important;
+        padding: 5px 10px;
+      }
+    }
+
+    .feature-card {
+      padding: 10px;
+      border: none;
+      margin-bottom: 15px;
+      h5 {
+        margin-bottom: 0px;
+      }
+      p {
+        margin-bottom: 0px;
+        line-height: normal;
+      }
+      .wrapper-button {
+        position: relative;
+        display: inline-block;
+        top: .2rem;
+        margin-right: 0.25rem;
+
+        svg {
+          height: 1.5rem;
+        }
+      }
+    }
+  }
+  
+  .description-container {
+    .translucent-card {
+      max-width: 100%;
+      min-height: 400px;
+    }
+    h6 {
+      text-transform: uppercase;
+      letter-spacing: .1rem;
+      text-align: center;
+      margin-bottom: 0;
+    }
+    .silhouette-container {
+      max-height: 100%;
+      max-width: 100%;
+      min-width: 25%;
+      // margin-top: 20px;
+      // background-color: $light-maroon-translucent;
+      // border-radius: 16px;
+      display: flex;
+      justify-content: center;
+      img {
+        max-height: 100%;
+        max-width: 100%;
+        position: absolute;
+        top: 50%;
+        left: 0;
+        transform: translateY(-50%);
+      }
+    }
+    .description-card {
+      height: fit-content;
+      padding: 10px 10px 2px;
+      p {
+        padding-bottom: .25rem;
+        // font-size: 1.1rem;
+        // line-height: 1;
+        .description-label {
+          text-transform: capitalize;
+          // font-size: large;
+          // text-transform: uppercase;
+          // letter-spacing: .2rem;
+        }
+      }
+    }
+    
+  }  
 }
