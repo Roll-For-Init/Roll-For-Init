@@ -310,10 +310,12 @@ const LandingPage = () => {
       ) : (
           <div className="character-container">
             <div className="card translucent-card mt-0">
+              {console.log(characters)};
               {Object.entries(characters).length === 0 ?
                 <div>No Characters Created Yet</div>
                 : Object.entries(characters).map((char, idx) => {
               const charInfo = char[1];
+              if(!charInfo.ability_scores) return null
               return (
                 <div
                   className="card content-card character-card"
@@ -339,7 +341,7 @@ const LandingPage = () => {
                         />}
                       <div className="info-container">
                         <p className="character-name">{`${charInfo?.name}`}</p>
-                        <p className="character-info">{`${charInfo.race?.name} ${charInfo.class[0]?.name} ${charInfo.level}`}</p>
+                        <p className="character-info">{`${charInfo.race?.name} ${charInfo.class && charInfo.class[0]?.name} ${charInfo.level}`}</p>
                       </div>
                     </span>
                     <span className="same-line mb-0">
@@ -348,10 +350,10 @@ const LandingPage = () => {
                           className="character-icon"
                           src={raceIcons[`${charInfo.race?.name?.toLowerCase()}.png`]}
                         />
-                        <img
+                        {charInfo.class && <img
                           className="character-icon"
-                          src={classIcons[`${charInfo.class[0]?.name?.toLowerCase()}.png`]}
-                        />
+                          src={classIcons[`${charInfo.class && charInfo.class[0]?.name?.toLowerCase()}.png`]}
+                        />}
                       </div>
                     </span>
                   </div>
