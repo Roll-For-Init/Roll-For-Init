@@ -7,7 +7,7 @@ const apiKey = 'SxReYSrsBCxyO11FSPnR2ZDnNKmo0lNV'
 
 // JSON data to fill the PDF
 
-  const testMessage = async (req, res) => {
+  const pdfFill = async (req, res) => {
     const anvilClient = new Anvil({ apiKey })
     const { statusCode, data } = await anvilClient.fillPDF(pdfTemplateID, req.body)
     fs.writeFileSync('characterSheet.pdf', data, { encoding: null })
@@ -17,5 +17,5 @@ const apiKey = 'SxReYSrsBCxyO11FSPnR2ZDnNKmo0lNV'
 }
 
 
-module.exports = { testMessage }
+module.exports = { pdfFill }
 

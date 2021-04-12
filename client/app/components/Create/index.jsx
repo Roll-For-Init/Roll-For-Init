@@ -20,7 +20,6 @@ import { Link } from 'react-router-dom';
 //import {backgroundCaller} from '../apiCaller';
 
 const buttonNames = [
-  'pdf create',
   'race',
   'class',
   'abilities',

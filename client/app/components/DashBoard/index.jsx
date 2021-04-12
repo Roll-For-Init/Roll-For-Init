@@ -8,11 +8,114 @@ import './styles.scss';
 import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-inline-editing';
+import axios from 'axios';
+
 
 
 import {D20, StarOutline, StarFilled} from '../../utils/svgLibrary';
+import characterService from '../../redux/services/character.service';
 
 //swap race class icons with white
+
+
+/*const download = (content, fileName, contentType)  => {
+  var a = document.createElement("a");
+  var file = new Blob([content], {type: contentType});
+  a.href = URL.createObjectURL(file);
+  a.download = fileName;
+  a.click();
+}*/
+
+const formatPayload = (character) => {
+  var payload = {
+    "title": "Character Sheet Demo",
+    "fontSize": 10,
+    "textColor": "#333333",
+    "data": {
+      "Name": character.name,
+      "Class": character.class[0].name,
+      "Background": character.background.name,
+      "Race": character.race.name,
+      "Alignment": character.lore.alignment,
+      "EXP": character.experience.current,
+      "STR": character.ability_scores.str.score,
+      "DXT": character.ability_scores.dex.score,
+      "CON": character.ability_scores.con.score,
+      "INT": character.ability_scores.int.score,
+      "WIS": character.ability_scores.wis.score,
+      "CHR": character.ability_scores.cha.score,
+      //"ArmorClass": "Armor Class",
+      "PersonalityTraits": character.lore.personality_traits,
+      "Ideals": character.lore.ideals,
+      "Flaws": character.lore.flaws,
+      "Features": character.features.name,
+      "Languages": character.misc_proficiencies.languages,
+      "Armor": character.misc_proficiencies.armor,
+      "Weapons": character.misc_proficiencies.weapons,
+      "STRmod": ("+" + character.ability_scores.str.modifier),
+      "DXTmod": ("+" + character.ability_scores.dex.modifier),
+      "CONmod": ("+" + character.ability_scores.con.modifier),
+      "INTmod": ("+" + character.ability_scores.int.modifier),
+      "WISmod": ("+" + character.ability_scores.wis.modifier),
+      "CHRmod": ("+" + character.ability_scores.cha.modifier),
+      "ProBonus": ("+" + character.proficiency_bonus),
+      "Bonds": character.lore.bonds,
+      "Initiative": character.initiative_bonus,
+      "Speed": character.walking_speed,
+      /*"STstr": characterService.saving_throws.str.advantage,
+      "STdxt": characterService.saving_throws.dxt.advantage,
+      "STcon": characterService.saving_throws.con.advantage,
+      "STint": characterService.saving_throws.int.advantage,
+      "STwis": characterService.saving_throws.wis.advantage,
+      "STchr": characterService.saving_throws.chr.advantage,*/
+      "CurrentHP": character.health.current,
+      "MaxHP": character.health.max,
+      "TempHP": character.health.temp,
+      /*"Acrobatics": ("+" + character.skills.acrobatics.modifier),
+      "AnimalHandling": ("+" + character.skills.animal_handling.modifier),
+      "Arcana": ("+" + character.skills.arcana.modifier),
+      "Athletics": ("+" + character.skills.athletics.modifier),
+      "Deception": ("+" + character.skills.deception.modifier),
+      "History": ("+" + character.skills.history.modifier),
+      "Insight": ("+" + character.skills.insight.modifier),
+      "Intimidation": ("+" + character.skills.intimidation.modifier),
+      "Investigation": ("+" + character.skills.investigation.modifier),
+      "Medicine": ("+" + character.skills.medicine.modifier),
+      "Nature": ("+" + character.skills.nature.modifier),
+      "Perception": ("+" + character.skills.perception.modifier),
+      "Performance": ("+" + character.skills.performance.modifier),
+      "Persuasion": ("+" + character.skills.persuasion.modifier),
+      "Religion": ("+" + character.skills.religion.modifier),
+      "SleightOfHand": "+0",
+      "Stealth": "+0",
+      "Survival": "+0",*/
+      "Attack1": character.attacks.weapons[0].name,
+      "Attack2": character.attacks.weapons[1].name,
+      "Attack3": character.attacks.weapons[2].name,
+      //"Bonus3": character.attacks.weapons[2].advantage,
+      //"Bonus2": character.attacks.weapons[1].advantage,
+      //"Bonus1": character.attacks.weapons[0].advantage,
+      "Damage1": character.attacks.weapons[0].damage_dice,
+      "Damage2": character.attacks.weapons[1].damage_dice,
+      "Damage3": character.attacks.weapons[2].damange_dice
+    }
+  }
+    return payload;
+}
+
+const pdfExport = async(character) => {
+  axios.post('api/pdf/pdfGen', formatPayload(character), {responseType: 'blob'}).then(response => {
+    const file = new Blob([response.data], {
+      type: "application/pdf"
+    });
+    //download(JSON.stringify(character), 'character.txt', 'text/plain');
+    const fileURL = URL.createObjectURL(file);
+    window.open(fileURL);
+  })
+  .catch(error => {
+    console.log(error);
+  });
+} 
 
 const skillScores = {
   athletics: 'str',
@@ -84,6 +187,11 @@ export const DashBoard = () => {
               </table>
             </span>
             <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
+          </span>
+          <span style={{paddingLeft:'775px'}}>
+          <button className="text-uppercase btn btn-primary" onClick={() => {pdfExport(character)}}>
+          Export as PDF
+          </button>
           </span>
         </div>
       </div>
