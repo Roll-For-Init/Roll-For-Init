@@ -55,6 +55,7 @@ export const DashBoard = () => {
   const character = useSelector(state => state.characters[charID]);
   console.log(character);
   const [showShortRest, setShowShortRest] = useState(false);
+  const [showLongRest, setShowLongRest] = useState(false);
   const [showExp, setShowExp] = useState(false);
   const [currentPercentage, setCurrentPercentage] = useState(`${character.experience.current/character.experience.threshold*100}%`)
   
@@ -65,6 +66,8 @@ export const DashBoard = () => {
       <Header />
       {showShortRest && <ShortRest showModal={showShortRest} setShowModal={setShowShortRest} hitDice={character.hit_dice} con={character.ability_scores.con.modifier} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
       {showExp && <ChangeExp exp={character.experience} showModal={showExp} setShowModal={setShowExp} charID={charID} setPercentage={setCurrentPercentage}/>}
+      {showLongRest && <LongRest showModal={showLongRest} setShowModal={setShowLongRest} hitDice={character.hit_dice} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
+
       <div className="toolbar fixed-top">
         <div className="subheader py-1 px-3 pt-2">
           <h2 className="small-caps mr-5">{character.name}</h2>
@@ -136,7 +139,7 @@ export const DashBoard = () => {
               <button onClick={() => setShowShortRest(true)} className="text-uppercase btn btn-secondary mx-2">
                 Short Rest
               </button>
-              <button className="text-uppercase btn btn-secondary mx-2">
+              <button onClick={() => setShowLongRest(true)} className="text-uppercase btn btn-secondary mx-2">
                 Long Rest
               </button>
             </div>
@@ -160,7 +163,7 @@ export const DashBoard = () => {
             <div className="row">
               <div className="col-sm-8 px-2">
                       <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed} charID={charID}/>
-                      <HitPointsCard health={character.health} hit_dice={character.hit_dice} charID={charID}/>
+                      <HitPointsCard key={`${character.health.current}-health`} health={character.health} hit_dice={character.hit_dice} charID={charID}/>
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
                 <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
@@ -254,6 +257,77 @@ const ChangeExp = ({exp, showModal, setShowModal, charID, setPercentage}) => {
   )
   
 }
+const LongRest = ({showModal, setShowModal, hitDice, charClass, spellSlots, charID, health}) => {
+  const [spellsRecovered, setSpellsRecovered] = useState(0);
+  const [healthRecovered, setHealthRecovered] = useState(0);
+  const [diceRecovered, setDiceRecovered] = useState(0);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(spellSlots);
+    if(spellSlots) {
+      let newSlots = spellSlots;
+      let recovered = 0;
+      for(let i = 1; i <= newSlots.length; i++) {
+        let slot = newSlots[i];
+        if(slot.max <= 0) break;
+        recovered = recovered + (slot.max-slot.current);
+        slot.current = slot.max;
+      }
+      setSpellsRecovered(recovered);
+      dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+    }
+    if(hitDice.current < hitDice.max) {
+      let newHitDice = hitDice;
+      let newHitNum = newHitDice[0].current + Math.ceil(newHitDice[0].max/2)
+      if(newHitNum > newHitDice[0].max) newHitNum = newHitDice[0].max;
+      newHitDice[0].current = newHitNum;
+      dispatch(setArrayUpdate(charID, 'hit_dice', newHitDice))
+      setDiceRecovered(newHitNum);  
+    }
+    if(health.current < health.max) {
+      let recovered = health.max - health.current
+      let newState = {current: health.current+recovered};
+      setHealthRecovered(recovered);
+      dispatch(setUpdate(charID, 'health', newState))  
+    }
+  }, [])
+
+  return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>A Long Rest is a period of extended downtime, at least 8 hours long, during which a character sleeps or performs light activity: 
+              reading, talking, eating, or standing watch for no more than 2 hours. </h5>
+          </div>
+          {spellSlots && spellsRecovered > 0 && (
+            <div className="modal-sect pb-0">
+              {preparedSpells.includes(charClass.toLowerCase()) ? 
+                <h5>You have recovered {spellsRecovered} spell slots and can now prepare a new set of spells.</h5>
+                :
+                <h5>You have recovered {spellsRecovered} spell slots.</h5>}
+            </div>
+          )}
+          {healthRecovered > 0 && (
+            <div className="modal-sect pb-0"><h5>You have recovered {healthRecovered} health.</h5></div>
+          )}
+          {diceRecovered > 0 && (
+            <div className="modal-sect pb-0"><h5>You have recovered {diceRecovered} hit dice.</h5></div>
+          )}
+    </Modal>
+    </Portal>
+  )
+}
 
 const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots, charID, health}) => {
   const [spellsRecovered, setSpellsRecovered] = useState(0);
@@ -279,9 +353,11 @@ const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots
     if(charClass.toLowerCase() === "warlock") {
       let recovered = 0;
       let newSlots = spellSlots;
-      for(let slot of newSlots) {
+      for(let i = 1; i <= newSlots.length; i++) {
+        let slot = newSlots[i];
         if(slot.max <= 0) break;
-        recovered+=(slot.max-slot.current);
+        console.log(i, slot.max-slot.current);
+        recovered = recovered + (slot.max-slot.current);
         slot.current = slot.max;
       }
       setSpellsRecovered(recovered)
