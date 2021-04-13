@@ -526,7 +526,7 @@ export const Equipment = ({ charID, setPage }) => {
                 return (
                   <div className="card content-card equipment-card" key={idx}>
                     <EquipmentItem
-                      equipment={equipmentItem}
+                      equipment={equipmentItem.equipment}
                       className={className}
                       noButton={true}
                     />
