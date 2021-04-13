@@ -7,10 +7,10 @@ import { setUpdate, setArrayUpdate} from '../../redux/actions/characters';
 import './styles.scss';
 import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
-import EditableLabel from 'react-inline-editing';
+import EditableLabel from 'react-editable-label';
+import skullIcon from '../../../public/assets/imgs/skull-icon.png'
 
-
-import {D20, FancyStar} from '../../utils/svgLibrary';
+import {D20, FancyStar, CircleSlot} from '../../utils/svgLibrary';
 
 //swap race class icons with white
 
@@ -46,6 +46,7 @@ const fullAbScore = {
   con: 'Constitution',
 };
 
+const preparedSpells = ['wizard', 'cleric', 'druid'];
 
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
@@ -54,47 +55,62 @@ export const DashBoard = () => {
   const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
   const character = useSelector(state => state.characters[charID]);
   console.log(character);
+  const [showShortRest, setShowShortRest] = useState(false);
+  const [showLongRest, setShowLongRest] = useState(false);
+  const [showExp, setShowExp] = useState(false);
+  const [showRoller, setShowRoller] = useState(false)
+  const [currentPercentage, setCurrentPercentage] = useState(`${character.experience.current/character.experience.threshold*100}%`)
+  
 
   return (
     character.level ?
     (<div id="dashboard" className="dashboard">
       <Header />
+      {showShortRest && <ShortRest showModal={showShortRest} setShowModal={setShowShortRest} hitDice={character.hit_dice} con={character.ability_scores.con.modifier} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
+      {showExp && <ChangeExp exp={character.experience} showModal={showExp} setShowModal={setShowExp} charID={charID} setPercentage={setCurrentPercentage}/>}
+      {showLongRest && <LongRest showModal={showLongRest} setShowModal={setShowLongRest} hitDice={character.hit_dice} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
+      {showRoller && <DiceRoller showModal={showRoller} setShowModal={setShowRoller}/>}
       <div className="toolbar fixed-top">
-        <div className="subheader">
-          <h2 className="small-caps mr-5">{character.name}</h2>
-            <h5 className="text-uppercase">
+        <div className="subheader py-1 px-3">
+          <h2 className="small-caps mr-5 mb-1">{character.name}</h2>
+          <span className="ml-2">
+            <h5 className="text-uppercase pt-2">
               <img
                 className="button-icon"
                 src={require(`../../../public/assets/imgs/icons/white/class/${character.class[0].name.toLowerCase()}.png`)}
               />
               {character.class[0].name}
             </h5>
-            <h5 className="text-uppercase">
+            <h5 className="text-uppercase pt-2">
               <img
                 className="button-icon"
                 src={require(`../../../public/assets/imgs/icons/white/race/${character.race.name.toLowerCase().replaceAll('-','_')}.png`)}
               />
               {character.race.subrace ? character.race.subrace : character.race.name}
             </h5>
-            <h5 className="text-uppercase mr-2" style={{paddingBottom:'0.3125rem'}}>Level <span style={{fontSize:'1.6rem'}}>{character.level}</span></h5>
-            <span className="card content-card description-card m-0 p-1 w-auto">
-              <h6 className="text-uppercase text-center m-0 px-4">{character.experience.current} XP</h6>
-            </span>
-            {/* <span className="m-0 align-top">
+            <h5 className="text-uppercase mr-2 pb-0 pt-1">Level <span style={{fontSize:'1.6rem'}}>&#8198;{character.level}</span></h5>
+            <span className="m-0 ml-2 align-bottom">
               <table style={{display: 'inline-table'}}>
                 <tbody>
                   <tr>
-                  <span className="card content-card description-card m-0 p-1 w-auto">
-                  <h6 className="text-uppercase text-center m-0 px-4">{character.experience.current} XP</h6>
-                  </span>
+                  <td className="card content-card description-card m-0 p-0 w-auto status-bar" style={{minWidth: '90px'}}>
+                  <h6 className="unfilled on-top text-uppercase text-center p-1 m-0">{character.experience.current} XP</h6>
+                  <div className={`filled blue ${currentPercentage==='100%' ? `full` : ``}`} style={{width: currentPercentage}}/>
+                  </td>
+                  <td><button onClick={() => setShowExp(true)} className="text-uppercase btn btn-primary exp-add mr-0 ml-1" style={{boxShadow: 'none'}}>
+                    +/-
+                  </button>
+                  </td>
                   </tr>
                   <tr>
-                  <h6 className="text-uppercase text-center text-white m-0 w-auto"><small className="text-uppercase text-white">Next Level: {character.experience.threshold}</small></h6>
+                  <td colSpan="2" className="text-center"><h6 className="text-uppercase text-white m-0 mr-1 w-auto"><small className="text-uppercase text-white">Next Level: {character.experience.threshold}</small></h6></td>
                   </tr>
+                  
                 </tbody>
               </table>
-            </span> */}
-          <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
+            </span>
+            <button onClick={() => setShowRoller(true)} style={{marginRight:'10px'}} className="wrapper-button-inline float-right"><D20 fill='#ffffff' width='45' height='45'/></button>
+          </span>
         </div>
       </div>
       {/* <div>
@@ -124,10 +140,10 @@ export const DashBoard = () => {
               <button className="text-uppercase btn btn-primary">Features</button>
             </div>
             <div className="float-right w-auto d-inline-block">
-              <button className="text-uppercase btn btn-secondary mx-2">
+              <button onClick={() => setShowShortRest(true)} className="text-uppercase btn btn-secondary mx-2">
                 Short Rest
               </button>
-              <button className="text-uppercase btn btn-secondary mx-2">
+              <button onClick={() => setShowLongRest(true)} className="text-uppercase btn btn-secondary mx-2">
                 Long Rest
               </button>
             </div>
@@ -151,7 +167,7 @@ export const DashBoard = () => {
             <div className="row">
               <div className="col-sm-8 px-2">
                       <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed} charID={charID}/>
-                      <HitPointsCard health={character.health} hit_dice={character.hit_dice} charID={charID}/>
+                      <HitPointsCard key={`${character.health.current}-health`} health={character.health} hit_dice={character.hit_dice} deathThrows={character.death_throws} charID={charID}/>
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
                 <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
@@ -159,7 +175,7 @@ export const DashBoard = () => {
             </div>
             <div className="pinned row px-2">
               <div className="col-12 px-0">
-                <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus}/>
+                <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID}/>
 
               </div>
             </div>
@@ -174,6 +190,253 @@ export const DashBoard = () => {
   );
 };
 
+const ChangeExp = ({exp, showModal, setShowModal, charID, setPercentage}) => {
+  const [value, setValue] = useState(null);
+  const [nextLevel, setNextLevel] = useState(exp.current === exp.threshold ? true : false);
+  const dispatch = useDispatch();
+  const gainExp = () => {
+    let newCurrent = exp.current + Number.parseInt(value);
+    if(newCurrent >= exp.threshold) {
+      newCurrent = exp.threshold;
+      console.log('in here');
+      setNextLevel(true);
+    }
+    setPercentage(`${newCurrent/exp.threshold*100}%`)
+    dispatch(setUpdate(charID, 'experience', {current: newCurrent}))
+  }
+  const resetExp = () => {
+    let newCurrent = 0;
+    setPercentage(`0%`);
+    setNextLevel(false);
+    dispatch(setUpdate(charID, 'experience', {current: newCurrent}))
+  }
+
+  return (
+    <Portal>
+    <Modal id='exp-modal' visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>How much EXP?</h5>
+          </div>
+          <div className="card content-card name-card">
+            <FloatingLabel
+              id='EXP'
+              name='EXP'
+              placeholder='EXP'
+              type="number"
+              min="0"
+              value={value}
+              onChange={e => setValue(e.target.value)}
+            />
+          </div>
+          {!nextLevel ? <button
+            className="text-uppercase btn-primary modal-button"
+            onClick={() => {gainExp();}}
+            data-dismiss="modal"
+          >
+            Gain Experience
+          </button>
+          :
+          <div className="card content-card description-card">
+            <h5>You've reached the next level. This application doesn't currently support characters past level 1, so please check back in the future for updates!</h5>
+          </div>
+          }
+          <button
+            className="text-uppercase btn-alert modal-button"
+            onClick={() => {resetExp(); setShowModal(false)}}
+            data-dismiss="modal"
+          >
+            Reset to Level Start
+          </button>
+    </Modal>
+    </Portal>
+  )
+  
+}
+const LongRest = ({showModal, setShowModal, hitDice, charClass, spellSlots, charID, health}) => {
+  const [spellsRecovered, setSpellsRecovered] = useState(0);
+  const [healthRecovered, setHealthRecovered] = useState(0);
+  const [diceRecovered, setDiceRecovered] = useState(0);
+
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    console.log(spellSlots);
+    if(spellSlots) {
+      let newSlots = spellSlots;
+      let recovered = 0;
+      for(let i = 1; i <= newSlots.length; i++) {
+        let slot = newSlots[i];
+        if(slot.max <= 0) break;
+        recovered = recovered + (slot.max-slot.current);
+        slot.current = slot.max;
+      }
+      setSpellsRecovered(recovered);
+      dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+    }
+    if(hitDice.current < hitDice.max) {
+      let newHitDice = hitDice;
+      let newHitNum = newHitDice[0].current + Math.ceil(newHitDice[0].max/2)
+      if(newHitNum > newHitDice[0].max) newHitNum = newHitDice[0].max;
+      newHitDice[0].current = newHitNum;
+      dispatch(setArrayUpdate(charID, 'hit_dice', newHitDice))
+      setDiceRecovered(newHitNum);  
+    }
+    if(health.current < health.max) {
+      let recovered = health.max - health.current
+      let newState = {current: health.current+recovered};
+      setHealthRecovered(recovered);
+      dispatch(setUpdate(charID, 'health', newState))  
+    }
+  }, [])
+
+  return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>A Long Rest is a period of extended downtime, at least 8 hours long, during which a character sleeps or performs light activity: 
+              reading, talking, eating, or standing watch for no more than 2 hours. </h5>
+          </div>
+          {spellSlots && spellsRecovered > 0 && (
+            <div className="modal-sect pb-0">
+              {preparedSpells.includes(charClass.toLowerCase()) ? 
+                <h5>You have recovered {spellsRecovered} spell slots and can now prepare a new set of spells.</h5>
+                :
+                <h5>You have recovered {spellsRecovered} spell slots.</h5>}
+            </div>
+          )}
+          {healthRecovered > 0 && (
+            <div className="modal-sect pb-0"><h5>You have recovered {healthRecovered} health.</h5></div>
+          )}
+          {diceRecovered > 0 && (
+            <div className="modal-sect pb-0"><h5>You have recovered {diceRecovered} hit dice.</h5></div>
+          )}
+    </Modal>
+    </Portal>
+  )
+}
+
+const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots, charID, health}) => {
+  const [spellsRecovered, setSpellsRecovered] = useState(0);
+  const [healthRecovered, setHealthRecovered] = useState(0);
+  const [numHitDice, setNumHitDice] = useState(hitDice[0].current);
+
+  const dispatch = useDispatch();
+
+  const rollDie = () => {
+    let recovered = Math.floor(Math.random()*(hitDice[0].type)+1);
+    let newHitDice = hitDice;
+    newHitDice[0].current -= 1;
+    dispatch(setArrayUpdate(charID, 'hit_dice', newHitDice))
+    setNumHitDice(numHitDice-1);
+    setHealthRecovered(recovered+con);
+    let newHealth = health.current + recovered + con;
+    if(newHealth > health.max) newHealth = health.max;
+    let newState = {current: newHealth};
+    dispatch(setUpdate(charID, 'health', newState))
+  }
+
+  useEffect(() => { /*TEMP : coded for level 1 only */
+    if(charClass.toLowerCase() === "warlock") {
+      let recovered = 0;
+      let newSlots = spellSlots;
+      for(let i = 1; i <= newSlots.length; i++) {
+        let slot = newSlots[i];
+        if(slot.max <= 0) break;
+        console.log(i, slot.max-slot.current);
+        recovered = recovered + (slot.max-slot.current);
+        slot.current = slot.max;
+      }
+      setSpellsRecovered(recovered)
+      dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+    }
+    if(charClass.toLowerCase() === "wizard") {
+      setSpellsRecovered(1);
+      let newSlots = spellSlots;
+      newSlots[1].current = newSlots[1].current + 1;
+      dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+    }
+  }, [])
+
+  
+
+  return (
+    <Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>A	short	rest	is	a	period	of	downtime,	at	least	1	hour long,	during	which	a	character	does	nothing	more 
+              strenuous	than	eating,	drinking,	reading, and tending to wounds.</h5>
+          </div>
+          {spellSlots && spellsRecovered > 0 && (
+            <div className="modal-sect pb-0"><h5>You have recovered {spellsRecovered} spell slots.</h5></div>
+          )}
+          {healthRecovered > 0 && (
+            <div className="modal-sect pb-0"><h5>You have recovered {healthRecovered} health.</h5></div>
+          )}
+          {numHitDice > 0 ? <button
+            className="text-uppercase btn-primary modal-button"
+            onClick={() => {rollDie()}}
+            data-dismiss="modal"
+          >
+            Roll Hit Die
+          </button> : (
+            <div className="modal-sect pb-0"><h5>You have no more hit dice. Take a long rest to recover them as well as your health and spell slots.</h5></div>
+          )}
+    </Modal>
+    </Portal>
+  )
+}
+
+const DiceRoller = ({showModal, setShowModal}) => {
+  return (<Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>What die, and how many?</h5>
+          </div>
+          <button
+            className="text-uppercase btn-primary modal-button"
+            data-dismiss="modal"
+          >
+            Roll
+          </button> 
+    </Modal>
+    </Portal>)
+}
 const AbilitiesCard = ({ ability_scores }) => {
 
   return (
@@ -400,31 +663,67 @@ const ManualEntryModal = ({name, showModal, setShowModal, placeholder, thePrompt
     </Portal>
   )
 }
-
-const HitPointsCard = ({health, hit_dice, charID}) => {
+const HitPointsCard = ({health, hit_dice, charID, deathThrows}) => {
   const dispatch = useDispatch();
 
   const [showDmg, setShowDmg] = useState(false);
   const [showHealth, setShowHealth] = useState(false);
-  const [showSaves, setShowSaves] = useState(false);
+  const [showSaves, setShowSaves] = useState(health.current <= 0 ? true : false);
+  const [temp, setTemp] = useState(health.temp)
+  const [currentPercentage, setCurrentPercentage] = useState(`${health.current/health.max * 100}%`);
 
+  const updateTemp = (amt) => {
+    amt = Number.parseInt(amt);
+    console.log(amt);
+    dispatch(setUpdate(charID, 'health', {temp: amt}));
+    setTemp(amt)
+  }
   const changeHealth = (amt) => {
     amt = Number.parseInt(amt)
     if(amt < 0 && health.temp > 0) {
       let newAmt = amt + health.temp;
       let newTemp = health.temp + amt;
+      if(newTemp<0) newTemp = 0;
       dispatch(setUpdate(charID, 'health', {temp: newTemp}))
       if(newAmt < 0) {
         amt = newAmt
       }
+      else {
+        amt = 0;
+      }
+      setTemp(newTemp);
     }
     let newHealth = health.current+amt;
-    if(newHealth <= 0) setShowSaves(true);
+    if(newHealth <= 0) {
+      newHealth = 0;
+      setShowSaves(true);
+    }
     else setShowSaves(false);
     if(newHealth >health.max) newHealth = health.max;
     let newState = {current: newHealth};
 
+    setCurrentPercentage(`${newHealth/health.max * 100}%`);
     dispatch(setUpdate(charID, 'health', newState))
+  }
+  const handleSuccess = (turnSuccess) => {
+    let newThrow;
+    if(turnSuccess) {
+      newThrow = {successes: deathThrows.successes + 1}
+    }
+    else {
+      newThrow = {successes: deathThrows.successes - 1}
+    }
+    dispatch(setUpdate(charID, 'death_throws', newThrow))
+  }
+  const handleFailure = (turnFailure) => {
+    let newThrow;
+    if(turnFailure) {
+      newThrow = {failures: deathThrows.failures + 1}
+    }
+    else {
+      newThrow = {failures: deathThrows.failures - 1}
+    }
+    dispatch(setUpdate(charID, 'death_throws', newThrow))
   }
 
   const currentHealthClass = () => {
@@ -442,62 +741,74 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
     <>
     <div className="hit-points card translucent-card long-card">
       <div className="row">
+        {console.log(showSaves)}
         <div className="col-sm-7 px-3">
         {!showSaves ? 
           (<><h6 className="mb-1 card-title d-block">Hit Points</h6>
           <div className="row p-0 m-0">
             <div className="col-sm-8 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0 health-bar">
-                <div className={currentHealthClass()} style={{width: health.current/health.max*100 + "%"}}></div>
-                <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
+              <div className='status-bar card content-card description-card p-0 my-0 mr-2 ml-0'>
+                  <h3 className="unfilled on-top text-center m-0">{health.current}/{health.max}</h3>
+                  <div className={`filled green ${currentPercentage==='100%' ? `full` : ``}`} style={{width: currentPercentage}}/>
               </div>
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
             </div>
             <div className="col-sm-4 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0">
-              {/*<EditableLabel text={health.temp}
-                labelClassName='text-uppercase text-center m-0'
-                inputClassName='text-uppercase text-center m-0'
-                inputWidth='200px'
-                inputHeight='25px'
-                inputMaxLength='50'
-                labelFontWeight='bold'
-                inputFontWeight='bold'
-                //onFocus={this._handleFocus}
-                //onFocusOut={this._handleFocusOut}
-        />*/}
-                <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
-              </div>
+            <EditableLabel 
+                key={`temp-${temp}`}
+                initialValue={health.temp}
+                labelClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center hover-effect"
+                inputClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center"
+                save={(value) => {updateTemp(value)}}
+                min='0'
+                max='999'
+            />
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
             </div>
           </div></>)
           :
           (
             <><h6 className="mb-1 card-title d-block">Death Saves</h6>
-          <div className="row p-0 m-0">
-            <div className="col-sm-8 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0">
-                <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
+          <div className="row p-0 m-0 death-saves">
+              <div className="card content-card description-card my-0 mr-auto ml-auto w-auto mb-2 pt-2">
+              <div className="row p-0 m-0 pt-1">
+                <div style={{position: 'relative'}} className="col-sm p-0 d-flex justify-content-start fail">
+                  {[...Array(deathThrows.failures)].map((fail, index) => {
+                    return(
+                      <button onClick={() => handleFailure(false)} key={`fail-${index}`}className='wrapper-button-inline p-0'><CircleSlot className='circle-filled m-0' width='18px' height='18px'/></button>
+                    )
+                  })}
+                  {[...Array(3-deathThrows.failures)].map((unfail, index) => {
+                    return(
+                      <button onClick={() => handleFailure(true)} key={`unfail-${index}`}className='wrapper-button-inline p-0'><CircleSlot className='circle-outline m-0' width='18px' height='18px'/></button>
+                    )
+                  })}
+                </div>
+                <div className="col-sm-1 p-1 d-flex justify-content-center">
+                  <img src={skullIcon} width='20px' height='18px'/>
+                </div>
+                <div style={{position: 'relative'}} className="col-sm p-0 d-flex justify-content-end success">
+                  {[...Array(deathThrows.successes)].map((success, index) => {
+                    return(
+                      <button onClick={() => handleSuccess(false)} key={`success-${index}`}className='wrapper-button-inline p-0'><CircleSlot className='circle-filled m-0' width='18px' height='18px'/></button>
+                    )
+                  })}
+                  {[...Array(3-deathThrows.successes)].map((unsuccess, index) => {
+                    return(
+                      <button onClick={() => handleSuccess(true)} key={`unsuccess-${index}`}className='wrapper-button-inline p-0'><CircleSlot className='circle-outline m-0' width='18px' height='18px'/></button>
+                    )
+                  })}
+                </div>
               </div>
-              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
-            </div>
-            <div className="col-sm-4 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0">
-              {/*<EditableLabel text={health.temp}
-                labelClassName='text-uppercase text-center m-0'
-                inputClassName='text-uppercase text-center m-0'
-                inputWidth='200px'
-                inputHeight='25px'
-                inputMaxLength='50'
-                labelFontWeight='bold'
-                inputFontWeight='bold'
-                //onFocus={this._handleFocus}
-                //onFocusOut={this._handleFocusOut}
-          />*/}
-                <h3 className="text-uppercase text-center m-0">{health.temp}</h3>
+              <div className="row p-0 m-0">
+                <div className="col-sm p-0 text-left">
+                  <small>FAILURES</small>
+                </div>
+                <div className="col-sm p-0 text-right">
+                  <small>SUCCESSES</small>
+                </div>
               </div>
-              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
-            </div>
+              </div>
           </div></>
           )
         }
@@ -506,7 +817,7 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
             <button className="btn btn-alert text-uppercase text-center align-middle" onClick={() => setShowDmg(true)}>Damage</button>
           </div>
           <div className="col-sm px-1 py-0">
-            <button className="btn btn-success text-uppercase text-center align-middle mr-0" onClick={() => setShowHealth(true)}>Heal</button>
+            <button className="btn btn-success text-uppercase text-center align-middle" onClick={() => setShowHealth(true)}>Heal</button>
           </div>
         </div>
         </div>
@@ -635,7 +946,22 @@ const ExtraStatsCard = ({charID, conditions, defenses}) => {
   );
 };
 
-const SpellsAndPinned = ({spells, modifier, proficiency}) => {
+const SpellsAndPinned = ({spells, modifier, proficiency, charID}) => {
+  const dispatch = useDispatch();
+
+  const spendSpell = (level) => {
+    let newSlots = spells.slots;
+    let newCurrent = spells.slots[level].current -1;
+    newSlots[level].current = newCurrent;
+    dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+  }
+  const unspendSpell = (level) => {
+    let newSlots = spells.slots;
+    let newCurrent = spells.slots[level].current +1;
+    newSlots[level].current = newCurrent;
+    dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+  }
+
   return (
   <div className="card translucent-card w-100 mx-0">
     {spells != null && (<div className="row px-5">
@@ -665,27 +991,24 @@ const SpellsAndPinned = ({spells, modifier, proficiency}) => {
       </div>
       </div>
       <div className="ml-auto">
-        <div className="card content-card description-card pb-0">
-                      {/*SPELL SLOTS TBD*/}
+        <div className="card content-card description-card">
         <h6 className="text-uppercase text-center m-0">Spell Slots</h6>
         <table className="table table-borderless table-sm">
           <tbody>
             <tr>
-          {spells.slots.map((slot) => {
+          {spells.slots.map((slot, spellLevel) => {
             return (
-              slot.max > 0 ? <td key={slot.max}>
-              <h5 className="text-uppercase text-center m-0"><span>
-                {[...Array(slot.current)].map(() => {
+              spellLevel > 0 && slot.max > 0 ? <td key={slot.max} className='pb-0 text-center'>
+                {[...Array(slot.max - slot.current)].map((slot, index) => {
                   return (
-                    <>&#9679;</>
+                    <button onClick={() => unspendSpell(spellLevel)} key={`used-${index}`}className='wrapper-button-inline pb-0'><CircleSlot className='circle-filled mx-1' width='20px' height='20px'/></button>
                   )
                 })}
-                {[...Array(slot.max)].map(() => {
+                {[...Array(slot.current)].map((slot, index) => {
                   return (
-                    <>&#9675;</>
+                    <button onClick={() => spendSpell(spellLevel)} key={`unused-${index}`}className='wrapper-button-inline pb-0'><CircleSlot className='circle-outline mx-1' width='20px' height='20px'/></button>
                   )
                 })}
-              </span></h5>
               </td>
               : 
               null
@@ -696,8 +1019,8 @@ const SpellsAndPinned = ({spells, modifier, proficiency}) => {
           <tr>
           {spells.slots.map((slot, index) => {
             return (
-              slot.max > 0 ? <td>
-                <h4 className="text-uppercase text-center m-0">{index+1}</h4>
+              index > 0 && slot.max > 0 ? <td className="py-0">
+                <h4 className="text-uppercase text-center m-0 line-height-small">{index}</h4>
               </td>
               : 
               null

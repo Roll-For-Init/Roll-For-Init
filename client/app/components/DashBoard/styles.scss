@@ -1,8 +1,145 @@
 @import 'client/app/variables';
 
 .dashboard {
+
+    .death-saves {
+        
+        button {
+            position: relative;
+
+            &:nth-last-child(2) {
+                margin-left: 4px;
+                margin-right: 4px;
+            }
+            &:first-child::before {
+                display: none;
+            }
+
+            &::before{
+                content: '';
+                position: absolute;
+                top: .8rem;
+                left: -.45rem;
+                width: .6rem;
+                height: .1rem;
+                background: $medium-blue;
+                z-index: 0;
+            }
+        } 
+        
+        .success {
+            .circle-filled {
+                circle {
+                    fill: $green;
+                    stroke: $medium-blue;
+                  }
+                  &:hover circle {
+                    fill: $dark-green;
+                  }
+                  &:active circle {
+                    fill: $medium-green;
+                  }
+            }
+            .circle-outline {
+                circle {
+                    stroke: $medium-blue;
+                }
+                &:hover circle {
+                    fill: lighten($medium-green, 10%);
+                }
+                &:active circle {
+                    fill: $dark-green;
+                }
+            }
+        }
+        .fail {
+            .circle-filled {
+                circle {
+                    fill: $red;
+                    stroke: $medium-blue;
+                  }
+                  &:hover circle {
+                    fill: darken($red, 15%);
+                  }
+                  &:active circle {
+                    fill: $desat-red;
+                  }
+            }
+            .circle-outline {
+                circle {
+                    stroke: $medium-blue;
+                }
+                &:hover circle {
+                    fill: lighten($red, 10%);
+                }
+                &:active circle {
+                    fill: $desat-red;
+                }
+            }
+
+        }
+        
+    }
+    .status-bar {
+        display: flex;
+        flex-flow: row nowrap;
+        padding: 0;
+        .on-top {
+            z-index: 5;
+        }
+        .filled, .unfilled {
+            box-sizing: border-box;
+            flex: none;
+            border-top-left-radius: 8px;
+            border-bottom-left-radius: 8px;
+        }
+        .full {
+            border-radius: 8px;
+        }
+        .filled {
+            margin-left: -100%;
+        }
+        .unfilled {
+            width:100%;
+            padding-top: .2rem;
+            padding-bottom: .2rem;
+        }
+        .green {
+            background-color: $green;
+        }
+        .blue {
+            background-color: $bright-blue;
+        }
+    }
+    .line-height-small {
+        line-height: 1rem;
+    }
+    .spell-slot {
+        background-color: transparent;
+        margin: 0;
+        border: none;
+        padding: 0;
+        box-shadow: none;
+        &.used::after {
+            content: '●';
+            margin: 0;
+        }
+        &.unused::after {
+            content: '○';
+            margin: 0;
+        }
+    }
+    .hover-effect {
+        &:hover {
+            background-color: $dark-off-white;
+
+        }
+    }
   /******* header *******/
 
+  .h3 {
+    font-size: 1.75rem !important;
+  }
   .toolbar {
     width: 100%;
     margin-top: 44px;
@@ -268,6 +405,13 @@
       }
   }
 
+  .btn-alert {
+    background-color: $desat-red;
+    border: none;
+    padding: 2px 5px;
+    color: white;
+  }
+
   .table {
     color: $dark-blue;
   }
@@ -404,12 +548,57 @@
           }
         }
       }
+      &.circle-filled {
+        circle {
+            fill: $dark-blue;
+          }
+          &:hover circle {
+            fill: $very-dark-blue;
+          }
+          &:active circle {
+            fill: $dark-blue-disabled;
+          }
+      }
+      &.circle-outline {
+        circle.outline {
+            stroke: $dark-blue-disabled;
+            fill: transparent;
+          }
+          circle.fill {
+            fill: transparent;
+          }
+          &:hover {
+            circle.fill {
+              fill: $dark-blue-disabled;
+            }
+          }
+          &:active {
+            circle.fill {
+              fill: $very-dark-blue;
+            }
+          }
+      }
     }
-  }
-
-  .misc-stats h2 {
-    height: 2.4rem;
-  }
+}
+.wrapper-button-inline {
+    @extend .wrapper-button;
+    margin: 0;
+    svg {
+        height: auto;
+    }
+    display: inline-block;
+    padding-right: 3px;
+}
+.exp-add {
+    padding: 0;
+    padding-left: 2px;
+    padding-right: 2px;
+    vertical-align: top;
+    text-align: center;
+}
+.misc-stats h2 {
+  height: 2.4rem;
+}
 
   .list-item {
     display: inline-block;
@@ -452,6 +641,11 @@
 
   div {
     color: $dark-blue !important;
+  }
+  .modal {
+      .btn-alert {
+          font-size: .75rem;
+      }
   }
   .modal-button {
     font-size: 1.25rem;
