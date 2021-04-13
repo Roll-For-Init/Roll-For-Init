@@ -8,6 +8,7 @@ import './styles.scss';
 import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-editable-label';
+import skullIcon from '../../../public/assets/imgs/skull-icon.png'
 
 import {D20, StarOutline, StarFilled, CircleSlot} from '../../utils/svgLibrary';
 
@@ -163,7 +164,7 @@ export const DashBoard = () => {
             <div className="row">
               <div className="col-sm-8 px-2">
                       <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed} charID={charID}/>
-                      <HitPointsCard key={`${character.health.current}-health`} health={character.health} hit_dice={character.hit_dice} charID={charID}/>
+                      <HitPointsCard key={`${character.health.current}-health`} health={character.health} hit_dice={character.hit_dice} deathThrows={character.death_throws} charID={charID}/>
               </div>
               <div className="col-sm-4 px-2 pr-0 pl-2">
                 <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
@@ -635,12 +636,12 @@ const ManualEntryModal = ({name, showModal, setShowModal, placeholder, thePrompt
     </Portal>
   )
 }
-const HitPointsCard = ({health, hit_dice, charID}) => {
+const HitPointsCard = ({health, hit_dice, charID, deathThrows}) => {
   const dispatch = useDispatch();
 
   const [showDmg, setShowDmg] = useState(false);
   const [showHealth, setShowHealth] = useState(false);
-  const [showSaves, setShowSaves] = useState(false);
+  const [showSaves, setShowSaves] = useState(health.current <= 0 ? true : false);
   const [temp, setTemp] = useState(health.temp)
   const [currentPercentage, setCurrentPercentage] = useState(`${health.current/health.max * 100}%`);
 
@@ -666,18 +667,43 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
       setTemp(newTemp);
     }
     let newHealth = health.current+amt;
-    console.log(newHealth);
-    if(newHealth <= 0) setShowSaves(true);
+    if(newHealth <= 0) {
+      newHealth = 0;
+      setShowSaves(true);
+      console.log('in here');
+    }
     else if(newHealth >health.max) newHealth = health.max;
     let newState = {current: newHealth};
 
     setCurrentPercentage(`${newHealth/health.max * 100}%`);
     dispatch(setUpdate(charID, 'health', newState))
   }
+  const handleSuccess = (turnSuccess) => {
+    let newThrow;
+    if(turnSuccess) {
+      newThrow = {successes: deathThrows.successes + 1}
+    }
+    else {
+      newThrow = {successes: deathThrows.successes - 1}
+    }
+    dispatch(setUpdate(charID, 'death_throws', newThrow))
+  }
+  const handleFailure = (turnFailure) => {
+    let newThrow;
+    if(turnFailure) {
+      newThrow = {failures: deathThrows.failures + 1}
+    }
+    else {
+      newThrow = {failures: deathThrows.failures - 1}
+    }
+    dispatch(setUpdate(charID, 'death_throws', newThrow))
+  }
+
   return (
     <>
     <div className="hit-points card translucent-card long-card">
       <div className="row">
+        {console.log(showSaves)}
         <div className="col-sm-7 px-3">
         {!showSaves ? 
           (<><h6 className="mb-1 card-title d-block">Hit Points</h6>
@@ -698,38 +724,53 @@ const HitPointsCard = ({health, hit_dice, charID}) => {
                 save={(value) => {updateTemp(value)}}
                 min='0'
                 max='999'
-                //onFocus={this._handleFocus}
-                //onFocusOut={this._handleFocusOut}
-    />                {/*<h3 className="text-uppercase text-center m-0">{health.temp}</h3>*/}
+            />
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
             </div>
           </div></>)
           :
           (
             <><h6 className="mb-1 card-title d-block">Death Saves</h6>
-          <div className="row p-0 m-0">
-            <div className="col-sm-8 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0">
-                <h3 className="text-uppercase text-center m-0">{health.current}/{health.max}</h3>
+          <div className="row p-0 m-0 death-saves">
+              <div className="card content-card description-card my-0 mr-auto ml-auto w-auto mb-2 pt-2">
+              <div className="row p-0 m-0 pt-1">
+                <div style={{position: 'relative'}} className="col-sm p-0 d-flex justify-content-start fail">
+                  {[...Array(deathThrows.failures)].map((fail, index) => {
+                    return(
+                      <button onClick={() => handleFailure(false)} key={`fail-${index}`}className='wrapper-button-inline p-0'><CircleSlot className='circle-filled m-0' width='18px' height='18px'/></button>
+                    )
+                  })}
+                  {[...Array(3-deathThrows.failures)].map((unfail, index) => {
+                    return(
+                      <button onClick={() => handleFailure(true)} key={`unfail-${index}`}className='wrapper-button-inline p-0'><CircleSlot className='circle-outline m-0' width='18px' height='18px'/></button>
+                    )
+                  })}
+                </div>
+                <div className="col-sm-1 p-1 d-flex justify-content-center">
+                  <img src={skullIcon} width='20px' height='18px'/>
+                </div>
+                <div style={{position: 'relative'}} className="col-sm p-0 d-flex justify-content-end success">
+                  {[...Array(deathThrows.successes)].map((success, index) => {
+                    return(
+                      <button onClick={() => handleSuccess(false)} key={`success-${index}`}className='wrapper-button-inline p-0'><CircleSlot className='circle-filled m-0' width='18px' height='18px'/></button>
+                    )
+                  })}
+                  {[...Array(3-deathThrows.successes)].map((unsuccess, index) => {
+                    return(
+                      <button onClick={() => handleSuccess(true)} key={`unsuccess-${index}`}className='wrapper-button-inline p-0'><CircleSlot className='circle-outline m-0' width='18px' height='18px'/></button>
+                    )
+                  })}
+                </div>
               </div>
-              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
-            </div>
-            <div className="col-sm-4 px-1 py-0">
-              <div className="card content-card description-card my-0 mr-2 ml-0 hover-effect">
-              <EditableLabel 
-                ref={tempRef}
-                initialValue={health.temp}
-                labelClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center hover-effect"
-                inputClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center"
-                save={(value) => {updateTemp(value)}}
-                min='0'
-                max='999'
-                //onFocus={this._handleFocus}
-                //onFocusOut={this._handleFocusOut}
-    />                {/*<h3 className="text-uppercase text-center m-0">{health.temp}</h3>*/}
+              <div className="row p-0 m-0">
+                <div className="col-sm p-0 text-left">
+                  <small>FAILURES</small>
+                </div>
+                <div className="col-sm p-0 text-right">
+                  <small>SUCCESSES</small>
+                </div>
               </div>
-              <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Temp</small></h6>
-            </div>
+              </div>
           </div></>
           )
         }

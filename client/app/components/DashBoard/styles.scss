@@ -2,6 +2,84 @@
 
 .dashboard {
 
+    .death-saves {
+        
+        button {
+            position: relative;
+
+            &:nth-last-child(2) {
+                margin-left: 4px;
+                margin-right: 4px;
+            }
+            &:first-child::before {
+                display: none;
+            }
+
+            &::before{
+                content: '';
+                position: absolute;
+                top: .8rem;
+                left: -.45rem;
+                width: .6rem;
+                height: .1rem;
+                background: $medium-blue;
+                z-index: 0;
+            }
+        } 
+        
+        .success {
+            .circle-filled {
+                circle {
+                    fill: $green;
+                    stroke: $medium-blue;
+                  }
+                  &:hover circle {
+                    fill: $dark-green;
+                  }
+                  &:active circle {
+                    fill: $medium-green;
+                  }
+            }
+            .circle-outline {
+                circle {
+                    stroke: $medium-blue;
+                }
+                &:hover circle {
+                    fill: lighten($medium-green, 10%);
+                }
+                &:active circle {
+                    fill: $dark-green;
+                }
+            }
+        }
+        .fail {
+            .circle-filled {
+                circle {
+                    fill: $red;
+                    stroke: $medium-blue;
+                  }
+                  &:hover circle {
+                    fill: darken($red, 15%);
+                  }
+                  &:active circle {
+                    fill: $desat-red;
+                  }
+            }
+            .circle-outline {
+                circle {
+                    stroke: $medium-blue;
+                }
+                &:hover circle {
+                    fill: lighten($red, 10%);
+                }
+                &:active circle {
+                    fill: $desat-red;
+                }
+            }
+
+        }
+        
+    }
     .status-bar {
         display: flex;
         flex-flow: row nowrap;
@@ -455,17 +533,11 @@
             fill: transparent;
           }
           &:hover {
-            circle.outline {
-              stroke: $dark-blue-disabled;
-            }
             circle.fill {
               fill: $dark-blue-disabled;
             }
           }
           &:active {
-            circle.outline {
-              stroke: $very-dark-blue;
-            }
             circle.fill {
               fill: $very-dark-blue;
             }

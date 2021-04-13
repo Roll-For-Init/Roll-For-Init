@@ -80,9 +80,9 @@ export const StarOutline = (props) => {
 
 export const CircleSlot = (props) => {
     return (
-        <svg className={props.className} width={props.width} height={props.height}viewBox="0 0 70 70" xmlns="http://www.w3.org/2000/svg">
-            <circle className="fill" cx="40" cy="40" r='25'/>
-            <circle className="outline" cx="40" cy="40" r='25' strokeWidth="10"/>
+        <svg className={props.className} width={props.width} height={props.height}viewBox="0 0 85 75" xmlns="http://www.w3.org/2000/svg">
+            <circle className="fill" cx="40" cy="40" r='32' strokeWidth="7"/>
+            <circle className="outline" cx="40" cy="40" r='32' strokeWidth="7"/>
         </svg>
     )
 }
