@@ -58,6 +58,7 @@ export const DashBoard = () => {
   const [showShortRest, setShowShortRest] = useState(false);
   const [showLongRest, setShowLongRest] = useState(false);
   const [showExp, setShowExp] = useState(false);
+  const [showRoller, setShowRoller] = useState(false)
   const [currentPercentage, setCurrentPercentage] = useState(`${character.experience.current/character.experience.threshold*100}%`)
   
 
@@ -68,27 +69,27 @@ export const DashBoard = () => {
       {showShortRest && <ShortRest showModal={showShortRest} setShowModal={setShowShortRest} hitDice={character.hit_dice} con={character.ability_scores.con.modifier} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
       {showExp && <ChangeExp exp={character.experience} showModal={showExp} setShowModal={setShowExp} charID={charID} setPercentage={setCurrentPercentage}/>}
       {showLongRest && <LongRest showModal={showLongRest} setShowModal={setShowLongRest} hitDice={character.hit_dice} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
-
+      {showRoller && <DiceRoller showModal={showRoller} setShowModal={setShowRoller}/>}
       <div className="toolbar fixed-top">
-        <div className="subheader py-1 px-3 pt-2">
-          <h2 className="small-caps mr-5">{character.name}</h2>
+        <div className="subheader py-1 px-3">
+          <h2 className="small-caps mr-5 mb-1">{character.name}</h2>
           <span className="ml-2">
-            <h5 className="text-uppercase">
+            <h5 className="text-uppercase pt-2">
               <img
                 className="button-icon"
                 src={require(`../../../public/assets/imgs/icons/white/class/${character.class[0].name.toLowerCase()}.png`)}
               />
               {character.class[0].name}
             </h5>
-            <h5 className="text-uppercase">
+            <h5 className="text-uppercase pt-2">
               <img
                 className="button-icon"
                 src={require(`../../../public/assets/imgs/icons/white/race/${character.race.name.toLowerCase().replaceAll('-','_')}.png`)}
               />
               {character.race.subrace ? character.race.subrace : character.race.name}
             </h5>
-            <h5 className="text-uppercase mr-2 pb-2">Level <span style={{fontSize:'1.6rem'}}>&#8198;{character.level}</span></h5>
-            <span className="m-0 ml-2 align-top">
+            <h5 className="text-uppercase mr-2 pb-0 pt-1">Level <span style={{fontSize:'1.6rem'}}>&#8198;{character.level}</span></h5>
+            <span className="m-0 ml-2 align-bottom">
               <table style={{display: 'inline-table'}}>
                 <tbody>
                   <tr>
@@ -108,7 +109,7 @@ export const DashBoard = () => {
                 </tbody>
               </table>
             </span>
-            <D20 className='float-right' style={{marginRight:'10px'}} fill='#ffffff' width='45' height='45'/>
+            <button onClick={() => setShowRoller(true)} style={{marginRight:'10px'}} className="wrapper-button-inline float-right"><D20 fill='#ffffff' width='45' height='45'/></button>
           </span>
         </div>
       </div>
@@ -410,6 +411,30 @@ const ShortRest = ({showModal, setShowModal, hitDice, con, charClass, spellSlots
   )
 }
 
+const DiceRoller = ({showModal, setShowModal}) => {
+  return (<Portal>
+    <Modal id={name} visible={showModal} className="modal modal-dialog-centered" dialogClassName="modal-dialog-centered" onClickBackdrop={()=>setShowModal(false)}
+    >
+          <button
+            type="button"
+            className="close"
+            onClick={() => setShowModal(false)}
+            aria-label="Close"
+          >
+            <i className="bi bi-x"></i>
+          </button>
+          <div className="modal-sect pb-0">
+            <h5>What die, and how many?</h5>
+          </div>
+          <button
+            className="text-uppercase btn-primary modal-button"
+            data-dismiss="modal"
+          >
+            Roll
+          </button> 
+    </Modal>
+    </Portal>)
+}
 const AbilitiesCard = ({ ability_scores }) => {
 
   return (
