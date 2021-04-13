@@ -245,6 +245,7 @@ const EquipmentCard = ({
                   .replace(' ', '-')}`}
                 setSelectionEq={setSelectionEq}
                 dropdown
+                className={className}
               />
               {Object.keys(selectionEq).length !== 0 && (
                 <>
@@ -253,7 +254,7 @@ const EquipmentCard = ({
                   ].map((dropdownItem, idx) => {
                     return (
                       <div key={idx} style={{ marginTop: '5px' }}>
-                        <EquipmentItem equipment={dropdownItem} />
+                        <EquipmentItem equipment={dropdownItem} className={className} />
                       </div>
                     );
                   })}
@@ -286,6 +287,7 @@ const EquipmentCard = ({
                                 .toLowerCase()
                                 .replace(' ', '-')}-${idx}`}
                               setSelectionEq={setSelectionEq}
+                              className={className}
                               dropdown
                             />
                             {Object.keys(selectionEq).length !== 0 && (
@@ -297,7 +299,7 @@ const EquipmentCard = ({
                                 ].map((dropdownItem, idx) => {
                                   return (
                                     <div key={idx} style={{ marginTop: '5px' }}>
-                                      <EquipmentItem equipment={dropdownItem} />
+                                      <EquipmentItem equipment={dropdownItem} className={className} />
                                     </div>
                                   );
                                 })}
