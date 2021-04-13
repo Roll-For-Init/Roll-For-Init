@@ -37,7 +37,7 @@ const EquipmentItem = ({
           <h5>{equipment.header}</h5>
         ) : (
           <>
-            {equipment.quantity > 1 ? (
+            {equipment.quantity > 1 && !(equipment.category === 'currency') ? (
               equipment.equipment ? <h5>{`${equipment.equipment.name} (${equipment.quantity})`}</h5> 
               :
               <h5>{`${equipment.name} (${equipment.quantity})`}</h5>
