@@ -10,7 +10,7 @@ import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-editable-label';
 import skullIcon from '../../../public/assets/imgs/skull-icon.png'
 
-import {D20, StarOutline, StarFilled, CircleSlot} from '../../utils/svgLibrary';
+import {D20, FancyStar, CircleSlot} from '../../utils/svgLibrary';
 
 //swap race class icons with white
 
@@ -121,8 +121,10 @@ export const DashBoard = () => {
             </p>
           );
         })} */}
-      <div style={{paddingTop: '125px'}}>
-      <div className="container-fluid px-5 py-4">
+      <div style={{paddingTop: '105px'}}>
+      
+      <div className="container-fluid px-5 py-3">
+      
         <div className="row position-relative no-gutters mb-2" >
           <div className="w-100">
             <div className="float-start w-auto d-inline-block">
@@ -586,16 +588,16 @@ const StatsCard = ({initiative, ac, speed, charID}) => {
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card text-center">
             <h6 className="text-uppercase m-0">Initiative</h6>
-            <h2 className="text-uppercase m-0">{initiative < 0 ? `-${initiative}` : `+${initiative}`}</h2>
+            <h2 className="text-uppercase m-0">{initiative < 0 ? `${initiative}` : `+${initiative}`}</h2>
           </div>
         </div>
         <div className="col-sm px-2 py-1">
           <div className="card content-card description-card text-center">
             <h6 className="text-uppercase m-0">Inspiration</h6>
             {!inspiration ?
-              <button className='wrapper-button' onClick={toggleInspiration}><StarOutline /></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><FancyStar className="star-outline"/></button>
               :
-              <button className='wrapper-button' onClick={toggleInspiration}><StarFilled /></button>
+              <button className='wrapper-button' onClick={toggleInspiration}><FancyStar className="star-filled"/></button>
             }
           </div>
         </div>
@@ -695,9 +697,9 @@ const HitPointsCard = ({health, hit_dice, charID, deathThrows}) => {
     if(newHealth <= 0) {
       newHealth = 0;
       setShowSaves(true);
-      console.log('in here');
     }
-    else if(newHealth >health.max) newHealth = health.max;
+    else setShowSaves(false);
+    if(newHealth >health.max) newHealth = health.max;
     let newState = {current: newHealth};
 
     setCurrentPercentage(`${newHealth/health.max * 100}%`);
@@ -724,6 +726,17 @@ const HitPointsCard = ({health, hit_dice, charID, deathThrows}) => {
     dispatch(setUpdate(charID, 'death_throws', newThrow))
   }
 
+  const currentHealthClass = () => {
+    const healthPercent = health.current/health.max*100;
+    if (healthPercent >= 66) {
+      return "current-health green";
+    }
+    if (healthPercent <= 33) {
+      return "current-health red";
+    }
+    return "current-health yellow";
+  }
+
   return (
     <>
     <div className="hit-points card translucent-card long-card">
@@ -735,7 +748,7 @@ const HitPointsCard = ({health, hit_dice, charID, deathThrows}) => {
           <div className="row p-0 m-0">
             <div className="col-sm-8 px-1 py-0">
               <div className='status-bar card content-card description-card p-0 my-0 mr-2 ml-0'>
-                  <h3 className="unfilled on-top text-center mb-0">{health.current}/{health.max}</h3>
+                  <h3 className="unfilled on-top text-center m-0">{health.current}/{health.max}</h3>
                   <div className={`filled green ${currentPercentage==='100%' ? `full` : ``}`} style={{width: currentPercentage}}/>
               </div>
               <h6 className="text-uppercase text-center text-white m-0 mt-1"><small>Current/Max</small></h6>
