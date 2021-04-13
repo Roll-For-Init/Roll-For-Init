@@ -21,12 +21,12 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
     for(let item of items.set) {
         console.log(item);
-        if(item.equipment?.unit) {
+        if(item.equipment && item.equipment.unit) {
             item={
                 ...item.equipment
             };
         }
-        else if(!(item.desc || item.equipment?.desc)) {
+        else if(!(item.desc || (item.equipment && item.equipment.desc))) {
             item.equipment ? equipment.inventory.push({...item.equipment, quantity: item.quantity})
             : equipment.inventory.push(item);
             continue;
@@ -66,7 +66,7 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
     for(let key in items.choices) {
         let item = items.choices[key];
         console.log(item);
-        if(!(item.desc || item.equipment?.desc)) {
+        if(!(item.desc || (item.equipment && item.equipment.desc))) {
             equipment.inventory.push(item);
             continue;
         }

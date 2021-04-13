@@ -37,7 +37,7 @@ const EquipmentItem = ({
           <h5>{equipment.header}</h5>
         ) : (
           <>
-            {equipment.quantity > 1 ? (
+            {equipment.quantity > 1 && !(equipment.category === 'currency') ? (
               equipment.equipment ? <h5>{`${equipment.equipment.name} (${equipment.quantity})`}</h5> 
               :
               <h5>{`${equipment.name} (${equipment.quantity})`}</h5>
@@ -526,7 +526,7 @@ export const Equipment = ({ charID, setPage }) => {
                 return (
                   <div className="card content-card equipment-card" key={idx}>
                     <EquipmentItem
-                      equipment={equipmentItem}
+                      equipment={equipmentItem.equipment}
                       className={className}
                       noButton={true}
                     />
