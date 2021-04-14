@@ -59,7 +59,7 @@ export const DashBoard = () => {
   const [showLongRest, setShowLongRest] = useState(false);
   const [showExp, setShowExp] = useState(false);
   const [showRoller, setShowRoller] = useState(false)
-  const [currentPercentage, setCurrentPercentage] = useState(`${character.experience.current/character.experience.threshold*100}%`)
+  const [currentPercentage, setCurrentPercentage] = character.level ? useState(`${character.experience.current/character.experience.threshold*100}%`) : useState();
   
 
   return (
@@ -903,11 +903,11 @@ const ExtraStatsCard = ({charID, conditions, defenses}) => {
     let push = item.push;
     item = item.item;
     console.log(state, item);
-    let newState;
+    let newState = state;
     if(push) {state.push(item);
       newState = state;
     }
-    else newState = state.splice(state.indexOf(item), 1);
+    else if (state.includes(item)) newState = state.splice(state.indexOf(item), 1);
     dispatch(setArrayUpdate(charID, 'conditions', newState));
     console.log("NEW STATE", newState);
     return newState;
