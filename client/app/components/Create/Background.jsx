@@ -273,7 +273,7 @@ export const Background = ({ charID, setPage }) => {
               })}
             </div>
           )}
-          {(selectionBg[0].index === 'custom' || selectionBg[0].proficiencies?.size) &&
+          {(selectionBg[0].index === 'custom' || Object.values(selectionBg[0].proficiencies).some(p => {return p.length})) &&
             <div className="card translucent-card">
               <div className="card content-card card-title">
                 <h4>Proficiencies</h4>

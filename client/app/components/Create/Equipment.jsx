@@ -121,7 +121,8 @@ const EquipmentItem = ({
                     Contents:&nbsp;
                     {Object.keys(equipment.desc.contents)
                       .map(function(k) {
-                        return equipment.desc.contents[k].item.name;
+                        const quantity = equipment.desc.contents[k].item.quantity;
+                        return quantity > 1 ? equipment.desc.contents[k].item.name + " (" + quantity + ")" : equipment.desc.contents[k].item.name;
                       })
                       .join(', ')}
                   </>
@@ -244,6 +245,7 @@ const EquipmentCard = ({
                   .replace(' ', '-')}`}
                 setSelectionEq={setSelectionEq}
                 dropdown
+                className={className}
               />
               {Object.keys(selectionEq).length !== 0 && (
                 <>
@@ -252,7 +254,7 @@ const EquipmentCard = ({
                   ].map((dropdownItem, idx) => {
                     return (
                       <div key={idx} style={{ marginTop: '5px' }}>
-                        <EquipmentItem equipment={dropdownItem} />
+                        <EquipmentItem equipment={dropdownItem} className={className} />
                       </div>
                     );
                   })}
@@ -285,6 +287,7 @@ const EquipmentCard = ({
                                 .toLowerCase()
                                 .replace(' ', '-')}-${idx}`}
                               setSelectionEq={setSelectionEq}
+                              className={className}
                               dropdown
                             />
                             {Object.keys(selectionEq).length !== 0 && (
@@ -296,7 +299,7 @@ const EquipmentCard = ({
                                 ].map((dropdownItem, idx) => {
                                   return (
                                     <div key={idx} style={{ marginTop: '5px' }}>
-                                      <EquipmentItem equipment={dropdownItem} />
+                                      <EquipmentItem equipment={dropdownItem} className={className} />
                                     </div>
                                   );
                                 })}
@@ -510,31 +513,33 @@ export const Equipment = ({ charID, setPage }) => {
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Equipment</h2>
           </div>
-          <div
-            className="card translucent-card"
-            style={{ paddingBottom: '10px' }}
-          >
-            <div className="card content-card card-title">
-              <h4>Base Equipment</h4>
-            </div>
-            <Masonry
-              breakpointCols={breakpointColumnsObj}
-              className="my-masonry-grid"
-              columnClassName="my-masonry-grid_column"
+          {equipmentList.length > 0 &&
+            <div
+              className="card translucent-card"
+              style={{ paddingBottom: '10px' }}
             >
-              {equipmentList.map((equipmentItem, idx) => {
-                return (
-                  <div className="card content-card equipment-card" key={idx}>
-                    <EquipmentItem
-                      equipment={equipmentItem.equipment}
-                      className={className}
-                      noButton={true}
-                    />
-                  </div>
-                );
-              })}
-            </Masonry>
-          </div>
+              <div className="card content-card card-title">
+                <h4>Base Equipment</h4>
+              </div>
+              <Masonry
+                breakpointCols={breakpointColumnsObj}
+                className="my-masonry-grid"
+                columnClassName="my-masonry-grid_column"
+              >
+                {equipmentList.map((equipmentItem, idx) => {
+                  return (
+                    <div className="card content-card equipment-card" key={idx}>
+                      <EquipmentItem
+                        equipment={equipmentItem.equipment}
+                        className={className}
+                        noButton={true}
+                      />
+                    </div>
+                  );
+                })}
+              </Masonry>
+            </div>
+          }
           {equipmentOptions.map((equipmentOption, idx) => {
             return (
               <EquipmentList
