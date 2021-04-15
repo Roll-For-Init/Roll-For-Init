@@ -13,7 +13,7 @@ import {
   SET_SPELLS,
   SET_PAGE,
   SET_UPDATE,
-  SET_ARRAY_UPDATE
+  SET_ARRAY_UPDATE,
 } from '../actions/types';
 
 const initialCharacter = {
@@ -74,8 +74,8 @@ const character = (state = initialCharacter, action, charID) => {
       return {
         ...state,
         background:
-          payload.background.index &&
-          payload.background.index != state.background?.index
+          payload.background?.index &&
+          payload.background?.index != state.background?.index
             ? payload.background
             : { ...state.background, ...payload.background },
       };
@@ -112,15 +112,18 @@ const character = (state = initialCharacter, action, charID) => {
         },
       };
     case SET_UPDATE:
-        return {
-            ...state,
-            [payload.attribute]: {...state[payload.attribute], ...payload.updated}
-        }
+      return {
+        ...state,
+        [payload.attribute]: {
+          ...state[payload.attribute],
+          ...payload.updated,
+        },
+      };
     case SET_ARRAY_UPDATE:
-        return {
-            ...state,
-            [payload.attribute]: payload.updated
-        }
+      return {
+        ...state,
+        [payload.attribute]: payload.updated,
+      };
     default:
       return state;
   }
@@ -196,16 +199,16 @@ export default function(state = initialState, action) {
         ...state,
         [payload.charID]: character(state[payload.charID], action, payload),
       };
-      case SET_UPDATE:
-        return {
-          ...state,
-          [payload.charID]: character(state[payload.charID], action, payload),
-        };
+    case SET_UPDATE:
+      return {
+        ...state,
+        [payload.charID]: character(state[payload.charID], action, payload),
+      };
     case SET_ARRAY_UPDATE:
-        return {
-                ...state,
-                [payload.charID]: character(state[payload.charID], action, payload),
-        }
+      return {
+        ...state,
+        [payload.charID]: character(state[payload.charID], action, payload),
+      };
     default:
       return state;
   }
