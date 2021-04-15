@@ -16,6 +16,9 @@ export const Descriptions = ({ charID, setPage }) => {
 
   const [alignments, setAlignments] = useState([]);
 
+  const description = useSelector(
+    state => state.characters[charID].description
+  );
   const race = useSelector(state => state.characters[charID].race);
 
   //   const selectDescription = description => {
@@ -54,22 +57,40 @@ export const Descriptions = ({ charID, setPage }) => {
     CharacterService.getIndexedList('alignments').then(list => {
       setAlignments(list);
     });
-    console.log("RACE", race);
+    console.log('RACE', race);
   }, []);
 
   const [userChoices, setUserChoices] = useReducer(reducer, {});
-  const [personality, setPersonality] = useState('');
-  const [ideals, setIdeals] = useState('');
-  const [bonds, setBonds] = useState('');
-  const [flaws, setFlaws] = useState('');
-  const [height, setHeight] = useState('');
-  const [weight, setWeight] = useState('');
-  const [age, setAge] = useState('');
-  const [eyes, setEyes] = useState('');
-  const [skin, setSkin] = useState('');
-  const [hair, setHair] = useState('');
-  const [backstory, setBackstory] = useState('');
-  const [relationships, setRelationships] = useState('');
+
+  const [personality, setPersonality] = useState(
+    description?.lore?.personality_traits ?? ''
+  );
+  const [ideals, setIdeals] = useState(description?.lore?.ideals ?? '');
+  const [bonds, setBonds] = useState(description?.lore?.bonds ?? '');
+  const [flaws, setFlaws] = useState(description?.lore?.flaws ?? '');
+  const [relationships, setRelationships] = useState(
+    description?.lore?.relationships ?? ''
+  );
+  const [backstory, setBackstory] = useState(
+    description?.lore?.backstory ?? ''
+  );
+
+  const [height, setHeight] = useState(
+    description?.physical_description?.height ?? ''
+  );
+  const [weight, setWeight] = useState(
+    description?.physical_description?.weight ?? ''
+  );
+  const [age, setAge] = useState(description?.physical_description?.age ?? '');
+  const [eyes, setEyes] = useState(
+    description?.physical_description?.eyes ?? ''
+  );
+  const [skin, setSkin] = useState(
+    description?.physical_description?.skin ?? ''
+  );
+  const [hair, setHair] = useState(
+    description?.physical_description?.hair ?? ''
+  );
 
   const maxImageSize = 10000000; // bytes
   const acceptedFileTypes =
@@ -79,7 +100,14 @@ export const Descriptions = ({ charID, setPage }) => {
     return item.trim();
   });
 
-  const [selectionAl, setSelectionAl] = useState(null);
+  const [selectionAl, setSelectionAl] = useState(
+    description?.lore?.alignment ?? null
+  );
+
+  useEffect(() => {
+    dispatch(setDescription(charID, { lore: { alignment: selectionAl } }));
+  }, [selectionAl]);
+
   const [charPort, setCharPort] = useState(charPlaceholder);
   const [fileName, setFileName] = useState('No file chosen');
   const [errors, setErrors] = useState('');
