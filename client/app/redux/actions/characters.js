@@ -34,11 +34,16 @@ export const submitExistingCharacter = characterInfo => dispatch => {
   });
 };
 
-export const submitCharacter = characterInfo => dispatch => {
-  console.log('SUBMIT CHARACTER', characterInfo);
+export const submitCharacter = characterInfo => (dispatch, getState) => {
+  console.log('SUBMIT CHARACTER', characterInfo, getState().auth.user);
 
-  return CharacterService.createCharacter(characterInfo).then(
+  const data = {
+    character: characterInfo,
+    user: getState().auth.user,
+  };
+  return CharacterService.createCharacter(data).then(
     res => {
+      console.log(res);
       dispatch({
         type: SUBMIT_CHARACTER_SUCCESS,
         payload: characterInfo,
@@ -62,8 +67,12 @@ export const submitCharacter = characterInfo => dispatch => {
   );
 };
 
-export const updateCharacter = character => dispatch => {
-  return CharacterService.updateCharacter(character).then(
+export const updateCharacter = character => (dispatch, getState) => {
+  const data = {
+    character,
+    user: getState().auth.user,
+  };
+  return CharacterService.updateCharacter(data).then(
     res => {
       dispatch({
         type: UPDATE_CHARACTER_SUCCESS,

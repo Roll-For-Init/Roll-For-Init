@@ -78,37 +78,65 @@ const delete_character = (req, res) => {
 };
 
 const update_character = (req, res) => {
-  let id = req.params.characterid;
-  let oldCharacter = {};
-  console.log('Attempting to update character:', req.params.characterid);
-  const updates = req.body;
-  console.log('Applying:', updates);
-  Character.findByIdAndUpdate(id, { $set: updates }, { new: true })
-    .then(newCharacter => {
-      if (!newCharacter) return throwError(res, 403, 'Action forbidden.');
-      newCharacter.save();
-      console.log('Successfully updated character:', req.params.username);
-      if (Object.keys(updates).includes('name')) {
-        //Do stuff on update name
-        return res.status(200).json({ old: oldCharacter, new: newCharacter });
-      } else {
-        return res.status(200).json({ old: oldCharacter, new: newCharacter });
-      }
+  console.log('Attempting to update user:', req.body);
+  let query = { username: req.body.user.username };
+  let oldUser = {};
+  //Checks that the user id's match
+  User.findOne(query)
+    .then(user => {
+      if (!user) return throwError(res, 403, 'Action forbidden.');
+      oldUser = user;
+      console.log('Found user:', req.body.user.username);
+    })
+    .catch(err => throwError(res, 403, 'Action forbidden.', err));
+
+  const updates = req.body.character;
+
+  User.findOneAndUpdate(
+    query,
+    { $set: { 'characters.$': updates } },
+    { new: true }
+  )
+    .then(newUser => {
+      if (!newUser) return throwError(res, 403, 'Action forbidden.');
+
+      newUser.save();
+      console.log('Successfully updated user:', req.body.user.username);
+
+      return res.status(200).json({ old: oldUser, new: newUser });
     })
     .catch(err => throwError(res, 403, 'Action forbidden.', err));
 };
 
 const create_character = (req, res) => {
-  const character = new Character(req.body);
-  Character.create(character)
-    .then(newCharacter => {
-      if (!newCharacter)
-        return throwError(res, 500, 'Error registering character.');
-      return res.status(200).json(newCharacter);
+  console.log('Attempting to update user:', req.body);
+  let query = { username: req.body.user.username };
+  let oldUser = {};
+  //Checks that the user id's match
+  User.findOne(query)
+    .then(user => {
+      if (!user) return throwError(res, 403, 'Action forbidden.');
+      oldUser = user;
+      console.log('Found user:', req.body.user.username);
     })
-    .catch(err => {
-      throwError(res, 500, 'Error registering character.', err);
-    });
+    .catch(err => throwError(res, 403, 'Action forbidden.', err));
+
+  const updates = req.body.character;
+
+  User.findOneAndUpdate(
+    query,
+    { $push: { characters: updates } },
+    { new: true }
+  )
+    .then(newUser => {
+      if (!newUser) return throwError(res, 403, 'Action forbidden.');
+
+      newUser.save();
+      console.log('Successfully updated user:', req.body.user.username);
+
+      return res.status(200).json({ old: oldUser, new: newUser });
+    })
+    .catch(err => throwError(res, 403, 'Action forbidden.', err));
 };
 
 module.exports = {
