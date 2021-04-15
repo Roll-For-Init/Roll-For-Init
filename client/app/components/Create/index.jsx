@@ -532,8 +532,23 @@ const PageViewer = ({ charID}) => {
                             </li>
                           );
                         else {
+                          let items = [];
+                          if (Array.isArray(equip.equipment)) {
+                            items = items.concat(equip.equipment.map(
+                              (item, idx2) => {
+                                return (
+                                  item.name ?
+                                  <li key={`equip-select-${idx}-${idx2}`}>
+                                    <p>{item.name}</p>
+                                  </li>
+                                  :
+                                  <></>
+                                );
+                              }
+                            ));
+                          }
                           if (equip.selection)
-                            return Object.keys(equip.selection).map(
+                            items = items.concat(Object.keys(equip.selection).map(
                               selection => {
                                 return equip.selection[selection].map(
                                   (item, idx) => {
@@ -545,7 +560,8 @@ const PageViewer = ({ charID}) => {
                                   }
                                 );
                               }
-                            );
+                            ));
+                          return items;
                         }
                       }
                     })}

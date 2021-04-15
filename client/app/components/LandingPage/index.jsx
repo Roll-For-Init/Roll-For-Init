@@ -243,13 +243,29 @@ const LandingPage = () => {
   const dispatch = useDispatch();
 
   function handleClick(character) {
-    const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
-    if (!characters[charID]) {
-      dispatch(submitExistingCharacter(character));
-    }
-    history.push('/dashboard');
-  }
+    let user = JSON.parse(localStorage.getItem('state'));
 
+    user.app = {
+      current_character: character[0],
+    };
+    
+    if (!characters[character[0]]) {
+      dispatch(submitExistingCharacter(character));
+      user.characters = {
+        ...user.characters,
+        [character[0]]: character[1],
+      };
+    }
+    localStorage.setItem('state', JSON.stringify(user));
+    if (JSON.parse(localStorage.getItem('state')).app.current_character === character[0]) {
+      // console.log(JSON.parse(localStorage.getItem('state')).app.current_character);
+      
+      history.push('/dashboard');
+    }
+  }
+  
+  // console.log(JSON.parse(localStorage.getItem('state')).app.current_character);
+  
   function importAll(r) {
     let images = {};
     r.keys().map((item, index) => {
@@ -310,7 +326,6 @@ const LandingPage = () => {
       ) : (
           <div className="character-container">
             <div className="card translucent-card mt-0">
-              {console.log(characters)};
               {Object.entries(characters).length === 0 ?
                 <div>No Characters Created Yet</div>
                 : Object.entries(characters).map((char, idx) => {

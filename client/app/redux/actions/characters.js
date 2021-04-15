@@ -19,7 +19,7 @@ import {
   SET_PAGE,
   SET_EQUIPMENT,
   SET_UPDATE,
-  SET_ARRAY_UPDATE
+  SET_ARRAY_UPDATE,
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
@@ -32,14 +32,6 @@ export const submitExistingCharacter = characterInfo => dispatch => {
     type: SUBMIT_CHARACTER_SUCCESS,
     payload: characterInfo[1],
   });
-  let user = JSON.parse(localStorage.getItem('state'));
-  console.log('user', user);
-  user.characters = {
-    ...user.characters,
-    [characterInfo[0]]: characterInfo[1],
-  };
-  console.log('user', user.characters);
-  localStorage.setItem('user', JSON.stringify(user));
 };
 
 export const submitCharacter = characterInfo => dispatch => {
@@ -175,11 +167,11 @@ export const setEquipment = (charID, equipment) => dispatch => {
 };
 
 export const setUpdate = (charID, attribute, updated) => dispatch => {
-    console.log('UPDATE_SHEET', charID, attribute, updated);
-    dispatch({type: SET_UPDATE, payload: {charID, attribute, updated}});
-}
+  console.log('UPDATE_SHEET', charID, attribute, updated);
+  dispatch({ type: SET_UPDATE, payload: { charID, attribute, updated } });
+};
 
 export const setArrayUpdate = (charID, attribute, updated) => dispatch => {
-    console.log('UPDATE_ARRAY_SHEET', charID, attribute, updated);
-    dispatch({type: SET_ARRAY_UPDATE, payload:{charID, attribute, updated}})
-}
+  console.log('UPDATE_ARRAY_SHEET', charID, attribute, updated);
+  dispatch({ type: SET_ARRAY_UPDATE, payload: { charID, attribute, updated } });
+};

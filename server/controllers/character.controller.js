@@ -1,6 +1,7 @@
 // eslint-disable-next-line no-unused-vars
 const config = require('../../config/config.js');
 const Character = require('../models/Character.js');
+const User = require('../models/User.js');
 
 //Projections
 const projections = {
@@ -98,7 +99,6 @@ const update_character = (req, res) => {
 };
 
 const create_character = (req, res) => {
-  console.log('in create character', req.body);
   const character = new Character(req.body);
   Character.create(character)
     .then(newCharacter => {

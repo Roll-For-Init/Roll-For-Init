@@ -296,9 +296,17 @@ const CharacterSchema = new Schema(
           header: [String],
           rows: [
             {
-              name: [{ String }],
+              name: [String],
             },
           ],
+        },
+        charges: {
+          current: Number,
+          max: Number,
+        },
+        pinned: {
+          type: Boolean,
+          default: false,
         },
       },
       /*
