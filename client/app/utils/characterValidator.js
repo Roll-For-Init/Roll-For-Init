@@ -53,6 +53,7 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
       let costAmt = item.desc ? item.desc.cost.match(/\d+/g) : 0;
       let denom = item.desc ? item.desc.cost.match(/[a-zA-Z]+/g) : '';
 
+<<<<<<< HEAD
       item = {
         ...item.desc,
         cost: {
@@ -63,6 +64,48 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
         quantity: item.quantity ? 1 : item.quantity,
       };
     }
+=======
+    for(let item of items.set) {
+        console.log(item);
+        if(item.equipment && item.equipment.unit) {
+            item={
+                ...item.equipment
+            };
+        }
+        else if (item.equipment?.desc?.contents) {
+            for(let thing of item.equipment.desc.contents) {
+                let costAmt = thing.item.desc.cost.match(/\d+/g);
+                let denom = thing.item.desc.cost.match(/[a-zA-Z]+/g);
+                equipment.inventory.push(
+                    {...thing.item.desc, 
+                    cost: {amount: costAmt, denomination: denom},
+                    name: thing.item.name,
+                    quantity: thing.quantity})
+            }
+            continue;
+        }
+        else if(!(item.desc || (item.equipment && item.equipment.desc))) {
+            item.equipment ? equipment.inventory.push({...item.equipment, quantity: item.quantity})
+            : equipment.inventory.push(item);
+            continue;
+        }
+        else if(item.equipment) {
+            let costAmt = item.equipment.desc ? item.equipment.desc.cost.match(/\d+/g) : 0;
+            let denom =  item.equipment.desc ? item.equipment.desc.cost.match(/[a-zA-Z]+/g) : "";
+            item = {
+                ...item.equipment.desc,
+                cost: {
+                    amount: costAmt,
+                    denomination: denom
+                },
+                name: item.equipment.name,
+                quantity: item.quantity ? 1 : item.quantity
+            }
+        }
+        else {
+            let costAmt = item.desc ? item.desc.cost.match(/\d+/g) : 0;
+            let denom =  item.desc ? item.desc.cost.match(/[a-zA-Z]+/g) : "";
+>>>>>>> 1a6d2d4c84a93a567d377052460aefb22a2f726e
 
     sortEquipment(equipment, item, weaponProficiencies, armorProficiencies);
   }
@@ -80,6 +123,7 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
           let costAmt = choice.desc.cost.match(/\d+/g);
           let denom = choice.desc.cost.match(/[a-zA-Z]+/g);
 
+<<<<<<< HEAD
           choice = {
             ...choice.desc,
             name: choice.name,
@@ -103,6 +147,53 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
       console.log(item);
       let costAmt = item.equipment.desc.cost.match(/\d+/g);
       let denom = item.equipment.desc.cost.match(/[a-zA-Z]+/g);
+=======
+    for(let key in items.choices) {
+        let item = items.choices[key];
+        console.log("ITEM", item);
+        if(!(item.desc || (item.equipment && item.equipment.desc))) {
+            equipment.inventory.push(item);
+            continue;
+        }
+        else if (item.equipment?.desc?.contents) {
+            for(let thing of item.equipment.desc.contents) {
+                let costAmt = thing.item.desc.cost.match(/\d+/g);
+                let denom = thing.item.desc.cost.match(/[a-zA-Z]+/g);
+                equipment.inventory.push(
+                    {...thing.item.desc, 
+                    cost: {amount: costAmt, denomination: denom},
+                    name: thing.item.name,
+                    quantity: thing.quantity})
+            }
+            continue;
+        }
+        if(Array.isArray(item.equipment)) {
+            for(let choice of item.equipment) {
+                if(choice.index != undefined) {
+                    let costAmt = choice.desc.cost.match(/\d+/g)
+                    let denom =  choice.desc.cost.match(/[a-zA-Z]+/g);
+        
+                    choice = {
+                        ...choice.desc,
+                        name: choice.name,
+                        cost: {
+                            amount: costAmt,
+                            denomination: denom
+        
+                        },        
+                        quantity: !choice.quantity ? 1 : choice.quantity
+                    };
+                    sortEquipment(equipment, choice, weaponProficiencies, armorProficiencies);
+                }
+            }
+        }
+        else if(item.equipment.choose) {
+            //do nothing
+        }
+        else {
+            let costAmt = item.equipment.desc.cost.match(/\d+/g)
+            let denom =  item.equipment.desc.cost.match(/[a-zA-Z]+/g);
+>>>>>>> 1a6d2d4c84a93a567d377052460aefb22a2f726e
 
       item = {
         ...item.equipment.desc,
@@ -301,6 +392,7 @@ const fillModel = async (equipment, character) => {
   return model;
 };
 
+<<<<<<< HEAD
 const sortEquipment = (
   equipment,
   item,
@@ -325,6 +417,18 @@ const sortEquipment = (
     else item.proficiency = false;
     item.properties = item.desc.split(', ');
     delete item.desc;
+=======
+const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies) => {
+    //console.log(item);
+    let category = item.category ? item.category.toLowerCase() : 'pack';
+    if(category.includes("weapon")) {
+        item.pinned = false;
+        //console.log(weaponProficiencies, item)
+        if(weaponProficiencies.find(weapon => weapon.toLowerCase().includes(item.name.substring(0, item.name.indexOf(' ')).toLowerCase()))) item.proficiency = true;
+        else item.proficiency = false;
+        item.properties = item.desc.split(', ');
+        delete item.desc;
+>>>>>>> 1a6d2d4c84a93a567d377052460aefb22a2f726e
 
     //if(category.includes("magic")) equipment.attacks.magic_weapons.push(item);
     /*else*/ equipment.attacks.weapons.push(item);
