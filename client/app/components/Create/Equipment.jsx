@@ -498,6 +498,28 @@ export const Equipment = ({ charID, setPage }) => {
     );
     Promise.all(promises).then(() => {
       setEquipmentLoaded(true);
+    }).then(() => {
+      for(let set of equipmentList) {
+        if(set.equipment?.desc?.contents) {
+          CharacterService.getEquipmentDetails(set.equipment.desc.contents).then(
+            details => {
+              set.equipment.desc.contents = details;
+            }
+          )
+        }
+      }
+      for(let set of equipmentOptions) {
+        if(set.from[0]?.desc?.contents) {
+          for(let option of set.from) {
+            CharacterService.getEquipmentDetails(option.desc.contents).then(
+              details=> {
+                option.desc.contents = details;
+              }
+            )
+          }
+
+        }
+      }
     });
   }, []);
 
