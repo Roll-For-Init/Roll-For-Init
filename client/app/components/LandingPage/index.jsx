@@ -249,22 +249,23 @@ const LandingPage = () => {
       current_character: character[0],
     };
     
-    if (!characters[character[0]]) {
+    // if (!characters[character[0]]) {
       dispatch(submitExistingCharacter(character));
       user.characters = {
         ...user.characters,
         [character[0]]: character[1],
       };
-    }
+    // }
     localStorage.setItem('state', JSON.stringify(user));
+    console.log(character[0])
     if (JSON.parse(localStorage.getItem('state')).app.current_character === character[0]) {
-      // console.log(JSON.parse(localStorage.getItem('state')).app.current_character);
+      console.log("character id updated: ", JSON.parse(localStorage.getItem('state')).app.current_character);
       
       history.push('/dashboard');
     }
   }
   
-  // console.log(JSON.parse(localStorage.getItem('state')).app.current_character);
+  console.log(JSON.parse(localStorage.getItem('state')).app.current_character);
   
   function importAll(r) {
     let images = {};

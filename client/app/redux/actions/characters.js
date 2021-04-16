@@ -32,6 +32,10 @@ export const submitExistingCharacter = characterInfo => dispatch => {
     type: SUBMIT_CHARACTER_SUCCESS,
     payload: characterInfo[1],
   });
+  dispatch({
+    type: SET_CURRENT_CHARACTER,
+    payload: characterInfo[1],
+  });
 };
 
 export const submitCharacter = characterInfo => (dispatch, getState) => {
@@ -74,10 +78,6 @@ export const updateCharacter = character => (dispatch, getState) => {
   };
   return CharacterService.updateCharacter(data).then(
     res => {
-      dispatch({
-        type: UPDATE_CHARACTER_SUCCESS,
-        payload: { character: res.data },
-      });
       return Promise.resolve();
     },
     err => {
@@ -97,8 +97,12 @@ export const updateCharacter = character => (dispatch, getState) => {
   );
 };
 
-export const deleteCharacter = character => dispatch => {
-  return CharacterService.deleteCharacter(character).then(
+export const deleteCharacter = character => (dispatch, getState) => {
+  const data = {
+    character,
+    user: getState().auth.user,
+  };
+  return CharacterService.deleteCharacter(data).then(
     res => {
       dispatch({
         type: DELETE_CHARACTER_SUCCESS,

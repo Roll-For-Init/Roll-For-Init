@@ -64,17 +64,34 @@ const character_detail = (req, res) => {
 };
 
 const delete_character = (req, res) => {
-  Character.findByIdAndDelete(req.params.characterid)
-    .then(deletedCharacter => {
-      if (deletedCharacter) {
-        return res.status(200).send('Successfully deleted character.');
-      } else {
-        return throwError(res, 403, 'Action Forbidden.');
-      }
+  console.log('Attempting to update user:', req.body);
+  let query = { username: req.body.user.username };
+  let oldUser = {};
+  //Checks that the user id's match
+  User.findOne(query)
+    .then(user => {
+      if (!user) return throwError(res, 403, 'Action forbidden.');
+      oldUser = user;
+      console.log('Found user:', req.body.user.username);
     })
-    .catch(err => {
-      return throwError(res, 403, 'Action Forbidden.', err);
-    });
+    .catch(err => throwError(res, 403, 'Action forbidden.', err));
+
+  const updates = req.body.character;
+
+  User.findOneAndUpdate(
+    query,
+    { $pull: { characters: updates } },
+    { new: true }
+  )
+    .then(newUser => {
+      if (!newUser) return throwError(res, 403, 'Action forbidden.');
+
+      newUser.save();
+      console.log('Successfully updated user:', req.body.user.username);
+
+      return res.status(200).json({ old: oldUser, new: newUser });
+    })
+    .catch(err => throwError(res, 403, 'Action forbidden.', err));
 };
 
 const update_character = (req, res) => {
