@@ -8,7 +8,7 @@ import { useDispatch } from 'react-redux';
 
 // const character = useSelector(state => state.characters[charID]);
 
-const Features = ({charID, features, traits}) => {
+export const Features = ({charID, features, traits}) => {
 
   const breakpointColumnsObj = {
     default: 4,
@@ -68,7 +68,7 @@ const Features = ({charID, features, traits}) => {
                 { cards() }
             </Masonry>
             :
-            <h4>No results found</h4>
+            <h4 class="pb-2">No results found</h4>
           }
         </div>
       </div>
@@ -78,7 +78,7 @@ const Features = ({charID, features, traits}) => {
 
 };
 
-const FeatureCard = ({feature, togglePinned}) => {
+export const FeatureCard = ({feature, togglePinned}) => {
   console.log("feature.desc", feature.desc);
   console.log("feature.desc.join", feature.desc.join(' '));
   return (

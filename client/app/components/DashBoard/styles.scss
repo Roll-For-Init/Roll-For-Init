@@ -428,6 +428,10 @@
             left: .15rem;
             right: .15rem;
         }
+        &:first-child {
+          font-size: 150%;
+          line-height: 1;
+        }
     }
   }
   .pinned {
@@ -715,31 +719,31 @@
         padding: 5px 10px;
       }
     }
+  }
+  
+  .feature-card {
+    padding: 10px;
+    border: none;
+    margin-bottom: 15px;
+    h5 {
+      margin-bottom: 0px;
+    }
+    p {
+      margin-bottom: 0px;
+      line-height: normal;
+    }
+    .wrapper-button {
+      position: relative;
+      display: inline-block;
+      top: .2rem;
+      margin-right: 0.25rem;
 
-    .feature-card {
-      padding: 10px;
-      border: none;
-      margin-bottom: 15px;
-      h5 {
-        margin-bottom: 0px;
-      }
-      p {
-        margin-bottom: 0px;
-        line-height: normal;
-      }
-      .wrapper-button {
-        position: relative;
-        display: inline-block;
-        top: .2rem;
-        margin-right: 0.25rem;
-
-        svg {
-          height: 1.5rem;
-        }
+      svg {
+        height: 1.5rem;
       }
     }
   }
-  
+
   .description-container {
     .translucent-card {
       max-width: 100%;

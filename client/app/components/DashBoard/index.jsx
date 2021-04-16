@@ -9,6 +9,9 @@ import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-editable-label';
 import skullIcon from '../../../public/assets/imgs/skull-icon.png'
+import Description from './Description.jsx';
+import { Features, FeatureCard } from './Features.jsx';
+import Masonry from 'react-masonry-css';
 
 import {D20, FancyStar, CircleSlot} from '../../utils/svgLibrary';
 
@@ -48,27 +51,79 @@ const fullAbScore = {
 
 const preparedSpells = ['wizard', 'cleric', 'druid'];
 
+const Page = ({page, character, charID}) => {
+  console.log("setting page", page)
+  switch (page.name) {
+    case "description":
+      return <Description character={character} />;
+    case "features":
+      return <Features charID={charID} features={character.features} traits={character.traits} />;
+    case "inventory":
+    case "spellbook":
+    case "dashboard":
+    default:
+      return (
+        <div className="row">
+        <div className="col-xl-5 px-0 maincol">
+          <div className="row">
+            <div className="col-sm-6 pl-0 pr-2">
+                <AbilitiesCard ability_scores={character.ability_scores} />
+                <SavingThrowsCard saving_throws={character.saving_throws} />
+                <ProficienciesCard misc_proficiencies={character.misc_proficiencies} />
+            </div>
+            <div className="col-sm-6 px-2">
+                    <SkillsCard skills={character.skills} proficiency={character.proficiency_bonus}/>
+                    <SensesCard perception={character.skills.perception.modifier} insight={character.skills.insight.modifier} investigation={character.skills.investigation.modifier}/>
+            </div>
+          </div>
+        </div>
+        <div className="col-xl-7 px-0">
+          <div className="row">
+            <div className="col-sm-8 px-2">
+                    <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed} charID={charID}/>
+                    <HitPointsCard key={`${character.health.current}-health`} health={character.health} hit_dice={character.hit_dice} deathThrows={character.death_throws} charID={charID}/>
+            </div>
+            <div className="col-sm-4 px-2 pr-0 pl-2">
+              <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
+            </div>
+          </div>
+          <div className="pinned row px-2">
+            <div className="col-12 px-0">
+              <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} attacks={character.attacks} armor={character.armor}/>
+
+            </div>
+          </div>
+        </div>
+      </div>
+      );
+  }
+}
+
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
-  console.log(user);
+  console.log("user", user);
   
   const charID = JSON.parse(localStorage.getItem('state')).app.current_character;
   const character = useSelector(state => state.characters[charID]);
-  console.log(character);
+  console.log("character", character);
   const [showShortRest, setShowShortRest] = useState(false);
   const [showLongRest, setShowLongRest] = useState(false);
   const [showExp, setShowExp] = useState(false);
   const [showRoller, setShowRoller] = useState(false)
   const [currentPercentage, setCurrentPercentage] = character.level ? useState(`${character.experience.current/character.experience.threshold*100}%`) : useState();
+
+  const [page, setPage] = useState({name: "dashboard"});
+
+  
   
 
   return (
     character.level ?
     (<div id="dashboard" className="dashboard">
       <Header />
-      {showShortRest && <ShortRest showModal={showShortRest} setShowModal={setShowShortRest} hitDice={character.hit_dice} con={character.ability_scores.con.modifier} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
+      {showShortRest && <ShortRest showModal={showShortRest} setShowModal={setShowShortRest} hitDice={character.hit_dice} con={character.ability_scores.con.modifier} charClass={character.class[0].name} spellSlots={character.spells?.slots} charID={charID} health={character.health}/>}
       {showExp && <ChangeExp exp={character.experience} showModal={showExp} setShowModal={setShowExp} charID={charID} setPercentage={setCurrentPercentage}/>}
-      {showLongRest && <LongRest showModal={showLongRest} setShowModal={setShowLongRest} hitDice={character.hit_dice} charClass={character.class[0].name} spellSlots={character.spells.slots} charID={charID} health={character.health}/>}
+      {showLongRest && <LongRest showModal={showLongRest} setShowModal={setShowLongRest} hitDice={character.hit_dice} charClass={character.class[0].name} spellSlots={character.spells?.slots} charID={charID} health={character.health}/>}
       {showRoller && <DiceRoller showModal={showRoller} setShowModal={setShowRoller}/>}
       <div className="toolbar fixed-top">
         <div className="subheader py-1 px-3">
@@ -128,16 +183,21 @@ export const DashBoard = () => {
         <div className="row position-relative no-gutters mb-2" >
           <div className="w-100">
             <div className="float-start w-auto d-inline-block">
-              <button className="text-uppercase btn btn-primary">
+              <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "dashboard"})}>
+                Dashboard
+              </button>
+              <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "inventory"})}>
                 Inventory
               </button>
-              <button className="text-uppercase btn btn-primary">
+              <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "spellbook"})}>
                 Spellbook
               </button>
-              <button className="text-uppercase btn btn-primary">
+              <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "description"})}>
                 Description
               </button>
-              <button className="text-uppercase btn btn-primary">Features</button>
+              <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "features"})}>
+                Features
+              </button>
             </div>
             <div className="float-right w-auto d-inline-block">
               <button onClick={() => setShowShortRest(true)} className="text-uppercase btn btn-secondary mx-2">
@@ -149,38 +209,7 @@ export const DashBoard = () => {
             </div>
           </div>
         </div>
-        <div className="row">
-          <div className="col-xl-5 px-0 maincol">
-            <div className="row">
-              <div className="col-sm-6 pl-0 pr-2">
-                  <AbilitiesCard ability_scores={character.ability_scores} />
-                  <SavingThrowsCard saving_throws={character.saving_throws} />
-                  <ProficienciesCard misc_proficiencies={character.misc_proficiencies} />
-              </div>
-              <div className="col-sm-6 px-2">
-                      <SkillsCard skills={character.skills} proficiency={character.proficiency_bonus}/>
-                      <SensesCard perception={character.skills.perception.modifier} insight={character.skills.insight.modifier} investigation={character.skills.investigation.modifier}/>
-              </div>
-            </div>
-          </div>
-          <div className="col-xl-7 px-0">
-            <div className="row">
-              <div className="col-sm-8 px-2">
-                      <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed} charID={charID}/>
-                      <HitPointsCard key={`${character.health.current}-health`} health={character.health} hit_dice={character.hit_dice} deathThrows={character.death_throws} charID={charID}/>
-              </div>
-              <div className="col-sm-4 px-2 pr-0 pl-2">
-                <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
-              </div>
-            </div>
-            <div className="pinned row px-2">
-              <div className="col-12 px-0">
-                <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID}/>
-
-              </div>
-            </div>
-          </div>
-        </div>
+        <Page page={page} character={character} charID={charID} />
       </div>
       {/* </div> */}
     </div>
@@ -946,7 +975,7 @@ const ExtraStatsCard = ({charID, conditions, defenses}) => {
   );
 };
 
-const SpellsAndPinned = ({spells, modifier, proficiency, charID}) => {
+const SpellsAndPinned = ({spells, modifier, proficiency, charID, features, traits, inventory, attacks, armor}) => {
   const dispatch = useDispatch();
 
   const spendSpell = (level) => {
@@ -960,6 +989,35 @@ const SpellsAndPinned = ({spells, modifier, proficiency, charID}) => {
     let newCurrent = spells.slots[level].current +1;
     newSlots[level].current = newCurrent;
     dispatch(setUpdate(charID, 'spells', {slots: newSlots}))
+  }
+
+  const breakpointColumnsObj = {
+    default: 3,
+    1365: 2,
+    767: 2,
+    575: 2,
+  };
+
+  const togglePinned = (type, idx) => {
+    if (type === 'feature') {
+      features[idx].pinned = !features[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'features', features));
+    }
+    else if (type === 'trait') {
+      traits[idx].pinned = !traits[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'traits', traits));
+    }
+    else {
+
+    }
+  }
+
+  const cards = () => {
+    return features.map((f, index) => {return {...f, index: index}}).filter(f => (f.name && f.pinned)).map((f) => {
+      return <FeatureCard feature={f} togglePinned={() => {togglePinned('feature', f.index)}}/>;
+    }).concat(traits.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
+      return <FeatureCard feature={t} togglePinned={() => {togglePinned('trait', t.index)}}/>;
+    }));
   }
 
   return (
@@ -1033,7 +1091,16 @@ const SpellsAndPinned = ({spells, modifier, proficiency, charID}) => {
       </div>
     </div>)}
     <div className="row">
-
+      {cards().length ?
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column">
+          { cards() }
+        </Masonry>
+      :
+        <p class="text-center text-white my-1">You don't have anything pinned. Go to the Inventory, Spellbook, or Features pages and click the &#9733; icon to pin something.</p>
+      }
     </div>
   </div>
   )
