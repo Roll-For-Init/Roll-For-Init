@@ -93,9 +93,9 @@ const Race = ({ charID }) => {
               sortRaces(races).map((race, idx) => {
                 if (race && race.subraces.length > 0)
                   return (
-                    <>
+                    <div key={idx}>
                       {race.subraces.map((subrace, idx) => (
-                        <>
+                        <div key={idx}>
                           {subrace && (
                             <div className="icon-card-container" key={idx}>
                               <div
@@ -121,9 +121,9 @@ const Race = ({ charID }) => {
                               </div>
                             </div>
                           )}
-                        </>
+                        </div>
                       ))}
-                    </>
+                    </div>
                   );
                 else if (race)
                   return (
@@ -260,10 +260,10 @@ const AbilityBonusCard = ({ ability_bonuses }) => {
           return `+${ability.bonus} ${ability.ability_score.full_name}`;
         else
           return (
-            <>
+            <div key={index}>
               +{ability.bonus} {ability.ability_score.full_name}
               <br />
-            </>
+            </div>
           );
       })}
     </div>
@@ -413,8 +413,8 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
           <h4 className="card content-card card-title">Race Options</h4>
           {raceInfo.options.map((option, index) => {
             return (
-              <>
-                <div className="dd-container" key={index}>
+              <div key={index}>
+                <div className="dd-container">
                   <Dropdown
                     ddLabel={`${option.header}`}
                     title={`Choose ${option.choose}`}
@@ -460,7 +460,7 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
                       )}
                     </div>
                   )}
-              </>
+              </div>
             );
           })}
         </div>
@@ -510,10 +510,10 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
           </div>
           <div className="card content-card description-card mb-0">
             {//console.log(Object.values(raceInfo.proficiencies))
-            Object.keys(raceInfo.proficiencies).map(key => {
+            Object.keys(raceInfo.proficiencies).map((key, idx) => {
               return (
                 raceInfo.proficiencies[key].length > 0 && (
-                  <div className="same-line mb-0">
+                  <div className="same-line mb-0" key={idx}>
                     {key.toString().toLowerCase() === 'languages' && (
                       <Popover
                         isOpen={isLanguagePopoverOpen}

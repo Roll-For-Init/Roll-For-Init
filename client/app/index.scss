@@ -5,7 +5,7 @@
 
 html {
   font-size: 16px;
-  -webkit-text-size-adjust: none !important;
+  --webkit-text-size-adjust: none !important;
 }
 
 body {
@@ -18,16 +18,23 @@ body {
 body::-webkit-scrollbar {
   overflow: overlay;
   width: 10px;
+  padding:1px;
 }
 
 body::-webkit-scrollbar-track {
-  //-webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: #121212;
+  -webkit-box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.3);
+  background-color: #555555;
 }
 
 body::-webkit-scrollbar-thumb {
   border-radius: 10px;
   background-color: rgba(255, 255, 255, 0.5);
+  transition: .15s;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+  border-radius: 10px;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
 .title {
@@ -43,7 +50,7 @@ div {
 }
 
 .text-warning {
-  color: #d4af37 !important;
+  color: $dark-yellow !important;
 }
 
 .text-danger {
@@ -113,7 +120,7 @@ button {
 }
 
 input {
-  background-color: #f0e6d3 !important;
+  background-color: $off-white !important;
   color: $dark-blue !important;
   font-family: 'IM Fell DW Pica' !important;
   font-size: 1rem !important;

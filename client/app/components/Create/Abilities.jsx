@@ -89,7 +89,7 @@ export const Abilities = ({ charID, setPage }) => {
             bonus: ability
               ? ability.bonus + (ability2 ? ability2.bonus : 0)
               : ability2.bonus,
-            modifier: 0,
+            modifier: 0 + Math.floor((ability ? ability.bonus + (ability2 ? ability2.bonus : 0) : ability2.bonus) / 2),
             finalScore: ability
               ? 10 + ability.bonus + (ability2 ? ability2.bonus : 0)
               : 10 + ability2.bonus,
@@ -298,7 +298,7 @@ const PointBuyCard = ({
             short_name,
             points: points - 1,
             bonus,
-            modifier: Math.floor((ability.points - 11) / 2),
+            modifier: Math.floor((finalScore - 11) / 2),
             finalScore: finalScore - 1,
           };
         } else {
@@ -321,7 +321,7 @@ const PointBuyCard = ({
             short_name,
             points: points + 1,
             bonus,
-            modifier: Math.floor((ability.points - 9) / 2),
+            modifier: Math.floor((finalScore - 9) / 2),
             finalScore: finalScore + 1,
           };
         } else {
@@ -340,7 +340,7 @@ const PointBuyCard = ({
             short_name,
             points: choices,
             bonus,
-            modifier: Math.floor((choices - 10) / 2),
+            modifier: Math.floor((choices + bonus - 10) / 2),
             finalScore: choices + bonus,
           };
         } else {

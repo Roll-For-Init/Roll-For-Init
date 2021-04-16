@@ -6,7 +6,7 @@ import Dropzone from 'react-dropzone';
 import charPlaceholder from '../../../public/assets/imgs/char-placeholder.png';
 import './styles.scss';
 import { PropTypes } from 'prop-types';
-import { setCurrentCharacter } from '../../redux/actions';
+import { setCurrentCharacter, submitExistingCharacter } from '../../redux/actions';
 
 const DraftCharacterCard = ({ character }) => {
   const dispatch = useDispatch();
@@ -237,12 +237,36 @@ CharacterSection.propTypes = {
 
 const LandingPage = () => {
   const { auth, characters } = useSelector(state => state);
+  // const { isLoggedIn } = useSelector(state => state.auth);
+
   const history = useHistory();
+  const dispatch = useDispatch();
 
-  function handleClick() {
-    history.push('/dashboard');
+  function handleClick(character) {
+    let user = JSON.parse(localStorage.getItem('state'));
+
+    user.app = {
+      current_character: character[0],
+    };
+    
+    // if (!characters[character[0]]) {
+      dispatch(submitExistingCharacter(character));
+      user.characters = {
+        ...user.characters,
+        [character[0]]: character[1],
+      };
+    // }
+    localStorage.setItem('state', JSON.stringify(user));
+    console.log(character[0])
+    if (JSON.parse(localStorage.getItem('state')).app.current_character === character[0]) {
+      console.log("character id updated: ", JSON.parse(localStorage.getItem('state')).app.current_character);
+      
+      history.push('/dashboard');
+    }
   }
-
+  
+  console.log(JSON.parse(localStorage.getItem('state')).app.current_character);
+  
   function importAll(r) {
     let images = {};
     r.keys().map((item, index) => {
@@ -267,35 +291,6 @@ const LandingPage = () => {
     )
   );
 
-  const exampleCharacters = [
-    {
-      firstname: 'Glorbin',
-      lastname: 'Shmoo',
-      race: 'elf',
-      class: 'barbarian',
-      level: '2',
-      portraitsrc: charPlaceholder,
-    },
-    {
-      firstname: 'Xorglum',
-      lastname: 'Lightbeard',
-      race: 'gnome',
-      class: 'cleric',
-      level: '4',
-      portraitsrc: charPlaceholder,
-    },
-    {
-      firstname: 'Rooaar',
-      lastname: 'Graaagggh',
-      race: 'half-orc',
-      class: 'rogue',
-      level: '8',
-      portraitsrc: charPlaceholder,
-    },
-  ];
-
-  const { isLoggedIn } = useSelector(state => state.auth);
-  // const isLoggedIn = true;
   return (
     <div className="container landing">
       <div className="filler-space"></div>
@@ -330,44 +325,57 @@ const LandingPage = () => {
           </Link>
         </div>
       ) : (
-        <div className="character-container">
-          <div className="card translucent-card mt-0">
-            {exampleCharacters.map((character, idx) => {
+          <div className="character-container">
+            <div className="card translucent-card mt-0">
+              {Object.entries(characters).length === 0 ?
+                <div>No Characters Created Yet</div>
+                : Object.entries(characters).map((char, idx) => {
+              const charInfo = char[1];
+              if(!charInfo.ability_scores) return null
               return (
                 <div
                   className="card content-card character-card"
                   key={idx}
-                  onClick={handleClick}
+                  onClick={() => handleClick(char)}
                 >
                   <div className="same-line mb-0">
                     <span className="same-line mb-0">
-                      <img
-                        className="portrait-icon"
-                        src={character.portraitsrc}
-                        width="70"
-                        height="70"
-                      />
+                      {charInfo.portrait?.name === "No file chosen" ?
+                        <img
+                          className="portrait-icon"
+                          src={charPlaceholder}
+                          width="70"
+                          height="70"
+                        />
+                        :
+                        <img
+                          className="portrait-icon"
+                          src={charInfo.portrait?.name}
+                          alt={charInfo.portrait?.name}
+                          width="70"
+                          height="70"
+                        />}
                       <div className="info-container">
-                        <p className="character-name">{`${character.firstname}`}</p>
-                        <p className="character-info">{`${character.race} ${character.class} ${character.level}`}</p>
+                        <p className="character-name">{`${charInfo?.name}`}</p>
+                        <p className="character-info">{`${charInfo.race?.name} ${charInfo.class && charInfo.class[0]?.name} ${charInfo.level}`}</p>
                       </div>
                     </span>
                     <span className="same-line mb-0">
                       <div className="icon-container">
                         <img
                           className="character-icon"
-                          src={raceIcons[`${character.race}.png`]}
+                          src={raceIcons[`${charInfo.race?.name?.toLowerCase()}.png`]}
                         />
-                        <img
+                        {charInfo.class && <img
                           className="character-icon"
-                          src={classIcons[`${character.class}.png`]}
-                        />
+                          src={classIcons[`${charInfo.class && charInfo.class[0]?.name?.toLowerCase()}.png`]}
+                        />}
                       </div>
                     </span>
                   </div>
                 </div>
               );
-            })}
+              })}
           </div>
         </div>
       )}

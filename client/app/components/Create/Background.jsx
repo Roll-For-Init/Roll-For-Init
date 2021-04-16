@@ -41,6 +41,7 @@ export const Background = ({ charID, setPage }) => {
           if (bg.other_equipment) {
             equipment.equipment = equipment.equipment.concat(bg.other_equipment)
           }
+          equipment.equipment.push({...bg.starting_currency, category: 'currency'});
           dispatch(setBackground(charID, equipment));
           dispatch(
             setBackground(charID, { equipment_options: bg.equipment_options })
@@ -53,6 +54,8 @@ export const Background = ({ charID, setPage }) => {
             flaws: bg.flaws,
           };
           dispatch(setBackground(charID, { description: personality }));
+          dispatch(setBackground(charID, { desc: bg.desc }));
+          dispatch(setBackground(charID, { feature: bg.feature }));
         });
     }
   };
@@ -145,6 +148,7 @@ export const Background = ({ charID, setPage }) => {
           Tools: [],
           Languages: [],
           Skills: [...selectionSk1],
+          Armor: []
         },
         name: bgName,
         desc: bgDesc,
@@ -155,9 +159,9 @@ export const Background = ({ charID, setPage }) => {
       };
       for (let selection of selectionTlLg1) {
         if (selection.url.includes('language')) {
-          customBackground.proficiencies.Languages.push(selection);
+          customBackground.proficiencies.Languages.push(selection.name);
         } else {
-          customBackground.proficiencies.Tools.push(selection);
+          customBackground.proficiencies.Tools.push(selection.name);
         }
       }
       dispatch(setBackground(charID, customBackground));
@@ -269,7 +273,7 @@ export const Background = ({ charID, setPage }) => {
               })}
             </div>
           )}
-          {(selectionBg[0].index === 'custom' || selectionBg[0].proficiencies?.size) &&
+          {(selectionBg[0].index === 'custom' || Object.values(selectionBg[0].proficiencies).some(p => {return p.length})) &&
             <div className="card translucent-card">
               <div className="card content-card card-title">
                 <h4>Proficiencies</h4>
@@ -302,9 +306,7 @@ export const Background = ({ charID, setPage }) => {
                       ...gamingSets,
                       ...musicalInstruments,
                       ...otherTools,
-                      ...kits,
-                      ...landVehicles,
-                      ...waterVehicles,
+                      ...kits
                     ].filter(
                       item =>
                         !skill.includes(item.name.toString().toLowerCase())

@@ -37,7 +37,6 @@ const validate = values => {
   } else if (values.confirmPassword !== values.password) {
     errors.confirmPassword = 'Passwords do not match';
   }
-  console.log('values', values, 'errors', errors);
   return errors;
 };
 
@@ -63,9 +62,9 @@ const SignUp = () => {
         <div className="col-1 col-md"></div>
         <div className="col col-md-6 mb-5">
           <img
-              className="logo"
-              src={require('../../../public/assets/imgs/logo.png')}
-            />
+            className="logo"
+            src={require('../../../public/assets/imgs/logo.png')}
+          />
         </div>
         <div className="col-1 col-md"></div>
       </div>
