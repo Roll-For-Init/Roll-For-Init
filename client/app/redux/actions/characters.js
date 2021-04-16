@@ -19,26 +19,38 @@ import {
   SET_PAGE,
   SET_EQUIPMENT,
   SET_UPDATE,
-  SET_ARRAY_UPDATE
+  SET_ARRAY_UPDATE,
 } from './types';
 
 import { v4 as uuidv4 } from 'uuid';
 
 import CharacterService from '../services/character.service';
 
-export const submitCharacter = characterInfo => dispatch => {
-  console.log("SUBMIT CHARACTER", characterInfo);
-
-  //! temporarily add to redux before the database to test redux
+export const submitExistingCharacter = characterInfo => dispatch => {
+  console.log('SUBMIT CHARACTER', characterInfo);
   dispatch({
     type: SUBMIT_CHARACTER_SUCCESS,
-    payload: characterInfo,
+    payload: characterInfo[1],
   });
-  return CharacterService.createCharacter(characterInfo).then(
+  dispatch({
+    type: SET_CURRENT_CHARACTER,
+    payload: characterInfo[1],
+  });
+};
+
+export const submitCharacter = characterInfo => (dispatch, getState) => {
+  console.log('SUBMIT CHARACTER', characterInfo, getState().auth.user);
+
+  const data = {
+    character: characterInfo,
+    user: getState().auth.user,
+  };
+  return CharacterService.createCharacter(data).then(
     res => {
+      console.log(res);
       dispatch({
         type: SUBMIT_CHARACTER_SUCCESS,
-        payload: { character: res.data },
+        payload: characterInfo,
       });
       return Promise.resolve();
     },
@@ -59,13 +71,13 @@ export const submitCharacter = characterInfo => dispatch => {
   );
 };
 
-export const updateCharacter = character => dispatch => {
-  return CharacterService.updateCharacter(character).then(
+export const updateCharacter = character => (dispatch, getState) => {
+  const data = {
+    character,
+    user: getState().auth.user,
+  };
+  return CharacterService.updateCharacter(data).then(
     res => {
-      dispatch({
-        type: UPDATE_CHARACTER_SUCCESS,
-        payload: { character: res.data },
-      });
       return Promise.resolve();
     },
     err => {
@@ -85,8 +97,12 @@ export const updateCharacter = character => dispatch => {
   );
 };
 
-export const deleteCharacter = character => dispatch => {
-  return CharacterService.deleteCharacter(character).then(
+export const deleteCharacter = character => (dispatch, getState) => {
+  const data = {
+    character,
+    user: getState().auth.user,
+  };
+  return CharacterService.deleteCharacter(data).then(
     res => {
       dispatch({
         type: DELETE_CHARACTER_SUCCESS,
@@ -164,11 +180,11 @@ export const setEquipment = (charID, equipment) => dispatch => {
 };
 
 export const setUpdate = (charID, attribute, updated) => dispatch => {
-    console.log('UPDATE_SHEET', charID, attribute, updated);
-    dispatch({type: SET_UPDATE, payload: {charID, attribute, updated}});
-}
+  console.log('UPDATE_SHEET', charID, attribute, updated);
+  dispatch({ type: SET_UPDATE, payload: { charID, attribute, updated } });
+};
 
 export const setArrayUpdate = (charID, attribute, updated) => dispatch => {
-    console.log('UPDATE_ARRAY_SHEET', charID, attribute, updated);
-    dispatch({type: SET_ARRAY_UPDATE, payload:{charID, attribute, updated}})
-}
+  console.log('UPDATE_ARRAY_SHEET', charID, attribute, updated);
+  dispatch({ type: SET_ARRAY_UPDATE, payload: { charID, attribute, updated } });
+};

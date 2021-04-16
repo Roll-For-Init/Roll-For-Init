@@ -39,7 +39,7 @@ const Login = () => {
     dispatch(login(email, password));
   };
   if (isLoggedIn === true) {
-    return <Redirect to="/dashboard" />;
+    return <Redirect to="/" />;
   }
   return (
     <div className="container login">
@@ -48,9 +48,9 @@ const Login = () => {
         <div className="col-1 col-md"></div>
         <div className="col col-md-6 mb-5">
           <img
-              className="logo"
-              src={require('../../../public/assets/imgs/logo.png')}
-            />
+            className="logo"
+            src={require('../../../public/assets/imgs/logo.png')}
+          />
         </div>
         <div className="col-1 col-md"></div>
       </div>
