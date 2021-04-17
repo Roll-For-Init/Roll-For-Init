@@ -116,8 +116,16 @@ const Page = ({page, character, charID}) => {
           </div>
           <div className="pinned row px-2">
             <div className="col-12 px-0">
-              <SpellsAndPinned spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} attacks={character.attacks} armor={character.armor}/>
-
+              <div className="card translucent-card w-100 mx-0">
+                {character.spells != null && (
+                  <div className="row px-md-5">
+                  <SpellBoxes spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID}/>
+                  </div>
+                )}
+                <div className="row">
+                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} attacks={character.attacks} armor={character.armor} spells={character.spells}/>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -1333,21 +1341,6 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
         />
       )}
     </>
-  );
-};
-const SpellsAndPinned = ({ spells, modifier, proficiency, charID }) => {
-  return (
-    <div className="card translucent-card w-100 mx-0">
-      {spells != null && (
-        <div className="row px-md-5">
-        <SpellBoxes spells={spells} modifier={modifier} proficiency={proficiency} charID={charID}/>
-        </div>
-      )}
-      <div className="row">
-        <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} attacks={character.attacks} armor={character.armor} spells={character.spells}/>
-      </div>
-      
-    </div>
   );
 };
 
