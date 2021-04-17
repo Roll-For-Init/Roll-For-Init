@@ -12,7 +12,7 @@ import skullIcon from '../../../public/assets/imgs/skull-icon.png'
 import Description from './Description.jsx';
 import { Features, FeatureCard } from './Features.jsx';
 import Masonry from 'react-masonry-css';
-import SpellBook from "./Spells";
+import SpellBook from '/Spells';
 
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
@@ -140,8 +140,9 @@ export const DashBoard = () => {
 
   const charID = JSON.parse(localStorage.getItem('state')).app
     .current_character;
-  const character = useSelector(state => state.characters[charID]);
-  console.log("character", character);
+  const characterInfo = useSelector(state => state.characters[charID]);
+  const [character, setCharacter] = useState(characterInfo);
+  console.log(character);
   const [showShortRest, setShowShortRest] = useState(false);
   const [showLongRest, setShowLongRest] = useState(false);
   const [showExp, setShowExp] = useState(false);
@@ -154,6 +155,10 @@ export const DashBoard = () => {
     : useState();
   const [showSpells, setShowSpells] = useState(false);
   const [page, setPage] = useState({name: "dashboard"});
+
+  useEffect(() => {
+    setCharacter(characterInfo);
+  }, [characterInfo]);
 
   return character.level ? (
     <div id="dashboard" className="dashboard">
@@ -290,9 +295,11 @@ export const DashBoard = () => {
                 <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "inventory"})}>
                   Inventory
                 </button>
-                <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "spellbook"})}>
-                  Spellbook
-                </button>
+                {character.spells &&
+                  <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "spellbook"})}>
+                    Spellbook
+                  </button>
+                }
                 <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "description"})}>
                   Description
                 </button>
@@ -1393,7 +1400,7 @@ const Pinned = ({charID, features, traits, inventory, attacks, armor, spells}) =
 
 
 
-export const SpellBoxes = ({spells, modifier, proficiency, charID}) => {
+export const SpellBoxes = ({ spells, modifier, proficiency, charID }) => {
   const dispatch = useDispatch();
 
   const spendSpell = level => {
@@ -1520,8 +1527,7 @@ export const SpellBoxes = ({spells, modifier, proficiency, charID}) => {
         </div>
       </div>
     </>
-  )
-}
-
+  );
+};
 
 export default DashBoard;
