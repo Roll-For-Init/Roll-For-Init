@@ -26,48 +26,81 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
                 ...item.equipment
             };
         }
-        else if(!(item.desc || (item.equipment && item.equipment.desc))) {
-            item.equipment ? equipment.inventory.push({...item.equipment, quantity: item.quantity})
-            : equipment.inventory.push(item);
-            continue;
-        }
-        else if(item.equipment) {
-            let costAmt = item.equipment.desc ? item.equipment.desc.cost.match(/\d+/g) : 0;
-            let denom =  item.equipment.desc ? item.equipment.desc.cost.match(/[a-zA-Z]+/g) : "";
-            item = {
-                ...item.equipment.desc,
-                cost: {
-                    amount: costAmt,
-                    denomination: denom
-                },
-                name: item.equipment.name,
-                quantity: item.quantity ? 1 : item.quantity
-            }
-        }
-        else {
-            let costAmt = item.desc ? item.desc.cost.match(/\d+/g) : 0;
-            let denom =  item.desc ? item.desc.cost.match(/[a-zA-Z]+/g) : "";
+        else if (
+               item.equipment && item.equipment.desc && item.equipment.desc.contents
+             ) {
+               for (let thing of item.equipment.desc.contents) {
+                 let costAmt = thing.item.desc.cost.match(/\d+/g);
+                 let denom = thing.item.desc.cost.match(/[a-zA-Z]+/g);
+                 equipment.inventory.push({
+                   ...thing.item.desc,
+                   cost: { amount: costAmt, denomination: denom },
+                   name: thing.item.name,
+                   quantity: thing.quantity,
+                 });
+               }
+               continue;
+             } else if (
+               !(item.desc || (item.equipment && item.equipment.desc))
+             ) {
+               item.equipment
+                 ? equipment.inventory.push({
+                     ...item.equipment,
+                     quantity: item.quantity,
+                   })
+                 : equipment.inventory.push(item);
+               continue;
+             } else if (item.equipment) {
+               let costAmt = item.equipment.desc
+                 ? item.equipment.desc.cost.match(/\d+/g)
+                 : 0;
+               let denom = item.equipment.desc
+                 ? item.equipment.desc.cost.match(/[a-zA-Z]+/g)
+                 : '';
+               item = {
+                 ...item.equipment.desc,
+                 cost: {
+                   amount: costAmt,
+                   denomination: denom,
+                 },
+                 name: item.equipment.name,
+                 quantity: item.quantity ? 1 : item.quantity,
+               };
+             } else {
+               let costAmt = item.desc ? item.desc.cost.match(/\d+/g) : 0;
+               let denom = item.desc ? item.desc.cost.match(/[a-zA-Z]+/g) : '';
 
-            item = {
-                ...item.desc,
-                cost: {
-                    amount: costAmt,
-                    denomination: denom
-
-                },
-                name: item.name,
-                quantity: item.quantity ? 1 : item.quantity
-            }
-        }
+               item = {
+                 ...item.desc,
+                 cost: {
+                   amount: costAmt,
+                   denomination: denom,
+                 },
+                 name: item.name,
+                 quantity: item.quantity ? 1 : item.quantity,
+               };
+             }
        
         sortEquipment(equipment, item, weaponProficiencies, armorProficiencies);
     }
 
     for(let key in items.choices) {
         let item = items.choices[key];
-        console.log(item);
+        console.log("ITEM", item);
         if(!(item.desc || (item.equipment && item.equipment.desc))) {
             equipment.inventory.push(item);
+            continue;
+        }
+        else if (item.equipment.desc && item.equipment.desc.contents) {
+            for(let thing of item.equipment.desc.contents) {
+                let costAmt = thing.item.desc.cost.match(/\d+/g);
+                let denom = thing.item.desc.cost.match(/[a-zA-Z]+/g);
+                equipment.inventory.push(
+                    {...thing.item.desc, 
+                    cost: {amount: costAmt, denomination: denom},
+                    name: thing.item.name,
+                    quantity: thing.quantity})
+            }
             continue;
         }
         if(Array.isArray(item.equipment)) {
@@ -94,7 +127,6 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
             //do nothing
         }
         else {
-            console.log(item);
             let costAmt = item.equipment.desc.cost.match(/\d+/g)
             let denom =  item.equipment.desc.cost.match(/[a-zA-Z]+/g);
 
@@ -240,7 +272,7 @@ const fillModel = async (equipment, character) => { //will probably need a separ
 }
 
 const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies) => {
-    console.log(item);
+    //console.log(item);
     let category = item.category ? item.category.toLowerCase() : 'pack';
     if(category.includes("weapon")) {
         item.pinned = false;
@@ -447,7 +479,11 @@ const spellsPopulator = (spells) => {
         let list = spells[i];
         for(let spell of list) {
             let found = spells.cards[key].find(card => card.index === spell)
-            cards[i].push(found);
+            if(found) {
+                found.pinned=false;
+                found.prepared = false;
+                cards[i].push(found);    
+            }
         }
     }
     return cards;
