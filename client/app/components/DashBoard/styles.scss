@@ -434,7 +434,7 @@
         }
     }
   }
-  .pinned {
+  .pinned, .spells-container {
     .table {
         margin-bottom: 0;
         margin-top: -5px;
@@ -456,37 +456,98 @@
 
   }
   /******* buttons *******/
-  .btn-outline-success {
-    border: {
-      style: solid !important;
-      color: $green !important;
-      width: 2px !important;
-      radius: 8px;
-    }
+  // .btn-outline-success {
+  //   border: {
+  //     style: solid !important;
+  //     color: $green !important;
+  //     width: 2px !important;
+  //     radius: 8px;
+  //   }
+  //   color: $dark-blue;
+  //   box-shadow: none;
+  //   float: left;
+  //   font-size: 1rem;
+  //   padding: 2px 5px;
+  //   max-height: 1.67rem;
+  //   line-height: 1;
+  //   flex-grow: 0;
+  //   margin: auto 0px;
+  //   background-color: transparent;
+  //   margin: 2px;
+
+  //   &:hover,
+  //   &:active {
+  //     background-color: $medium-off-white;
+  //   }
+  //   span {
+  //       color: $dark-green;
+  //   }
+  //   input {
+  //       border: none;
+  //       background-color: transparent;
+  //   }
+  // }
+
+  .btn-outline-success,
+  .btn-clicked {
+    width: auto;
     color: $dark-blue;
-    box-shadow: none;
+    box-shadow: none !important;
     float: left;
     font-size: 1rem;
-    padding: 2px 5px;
-    max-height: 1.67rem;
+    padding: 5px;
+    max-height: 2rem;
     line-height: 1;
     flex-grow: 0;
     margin: auto 0px;
     background-color: transparent;
     margin: 2px;
+    border-radius: 8px;
 
-    &:hover,
-    &:active {
-      background-color: $medium-off-white;
+    &[disabled] {
+      opacity: 50%;
     }
-    span {
-        color: $dark-green;
+
+
+    // max-width: 4.5rem;
+    // margin: 0 0px 10px 0px;
+  }
+
+  .btn-outline-success {
+    border: 3px solid $medium-green !important;
+    background-color: $off-white;
+    &:not([disabled]) {
+      &:hover {
+        background-color: $medium-off-white;
+        color: $dark-blue;
+      }
+      &:active {
+        color: $white;
+        background-color: $dark-green !important;
+        border: 3px solid $dark-green !important;
+      }
     }
-    input {
-        border: none;
-        background-color: transparent;
+    &[disabled] {
+      background-color: $medium-off-white !important;
     }
   }
+  .btn-clicked {
+    color: white;
+    background-color: $medium-green;
+    border: 3px solid $medium-green !important;
+    &:not([disabled]) {
+      &:hover {
+        color: white;
+        background-color: $dark-green;
+        border: 3px solid $dark-green !important;
+      }
+      &:active {
+        color: $dark-blue;
+        background-color: $off-white;
+      }
+    }
+  }
+
   .btn-outline-primary {
       @extend .btn-outline-success;
       border: {
@@ -681,39 +742,39 @@
     }
   }
   .spells-container {
-      .active {
-        .dd-header__title, .dd-header__action {
-            color: white !important;
-        }
+    .active {
+      .dd-header__title, .dd-header__action {
+          color: white !important;
+      }
     }
     .wrapper-button {
         padding-top: 0;
         svg {
-            height: auto;
+          height: auto;
         }
     }
-      .dd-wrapper {
-          width: auto;
-          div:last-of-type {
-            margin-right: 0;
-          }
-      }
-      .dd-header {
-        box-shadow: 1px 2px 2px rgb(0 0 0 / 67%);
-      }
-      .dd-list {
-          border: none;
-      }
+    .dd-wrapper {
+        width: auto;
+        div:last-of-type {
+          margin-right: 0;
+        }
+    }
+    .dd-header {
+      box-shadow: 1px 2px 2px rgb(0 0 0 / 67%);
+    }
+    .dd-list {
+      border: none;
+    }
     .my-masonry-grid {
       margin-left: -15px;
-      margin-top: 0px;
+      margin-top: 0;
     }
     .my-masonry-grid_column {
-      padding-left: 30px;
+      padding-left: 15px;
     }
     .translucent-card {
       max-width: 100%;
-      padding: 10px;
+      padding: 25px 25px 10px;
       margin: 25px;
       > h4 {
         margin-bottom: 0;
@@ -750,23 +811,23 @@
     }
     
     .extra-padding {
-
-        div:first-child {
-                margin-right:50px;
-        }
+      div:first-child {
+        margin-right:50px;
       }
+    }
   }
 
   .features-container {
     .my-masonry-grid {
       margin-left: -15px;
+      margin-top: 0;
     }
     .my-masonry-grid_column {
       padding-left: 15px;
     }
     .translucent-card {
       max-width: 100%;
-      padding: 20px 25px 5px;
+      padding: 25px 25px 10px;
       > h4 {
         margin-bottom: 0;
         text-align: center;
@@ -797,7 +858,30 @@
   }
   
   .feature-card {
-    padding: 10px;
+    padding: 5px 10px 10px;
+    border: none;
+    margin-bottom: 15px;
+    h5 {
+      margin-bottom: 0px;
+    }
+    p {
+      margin-bottom: 0px;
+      line-height: normal;
+    }
+    .wrapper-button {
+      position: relative;
+      display: inline-block;
+      top: .2rem;
+      margin-right: 0.25rem;
+
+      svg {
+        height: 1.5rem;
+      }
+    }
+  }
+
+  .spell-card {
+    padding: 5px 10px 10px;
     border: none;
     margin-bottom: 15px;
     h5 {

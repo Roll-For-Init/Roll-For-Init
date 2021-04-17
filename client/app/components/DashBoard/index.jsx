@@ -12,7 +12,7 @@ import skullIcon from '../../../public/assets/imgs/skull-icon.png'
 import Description from './Description.jsx';
 import { Features, FeatureCard } from './Features.jsx';
 import Masonry from 'react-masonry-css';
-import SpellBook from '/Spells';
+import SpellBook from './Spells';
 
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
@@ -1314,7 +1314,7 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
             );
           })}
           <button
-            className="btn-outline-success"
+            className="btn btn-outline-success"
             onClick={() => {
               setShowAdd(true);
             }}
