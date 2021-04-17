@@ -8,6 +8,7 @@ function Dropdown({
   ddLabel,
   hideLabel = false,
   title,
+  permTitle,
   items,
   width,
   multiSelect = false,
@@ -76,7 +77,9 @@ function Dropdown({
           return selection[k].name;
         })
         .join(', ');
-    } else {
+    } 
+    else if(permTitle) updatedTitle=title;
+    else {
       updatedTitle = `Choose ${selectLimit}`;
     }
     setTitle(updatedTitle);
@@ -92,7 +95,7 @@ function Dropdown({
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
   return (
-    <div className="dd-wrapper" style={{ width: width }}>
+    <div className="dd-wrapper" style={{width: width}}>
       {!hideLabel && (
         <div className={classname ? 'dd-label ' + classname : 'dd-label'}>
           {popover && (
@@ -152,7 +155,8 @@ function Dropdown({
         </div>
       </div>
       {open && (
-        <ul className={`dd-list ${classname && classname} shadow-card scroll`}>
+        //<ul className={`dd-list ${classname && classname} shadow-card scroll`}>
+        <ul className={`dd-list shadow-card scroll`}>
           {items.map(item => (
             <li className="dd-list-item" key={item.index}>
               <button

@@ -479,7 +479,11 @@ const spellsPopulator = (spells) => {
         let list = spells[i];
         for(let spell of list) {
             let found = spells.cards[key].find(card => card.index === spell)
-            cards[i].push(found);
+            if(found) {
+                found.pinned=false;
+                found.prepared = false;
+                cards[i].push(found);    
+            }
         }
     }
     return cards;

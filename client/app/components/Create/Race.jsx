@@ -260,7 +260,7 @@ const AbilityBonusCard = ({ ability_bonuses }) => {
           return `+${ability.bonus} ${ability.ability_score.full_name}`;
         else
           return (
-            <div key={index}>
+            <div key={index} style={{color: "#404959"}}>
               +{ability.bonus} {ability.ability_score.full_name}
               <br />
             </div>
