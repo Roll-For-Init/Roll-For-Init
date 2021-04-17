@@ -20,6 +20,7 @@ function Dropdown({
   classname,
   border = '3px',
   stateKey,
+  headerClassName
 }) {
   const [open, setOpen] = useState(false);
   // const [selection, setSelection] = useState([items[0]]);
@@ -137,7 +138,7 @@ function Dropdown({
       )}
       <div
         tabIndex={0}
-        className={classname ? 'dd-header ' + classname : 'dd-header'}
+        className={headerClassName ? 'dd-header ' + headerClassName : classname ? 'dd-header ' + classname : 'dd-header'}
         style={{ border: `${border} solid $maroon` }}
         role="button"
         onKeyPress={() => toggle(!open)}

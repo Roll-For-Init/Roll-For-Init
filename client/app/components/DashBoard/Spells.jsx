@@ -9,7 +9,7 @@ import {SpellBoxes} from "./index";
 
 // const character = useSelector(state => state.characters[charID]);
 
-const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
+export const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
 
   const breakpointColumnsObj = {
     default: 4,
@@ -51,14 +51,14 @@ const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
     if(!(filterFavorites || filterPrepared || filterSlot || levelFilter.length>0)) setFilterAll(true);
   }, [filterFavorites, filterPrepared, filterSlot])
   useEffect(() => {
-      console.log(filterAll);
+    console.log(filterAll);
     if(filterAll) {
         setFilterFavorites(false);
         setFilterPrepared(false);
         setFilterSlot(false)
         setLevelFilter([]);
     }
-}, [filterAll])
+  }, [filterAll])
 // useEffect(() => {
 //     if(currentPrepared >= maxPrepared) {
 //         let unselected = document.getElementsByName("prepared");
@@ -70,7 +70,7 @@ const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
 //     }
 // }, [])
 
-  const levels = [{name:"cantrip", index: 0}, {name:"level 1", index: 1}, {name: "level 2", index: 2}, {name: "level 3", index: 3}, {name: "level 4", index: 4}, {name:"level 5", index: 5}, {name:"level 6", index:6}, {name:"level 7", index:7}, {name:"level 8", index: 8}, {name:"level 9", index:9}];
+  const levels = [{name:"Cantrip", index: 0}, {name:"Level 1", index: 1}, {name: "Level 2", index: 2}, {name: "Level 3", index: 3}, {name: "Level 4", index: 4}, {name:"Level 5", index: 5}, {name:"Level 6", index:6}, {name:"Level 7", index:7}, {name:"Level 8", index: 8}, {name:"Level 9", index:9}].filter(l => spellcasting.cards[l.index]?.length);
   
   const togglePinned = (level, index) => {
     spellcasting.cards[level][index].pinned = spellcasting.cards[level][index].pinned ? !spellcasting.cards[level][index].pinned : true;
@@ -221,7 +221,7 @@ const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
                 key={`all-${filterAll}`}
                 className={`btn btn-lg btn-secondary filter-button ${filterAll &&
                   'active'}`}
-                onClick={() => setFilterAll(!filterAll)}
+                onClick={() => setFilterAll(true)}
               >
                 All
               </button>
@@ -232,20 +232,23 @@ const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
               >
                 Favorites
               </button>
-              <button
-                className={`btn btn-lg btn-secondary filter-button ${filterPrepared &&
-                  'active'}`}
-                  onClick={() => {setFilterPrepared(!filterPrepared); setFilterAll(false)}}
-                  >
-                Prepared
-              </button>
+              {prepared &&
+                <button
+                  className={`btn btn-lg btn-secondary filter-button ${filterPrepared &&
+                    'active'}`}
+                    onClick={() => {setFilterPrepared(!filterPrepared); setFilterAll(false)}}
+                    >
+                  Prepared
+                </button>
+              }
               <button
                 className={`btn btn-lg btn-secondary filter-button ${filterSlot &&
                   'active'}`}
                   onClick={() => {setFilterSlot(!filterSlot); setFilterAll(false)}}
-             >
+              >
                 Slot Available
               </button>
+              {levels.length > 1 &&
                 <Dropdown
                         hideLabel={true}
                         title="Level"
@@ -255,8 +258,9 @@ const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
                         multiSelect={true}
                         selection={levelFilter}
                         setSelection={setLevelFilter}
-                        classname={`dd-wrapper btn btn-lg btn-secondary filter-button ${levelFilter.length>0 && 'active'}`}
+                        headerClassName={`dd-wrapper btn btn-lg btn-secondary filter-button ${levelFilter.length>0 && 'active'}`}
                 />
+              }
             </div>
           </div>
         </div>
@@ -278,11 +282,11 @@ const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
 
 };
 
-const SpellCard = ({ spell, level, index, prepared, togglePinned, togglePrepared, currentPrepared, maxPrepared }) => {
+export const SpellCard = ({ spell, level, index, prepared, togglePinned, togglePrepared, currentPrepared, maxPrepared }) => {
     return (
       <div className="card content-card spell-card mb-3">
         <div className="row">
-          <div className="col pl-0">
+          <div className="col px-0">
             <h5>
               {!spell.pinned ?
                 <button className="wrapper-button" onClick={() => {togglePinned(level, index)}}><Star className="star-outline"/></button>
@@ -292,19 +296,24 @@ const SpellCard = ({ spell, level, index, prepared, togglePinned, togglePrepared
               {spell.name}
             </h5>
           </div>
-          <div className="col-auto pr-0">
-            {prepared && level > 0 && <button
-              onClick={() => togglePrepared(level, index)}
-              className={`btn ${
-                spell.prepared ? `btn-clicked` : `btn-outline-success`
-              } d-inline`}
-              name="prepared"
-              disabled={!spell.prepared && currentPrepared >= maxPrepared}
-            >
-              {spell.prepared ? 'Prepared' : 'Prepare'}
-            </button>}
-          </div>
+          {prepared && level > 0 && togglePrepared &&
+            <div className="col-auto pr-0">
+              <button
+                onClick={() => togglePrepared(level, index)}
+                className={`btn ${
+                  spell.prepared ? `btn-clicked` : `btn-outline-success`
+                } d-inline`}
+                name="prepared"
+                disabled={!spell.prepared && currentPrepared >= maxPrepared}
+              >
+                {spell.prepared ? 'Prepared' : 'Prepare'}
+              </button>
+            </div>
+          }
         </div>
+        {prepared && level > 0 && !togglePrepared &&
+          <i className="text-lowercase">{spell.prepared ? "Prepared" : "Unprepared"}</i>
+        }
         <hr className="solid" />
         <div className="spell-desc">
           <p>

@@ -12,7 +12,7 @@ import skullIcon from '../../../public/assets/imgs/skull-icon.png'
 import Description from './Description.jsx';
 import { Features, FeatureCard } from './Features.jsx';
 import Masonry from 'react-masonry-css';
-import SpellBook from './Spells';
+import { SpellBook, SpellCard } from './Spells';
 
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
@@ -66,7 +66,7 @@ const fullAbScore = {
   con: 'Constitution',
 };
 
-const preparedSpells = ['wizard', 'cleric', 'druid'];
+const preparedSpells = ['wizard', 'cleric', 'druid', 'paladin'];
 
 const Page = ({page, character, charID}) => {
   console.log("setting page", page)
@@ -123,7 +123,7 @@ const Page = ({page, character, charID}) => {
                   </div>
                 )}
                 <div className="row">
-                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} attacks={character.attacks} armor={character.armor} spells={character.spells}/>
+                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} attacks={character.attacks} armor={character.armor} spells={character.spells.cards} charClassName={character.class[0].name}/>
                 </div>
               </div>
             </div>
@@ -1320,7 +1320,7 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
             }}
           >
             {/*<input className='form-control'/>*/}
-            <span className="green">+</span>Add condition
+            <span className="text-success">+</span>Add condition
           </button>
         </div>
         <div className="card content-card description-card">
@@ -1351,7 +1351,8 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
   );
 };
 
-const Pinned = ({charID, features, traits, inventory, attacks, armor, spells}) => {
+const Pinned = ({charID, features, traits, inventory, attacks, armor, spells, charClassName}) => {
+  const dispatch = useDispatch();
 
   const breakpointColumnsObj = {
     default: 3,
@@ -1360,7 +1361,7 @@ const Pinned = ({charID, features, traits, inventory, attacks, armor, spells}) =
     575: 2,
   };
 
-  const togglePinned = (type, idx) => {
+  const togglePinned = (type, idx, level=0) => {
     if (type === 'feature') {
       features[idx].pinned = !features[idx].pinned;
       dispatch(setArrayUpdate(charID, 'features', features));
@@ -1369,17 +1370,31 @@ const Pinned = ({charID, features, traits, inventory, attacks, armor, spells}) =
       traits[idx].pinned = !traits[idx].pinned;
       dispatch(setArrayUpdate(charID, 'traits', traits));
     }
+    else if (type==='spell') {
+      spells[level][idx].pinned = !spells[level][idx].pinned;
+      dispatch(setUpdate(charID, 'spells', {cards: spells}));
+    }
     else {
 
     }
   }
 
   const cards = () => {
-    return features.map((f, index) => {return {...f, index: index}}).filter(f => (f.name && f.pinned)).map((f) => {
+    const cards = features.map((f, index) => {return {...f, index: index}}).filter(f => (f.name && f.pinned)).map((f) => {
       return <FeatureCard feature={f} togglePinned={() => {togglePinned('feature', f.index)}}/>;
     }).concat(traits.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
       return <FeatureCard feature={t} togglePinned={() => {togglePinned('trait', t.index)}}/>;
-    }));
+    })).concat(
+      Array.prototype.concat.apply([], 
+        spells.map(level => {
+          return level.map((s, index) => {return {...s, index: index}})
+            .filter(s => s.pinned)
+            .map((s) => {
+              return <SpellCard spell={s} level={s.level} index={s.index} togglePinned={() => {togglePinned('spell', s.index, s.level)}} prepared={preparedSpells.includes(charClassName.toLowerCase())}/>;
+      })}))
+    );
+    console.log("cards", cards);
+    return cards;
   }
 
   return (
@@ -1426,9 +1441,9 @@ export const SpellBoxes = ({ spells, modifier, proficiency, charID }) => {
               <tr>
                 <td>
                   <h5 className="text-uppercase text-center m-0">
-                    {modifier >= 0 ? `+${modifier}` : `-${modifier}`}
+                    {modifier >= 0 ? `+${modifier}` : `${modifier}`}
                     <super>
-                      <small>({spells.casting_ability})</small>
+                      <small> ({spells.casting_ability})</small>
                     </super>
                   </h5>
                 </td>
@@ -1441,7 +1456,7 @@ export const SpellBoxes = ({ spells, modifier, proficiency, charID }) => {
                   <h5 className="text-uppercase text-center m-0">
                     {modifier + proficiency >= 0
                       ? `+${modifier + proficiency}`
-                      : `-${modifier + proficiency}`}
+                      : `${modifier + proficiency}`}
                   </h5>
                 </td>
               </tr>

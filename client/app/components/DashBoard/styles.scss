@@ -108,7 +108,7 @@
             background-color: $green;
         }
         .blue {
-            background-color: $bright-blue;
+            background-color: $light-blue;
         }
     }
     .line-height-small {
@@ -803,6 +803,7 @@
       letter-spacing: normal;
       padding: 0 10px;
       border: none;
+      box-shadow: none;
     }
   
     .content-card {

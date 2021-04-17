@@ -46,7 +46,7 @@ div {
 }
 
 .text-success {
-  color: $green !important;
+  color: $medium-green !important;
 }
 
 .text-warning {
@@ -107,11 +107,23 @@ button {
     }
     &:hover {
       background-color: $medium-off-white;
-      color: $very-dark-blue;
+      color: $dark-blue;
     }
     &:active {
       background-color: $dark-off-white !important;
-      color: black !important;
+      color: $very-dark-blue !important;
+    }
+    &.active {
+      background-color: $medium-blue !important;
+      color: white;
+      &:hover {
+        background-color: $dark-blue !important;
+        // color: $very-dark-blue;
+      }
+      &:active {
+        background-color: $very-dark-blue !important;
+        color: white !important;
+      }
     }
   }
   &[disabled] {
