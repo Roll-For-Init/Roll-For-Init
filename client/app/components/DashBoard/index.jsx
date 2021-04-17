@@ -16,15 +16,86 @@ import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 //swap race class icons with white
 
 
-/*const download = (content, fileName, contentType)  => {
-  var a = document.createElement("a");
-  var file = new Blob([content], {type: contentType});
-  a.href = URL.createObjectURL(file);
-  a.download = fileName;
-  a.click();
-}*/
+const download = (character)  => {
+    const element = document.createElement("a");
+    const file = new Blob([JSON.stringify(character)], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = "file.txt";
+    document.body.appendChild(element);
+    element.click();
+}
 
-const formatPayload = (character) => {
+
+const getInventory = (character) => {
+  var inventory = "";
+  for (var i = 0; i < character.inventory.length; i++){
+    inventory += character.inventory[i].name + " (" + character.inventory[i].quantity + ")\n";
+  }
+  return inventory;
+}
+
+const calcArmorClass = (character) => {
+  var armorClass = 0;
+  var armorArray = character.armor;
+  for (var i = 0; i < armorArray.length; i++){
+    armorClass += parseInt(armorArray[i].armor_class.base);
+  }
+  return armorClass;
+}
+
+const formatArray = (toFormat) => {
+  var formattedString = "";
+  for (var i = 0; i < toFormat.length; i++){
+    if (i == toFormat.length - 1){
+      formattedString += toFormat[i] + "."
+      break;
+    }
+    formattedString += toFormat[i] + ", "
+  }
+  return formattedString;
+}
+
+const calculateStatWeights = (character) => {
+  var cp = 0;
+  var sp = 0;
+  var ep = 0;
+  var gp = 0;
+  var pp = 0;
+  for (var i = 0; i < character.inventory.length; i++){
+    var item = character.inventory[i];
+    if (item.cost.denomination === "cp"){
+      cp += parseInt(item.cost.amount);
+    }
+    if (item.cost.denomination === "sp"){
+      sp += parseInt(item.cost.amount);
+    }
+    if (item.cost.denomination === "ep"){
+      ep += parseInt(item.cost.amount);
+    }
+    if (item.cost.denomination === "gp"){
+      gp += parseInt(item.cost.amount);
+    }
+    if (item.cost.denomination === "pp"){
+      pp += parseInt(item.cost.amount);
+    }
+  }
+  var invArray = [cp, sp, ep, gp, pp]
+  return invArray;
+}
+
+const isProficient = (proficiency) => {
+  if (proficiency){
+    return "⬤"
+  }
+  else return "";
+}
+
+const calcBonus = (character) => {
+  return "+" + parseInt(character.ability_scores.str.modifier) + (parseInt(character.ability_scores.dex.modifier) + parseInt(character.proficiency_bonus));
+  
+}
+const formatPayload = (character, user) => {
+  var invStats = calculateStatWeights(character);
   var payload = {
     "title": "Character Sheet Demo",
     "fontSize": 10,
@@ -34,22 +105,22 @@ const formatPayload = (character) => {
       "Class": character.class[0].name,
       "Background": character.background.name,
       "Race": character.race.name,
-      "Alignment": character.lore.alignment,
-      "EXP": character.experience.current,
+      "Alignment": character.lore.alignment[0].name,
+      "EXP": character.experience.current + "/" + character.experience.threshold,
       "STR": character.ability_scores.str.score,
       "DXT": character.ability_scores.dex.score,
       "CON": character.ability_scores.con.score,
       "INT": character.ability_scores.int.score,
       "WIS": character.ability_scores.wis.score,
       "CHR": character.ability_scores.cha.score,
-      //"ArmorClass": "Armor Class",
+      //"ArmorClass": calcArmorClass(character),
       "PersonalityTraits": character.lore.personality_traits,
       "Ideals": character.lore.ideals,
       "Flaws": character.lore.flaws,
-      "Features": character.features.name,
-      "Languages": character.misc_proficiencies.languages,
-      "Armor": character.misc_proficiencies.armor,
-      "Weapons": character.misc_proficiencies.weapons,
+      "Features": character.features[0].desc,
+      "Languages": "Languages: " + formatArray(character.misc_proficiencies.languages),
+      "Armor": "Armor: " + formatArray(character.misc_proficiencies.armor),
+      "Weapons": "Weapons: " + formatArray(character.misc_proficiencies.weapons),
       "STRmod": ("+" + character.ability_scores.str.modifier),
       "DXTmod": ("+" + character.ability_scores.dex.modifier),
       "CONmod": ("+" + character.ability_scores.con.modifier),
@@ -60,16 +131,16 @@ const formatPayload = (character) => {
       "Bonds": character.lore.bonds,
       "Initiative": character.initiative_bonus,
       "Speed": character.walking_speed,
-      /*"STstr": characterService.saving_throws.str.advantage,
-      "STdxt": characterService.saving_throws.dxt.advantage,
-      "STcon": characterService.saving_throws.con.advantage,
-      "STint": characterService.saving_throws.int.advantage,
-      "STwis": characterService.saving_throws.wis.advantage,
-      "STchr": characterService.saving_throws.chr.advantage,*/
+      "STstr": ("+" + character.saving_throws.str.modifier),
+      "STdxt": ("+" + character.saving_throws.str.modifier),
+      "STcon": ("+" + character.saving_throws.con.modifier),
+      "STint": ("+" + character.saving_throws.int.modifier),
+      "STwis": ("+" + character.saving_throws.wis.modifier),
+      "STchr": ("+" + character.saving_throws.cha.modifier),
       "CurrentHP": character.health.current,
       "MaxHP": character.health.max,
       "TempHP": character.health.temp,
-      /*"Acrobatics": ("+" + character.skills.acrobatics.modifier),
+      "Acrobatics": ("+" + character.skills.acrobatics.modifier),
       "AnimalHandling": ("+" + character.skills.animal_handling.modifier),
       "Arcana": ("+" + character.skills.arcana.modifier),
       "Athletics": ("+" + character.skills.athletics.modifier),
@@ -86,23 +157,55 @@ const formatPayload = (character) => {
       "Religion": ("+" + character.skills.religion.modifier),
       "SleightOfHand": "+0",
       "Stealth": "+0",
-      "Survival": "+0",*/
+      "Survival": "+0",
       "Attack1": character.attacks.weapons[0].name,
       "Attack2": character.attacks.weapons[1].name,
       "Attack3": character.attacks.weapons[2].name,
-      //"Bonus3": character.attacks.weapons[2].advantage,
-      //"Bonus2": character.attacks.weapons[1].advantage,
-      //"Bonus1": character.attacks.weapons[0].advantage,
-      "Damage1": character.attacks.weapons[0].damage_dice,
-      "Damage2": character.attacks.weapons[1].damage_dice,
-      "Damage3": character.attacks.weapons[2].damange_dice
+      "Bonus3": calcBonus(character),
+      "Bonus2": calcBonus(character),
+      "Bonus1": calcBonus(character),
+      "Damage1": character.attacks.weapons[0].damage.damage_type + "/" + character.attacks.weapons[0].damage.damage_dice,
+      "Damage2": character.attacks.weapons[1].damage.damage_type + "/" + character.attacks.weapons[1].damage.damage_dice,
+      "Damage3": character.attacks.weapons[2].damage.damage_type + "/" + character.attacks.weapons[2].damage.damage_dice,
+      "HitDice": character.hit_dice[0].current,
+      "Inspiration": ((character.inspiration) ? "+1" : "+0"),
+      "Username": character.name,
+      "CP": invStats[0],
+      "SP": invStats[1],
+      "EP": invStats[2],
+      "GP": invStats[3],
+      "PP": invStats[4],
+      "Inventory": getInventory(character),
+      "AcrobaticsPro": isProficient(character.skills.acrobatics.proficiency),
+      "AnimalHandlingPro": isProficient(character.skills.animal_handling.proficiency),
+      "ArcanaPro": isProficient(character.skills.arcana.proficiency),
+      "AthleticsPro": isProficient(character.skills.athletics.proficiency),
+      "DeceptionPro": isProficient(character.skills.deception.proficiency),
+      "HistoryPro": isProficient(character.skills.history.proficiency),
+      "InsightPro": isProficient(character.skills.insight.proficiency),
+      "IntimidationPro": isProficient(character.skills.intimidation.proficiency),
+      "InvestigationPro": isProficient(character.skills.investigation.proficiency),
+      "MedicinePro": isProficient(character.skills.medicine.proficiency),
+      "NaturePro": isProficient(character.skills.nature.proficiency),
+      "PerceptionPro": isProficient(character.skills.perception.proficiency),
+      "PerformancePro": isProficient(character.skills.performance.proficiency),
+      "PersuasionPro": isProficient(character.skills.persuasion.proficiency),
+      "ReligionPro": isProficient(character.skills.religion.proficiency),
+      "STstrPro": isProficient(character.saving_throws.str.proficiency),
+      "STdxtPro": isProficient(character.saving_throws.dex.proficiency),
+      "STconPro": isProficient(character.saving_throws.con.proficiency),
+      "STintPro": isProficient(character.saving_throws.int.proficiency),
+      "STwisPro": isProficient(character.saving_throws.wis.proficiency),
+      "STchrPro": isProficient(character.saving_throws.cha.proficiency)
     }
   }
     return payload;
 }
 
-const pdfExport = async(character) => {
-  axios.post('api/pdf/pdfGen', formatPayload(character), {responseType: 'blob'}).then(response => {
+const pdfExport = async(character, user) => {
+  //console.log(JSON.stringify(character));
+  //console.log(calculateAC(character));
+  axios.post('api/pdf/pdfGen', formatPayload(character, user), {responseType: 'blob'}).then(response => {
     const file = new Blob([response.data], {
       type: "application/pdf"
     });
@@ -298,8 +401,13 @@ export const DashBoard = () => {
               <D20 fill="#ffffff" width="45" height="45" />
             </button>
           </span>
-          <span style={{paddingLeft:'775px'}}>
-          <button className="text-uppercase btn btn-primary" onClick={() => {pdfExport(character)}}>
+          <span style={{paddingLeft:'500px'}}>
+          <button className="text-uppercase btn btn-primary" onClick={() => {download(character)}}>
+          Download Character
+          </button>
+          </span>
+          <span style={{paddingLeft:'0px'}}>
+          <button className="text-uppercase btn btn-primary" onClick={() => {pdfExport(character, user)}}>
           Export as PDF
           </button>
           </span>
