@@ -127,6 +127,7 @@ const update_character = (req, res) => {
 
 const create_character = (req, res) => {
   console.log('Attempting to update user:', req.body);
+  if(!req.body.user) return throwError(res, 401, 'Not logged in')
   let query = { username: req.body.user.username };
   let oldUser = {};
   //Checks that the user id's match

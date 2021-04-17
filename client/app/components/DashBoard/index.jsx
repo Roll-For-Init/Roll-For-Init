@@ -9,6 +9,7 @@ import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-editable-label';
 import skullIcon from '../../../public/assets/imgs/skull-icon.png';
+import SpellBook from "./Spells";
 
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
@@ -82,6 +83,7 @@ export const DashBoard = () => {
           100}%`
       )
     : useState();
+  const [showSpells, setShowSpells] = useState(false);
 
   return character.level ? (
     <div id="dashboard" className="dashboard">
@@ -215,9 +217,9 @@ export const DashBoard = () => {
                 <button className="text-uppercase btn btn-primary">
                   Inventory
                 </button>
-                <button className="text-uppercase btn btn-primary">
+                {character.spells &&<button onClick={() => setShowSpells(true)} className="text-uppercase btn btn-primary">
                   Spellbook
-                </button>
+                </button>}
                 <button className="text-uppercase btn btn-primary">
                   Description
                 </button>
@@ -241,6 +243,17 @@ export const DashBoard = () => {
               </div>
             </div>
           </div>
+          {showSpells ? <SpellBook spellcasting={character.spells} modifier={
+                      character.spells
+                        ? character.ability_scores[
+                            character.spells.casting_ability
+                          ].modifier
+                        : null
+                    }
+                    proficiency={character.proficiency_bonus}
+                    charID={charID}
+                    prepared={preparedSpells.includes(character.class[0].name.toLowerCase())}/> 
+      : 
           <div className="row">
             <div className="col-xl-5 px-0 maincol">
               <div className="row">
@@ -307,6 +320,8 @@ export const DashBoard = () => {
               </div>
             </div>
           </div>
+         }
+
         </div>
         {/* </div> */}
       </div>
@@ -1340,8 +1355,20 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
     </>
   );
 };
-
 const SpellsAndPinned = ({ spells, modifier, proficiency, charID }) => {
+  return (
+    <div className="card translucent-card w-100 mx-0">
+      {spells != null && (
+        <div className="row px-5">
+        <SpellBoxes spells={spells} modifier={modifier} proficiency={proficiency} charID={charID}/>
+        </div>
+      )}
+      <div className="row"></div>
+    </div>
+  );
+};
+
+export const SpellBoxes = ({spells, modifier, proficiency, charID}) => {
   const dispatch = useDispatch();
 
   const spendSpell = level => {
@@ -1358,9 +1385,7 @@ const SpellsAndPinned = ({ spells, modifier, proficiency, charID }) => {
   };
 
   return (
-    <div className="card translucent-card w-100 mx-0">
-      {spells != null && (
-        <div className="row px-5">
+      <>
           <div>
             <div className="card content-card description-card p-1">
               <h6 className="text-uppercase text-center m-0">Spellcasting</h6>
@@ -1469,11 +1494,9 @@ const SpellsAndPinned = ({ spells, modifier, proficiency, charID }) => {
               </table>
             </div>
           </div>
-        </div>
-      )}
-      <div className="row"></div>
-    </div>
-  );
-};
+          </>
+      )
+}
+
 
 export default DashBoard;

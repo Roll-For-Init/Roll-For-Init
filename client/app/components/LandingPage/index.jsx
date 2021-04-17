@@ -258,14 +258,14 @@ const LandingPage = () => {
     // }
     localStorage.setItem('state', JSON.stringify(user));
     console.log(character[0])
-    if (JSON.parse(localStorage.getItem('state')).app.current_character === character[0]) {
+    if (JSON.parse(localStorage.getItem('state'))?.app?.current_character === character[0]) {
       console.log("character id updated: ", JSON.parse(localStorage.getItem('state')).app.current_character);
       
       history.push('/dashboard');
     }
   }
   
-  console.log(JSON.parse(localStorage.getItem('state')).app.current_character);
+  console.log(JSON.parse(localStorage.getItem('state'))?.app?.current_character);
   
   function importAll(r) {
     let images = {};

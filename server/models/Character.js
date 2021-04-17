@@ -691,6 +691,10 @@ const CharacterSchema = new Schema(
             type: Boolean,
             default: false,
           },
+          prepared: {
+              type: Boolean,
+              default: false
+          }
         },
       ],
       /*

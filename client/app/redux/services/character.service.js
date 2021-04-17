@@ -5,13 +5,7 @@ const {parseEquipment, fillModel} = require('../../utils/characterValidator');
 const API_URL = '/api/';
 
 const validateCharacter = async characterData => {
-    console.log(characterData.equipment);
-    console.log(characterData.class.proficiencies);
-    console.log(characterData.race.proficiencies);
-    console.log(characterData.background.proficiencies);
-    console.log(characterData.class.proficiencies.Armor.concat(characterData.race.proficiencies.Armor).concat(characterData.background.proficiencies.Armor))
     let equipment = await parseEquipment(characterData.equipment, [...characterData.class.proficiencies.Weapons||[], ...characterData.race.proficiencies.Weapons||[], ...characterData.background.proficiencies.Weapons||[]], [...characterData.class.proficiencies.Armor||[], ...characterData.race.proficiencies.Armor||[], ...characterData.background.proficiencies.Armor||[]]);
-    console.log(equipment);
     return await fillModel(equipment, characterData).then((validatedCharacter) => {
         return validatedCharacter
     });    
