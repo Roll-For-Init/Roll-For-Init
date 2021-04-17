@@ -9,6 +9,9 @@ import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
 import EditableLabel from 'react-editable-label';
 import skullIcon from '../../../public/assets/imgs/skull-icon.png';
+import Features from './Features.jsx';
+import Description from './Description.jsx';
+import Inventory from './Inventory.jsx';
 
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
@@ -76,6 +79,7 @@ export const DashBoard = () => {
   const [showLongRest, setShowLongRest] = useState(false);
   const [showExp, setShowExp] = useState(false);
   const [showRoller, setShowRoller] = useState(false);
+  const [showFeatures, setShowFeaures] = useState(true);
   const [currentPercentage, setCurrentPercentage] = character.level
     ? useState(
         `${(character.experience.current / character.experience.threshold) *
@@ -221,7 +225,10 @@ export const DashBoard = () => {
                 <button className="text-uppercase btn btn-primary">
                   Description
                 </button>
-                <button className="text-uppercase btn btn-primary">
+                <button
+                  className="text-uppercase btn btn-primary"
+                  onClick={() => setShowFeaures(true)}
+                >
                   Features
                 </button>
               </div>
@@ -241,72 +248,89 @@ export const DashBoard = () => {
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="col-xl-5 px-0 maincol">
-              <div className="row">
-                <div className="col-sm-6 pl-0 pr-2">
-                  <AbilitiesCard ability_scores={character.ability_scores} />
-                  <SavingThrowsCard saving_throws={character.saving_throws} />
-                  <ProficienciesCard
-                    misc_proficiencies={character.misc_proficiencies}
-                  />
+          {!showFeatures ? (
+            <div className="row">
+              <div className="col-xl-5 px-0 maincol">
+                <div className="row">
+                  <div className="col-sm-6 pl-0 pr-2">
+                    <AbilitiesCard ability_scores={character.ability_scores} />
+                    <SavingThrowsCard saving_throws={character.saving_throws} />
+                    <ProficienciesCard
+                      misc_proficiencies={character.misc_proficiencies}
+                    />
+                  </div>
+                  <div className="col-sm-6 px-2">
+                    <SkillsCard
+                      skills={character.skills}
+                      proficiency={character.proficiency_bonus}
+                    />
+                    <SensesCard
+                      perception={character.skills.perception.modifier}
+                      insight={character.skills.insight.modifier}
+                      investigation={character.skills.investigation.modifier}
+                    />
+                  </div>
                 </div>
-                <div className="col-sm-6 px-2">
-                  <SkillsCard
-                    skills={character.skills}
-                    proficiency={character.proficiency_bonus}
-                  />
-                  <SensesCard
-                    perception={character.skills.perception.modifier}
-                    insight={character.skills.insight.modifier}
-                    investigation={character.skills.investigation.modifier}
-                  />
+              </div>
+              <div className="col-xl-7 px-0">
+                <div className="row">
+                  <div className="col-sm-8 px-2">
+                    <StatsCard
+                      initiative={character.initiative_bonus}
+                      ac={character.ac}
+                      speed={character.walking_speed}
+                      charID={charID}
+                    />
+                    <HitPointsCard
+                      key={`${character.health.current}-health`}
+                      health={character.health}
+                      hit_dice={character.hit_dice}
+                      deathThrows={character.death_throws}
+                      charID={charID}
+                    />
+                  </div>
+                  <div className="col-sm-4 px-2 pr-0 pl-2">
+                    <ExtraStatsCard
+                      charID={charID}
+                      conditions={character.conditions}
+                      defenses={character.defenses}
+                    />
+                  </div>
+                </div>
+                <div className="pinned row px-2">
+                  <div className="col-12 px-0">
+                    <SpellsAndPinned
+                      spells={character.spells}
+                      modifier={
+                        character.spells
+                          ? character.ability_scores[
+                              character.spells.casting_ability
+                            ].modifier
+                          : null
+                      }
+                      proficiency={character.proficiency_bonus}
+                      charID={charID}
+                    />
+                  </div>
                 </div>
               </div>
             </div>
-            <div className="col-xl-7 px-0">
-              <div className="row">
-                <div className="col-sm-8 px-2">
-                  <StatsCard
-                    initiative={character.initiative_bonus}
-                    ac={character.ac}
-                    speed={character.walking_speed}
-                    charID={charID}
-                  />
-                  <HitPointsCard
-                    key={`${character.health.current}-health`}
-                    health={character.health}
-                    hit_dice={character.hit_dice}
-                    deathThrows={character.death_throws}
-                    charID={charID}
-                  />
-                </div>
-                <div className="col-sm-4 px-2 pr-0 pl-2">
-                  <ExtraStatsCard
-                    charID={charID}
-                    conditions={character.conditions}
-                    defenses={character.defenses}
-                  />
-                </div>
-              </div>
-              <div className="pinned row px-2">
-                <div className="col-12 px-0">
-                  <SpellsAndPinned
-                    spells={character.spells}
-                    modifier={
-                      character.spells
-                        ? character.ability_scores[
-                            character.spells.casting_ability
-                          ].modifier
-                        : null
-                    }
-                    proficiency={character.proficiency_bonus}
-                    charID={charID}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          ) : (
+            <Inventory
+              charID={charID}
+              features={[]}
+              traits={[]}
+              treasure={character.treasure}
+              character={character}
+              str_score={character.ability_scores.str.score}
+              inventory={character.inventory}
+              weapons={character.attacks.weapons.concat(
+                character.attacks.magic_weapons
+              )}
+              charClassName={character.class[0].name}
+              armor={character.equipped_armor}
+            />
+          )}
         </div>
         {/* </div> */}
       </div>
