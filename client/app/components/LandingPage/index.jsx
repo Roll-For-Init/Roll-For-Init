@@ -28,7 +28,7 @@ const DraftCharacterCard = ({ character }) => {
 
 const UploadCharacter = () => {
   const maxImageSize = 10000000; // bytes
-  const acceptedFileTypes = 'application/pdf';
+  const acceptedFileTypes = 'text/plain';
   const characterLimit = 28;
   const acceptedFileTypesArray = acceptedFileTypes.split(',').map(item => {
     return item.trim();
@@ -53,8 +53,8 @@ const UploadCharacter = () => {
         return false;
       }
       if (!acceptedFileTypesArray.includes(currentFileType)) {
-        console.log('Please only upload a PDF.');
-        setErrors('Please only upload a PDF.');
+        console.log('Please only upload a text file.');
+        setErrors('Please only upload a text file.');
         return false;
       }
       return true;
@@ -115,11 +115,11 @@ const UploadCharacter = () => {
               <h5>Upload a Character</h5>
             </div>
             <div className="modal-sect">
-              <p>Please upload your Roll For Init PDF character sheet.</p>
+              <p>Please upload your Roll For Init character text file.</p>
             </div>
             <Dropzone
               onDrop={handleOnDrop}
-              accept="application/pdf"
+              accept="text/plain"
               multiple={false}
               maxSize={maxImageSize}
             >

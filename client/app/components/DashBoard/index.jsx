@@ -20,7 +20,7 @@ const download = (character)  => {
     const element = document.createElement("a");
     const file = new Blob([JSON.stringify(character)], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = "file.txt";
+    element.download = "character.txt";
     document.body.appendChild(element);
     element.click();
 }
@@ -113,7 +113,7 @@ const formatPayload = (character, user) => {
       "INT": character.ability_scores.int.score,
       "WIS": character.ability_scores.wis.score,
       "CHR": character.ability_scores.cha.score,
-      //"ArmorClass": calcArmorClass(character),
+      "ArmorClass": "0",
       "PersonalityTraits": character.lore.personality_traits,
       "Ideals": character.lore.ideals,
       "Flaws": character.lore.flaws,
@@ -167,7 +167,7 @@ const formatPayload = (character, user) => {
       "Damage1": character.attacks.weapons[0].damage.damage_type + "/" + character.attacks.weapons[0].damage.damage_dice,
       "Damage2": character.attacks.weapons[1].damage.damage_type + "/" + character.attacks.weapons[1].damage.damage_dice,
       "Damage3": character.attacks.weapons[2].damage.damage_type + "/" + character.attacks.weapons[2].damage.damage_dice,
-      "HitDice": character.hit_dice[0].current,
+      "HitDice": character.hit_dice[0].current + "d" + character.hit_dice[0].type,
       "Inspiration": ((character.inspiration) ? "+1" : "+0"),
       "Username": character.name,
       "CP": invStats[0],
@@ -196,7 +196,8 @@ const formatPayload = (character, user) => {
       "STconPro": isProficient(character.saving_throws.con.proficiency),
       "STintPro": isProficient(character.saving_throws.int.proficiency),
       "STwisPro": isProficient(character.saving_throws.wis.proficiency),
-      "STchrPro": isProficient(character.saving_throws.cha.proficiency)
+      "STchrPro": isProficient(character.saving_throws.cha.proficiency),
+      "HitDiceTotal": character.hit_dice[0].max + "d" + character.hit_dice[0].type
     }
   }
     return payload;
