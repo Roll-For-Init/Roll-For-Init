@@ -674,6 +674,82 @@
     }
   }
 }
+.spells-container {
+  .active {
+    .dd-header__title, .dd-header__action {
+        color: white !important;
+    }
+}
+.wrapper-button {
+    padding-top: 0;
+    svg {
+        height: auto;
+    }
+}
+  .dd-wrapper {
+      width: auto;
+      div:last-of-type {
+        margin-right: 0;
+      }
+  }
+  .dd-header {
+    box-shadow: 1px 2px 2px rgb(0 0 0 / 67%);
+  }
+  .dd-list {
+      border: none;
+  }
+.my-masonry-grid {
+  margin-left: -15px;
+  margin-top: 0px;
+}
+.my-masonry-grid_column {
+  padding-left: 30px;
+}
+.translucent-card {
+  max-width: 100%;
+  padding: 10px;
+  margin: 25px;
+  > h4 {
+    margin-bottom: 0;
+    text-align: center;
+    color: white;
+  }
+  &:first-child {
+    margin-left: 0;
+  }
+  &:last-child {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
+
+.filter-text {
+  color: white;
+  margin: auto 15px;
+  font-size: 1.2em;
+}
+
+.filter-button {
+  color: $dark-blue;
+  margin: 0 15px 0 0;
+  font-variant: normal;
+  letter-spacing: normal;
+  padding: 0 10px;
+  border: none;
+}
+
+.content-card {
+  border: none;
+  margin: 0;
+}
+
+.extra-padding {
+
+    div:first-child {
+            margin-right:50px;
+    }
+  }
+}
 
 .inventory-container {
   .my-masonry-grid {

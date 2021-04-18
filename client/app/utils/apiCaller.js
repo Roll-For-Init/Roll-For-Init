@@ -185,7 +185,7 @@ const optionsHelper = async (container, options, key) => {
     optionSet.desc = container.desc;
     optionSet.type = 'feature';
   } else if (options.type.toLowerCase().includes('trait')) {
-    console.log(options);
+    //console.log(options);
     optionSet.header = options.header
       ? options.header
       : options.type.replace('_', ' ');
@@ -739,7 +739,6 @@ const getAlignments = async () => {
 const equipmentDetails = async equipment => {
   const promises = [];
   let result;
-  console.log(equipment);
   if (equipment[0]?.equipment) {
     result = equipment.map(theItem => {
       if(theItem.category && theItem.category == 'currency') {
@@ -782,6 +781,22 @@ const equipmentDetails = async equipment => {
       }
       return item;
     });
+  }
+  else if(equipment[0]?.item) {
+      result = equipment.map(item => {
+          if(item.item.url != undefined) {
+            promises.push(
+                axios.get(item.item.url).then(itemDetails => {
+                  itemDetails = itemDetails.data;
+                  makeEquipmentDesc(item, itemDetails).then(desc => {
+                    item.item.desc = desc;
+                  });
+                  return item;
+                })
+              );
+          }
+          return item;
+      })
   }
   else {
     result = equipment.map(theItem => {
