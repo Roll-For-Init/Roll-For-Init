@@ -260,7 +260,7 @@ const AbilityBonusCard = ({ ability_bonuses }) => {
           return `+${ability.bonus} ${ability.ability_score.full_name}`;
         else
           return (
-            <div key={index}>
+            <div key={index} style={{color: "#404959"}}>
               +{ability.bonus} {ability.ability_score.full_name}
               <br />
             </div>
@@ -411,58 +411,60 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
       {raceInfo.options.length > 0 && (
         <div className="card translucent-card">
           <h4 className="card content-card card-title">Race Options</h4>
-          {raceInfo.options.map((option, index) => {
-            return (
-              <div key={index}>
-                <div className="dd-container">
-                  <Dropdown
-                    ddLabel={`${option.header}`}
-                    title={`Choose ${option.choose}`}
-                    items={option.options.filter(
-                      item =>
-                        !skill.includes(item.name.toString().toLowerCase())
-                    )}
-                    width="100%"
-                    selectLimit={option.choose}
-                    multiSelect={option.choose > 1}
-                    selection={
-                      userChoices[
-                        `${option.header.toLowerCase().replace(' ', '-')}-${
-                          option.type
-                        }-${index}`
-                      ]
-                    }
-                    setSelection={setUserChoices}
-                    popover={Array.isArray(option.desc)}
-                    popoverText={option.desc?.map(desc => (
-                      <p key={desc}>{desc}</p>
-                    ))}
-                    classname="dd-choice"
-                    stateKey={`${option.header
-                      .toLowerCase()
-                      .replace(' ', '-')}-${option.type}-${index}`}
-                  />
-                </div>
-                {Array.isArray(option.desc) &&
-                  userChoices[
-                    `${option.header.toLowerCase().replace(' ', '-')}-${
-                      option.type
-                    }-${index}`
-                  ] && (
-                    <div className="card content-card description-card mb-0">
-                      {userChoices[
-                        `${option.header.toLowerCase().replace(' ', '-')}-${
-                          option.type
-                        }-${index}`
-                      ].map(
-                        choice =>
-                          Array.isArray(choice.desc) && <p>{choice.desc}</p>
+          <div>
+            {raceInfo.options.map((option, index) => {
+              return (
+                <>
+                  <div className="dd-container">
+                    <Dropdown
+                      ddLabel={`${option.header}`}
+                      title={`Choose ${option.choose}`}
+                      items={option.options.filter(
+                        item =>
+                          !skill.includes(item.name.toString().toLowerCase())
                       )}
-                    </div>
-                  )}
-              </div>
-            );
-          })}
+                      width="100%"
+                      selectLimit={option.choose}
+                      multiSelect={option.choose > 1}
+                      selection={
+                        userChoices[
+                          `${option.header.toLowerCase().replace(' ', '-')}-${
+                            option.type
+                          }-${index}`
+                        ]
+                      }
+                      setSelection={setUserChoices}
+                      popover={Array.isArray(option.desc)}
+                      popoverText={option.desc?.map(desc => (
+                        <p key={desc}>{desc}</p>
+                      ))}
+                      classname="dd-choice"
+                      stateKey={`${option.header
+                        .toLowerCase()
+                        .replace(' ', '-')}-${option.type}-${index}`}
+                    />
+                  </div>
+                  {Array.isArray(option.desc) &&
+                    userChoices[
+                      `${option.header.toLowerCase().replace(' ', '-')}-${
+                        option.type
+                      }-${index}`
+                    ] && (
+                      <div className="card content-card description-card mb-0">
+                        {userChoices[
+                          `${option.header.toLowerCase().replace(' ', '-')}-${
+                            option.type
+                          }-${index}`
+                        ].map(
+                          choice =>
+                            Array.isArray(choice.desc) && <p>{choice.desc}</p>
+                        )}
+                      </div>
+                    )}
+                </>
+              );
+            })}
+          </div>
         </div>
       )}
       {raceInfo.profCount > 0 && (

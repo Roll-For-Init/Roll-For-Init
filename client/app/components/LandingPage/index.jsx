@@ -121,6 +121,14 @@ const UploadCharacter = () => {
       >
         <div className="modal-dialog modal-dialog-centered" role="document">
           <div className="modal-content">
+            <button
+            type="button"
+            className="close"
+            data-dismiss="modal"
+            aria-label="Close"
+            >
+              <i className="bi bi-x"></i>
+            </button>
             <div className="modal-sect pb-0">
               <h5>Upload a Character</h5>
             </div>
@@ -268,14 +276,14 @@ const LandingPage = () => {
     // }
     localStorage.setItem('state', JSON.stringify(user));
     console.log(character[0])
-    if (JSON.parse(localStorage.getItem('state')).app.current_character === character[0]) {
+    if (JSON.parse(localStorage.getItem('state'))?.app?.current_character === character[0]) {
       console.log("character id updated: ", JSON.parse(localStorage.getItem('state')).app.current_character);
       
       history.push('/dashboard');
     }
   }
   
-  console.log(JSON.parse(localStorage.getItem('state')).app.current_character);
+  console.log(JSON.parse(localStorage.getItem('state'))?.app?.current_character);
   
   function importAll(r) {
     let images = {};

@@ -10,7 +10,13 @@ import Modal from 'react-bootstrap4-modal';
 import axios from 'axios';
 import characterService from '../../redux/services/character.service';
 import EditableLabel from 'react-editable-label';
-import skullIcon from '../../../public/assets/imgs/skull-icon.png';
+import skullIcon from '../../../public/assets/imgs/skull-icon.png'
+import Description from './Description.jsx';
+import { Features, FeatureCard } from './Features.jsx';
+import Masonry from 'react-masonry-css';
+import { SpellBook, SpellCard } from './Spells';
+import { Inventory, EquipmentItem } from './Inventory';
+
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
 //swap race class icons with white
@@ -301,7 +307,86 @@ const fullAbScore = {
   con: 'Constitution',
 };
 
-const preparedSpells = ['wizard', 'cleric', 'druid'];
+const preparedSpells = ['wizard', 'cleric', 'druid', 'paladin'];
+
+const Page = ({page, character, charID}) => {
+  console.log("setting page", page)
+  switch (page.name) {
+    case "description":
+      return <Description character={character} />;
+    case "features":
+      return <Features charID={charID} features={character.features} traits={character.traits} />;
+    case "spellbook":
+      return <SpellBook spellcasting={character.spells} modifier={
+          character.spells
+            ? character.ability_scores[
+                character.spells.casting_ability
+              ].modifier
+            : null
+          }
+        proficiency={character.proficiency_bonus}
+        charID={charID}
+        prepared={preparedSpells.includes(character.class[0].name.toLowerCase())}
+      />;
+    case "inventory":
+      return <Inventory
+        charID={charID}
+        features={[]}
+        traits={[]}
+        treasure={character.treasure}
+        character={character}
+        str_score={character.ability_scores.str.score}
+        inventory={character.inventory}
+        weapons={character.attacks.weapons}
+        charClassName={character.class[0].name}
+        armor={character.equipped_armor}
+      />;
+    case "dashboard":
+    default:
+      return (
+        <div className="row">
+        <div className="col-xl-5 px-0 maincol">
+          <div className="row">
+            <div className="col-sm-6 pl-0 pr-2">
+                <AbilitiesCard ability_scores={character.ability_scores} />
+                <SavingThrowsCard saving_throws={character.saving_throws} />
+                <ProficienciesCard misc_proficiencies={character.misc_proficiencies} />
+            </div>
+            <div className="col-sm-6 px-2">
+                    <SkillsCard skills={character.skills} proficiency={character.proficiency_bonus}/>
+                    <SensesCard perception={character.skills.perception.modifier} insight={character.skills.insight.modifier} investigation={character.skills.investigation.modifier}/>
+            </div>
+          </div>
+        </div>
+        <div className="col-xl-7 px-0">
+          <div className="row">
+            <div className="col-sm-8 px-2">
+                    <StatsCard initiative={character.initiative_bonus} ac={character.ac} speed={character.walking_speed} charID={charID}/>
+                    <HitPointsCard key={`${character.health.current}-health`} health={character.health} hit_dice={character.hit_dice} deathThrows={character.death_throws} charID={charID}/>
+            </div>
+            <div className="col-sm-4 px-2 pr-0 pl-2">
+              <ExtraStatsCard charID={charID} conditions={character.conditions} defenses={character.defenses}/>
+            </div>
+          </div>
+          <div className="pinned row px-2">
+            <div className="col-12 px-0">
+              <div className="card translucent-card w-100 mx-0">
+                {character.spells != null && (
+                  <div className="row px-md-5">
+                  <SpellBoxes spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID}/>
+                  </div>
+                )}
+                <div className="row">
+                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} weapons={character.attacks.weapons} armor={character.equipped_armor} treasure={character.treasure.other} spells={character.spells.cards} charClassName={character.class[0].name}/>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      );
+  }
+}
 
 export const DashBoard = () => {
   const user = useSelector(state => state.user);
@@ -309,18 +394,26 @@ export const DashBoard = () => {
 
   const charID = JSON.parse(localStorage.getItem('state')).app
     .current_character;
-  const character = useSelector(state => state.characters[charID]);
+  const characterInfo = useSelector(state => state.characters[charID]);
+  const [character, setCharacter] = useState(characterInfo);
   console.log(character);
   const [showShortRest, setShowShortRest] = useState(false);
   const [showLongRest, setShowLongRest] = useState(false);
   const [showExp, setShowExp] = useState(false);
   const [showRoller, setShowRoller] = useState(false);
+  const [showFeatures, setShowFeaures] = useState(true);
   const [currentPercentage, setCurrentPercentage] = character.level
     ? useState(
         `${(character.experience.current / character.experience.threshold) *
           100}%`
       )
     : useState();
+  const [showSpells, setShowSpells] = useState(false);
+  const [page, setPage] = useState({name: "dashboard"});
+
+  useEffect(() => {
+    setCharacter(characterInfo);
+  }, [characterInfo]);
 
   return character.level ? (
     <div id="dashboard" className="dashboard">
@@ -456,108 +549,41 @@ export const DashBoard = () => {
             </p>
           );
         })} */}
-      <div style={{ paddingTop: '105px' }}>
+      <div style={{paddingTop: '105px'}}>
         <div className="container-fluid px-5 py-3">
-          <div className="row position-relative no-gutters mb-2">
+          <div className="row position-relative no-gutters mb-2" >
             <div className="w-100">
               <div className="float-start w-auto d-inline-block">
-                <button className="text-uppercase btn btn-primary">
+                <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "dashboard"})}>
+                  Dashboard
+                </button>
+                <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "inventory"})}>
                   Inventory
                 </button>
-                <button className="text-uppercase btn btn-primary">
-                  Spellbook
-                </button>
-                <button className="text-uppercase btn btn-primary">
+                {character.spells &&
+                  <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "spellbook"})}>
+                    Spellbook
+                  </button>
+                }
+                <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "description"})}>
                   Description
                 </button>
-                <button className="text-uppercase btn btn-primary">
+                <button className="text-uppercase btn btn-primary" onClick={() => setPage({name: "features"})}>
                   Features
                 </button>
               </div>
               <div className="float-right w-auto d-inline-block">
-                <button
-                  onClick={() => setShowShortRest(true)}
-                  className="text-uppercase btn btn-secondary mx-2"
-                >
+                <button onClick={() => setShowShortRest(true)} className="text-uppercase btn btn-secondary mx-2">
                   Short Rest
                 </button>
-                <button
-                  onClick={() => setShowLongRest(true)}
-                  className="text-uppercase btn btn-secondary mx-2"
-                >
+                <button onClick={() => setShowLongRest(true)} className="text-uppercase btn btn-secondary mx-2">
                   Long Rest
                 </button>
               </div>
             </div>
           </div>
-          <div className="row">
-            <div className="col-xl-5 px-0 maincol">
-              <div className="row">
-                <div className="col-sm-6 pl-0 pr-2">
-                  <AbilitiesCard ability_scores={character.ability_scores} />
-                  <SavingThrowsCard saving_throws={character.saving_throws} />
-                  <ProficienciesCard
-                    misc_proficiencies={character.misc_proficiencies}
-                  />
-                </div>
-                <div className="col-sm-6 px-2">
-                  <SkillsCard
-                    skills={character.skills}
-                    proficiency={character.proficiency_bonus}
-                  />
-                  <SensesCard
-                    perception={character.skills.perception.modifier}
-                    insight={character.skills.insight.modifier}
-                    investigation={character.skills.investigation.modifier}
-                  />
-                </div>
-              </div>
-            </div>
-            <div className="col-xl-7 px-0">
-              <div className="row">
-                <div className="col-sm-8 px-2">
-                  <StatsCard
-                    initiative={character.initiative_bonus}
-                    ac={character.ac}
-                    speed={character.walking_speed}
-                    charID={charID}
-                  />
-                  <HitPointsCard
-                    key={`${character.health.current}-health`}
-                    health={character.health}
-                    hit_dice={character.hit_dice}
-                    deathThrows={character.death_throws}
-                    charID={charID}
-                  />
-                </div>
-                <div className="col-sm-4 px-2 pr-0 pl-2">
-                  <ExtraStatsCard
-                    charID={charID}
-                    conditions={character.conditions}
-                    defenses={character.defenses}
-                  />
-                </div>
-              </div>
-              <div className="pinned row px-2">
-                <div className="col-12 px-0">
-                  <SpellsAndPinned
-                    spells={character.spells}
-                    modifier={
-                      character.spells
-                        ? character.ability_scores[
-                            character.spells.casting_ability
-                          ].modifier
-                        : null
-                    }
-                    proficiency={character.proficiency_bonus}
-                    charID={charID}
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
+          <Page page={page} character={character} charID={charID} />
         </div>
-        {/* </div> */}
       </div>
     </div>
   ) : (
@@ -1553,13 +1579,13 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
             );
           })}
           <button
-            className="btn-outline-success"
+            className="btn btn-outline-success"
             onClick={() => {
               setShowAdd(true);
             }}
           >
             {/*<input className='form-control'/>*/}
-            <span className="green">+</span>Add condition
+            <span className="text-success">+</span>Add condition
           </button>
         </div>
         <div className="card content-card description-card">
@@ -1590,7 +1616,90 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
   );
 };
 
-const SpellsAndPinned = ({ spells, modifier, proficiency, charID }) => {
+const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, spells, charClassName}) => {
+  const dispatch = useDispatch();
+
+  const breakpointColumnsObj = {
+    default: 3,
+    1365: 2,
+    767: 2,
+    575: 2,
+  };
+
+  const togglePinned = (type, idx, level=0) => {
+    if (type === 'feature') {
+      features[idx].pinned = !features[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'features', features));
+    }
+    else if (type === 'trait') {
+      traits[idx].pinned = !traits[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'traits', traits));
+    }
+    else if (type === 'spell') {
+      spells[level][idx].pinned = !spells[level][idx].pinned;
+      dispatch(setUpdate(charID, 'spells', {cards: spells}));
+    }
+    else if (type === 'weapon') {
+      weapons[idx].pinned = !weapons[idx].pinned;
+      dispatch(setUpdate(charID, 'attacks', {weapons: weapons}));
+    }
+    else if (type === 'armor') {
+      armor[idx].pinned = !armor[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
+    }
+    else if (type === 'treasure') {
+      treasure[idx].pinned = !treasure[idx].pinned;
+      dispatch(setUpdate(charID, 'treasure', {other: treasure}));
+    }
+    else if (type === 'other') {
+      inventory[idx].pinned = !inventory[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'inventory', inventory));
+    }
+  }
+
+  const cards = () => {
+    const cards = features.map((f, index) => {return {...f, index: index}}).filter(f => (f.name && f.pinned)).map((f) => {
+      return <FeatureCard feature={f} togglePinned={() => {togglePinned('feature', f.index)}}/>;
+    }).concat(traits.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
+      return <FeatureCard feature={t} togglePinned={() => {togglePinned('trait', t.index)}}/>;
+    })).concat(
+      Array.prototype.concat.apply([], 
+        spells.map(level => {
+          return level.map((s, index) => {return {...s, index: index}})
+            .filter(s => s.pinned)
+            .map((s) => {
+              return <SpellCard spell={s} level={s.level} index={s.index} togglePinned={() => {togglePinned('spell', s.index, s.level)}} prepared={preparedSpells.includes(charClassName.toLowerCase())}/>;
+    })}))).concat(weapons.map((w, index) => {return {...w, index: index}}).filter(w => (w.name && w.pinned)).map((w) => {
+      return <EquipmentItem equipment={w} charClassName={charClassName} togglePinned={() => {togglePinned('weapon', w.index)}} />;
+    })).concat(armor.map((a, index) => {return {...a, index: index}}).filter(a => (a.name && a.pinned)).map((a) => {
+      return <EquipmentItem equipment={a} charClassName={charClassName} togglePinned={() => {togglePinned('armor', a.index)}} />;
+    })).concat(inventory.map((i, index) => {return {...i, index: index}}).filter(i => (i.name && i.pinned)).map((i) => {
+      return <EquipmentItem equipment={i} charClassName={charClassName} togglePinned={() => {togglePinned('other', i.index)}} />;
+    })).concat(treasure.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
+      return <EquipmentItem equipment={t} charClassName={charClassName} togglePinned={() => {togglePinned('treasure', t.index)}} />;
+    }));
+    return cards;
+  }
+
+  return (
+    <div className="row">
+      {cards().length ?
+        <Masonry
+          breakpointCols={breakpointColumnsObj}
+          className="my-masonry-grid"
+          columnClassName="my-masonry-grid_column">
+          { cards() }
+        </Masonry>
+      :
+        <p class="text-center text-white my-1">You don't have anything pinned. Go to the Inventory, Spellbook, or Features pages and click the &#9733; icon to pin something.</p>
+      }
+    </div>
+  )
+}
+
+
+
+export const SpellBoxes = ({ spells, modifier, proficiency, charID }) => {
   const dispatch = useDispatch();
 
   const spendSpell = level => {
@@ -1607,121 +1716,116 @@ const SpellsAndPinned = ({ spells, modifier, proficiency, charID }) => {
   };
 
   return (
-    <div className="card translucent-card w-100 mx-0">
-      {spells != null && (
-        <div className="row px-5">
-          <div>
-            <div className="card content-card description-card p-1">
-              <h6 className="text-uppercase text-center m-0">Spellcasting</h6>
-              <table className="table table-borderless table-sm">
-                <tbody>
-                  <tr>
-                    <td>
-                      <h5 className="text-uppercase text-center m-0">
-                        {modifier >= 0 ? `+${modifier}` : `-${modifier}`}
-                        <super>
-                          <small>({spells.casting_ability})</small>
-                        </super>
-                      </h5>
-                    </td>
-                    <td>
-                      <h5 className="text-uppercase text-center m-0">
-                        {8 + modifier + proficiency}
-                      </h5>
-                    </td>
-                    <td>
-                      <h5 className="text-uppercase text-center m-0">
-                        {modifier + proficiency >= 0
-                          ? `+${modifier + proficiency}`
-                          : `-${modifier + proficiency}`}
-                      </h5>
-                    </td>
-                  </tr>
-                  <tr>
-                    <td>
-                      <h6 className="text-uppercase text-center m-0">
-                        Ability
-                      </h6>
-                    </td>
-                    <td>
-                      <h6 className="text-uppercase text-center m-0">
-                        Save DC
-                      </h6>
-                    </td>
-                    <td>
-                      <h6 className="text-uppercase text-center m-0">
-                        Atk Bonus
-                      </h6>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-          <div className="ml-auto">
-            <div className="card content-card description-card">
-              <h6 className="text-uppercase text-center m-0">Spell Slots</h6>
-              <table className="table table-borderless table-sm">
-                <tbody>
-                  <tr>
-                    {spells.slots.map((slot, spellLevel) => {
-                      return spellLevel > 0 && slot.max > 0 ? (
-                        <td key={slot.max} className="pb-0 text-center">
-                          {[...Array(slot.max - slot.current)].map(
-                            (slot, index) => {
-                              return (
-                                <button
-                                  onClick={() => unspendSpell(spellLevel)}
-                                  key={`used-${index}`}
-                                  className="wrapper-button-inline pb-0"
-                                >
-                                  <CircleSlot
-                                    className="circle-filled mx-1"
-                                    width="20px"
-                                    height="20px"
-                                  />
-                                </button>
-                              );
-                            }
-                          )}
-                          {[...Array(slot.current)].map((slot, index) => {
-                            return (
-                              <button
-                                onClick={() => spendSpell(spellLevel)}
-                                key={`unused-${index}`}
-                                className="wrapper-button-inline pb-0"
-                              >
-                                <CircleSlot
-                                  className="circle-outline mx-1"
-                                  width="20px"
-                                  height="20px"
-                                />
-                              </button>
-                            );
-                          })}
-                        </td>
-                      ) : null;
-                    })}
-                  </tr>
-                  <tr>
-                    {spells.slots.map((slot, index) => {
-                      return index > 0 && slot.max > 0 ? (
-                        <td className="py-0">
-                          <h4 className="text-uppercase text-center m-0 line-height-small">
-                            {index}
-                          </h4>
-                        </td>
-                      ) : null;
-                    })}
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
+    <>
+      <div>
+        <div className="card content-card description-card p-1">
+          <h6 className="text-uppercase text-center m-0">Spellcasting</h6>
+          <table className="table table-borderless table-sm">
+            <tbody>
+              <tr>
+                <td>
+                  <h5 className="text-uppercase text-center m-0">
+                    {modifier >= 0 ? `+${modifier}` : `${modifier}`}
+                    <super>
+                      <small> ({spells.casting_ability})</small>
+                    </super>
+                  </h5>
+                </td>
+                <td>
+                  <h5 className="text-uppercase text-center m-0">
+                    {8 + modifier + proficiency}
+                  </h5>
+                </td>
+                <td>
+                  <h5 className="text-uppercase text-center m-0">
+                    {modifier + proficiency >= 0
+                      ? `+${modifier + proficiency}`
+                      : `${modifier + proficiency}`}
+                  </h5>
+                </td>
+              </tr>
+              <tr>
+                <td>
+                  <h6 className="text-uppercase text-center m-0">
+                    Ability
+                  </h6>
+                </td>
+                <td>
+                  <h6 className="text-uppercase text-center m-0">
+                    Save DC
+                  </h6>
+                </td>
+                <td>
+                  <h6 className="text-uppercase text-center m-0">
+                    Atk Bonus
+                  </h6>
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
-      )}
-      <div className="row"></div>
-    </div>
+      </div>
+      <div className="ml-auto">
+        <div className="card content-card description-card py-1">
+          <h6 className="text-uppercase text-center m-0">Spell Slots</h6>
+          <table className="table table-borderless table-sm">
+            <tbody>
+              <tr>
+                {spells.slots.map((slot, spellLevel) => {
+                  return spellLevel > 0 && slot.max > 0 ? (
+                    <td key={slot.max} className="pb-0 text-center">
+                      {[...Array(slot.max - slot.current)].map(
+                        (slot, index) => {
+                          return (
+                            <button
+                              onClick={() => unspendSpell(spellLevel)}
+                              key={`used-${index}`}
+                              className="wrapper-button-inline pb-0"
+                            >
+                              <CircleSlot
+                                className="circle-filled mx-1"
+                                width="20px"
+                                height="20px"
+                              />
+                            </button>
+                          );
+                        }
+                      )}
+                      {[...Array(slot.current)].map((slot, index) => {
+                        return (
+                          <button
+                            onClick={() => spendSpell(spellLevel)}
+                            key={`unused-${index}`}
+                            className="wrapper-button-inline pb-0"
+                          >
+                            <CircleSlot
+                              className="circle-outline mx-1"
+                              width="20px"
+                              height="20px"
+                            />
+                          </button>
+                        );
+                      })}
+                    </td>
+                  ) : null;
+                })}
+              </tr>
+              <tr>
+                {spells.slots.map((slot, index) => {
+                  return index > 0 && slot.max > 0 ? (
+                    <td className="py-0">
+                      <h4 className="text-uppercase text-center m-0 line-height-small">
+                        {index}
+                      </h4>
+                    </td>
+                  ) : null;
+                })}
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </>
   );
 };
 

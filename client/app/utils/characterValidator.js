@@ -472,15 +472,21 @@ const levelSorter = async (charClass, charLevel) => {
 const spellsPopulator = (spells) => {
     const cards = [[],[],[],[],[],[],[], [], []];
     for (let i = 0; i < 9; i++) {
-        let key;
-        if(spells[i] == undefined) break;
-        if(i === 0) key = 'cantrips';
-        else key=`level${i}`;
-        let list = spells[i];
-        for(let spell of list) {
-            let found = spells.cards[key].find(card => card.index === spell)
-            cards[i].push(found);
+      let key;
+      if(spells[i] == undefined) {
+        continue;
+      }
+      if(i === 0) key = 'cantrips';
+      else key=`level${i}`;
+      let list = spells[i];
+      for(let spell of list) {
+        let found = spells.cards[key].find(card => card.index === spell);
+        if(found) {
+          found.pinned=false;
+          found.prepared = false;
+          cards[i].push(found);
         }
+      }
     }
     return cards;
 }

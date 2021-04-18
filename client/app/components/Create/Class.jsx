@@ -376,11 +376,9 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
             {features.map((feature, idx, arr) => {
               return (
                 <div
-                  className={`card content-card description-card ${
-                    subclass?.subclass_features
-                      ? 'mb-0'
-                      : idx === arr.length - 1 && 'mb-0'
-                  }`}
+                  className={`card content-card description-card ${!subclass?.subclass_features &&
+                    idx === arr.length - 1 &&
+                    'mb-0'}`}
                   key={feature.index}
                 >
                   <h5 className="card-subtitle small-caps">{feature.name}</h5>
@@ -390,10 +388,11 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                 </div>
               );
             })}
-            {subclass?.subclass_features?.map((feature, index) => {
+            {subclass?.subclass_features?.map((feature, idx, arr) => {
               return (
                 <div
-                  className="card content-card description-card mb-0"
+                  className={`card content-card description-card ${idx ===
+                    arr.length - 1 && 'mb-0'}`}
                   key={feature.index}
                 >
                   <h5 className="card-subtitle small-caps">
@@ -402,7 +401,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
                   {feature.desc.map(desc => (
                     <p key={desc}>{desc}</p>
                   ))}
-                  <p key={`subclass-${index}`}>
+                  <p key={`subclass-${idx}`}>
                     {`Note: Only the ${main.name} subclass ${subclass.name} is available in this app.`}{' '}
                   </p>
                 </div>

@@ -45,6 +45,13 @@ export const submitCharacter = characterInfo => (dispatch, getState) => {
     character: characterInfo,
     user: getState().auth.user,
   };
+  if(!data.user) {
+      dispatch({
+        type: SUBMIT_CHARACTER_SUCCESS,
+        payload: characterInfo
+      })
+      return;
+  }
   return CharacterService.createCharacter(data).then(
     res => {
       console.log(res);

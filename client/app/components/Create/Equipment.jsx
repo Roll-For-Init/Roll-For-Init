@@ -17,7 +17,7 @@ const EquipmentItem = ({
   dropdown = false,
   className,
   stateKey,
-  noButton=false
+  noButton = false,
 }) => {
   const mapObj = { ', monk': '', monk: '' };
   // const [selection, setSelection] = useState(null)
@@ -32,18 +32,24 @@ const EquipmentItem = ({
 
   return (
     <>
-      <div className={noButton ? "equipment-card-title" : "equipment-card-title same-line"}>
+      <div
+        className={
+          noButton ? 'equipment-card-title' : 'equipment-card-title same-line'
+        }
+      >
         {dropdown ? (
           <h5>{equipment.header}</h5>
         ) : (
           <>
             {equipment.quantity > 1 && !(equipment.category === 'currency') ? (
-              equipment.equipment ? <h5>{`${equipment.equipment.name} (${equipment.quantity})`}</h5> 
-              :
-              <h5>{`${equipment.name} (${equipment.quantity})`}</h5>
+              equipment.equipment ? (
+                <h5>{`${equipment.equipment.name} (${equipment.quantity})`}</h5>
+              ) : (
+                <h5>{`${equipment.name} (${equipment.quantity})`}</h5>
+              )
+            ) : equipment.equipment ? (
+              <h5>{equipment.equipment.name}</h5>
             ) : (
-              equipment.equipment ? <h5>{equipment.equipment.name}</h5>
-              :
               <h5>{equipment.name}</h5>
             )}
           </>
@@ -76,19 +82,34 @@ const EquipmentItem = ({
               <hr />
               <div className="equipment-card-body">
                 {equipment.desc.category && (
-                  <i className="equipment-item-info">{equipment.desc.category}</i>
+                  <i className="equipment-item-info">
+                    {equipment.desc.category}
+                  </i>
                 )}
                 {equipment.desc.damage && (
                   <p className="equipment-item">
                     Damage:&nbsp;
-                    <i className="equipment-item-info">{`${equipment.desc.damage.damage_dice} ${equipment.desc.damage.damage_type}`}{equipment.desc.damage.two_handed ? ` one-handed, ` : null}</i>
-                    {equipment.desc.damage.two_handed && (<i className="equipment-item-info">{`${equipment.desc.damage.two_handed.damage_dice} ${equipment.desc.damage.two_handed.damage_type} (two-handed)`}</i>)}
+                    <i className="equipment-item-info">
+                      {`${equipment.desc.damage.damage_dice} ${equipment.desc.damage.damage_type}`}
+                      {equipment.desc.damage.two_handed
+                        ? ` one-handed, `
+                        : null}
+                    </i>
+                    {equipment.desc.damage.two_handed && (
+                      <i className="equipment-item-info">{`${equipment.desc.damage.two_handed.damage_dice} ${equipment.desc.damage.two_handed.damage_type} (two-handed)`}</i>
+                    )}
                   </p>
                 )}
                 {equipment.desc.range && (
-                    <p className="equipment-item">
+                  <p className="equipment-item">
                     Range:&nbsp;
-                    <i className="equipment-item-info">{`${equipment.desc.range.normal}${equipment.desc.range.long ? `/${equipment.desc.range.long}` : ``}`}</i>
+                    <i className="equipment-item-info">{`${
+                      equipment.desc.range.normal
+                    }${
+                      equipment.desc.range.long
+                        ? `/${equipment.desc.range.long}`
+                        : ``
+                    }`}</i>
                   </p>
                 )}
                 {equipment.desc.cost && (
@@ -111,7 +132,9 @@ const EquipmentItem = ({
                     ) : (
                       <p className="equipment-item">
                         Cost:&nbsp;
-                        <i className="equipment-item-info">{equipment.desc.cost}</i>
+                        <i className="equipment-item-info">
+                          {equipment.desc.cost}
+                        </i>
                       </p>
                     )}
                   </>
@@ -121,8 +144,14 @@ const EquipmentItem = ({
                     Contents:&nbsp;
                     {Object.keys(equipment.desc.contents)
                       .map(function(k) {
-                        const quantity = equipment.desc.contents[k].item.quantity;
-                        return quantity > 1 ? equipment.desc.contents[k].item.name + " (" + quantity + ")" : equipment.desc.contents[k].item.name;
+                        const quantity =
+                          equipment.desc.contents[k].item.quantity;
+                        return quantity > 1
+                          ? equipment.desc.contents[k].item.name +
+                              ' (' +
+                              quantity +
+                              ')'
+                          : equipment.desc.contents[k].item.name;
                       })
                       .join(', ')}
                   </>
@@ -254,7 +283,10 @@ const EquipmentCard = ({
                   ].map((dropdownItem, idx) => {
                     return (
                       <div key={idx} style={{ marginTop: '5px' }}>
-                        <EquipmentItem equipment={dropdownItem} className={className} />
+                        <EquipmentItem
+                          equipment={dropdownItem}
+                          className={className}
+                        />
                       </div>
                     );
                   })}
@@ -299,7 +331,10 @@ const EquipmentCard = ({
                                 ].map((dropdownItem, idx) => {
                                   return (
                                     <div key={idx} style={{ marginTop: '5px' }}>
-                                      <EquipmentItem equipment={dropdownItem} className={className} />
+                                      <EquipmentItem
+                                        equipment={dropdownItem}
+                                        className={className}
+                                      />
                                     </div>
                                   );
                                 })}
@@ -343,19 +378,10 @@ const EquipmentList = ({
   className,
   charID,
   theKey,
-  equipmentSelection, 
+  equipmentSelection,
   setEquipmentSelection,
-  dispatch
+  dispatch,
 }) => {
-  // either store the equipment list here, and then select from that list
-  // based on the key of the selected card (+1 since the first index is just the header)
-  // or do it in equipment card, where each card stores all of its own equipment
-  // doing it in equipmentlist is probably better, but im not sure
-  // either way, they would have to be concatenated in the main equipment component,
-  // but it would probably be best to wait until the user goes to the next page, so
-  // it doesn't have to be updated every time they change their selection?
-  //const equipmentList = [].concat.apply([], Object.values(equipmentItems));
-  //console.log(equipmentList);
   const [selectedCard, setSelectedCard] = useState(null);
 
   const breakpointColumnsObj = {
@@ -372,9 +398,9 @@ const EquipmentList = ({
     dispatch(
       setEquipment(charID, {
         choices: {
-          ...equipmentSelection, 
-          [theKey]: selectedCard
-        }
+          ...equipmentSelection,
+          [theKey]: selectedCard,
+        },
       })
     );
     //console.log("EQUIPMENT ITEM", equipmentItem);
@@ -429,49 +455,49 @@ export const Equipment = ({ charID, setPage }) => {
   };
   const [equipmentLoaded, setEquipmentLoaded] = useState(false);
 
-  const [addedEquipment, setAddedEquipment] = useState([]);
+  // const [addedEquipment, setAddedEquipment] = useState([]);
   const [equipmentSelection, setEquipmentSelection] = useReducer(reducer, {});
 
   const [name, setName] = useState('');
 
-  const addEquipment = idx => {
-    setAddedEquipment(...addedEquipment, idx);
-  };
+  // const addEquipment = idx => {
+  //   setAddedEquipment(...addedEquipment, idx);
+  // };
 
-  const removeEquipment = idx => {
-    setAddedEquipment(
-      addedEquipment.filter(equipment => equipment.index != idx)
-    );
-  };
+  // const removeEquipment = idx => {
+  //   setAddedEquipment(
+  //     addedEquipment.filter(equipment => equipment.index != idx)
+  //   );
+  // };
 
   const history = useHistory();
 
   const validateAndStore = () => {
-      if (character.equipment == null) {
-        //crimes i'm sorry couldn't get it working otherwise
-        character.equipment = {
-          choices: equipmentSelection,
-          set: equipmentList,
-        };
-      }
-      character.name = name;
-      console.log(character);
-      history.push('/dashboard');
-      CharacterService.validateCharacter(character).then((character) => {
-        dispatch(submitCharacter(character));
-      })
+    if (character.equipment == null) {
+      //crimes i'm sorry couldn't get it working otherwise
+      character.equipment = {
+        choices: equipmentSelection,
+        set: equipmentList,
+      };
+    }
+    character.name = name;
+    console.log(character);
+    history.push('/dashboard');
+    CharacterService.validateCharacter(character).then(character => {
+      dispatch(submitCharacter(character));
+    });
   };
 
   const onNext = () => {
-    console.log("EQUIPMENT", character.equipment)
+    console.log('EQUIPMENT', character.equipment);
     setPage({ index: 6, name: 'spells' });
     window.scrollTo(0, 0);
   };
 
-  const onFinish = () => {
-    validateAndStore();
-    history.push('/dashboard');
-  };
+  // const onFinish = () => {
+  //   validateAndStore();
+  //   history.push('/dashboard');
+  // };
 
   useEffect(() => {
     const promises = [];
@@ -535,7 +561,7 @@ export const Equipment = ({ charID, setPage }) => {
           <div className="mx-auto d-none d-md-flex title-back-wrapper">
             <h2 className="title-card p-4">Equipment</h2>
           </div>
-          {equipmentList.length > 0 &&
+          {equipmentList.length > 0 && (
             <div
               className="card translucent-card"
               style={{ paddingBottom: '10px' }}
@@ -561,7 +587,7 @@ export const Equipment = ({ charID, setPage }) => {
                 })}
               </Masonry>
             </div>
-          }
+          )}
           {equipmentOptions.map((equipmentOption, idx) => {
             return (
               <EquipmentList
@@ -577,18 +603,21 @@ export const Equipment = ({ charID, setPage }) => {
             );
           })}
           {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}
-          {character.class?.spellcasting?.level<=1 && (
-            <button className="text-uppercase btn-primary btn-lg px-5 btn-floating" onClick={onNext}>
+          {character.class?.spellcasting?.level <= 1 && (
+            <button
+              className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+              onClick={onNext}
+            >
               OK
             </button>
           )}
-          {!(character.class?.spellcasting?.level<=1) && (
+          {!(character.class?.spellcasting?.level <= 1) && (
             <button
-            className="text-uppercase btn-primary btn-lg px-5 btn-floating"
-            data-toggle={'modal'}
-            data-target={'#nameModalEq'}
+              className="text-uppercase btn-primary btn-lg px-5 btn-floating"
+              data-toggle={'modal'}
+              data-target={'#nameModalEq'}
             >
-            OK
+              OK
             </button>
           )}
           <div
