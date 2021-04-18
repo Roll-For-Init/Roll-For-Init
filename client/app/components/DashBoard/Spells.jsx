@@ -274,7 +274,7 @@ export const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared
                 { cards() }
             </Masonry>
             :
-            <h4>No spells found</h4>}
+            <h4 className="pb-2">No spells found</h4>}
         </div>
       </div>
     </div>

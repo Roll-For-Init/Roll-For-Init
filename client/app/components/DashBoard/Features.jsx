@@ -37,17 +37,27 @@ export const Features = ({charID, features, traits}) => {
 
   const cards = () => {
     return !searchTerm ?
-      features.map((f, index) => {
-        return f.name ? (<FeatureCard feature={f} togglePinned={() => {togglePinned('feature', index)}}/>) : <></>;
-      }).concat(traits.map((t, index) => {
-        return t.name ? (<FeatureCard feature={t} togglePinned={() => {togglePinned('trait', index)}}/>) : <></>;
+      features.map((f, idx) => {return {...f, index: idx}})
+        .filter((f) => {return f.name})
+        .map((f) => {
+          return f.name ? (<FeatureCard feature={f} togglePinned={() => {togglePinned('feature', f.index)}}/>) : <></>;
+        })
+      .concat(traits.map((t, idx) => {return {...t, index: idx}})
+        .filter((t) => {return t.name})
+        .map((t) => {
+          return t.name ? (<FeatureCard feature={t} togglePinned={() => {togglePinned('trait', t.index)}}/>) : <></>;
       }))
-      :
-      features.filter((f) => {return f.name && f.name.toLowerCase().includes(searchTerm.toLowerCase())}).map((f, index) => {
-        return f.name ? (<FeatureCard feature={f} togglePinned={() => {togglePinned('feature', index)}}/>) : <></>;
-      }).concat(traits.filter((t) => {return t.name &&t.name.toLowerCase().includes(searchTerm.toLowerCase())}).map((t, index) => {
-        return t.name ? (<FeatureCard feature={t} togglePinned={() => {togglePinned('trait', index)}}/>) : <></>;
-      }))
+    :
+      features.map((f, idx) => {return {...f, index: idx}})
+        .filter((f) => {return f.name && f.name.toLowerCase().includes(searchTerm.toLowerCase())})
+        .map((f) => {
+          return f.name ? (<FeatureCard feature={f} togglePinned={() => {togglePinned('feature', f.index)}}/>) : <></>;
+        })
+      .concat(traits.map((t, idx) => {return {...t, index: idx}})
+        .filter((t) => {return t.name && t.name.toLowerCase().includes(searchTerm.toLowerCase())})
+        .map((t) => {
+          return t.name ? (<FeatureCard feature={t} togglePinned={() => {togglePinned('trait', t.index)}}/>) : <></>;
+      }));
   }
 
   return (
