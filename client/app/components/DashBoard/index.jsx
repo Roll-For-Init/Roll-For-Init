@@ -13,7 +13,7 @@ import Description from './Description.jsx';
 import { Features, FeatureCard } from './Features.jsx';
 import Masonry from 'react-masonry-css';
 import { SpellBook, SpellCard } from './Spells';
-import Inventory from './Inventory';
+import { Inventory, EquipmentItem } from './Inventory';
 
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
@@ -97,9 +97,7 @@ const Page = ({page, character, charID}) => {
         character={character}
         str_score={character.ability_scores.str.score}
         inventory={character.inventory}
-        weapons={character.attacks.weapons.concat(
-          character.attacks.magic_weapons
-        )}
+        weapons={character.attacks.weapons}
         charClassName={character.class[0].name}
         armor={character.equipped_armor}
       />;
@@ -139,7 +137,7 @@ const Page = ({page, character, charID}) => {
                   </div>
                 )}
                 <div className="row">
-                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} attacks={character.attacks} armor={character.armor} spells={character.spells.cards} charClassName={character.class[0].name}/>
+                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} weapons={character.attacks.weapons} armor={character.equipped_armor} treasure={character.treasure.other} spells={character.spells.cards} charClassName={character.class[0].name}/>
                 </div>
               </div>
             </div>
@@ -1368,7 +1366,7 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
   );
 };
 
-const Pinned = ({charID, features, traits, inventory, attacks, armor, spells, charClassName}) => {
+const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, spells, charClassName}) => {
   const dispatch = useDispatch();
 
   const breakpointColumnsObj = {
@@ -1387,12 +1385,25 @@ const Pinned = ({charID, features, traits, inventory, attacks, armor, spells, ch
       traits[idx].pinned = !traits[idx].pinned;
       dispatch(setArrayUpdate(charID, 'traits', traits));
     }
-    else if (type==='spell') {
+    else if (type === 'spell') {
       spells[level][idx].pinned = !spells[level][idx].pinned;
       dispatch(setUpdate(charID, 'spells', {cards: spells}));
     }
-    else {
-
+    else if (type === 'weapon') {
+      weapons[idx].pinned = !weapons[idx].pinned;
+      dispatch(setUpdate(charID, 'attacks', {weapons: weapons}));
+    }
+    else if (type === 'armor') {
+      armor[idx].pinned = !armor[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
+    }
+    else if (type === 'treasure') {
+      treasure[idx].pinned = !treasure[idx].pinned;
+      dispatch(setUpdate(charID, 'treasure', {other: treasure}));
+    }
+    else if (type === 'other') {
+      inventory[idx].pinned = !inventory[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'inventory', inventory));
     }
   }
 
@@ -1408,9 +1419,15 @@ const Pinned = ({charID, features, traits, inventory, attacks, armor, spells, ch
             .filter(s => s.pinned)
             .map((s) => {
               return <SpellCard spell={s} level={s.level} index={s.index} togglePinned={() => {togglePinned('spell', s.index, s.level)}} prepared={preparedSpells.includes(charClassName.toLowerCase())}/>;
-      })}))
-    );
-    console.log("cards", cards);
+    })}))).concat(weapons.map((w, index) => {return {...w, index: index}}).filter(w => (w.name && w.pinned)).map((w) => {
+      return <EquipmentItem equipment={w} charClassName={charClassName} togglePinned={() => {togglePinned('weapon', w.index)}} />;
+    })).concat(armor.map((a, index) => {return {...a, index: index}}).filter(a => (a.name && a.pinned)).map((a) => {
+      return <EquipmentItem equipment={a} charClassName={charClassName} togglePinned={() => {togglePinned('armor', a.index)}} />;
+    })).concat(inventory.map((i, index) => {return {...i, index: index}}).filter(i => (i.name && i.pinned)).map((i) => {
+      return <EquipmentItem equipment={i} charClassName={charClassName} togglePinned={() => {togglePinned('other', i.index)}} />;
+    })).concat(treasure.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
+      return <EquipmentItem equipment={t} charClassName={charClassName} togglePinned={() => {togglePinned('treasure', t.index)}} />;
+    }));
     return cards;
   }
 
@@ -1499,7 +1516,7 @@ export const SpellBoxes = ({ spells, modifier, proficiency, charID }) => {
         </div>
       </div>
       <div className="ml-auto">
-        <div className="card content-card description-card">
+        <div className="card content-card description-card py-1">
           <h6 className="text-uppercase text-center m-0">Spell Slots</h6>
           <table className="table table-borderless table-sm">
             <tbody>

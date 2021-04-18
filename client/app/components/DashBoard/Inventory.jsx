@@ -15,7 +15,167 @@ import Equipment from '../Create/Equipment';
 
 // const character = useSelector(state => state.characters[charID]);
 
-const Inventory = ({
+
+
+export const EquipmentItem = ({
+  equipment,
+  modal = false,
+  selectionEq,
+  setSelectionEq,
+  dropdown = false,
+  charClassName,
+  stateKey,
+  noButton = false,
+  togglePinned,
+  toggleEquipped
+}) => {
+  // const [selection, setSelection] = useState(null)
+
+  return (
+    <div
+      className={`card content-card equipment-card`}
+    >
+      <div className="row">
+        <div className="col px-0">
+          <h5>
+            <button className="wrapper-button" onClick={() => { togglePinned(); }}>
+              <Star className={equipment.pinned ? "star-filled" : "star-outline"} />
+            </button>
+            <span>
+              {equipment.quantity > 1 &&
+              !(equipment.category === 'currency') ? (
+                equipment.equipment ? (
+                  `${equipment.equipment.name} (${equipment.quantity})`
+                ) : (
+                  `${equipment.name} (${equipment.quantity})`
+                )
+              ) : equipment.equipment ? (
+                equipment.equipment.name
+              ) : (
+                equipment.name
+              )}
+            </span>
+          </h5>
+        </div>
+        {equipment.ac && (
+          <div className="col-auto pr-0">
+            <button
+              onClick={() => toggleEquipped()}
+              className={`btn ${
+                equipment.equipped ? `btn-clicked` : `btn-outline-success`
+              } d-inline`}
+            >{equipment.equipped ? 'Equipped' : 'Equip'}</button>
+          </div>
+        )}
+      </div>
+      {equipment.cost && <hr />}
+      {equipment.category && (
+        <i className="equipment-item-info">
+          {equipment.category.toLowerCase()}
+        </i>
+      )}
+      {equipment.damage && (
+        <p className="equipment-item m-0">
+          Damage:&nbsp;
+          <i className="equipment-item-info">
+            {`${
+              equipment.damage.damage_dice
+            } ${equipment.damage.damage_type.toLowerCase()}`}
+            {equipment.damage.two_handed ? ` one-handed, ` : null}
+          </i>
+          {equipment.damage.two_handed && (
+            <i className="equipment-item-info">{`${
+              equipment.damage.two_handed.damage_dice
+            } ${equipment.damage.two_handed.damage_type.toLowerCase()} (two-handed)`}</i>
+          )}
+        </p>
+      )}
+      {equipment.ac && (
+        <p className="equipment-item m-0">
+          AC:&nbsp;
+          <i className="equipment-item-info">
+            {`${equipment.armor_class.base}${
+              equipment.armor_class.dex_bonus ? ' + Dex. modifier' : ''
+            }${
+              equipment.armor_class.max_bonus !== null
+                ? ` max ${equipment.armor_class.max_bonus}`
+                : ''
+            }`}
+          </i>
+        </p>
+      )}
+      {equipment.range && (
+        <p className="equipment-item m-0">
+          Range:&nbsp;
+          <i className="equipment-item-info">{`${equipment.range.normal}${
+            equipment.range.long ? `/${equipment.range.long}` : ``
+          }`}</i>
+        </p>
+      )}
+      {equipment.cost && (
+        <p className="same-line">
+          <span className="equipment-item">
+            Cost:&nbsp;
+            <i className="equipment-item-info">{`${equipment.cost.amount}${equipment.cost.denomination}`}</i>
+          </span>
+          {equipment.weight > 0 && (
+            <span className="equipment-item">
+              Weight:&nbsp;
+              <i className="equipment-item-info">{equipment.weight}</i>
+            </span>
+          )}
+        </p>
+      )}
+      {equipment.properties && (
+        <p className="equipment-item m-0">
+          <i className="equipment-item-info">
+            {charClassName.toLowerCase() !== 'monk' &&
+              equipment.properties
+                .filter(property => property.toLowerCase() !== 'monk')
+                .map((property, idx, arr) =>
+                  idx !== arr.length - 1
+                    ? property.toLowerCase() + ', '
+                    : property.toLowerCase()
+                )}
+          </i>
+        </p>
+      )}
+      {equipment.desc && (
+        <div className="equipment-card-body">
+          {Array.isArray(equipment.desc) ? (
+            <p>
+              <hr />
+              <ReactReadMoreReadLess
+                charLimit={250}
+                readMoreText="Show more"
+                readLessText="Show less"
+                readMoreClassName="read-more-less--more"
+                readLessClassName="read-more-less--less"
+              >
+                {equipment.desc.join('\n')}
+              </ReactReadMoreReadLess>
+            </p>
+          ) : (
+            <p className="equipment-item m-0">
+              <i className="equipment-item-info">
+                {charClassName.toLowerCase() !== 'monk' &&
+                  equipment.properties
+                    .filter(property => property.toLowerCase() !== 'monk')
+                    .map((property, idx, arr) =>
+                      idx !== arr.length - 1
+                        ? property.toLowerCase() + ', '
+                        : property.toLowerCase()
+                    )}
+              </i>
+            </p>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export const Inventory = ({
   charID,
   treasure,
   str_score,
@@ -33,163 +193,42 @@ const Inventory = ({
 
   const dispatch = useDispatch();
 
-  // const togglePinned = (type, idx) => {
-  //   if (type === 'feature') {
-  //     features[idx].pinned = !features[idx].pinned;
-  //     dispatch(setArrayUpdate(charID, 'features', features));
-  //   } else {
-  //     traits[idx].pinned = !traits[idx].pinned;
-  //     dispatch(setArrayUpdate(charID, 'traits', traits));
-  //   }
-  // };
-
-  const EquipmentItem = ({
-    equipment,
-    modal = false,
-    selectionEq,
-    setSelectionEq,
-    dropdown = false,
-    charClassName,
-    stateKey,
-    noButton = false,
-  }) => {
-    // const [selection, setSelection] = useState(null)
-
-    return (
-      <div
-        className={`card content-card equipment-card ${!modal && 'p-0'}`}
-        style={{ lineHeight: 'normal' }}
-      >
-        <div className="same-line">
-          <div className="same-line">
-            <button className="wrapper-button">
-              <Star className="star-outline" />
-            </button>
-            <div className="equipment-card-title">
-              {equipment.quantity > 1 &&
-              !(equipment.category === 'currency') ? (
-                equipment.equipment ? (
-                  <h5>{`${equipment.equipment.name} (${equipment.quantity})`}</h5>
-                ) : (
-                  <h5>{`${equipment.name} (${equipment.quantity})`}</h5>
-                )
-              ) : equipment.equipment ? (
-                <h5>{equipment.equipment.name}</h5>
-              ) : (
-                <h5>{equipment.name}</h5>
-              )}
-            </div>
-          </div>
-          {equipment.ac && (
-            <button className={`btn btn-card`}>{'Equipped'}</button>
-          )}
-        </div>
-        {equipment.cost && <hr />}
-        {equipment.category && (
-          <i className="equipment-item-info">
-            {equipment.category.toLowerCase()}
-          </i>
-        )}
-        {equipment.damage && (
-          <p className="equipment-item m-0">
-            Damage:&nbsp;
-            <i className="equipment-item-info">
-              {`${
-                equipment.damage.damage_dice
-              } ${equipment.damage.damage_type.toLowerCase()}`}
-              {equipment.damage.two_handed ? ` one-handed, ` : null}
-            </i>
-            {equipment.damage.two_handed && (
-              <i className="equipment-item-info">{`${
-                equipment.damage.two_handed.damage_dice
-              } ${equipment.damage.two_handed.damage_type.toLowerCase()} (two-handed)`}</i>
-            )}
-          </p>
-        )}
-        {equipment.ac && (
-          <p className="equipment-item m-0">
-            AC:&nbsp;
-            <i className="equipment-item-info">
-              {`${equipment.armor_class.base}${
-                equipment.armor_class.dex_bonus ? ' + Dex. modifier' : ''
-              }${
-                equipment.armor_class.max_bonus !== null
-                  ? ` max ${equipment.armor_class.max_bonus}`
-                  : ''
-              }`}
-            </i>
-          </p>
-        )}
-        {equipment.range && (
-          <p className="equipment-item m-0">
-            Range:&nbsp;
-            <i className="equipment-item-info">{`${equipment.range.normal}${
-              equipment.range.long ? `/${equipment.range.long}` : ``
-            }`}</i>
-          </p>
-        )}
-        {equipment.cost && (
-          <p className="same-line">
-            <span className="equipment-item">
-              Cost:&nbsp;
-              <i className="equipment-item-info">{`${equipment.cost.amount}${equipment.cost.denomination}`}</i>
-            </span>
-            {equipment.weight && (
-              <span className="equipment-item">
-                Weight:&nbsp;
-                <i className="equipment-item-info">{equipment.weight}</i>
-              </span>
-            )}
-          </p>
-        )}
-        {equipment.properties && (
-          <p className="equipment-item m-0">
-            <i className="equipment-item-info">
-              {charClassName.toLowerCase() !== 'monk' &&
-                equipment.properties
-                  .filter(property => property.toLowerCase() !== 'monk')
-                  .map((property, idx, arr) =>
-                    idx !== arr.length - 1
-                      ? property.toLowerCase() + ', '
-                      : property.toLowerCase()
-                  )}
-            </i>
-          </p>
-        )}
-        {equipment.desc && (
-          <div className="equipment-card-body">
-            {Array.isArray(equipment.desc) ? (
-              <>
-                <hr />
-                <ReactReadMoreReadLess
-                  charLimit={250}
-                  readMoreText="Show more"
-                  readLessText="Show less"
-                  readMoreClassName="read-more-less--more"
-                  readLessClassName="read-more-less--less"
-                >
-                  {equipment.desc.join('\n')}
-                </ReactReadMoreReadLess>
-              </>
-            ) : (
-              <p className="equipment-item m-0">
-                <i className="equipment-item-info">
-                  {charClassName.toLowerCase() !== 'monk' &&
-                    equipment.properties
-                      .filter(property => property.toLowerCase() !== 'monk')
-                      .map((property, idx, arr) =>
-                        idx !== arr.length - 1
-                          ? property.toLowerCase() + ', '
-                          : property.toLowerCase()
-                      )}
-                </i>
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-    );
+  const togglePinned = (type, idx) => {
+    if (type === 'weapon') {
+      weapons[idx].pinned = !weapons[idx].pinned;
+      dispatch(setUpdate(charID, 'attacks', { weapons: weapons }));
+    }
+    else if (type === 'armor') {
+      armor[idx].pinned = !armor[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
+    }
+    else if (type === 'treasure') {
+      treasure.other[idx].pinned = !treasure.other[idx].pinned;
+      dispatch(setUpdate(charID, 'treasure', {other: treasure.other}));
+    }
+    else if (type === 'other') {
+      inventory[idx].pinned = !inventory[idx].pinned;
+      dispatch(setArrayUpdate(charID, 'inventory', inventory));
+    }
   };
+
+  const toggleEquipped = (armor, idx) => {
+    const isShield = armor[idx].category.toLowerCase().includes("shield");
+    console.log("toggling", armor[idx]);
+    if (!armor[idx].equipped) {
+      armor = armor.map(a => {
+        if (isShield && a.category.toLowerCase().includes("shield")) {
+          a.equipped = false;
+        }
+        else if (!isShield && !a.category.toLowerCase().includes("shield")) {
+          a.equipped = false;
+        }
+        return a;
+      })
+    }
+    armor[idx].equipped = !armor[idx].equipped;
+    dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
+  }
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [showTreasureModal, setShowTreasureModal] = useState(false);
@@ -491,14 +530,14 @@ const Inventory = ({
   const filterOptions = [
     { filter: filterFavorites, setFilter: setFilterFavorites, array: [] },
     { filter: filterEquipped, setFilter: setFilterEquipped, array: [] },
-    { filter: filterWeapons, setFilter: setFilterWeapons, array: weapons },
-    { filter: filterArmor, setFilter: setFilterArmor, array: armor },
+    { filter: filterWeapons, setFilter: setFilterWeapons, array: weapons.map((w, idx) => {return {...w, type: 'weapon', index: idx}}) },
+    { filter: filterArmor, setFilter: setFilterArmor, array: armor.map((a, idx) => {return {...a, type: 'armor', index: idx}}) },
     {
       filter: filterTreasure,
       setFilter: setFilterTreasure,
-      array: treasure.other,
+      array: treasure.other.map((t, idx) => {return {...t, type: 'treasure', index: idx}}),
     },
-    { filter: filterOther, setFilter: setFilterOther, array: inventory },
+    { filter: filterOther, setFilter: setFilterOther, array: inventory.map((i, idx) => {return {...i, type: 'other', index: idx}}) },
   ];
 
   const onFilterAll = () => {
@@ -524,24 +563,20 @@ const Inventory = ({
   };
 
   const filterArray = () => {
-    if (filterAll) {
-      return weapons.concat(armor, inventory, treasure.other);
-    } else {
-      let optionsArray = [];
-      filterOptions.forEach(filterOption => {
-        if (filterOption.filter === true) {
-          optionsArray = optionsArray.concat(filterOption.array);
-        }
-      });
-      return optionsArray;
-    }
+    let optionsArray = [];
+    filterOptions.forEach(filterOption => {
+      if (filterAll || filterOption.filter) {
+        optionsArray = optionsArray.concat(filterOption.array);
+      }
+    });
+    return optionsArray.filter(i => i.name);
   };
 
   return (
     <div className="inventory-container">
       <div className="row">
         <div className="same-line mb-0 w-100">
-          <div className="translucent-card ml-0">
+          <div className="translucent-card ml-0 mt-3">
             <div className="same-line mb-0">
               <p className="filter-text">{`Filter by: `}</p>
               <button
@@ -673,7 +708,7 @@ const Inventory = ({
       <div className="row">
         <div
           className="translucent-card w-100 mt-0"
-          style={{ padding: '20px' }}
+          style={{ padding: '25px 25px 10px' }}
         >
           {filterArray().length !== 0 ? (
             <Masonry
@@ -683,15 +718,15 @@ const Inventory = ({
             >
               {filterArray().map((item, idx) => {
                 return (
-                  <div className="card content-card equipment-card" key={idx}>
-                    <EquipmentItem
-                      equipment={item}
-                      selectionEq={selectedCard}
-                      setSelectionEq={setSelectedCard}
-                      charClassName={charClassName}
-                      noButton
-                    />
-                  </div>
+                  <EquipmentItem
+                    equipment={item}
+                    selectionEq={selectedCard}
+                    setSelectionEq={setSelectedCard}
+                    charClassName={charClassName}
+                    noButton
+                    togglePinned={() => {togglePinned(item.type, item.index)}}
+                    toggleEquipped={() => {item.type === 'armor' && toggleEquipped(armor, item.index)}}
+                  />
                 );
               })}
             </Masonry>

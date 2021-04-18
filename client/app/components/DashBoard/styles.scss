@@ -744,10 +744,11 @@
 
   .inventory-container {
     .my-masonry-grid {
-      margin-left: -20px;
+      margin-top: 0;
+      margin-left: -15px;
     }
     .my-masonry-grid_column {
-      padding-left: 20px;
+      padding-left: 15px;
     }
     .translucent-card {
       max-width: 100%;
@@ -1057,10 +1058,11 @@
     }
   }
 
-  .spell-card {
+  .spell-card,
+  .equipment-card {
     padding: 5px 10px 10px;
     border: none;
-    margin-bottom: 15px;
+    margin-bottom: 15px !important;
     h5 {
       margin-bottom: 0px;
     }

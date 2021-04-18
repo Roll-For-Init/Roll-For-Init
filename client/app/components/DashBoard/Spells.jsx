@@ -284,7 +284,7 @@ export const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared
 
 export const SpellCard = ({ spell, level, index, prepared, togglePinned, togglePrepared, currentPrepared, maxPrepared }) => {
     return (
-      <div className="card content-card spell-card mb-3">
+      <div className="card content-card spell-card">
         <div className="row">
           <div className="col px-0">
             <h5>
