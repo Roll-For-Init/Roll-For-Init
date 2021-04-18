@@ -6,11 +6,10 @@ import Dropdown from '../shared/Dropdown';
 import { Star } from '../../utils/svgLibrary';
 import { useDispatch } from 'react-redux';
 import {SpellBoxes} from "./index";
-import { cssNumber, nodeName } from 'jquery';
 
 // const character = useSelector(state => state.characters[charID]);
 
-const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
+export const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
 
   const breakpointColumnsObj = {
     default: 4,
@@ -20,7 +19,7 @@ const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
   };
 
   const dispatch = useDispatch();
-  const [ filterAll, setFilterAll] = useState(true);
+  const [filterAll, setFilterAll] = useState(true);
   const [filterFavorites, setFilterFavorites] = useState(false);
   const [filterPrepared, setFilterPrepared] = useState(false);
   const [filterSlot, setFilterSlot] = useState(false);
@@ -52,29 +51,26 @@ const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared}) => {
     if(!(filterFavorites || filterPrepared || filterSlot || levelFilter.length>0)) setFilterAll(true);
   }, [filterFavorites, filterPrepared, filterSlot])
   useEffect(() => {
-      console.log(filterAll);
+    console.log(filterAll);
     if(filterAll) {
         setFilterFavorites(false);
         setFilterPrepared(false);
         setFilterSlot(false)
         setLevelFilter([]);
     }
-}, [filterAll])
-useEffect(() => {
-    if(currentPrepared >= maxPrepared) {
-        let unselected = document.getElementsByName("prepared");
-        for (let i = 0; i < unselected.length; i++) {
-          if (unselected[i].className.includes('btn-outline-success')) {
-            unselected[i].className = unselected[i].className.replace(
-              'btn-outline-success',
-              'btn-inactive'
-            );
-          }
-        }
-    }
-}, [])
+  }, [filterAll])
+// useEffect(() => {
+//     if(currentPrepared >= maxPrepared) {
+//         let unselected = document.getElementsByName("prepared");
+//         for (let i = 0; i < unselected.length; i++) {
+//           if (unselected[i].className.includes('btn-outline-success')) {
+//             unselected[i].className += " disabled";
+//           }
+//         }
+//     }
+// }, [])
 
-  const levels = [{name:"cantrip", index: 0}, {name:"level 1", index: 1}, {name: "level 2", index: 2}, {name: "level 3", index: 3}, {name: "level 4", index: 4}, {name:"level 5", index: 5}, {name:"level 6", index:6}, {name:"level 7", index:7}, {name:"level 8", index: 8}, {name:"level 9", index:9}];
+  const levels = [{name:"Cantrip", index: 0}, {name:"Level 1", index: 1}, {name: "Level 2", index: 2}, {name: "Level 3", index: 3}, {name: "Level 4", index: 4}, {name:"Level 5", index: 5}, {name:"Level 6", index:6}, {name:"Level 7", index:7}, {name:"Level 8", index: 8}, {name:"Level 9", index:9}].filter(l => spellcasting.cards[l.index]?.length);
   
   const togglePinned = (level, index) => {
     spellcasting.cards[level][index].pinned = spellcasting.cards[level][index].pinned ? !spellcasting.cards[level][index].pinned : true;
@@ -82,39 +78,44 @@ useEffect(() => {
   }
   const togglePrepared= (level, index) => {
     let prepared = spellcasting.cards[level][index].prepared;
-    console.log(currentPrepared);
-    if((!prepared && currentPrepared +1 >= maxPrepared)) {
-        let unselected = document.getElementsByName("prepared");
-        for (let i = 0; i < unselected.length; i++) {
-          if (unselected[i].className.includes('btn-outline-success')) {
-            unselected[i].className = unselected[i].className.replace(
-              'btn-outline-success',
-              'btn-inactive'
-            );
-          }
-        }
-       if(currentPrepared == 0) {
-            spellcasting.cards[level][index].prepared = true;
-            dispatch(setUpdate(charID, 'spells', {cards: spellcasting.cards}));    
-        }
-    }
-    else if((prepared && currentPrepared -1 < maxPrepared)) {
-        let unselected = document.getElementsByName("prepared");
-        for (let i = 0; i < unselected.length; i++) {
-          if (unselected[i].className.includes('btn-inactive')) {
-            unselected[i].className = unselected[i].className.replace(
-              'btn-inactive',
-              'btn-outline-success'
-            );
-          }
-        }
-        spellcasting.cards[level][index].prepared = false;
-        dispatch(setUpdate(charID, 'spells', {cards: spellcasting.cards}));    
-    }
-    else if(currentPrepared +1 < maxPrepared && currentPrepared -1 < maxPrepared){
-        spellcasting.cards[level][index].prepared = !prepared;
-        dispatch(setUpdate(charID, 'spells', {cards: spellcasting.cards}));    
-    }
+    // if (!prepared && currentPrepared + 1 >= maxPrepared) {
+    //   console.log("CASE 1");
+    //   // let unselected = document.getElementsByName("prepared");
+    //   // for (let i = 0; i < unselected.length; i++) {
+    //   //   if (unselected[i].className.includes('btn-outline-success')) {
+    //   //     unselected[i].className += " disabled"
+    //   //   }
+    //   // }
+    //   spellcasting.cards[level][index].prepared = true;
+    //   dispatch(setUpdate(charID, 'spells', {cards: spellcasting.cards}));
+    // }
+    // else if(prepared) {
+    //   console.log("CASE 2")
+    //   // let unselected = document.getElementsByName("prepared");
+    //   // if (currentPrepared === maxPrepared) {
+    //   //   for (let i = 0; i < unselected.length; i++) {
+    //   //     if (unselected[i].className.includes('disabled')) {
+    //   //       unselected[i].className = unselected[i].className.replace(
+    //   //         ' disabled',
+    //   //         ''
+    //   //       );
+    //   //     }
+    //   //   }
+    //   // }
+    //   spellcasting.cards[level][index].prepared = false;
+    //   dispatch(setUpdate(charID, 'spells', {cards: spellcasting.cards}));    
+    // }
+    // else if(currentPrepared + 1 < maxPrepared && currentPrepared -1 < maxPrepared){
+    //   console.log("CASE 3");
+    //   spellcasting.cards[level][index].prepared = !prepared;
+    //   dispatch(setUpdate(charID, 'spells', {cards: spellcasting.cards}));    
+    // }
+    // else {
+    //   console.log("NONE");
+    // }
+    spellcasting.cards[level][index].prepared = !prepared;
+    dispatch(setUpdate(charID, 'spells', {cards: spellcasting.cards}));    
+    setCurrentPrepared(prepared ? currentPrepared - 1 : currentPrepared + 1);
   }
 
 
@@ -139,7 +140,7 @@ useEffect(() => {
         if(level.length <= 0) continue;
         let newLevel = level.map((card, index) => {
             return(
-                <SpellCard key={`card-${index}`} spell={card} level={i} index={index} prepared={prepared} togglePinned={togglePinned} togglePrepared={togglePrepared}/>
+                <SpellCard key={`card-${index}`} spell={card} level={i} index={index} prepared={prepared} togglePinned={togglePinned} togglePrepared={togglePrepared} currentPrepared={currentPrepared} maxPrepared={maxPrepared} />
             )    
         })
         finalCards.push(...newLevel);
@@ -209,18 +210,18 @@ useEffect(() => {
   }
 
   return (
-      <div className='spells-container'>
-    <div className="row mt-4"><div className="mx-auto"><div className="row extra-padding"><SpellBoxes spells={spellcasting} modifier={modifier} proficiency={proficiency} charID={charID}/></div></div></div>
-    <div className="row">
+    <div className='spells-container'>
+      <div className="row mt-4"><div className="mx-auto"><div className="row extra-padding"><SpellBoxes spells={spellcasting} modifier={modifier} proficiency={proficiency} charID={charID}/></div></div></div>
+      <div className="row">
         <div className="same-line mb-0 w-100">
-          <div className="translucent-card ml-0">
+          <div className="translucent-card ml-0 p-2">
             <div className="same-line mb-0">
               <p className="filter-text">{`Filter by: `}</p>
               <button
                 key={`all-${filterAll}`}
                 className={`btn btn-lg btn-secondary filter-button ${filterAll &&
                   'active'}`}
-                onClick={() => setFilterAll(!filterAll)}
+                onClick={() => setFilterAll(true)}
               >
                 All
               </button>
@@ -231,20 +232,23 @@ useEffect(() => {
               >
                 Favorites
               </button>
-              <button
-                className={`btn btn-lg btn-secondary filter-button ${filterPrepared &&
-                  'active'}`}
-                  onClick={() => {setFilterPrepared(!filterPrepared); setFilterAll(false)}}
-                  >
-                Prepared
-              </button>
+              {prepared &&
+                <button
+                  className={`btn btn-lg btn-secondary filter-button ${filterPrepared &&
+                    'active'}`}
+                    onClick={() => {setFilterPrepared(!filterPrepared); setFilterAll(false)}}
+                    >
+                  Prepared
+                </button>
+              }
               <button
                 className={`btn btn-lg btn-secondary filter-button ${filterSlot &&
                   'active'}`}
                   onClick={() => {setFilterSlot(!filterSlot); setFilterAll(false)}}
-             >
+              >
                 Slot Available
               </button>
+              {levels.length > 1 &&
                 <Dropdown
                         hideLabel={true}
                         title="Level"
@@ -254,8 +258,9 @@ useEffect(() => {
                         multiSelect={true}
                         selection={levelFilter}
                         setSelection={setLevelFilter}
-                        classname={`dd-wrapper btn btn-lg btn-secondary filter-button ${levelFilter.length>0 && 'active'}`}
+                        headerClassName={`dd-wrapper btn btn-lg btn-secondary filter-button ${levelFilter.length>0 && 'active'}`}
                 />
+              }
             </div>
           </div>
         </div>
@@ -264,12 +269,12 @@ useEffect(() => {
         <div className="translucent-card mt-0 w-100">
            {cards().length ? <Masonry
                 breakpointCols={breakpointColumnsObj}
-                className="my-masonry-grid pl-0 py-3 pr-3"
+                className="my-masonry-grid"
                 columnClassName="my-masonry-grid_column">
                 { cards() }
             </Masonry>
             :
-            <h4>No spells found</h4>}
+            <h4 className="pb-2">No spells found</h4>}
         </div>
       </div>
     </div>
@@ -277,34 +282,44 @@ useEffect(() => {
 
 };
 
-const SpellCard = ({ spell, level, index, prepared, togglePinned, togglePrepared }) => {
+export const SpellCard = ({ spell, level, index, prepared, togglePinned, togglePrepared, currentPrepared, maxPrepared }) => {
     return (
-      <div className="card content-card spell-card mb-3">
-        <div id={spell.index} className="container-fluid px-0">
-          <div className="row">
-            {!spell.pinned ?
-            <button className='wrapper-button mr-2' onClick={() => {togglePinned(level, index)}}><Star className="star-outline" width="20px"/></button>
-            :
-            <button className='wrapper-button mr-2' onClick={() => {togglePinned(level, index)}}><Star className="star-filled" width="20px"/></button>
-            }
-            <div className="spell-title col-sm">{spell.name}</div>
-            {prepared && level > 0 && <button
-              onClick={() => togglePrepared(level, index)}
-              className={`btn ${
-                spell.prepared ? `btn-clicked` : `btn-outline-success`
-              } d-inline col-sm`}
-              name="prepared"
-            >
-              {spell.prepared ? 'Prepared' : 'Prepare'}
-            </button>}
+      <div className="card content-card spell-card">
+        <div className="row">
+          <div className="col px-0">
+            <h5>
+              {!spell.pinned ?
+                <button className="wrapper-button" onClick={() => {togglePinned(level, index)}}><Star className="star-outline"/></button>
+                :
+                <button className="wrapper-button" onClick={() => {togglePinned(level, index)}}><Star className="star-filled"/></button>
+              }
+              {spell.name}
+            </h5>
           </div>
+          {prepared && level > 0 && togglePrepared &&
+            <div className="col-auto pr-0">
+              <button
+                onClick={() => togglePrepared(level, index)}
+                className={`btn ${
+                  spell.prepared ? `btn-clicked` : `btn-outline-success`
+                } d-inline`}
+                name="prepared"
+                disabled={!spell.prepared && currentPrepared >= maxPrepared}
+              >
+                {spell.prepared ? 'Prepared' : 'Prepare'}
+              </button>
+            </div>
+          }
         </div>
+        {prepared && level > 0 && !togglePrepared &&
+          <i className="text-lowercase">{spell.prepared ? "Prepared" : "Unprepared"}</i>
+        }
         <hr className="solid" />
         <div className="spell-desc">
           <p>
             {spell.level === 0 ? 'cantrip' : `level ${spell.level}`}
             {spell.ritual && <em> (ritual)</em>}
-            <span>
+            <span className="float-right">
               <em>{spell.school.name.toLowerCase()}</em>
             </span>
           </p>
@@ -330,7 +345,7 @@ const SpellCard = ({ spell, level, index, prepared, togglePinned, togglePrepared
           </p>
         </div>
         <hr className="solid" />
-        <div className="spell-desc">
+        <p className="spell-desc">
           {spell.desc !== undefined && (
             <ReactReadMoreReadLess
               charLimit={250}
@@ -342,7 +357,7 @@ const SpellCard = ({ spell, level, index, prepared, togglePinned, togglePrepared
               {spell.desc.join('\n')}
             </ReactReadMoreReadLess>
           )}
-        </div>
+        </p>
       </div>
     );
   };
