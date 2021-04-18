@@ -65,6 +65,11 @@ export const Descriptions = ({ charID, setPage }) => {
   const [personality, setPersonality] = useState(
     description?.lore?.personality_traits ?? ''
   );
+
+  useEffect(() => {
+    dispatch(setDescription(charID, { lore: { alignment: selectionAl } }));
+  }, [selectionAl]);
+
   const [ideals, setIdeals] = useState(description?.lore?.ideals ?? '');
   const [bonds, setBonds] = useState(description?.lore?.bonds ?? '');
   const [flaws, setFlaws] = useState(description?.lore?.flaws ?? '');
