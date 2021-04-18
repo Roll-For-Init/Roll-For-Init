@@ -376,9 +376,11 @@ const Page = ({page, character, charID}) => {
                   <SpellBoxes spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID}/>
                   </div>
                 )}
+                {character.spells != null && (
                 <div className="row">
                   <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} weapons={character.attacks.weapons} armor={character.equipped_armor} treasure={character.treasure.other} spells={character.spells.cards} charClassName={character.class[0].name}/>
                 </div>
+                )}
               </div>
             </div>
           </div>
