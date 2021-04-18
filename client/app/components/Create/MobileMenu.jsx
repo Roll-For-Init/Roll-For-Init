@@ -1,11 +1,14 @@
 import React, { useState } from 'react';
-import useSelector from 'react-redux';
+import {useDispatch} from 'react-redux';
 
-function MobileMenu({ buttonNames, page, pages, setPage }) {
+function MobileMenu({ charID, character, buttonNames, page, pages, setPage }) {
   const [open, setOpen] = useState(false);
   const toggle = () => setOpen(!open);
+  const dispatch = useDispatch();
 
   const onPageChange = (page, index) => {
+    const payload = { name: page, index: index };
+    dispatch(setPage(charID, payload));
     setPage({ name: page, index });
     toggle(!open);
   };
@@ -45,7 +48,7 @@ function MobileMenu({ buttonNames, page, pages, setPage }) {
                   className={classname}
                   disabled={page.index < idx}
                   onClick={() => {
-                    page.index >= idx && onPageChange(name, idx);
+                    page.index > idx && onPageChange(name, idx);
                   }}
                 >
                   {name}
@@ -53,6 +56,25 @@ function MobileMenu({ buttonNames, page, pages, setPage }) {
               </li>
             );
           })}
+          {character.class?.spellcasting?.level <= 1 && (
+            <li className="mobile-menu-list-item" key={name}>
+            <button
+              key="spells"
+              type="button"
+              className={
+                character.page.name === 'spells'
+                  ? 'btn btn-lg btn-primary menu-button active'
+                  : 'btn btn-lg btn-secondary menu-button'
+              }
+              disabled={character.page.index < 6}
+              onClick={() => {
+                character.page.index > 6 && onPageChange('spells', 6);
+              }}
+            >
+              spells
+            </button>
+            </li>
+          )}
         </ul>
       )}
     </div>
