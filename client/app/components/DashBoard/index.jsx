@@ -29,7 +29,9 @@ const download = (character)  => {
 const getInventory = (character) => {
   var inventory = "";
   for (var i = 0; i < character.inventory.length; i++){
-    inventory += character.inventory[i].name + " (" + character.inventory[i].quantity + ")\n";
+    if (character.inventory[i].name != undefined){
+      inventory += character.inventory[i].name + " (" + character.inventory[i].quantity + ")\n";
+    }
   }
   return inventory;
 }
@@ -55,34 +57,6 @@ const formatArray = (toFormat) => {
   return formattedString;
 }
 
-const calculateStatWeights = (character) => {
-  var cp = 0;
-  var sp = 0;
-  var ep = 0;
-  var gp = 0;
-  var pp = 0;
-  for (var i = 0; i < character.inventory.length; i++){
-    var item = character.inventory[i];
-    if (item.cost.denomination === "cp"){
-      cp += parseInt(item.cost.amount);
-    }
-    if (item.cost.denomination === "sp"){
-      sp += parseInt(item.cost.amount);
-    }
-    if (item.cost.denomination === "ep"){
-      ep += parseInt(item.cost.amount);
-    }
-    if (item.cost.denomination === "gp"){
-      gp += parseInt(item.cost.amount);
-    }
-    if (item.cost.denomination === "pp"){
-      pp += parseInt(item.cost.amount);
-    }
-  }
-  var invArray = [cp, sp, ep, gp, pp]
-  return invArray;
-}
-
 const isProficient = (proficiency) => {
   if (proficiency){
     return "⬤"
@@ -90,12 +64,74 @@ const isProficient = (proficiency) => {
   else return "";
 }
 
+const addSign = (number) => {
+  var toPrint = "";
+  if (number >= 0){
+    toPrint = "+" + String(number);
+  }
+  return toPrint;
+}
+
+const setAlignment = (character) => {
+  if (character.lore.alignment === null){
+    return "";
+  } else {
+    return character.lore.alignment[0].name;
+  }
+}
+
+const findWeapons = (character) => {
+  var weps = [];
+  var wepCount = 0;
+  //console.log(character.attacks.weapons.length);
+  if (character.attacks.weapons != null){
+    for (var i = 0; i < character.attacks.weapons.length; i++){
+      weps.push(character.attacks.weapons[i].name);
+      wepCount++;
+    }
+  }
+  if (wepCount < 3){
+    console.log(character.attacks);
+    if (character.spells != null){
+      for (var i = wepCount; i < weps.length; i++){
+        weps.push(character.spells.cards[i].spell_type);
+        }
+      }
+    }
+  return weps;
+}
+
+/*const getTypes = (character) => {
+  var types = [];
+  var weps = findWeapons(character);
+  for (var i = 0; i < weps.length; i++){
+  }
+}*/
+
 const calcBonus = (character) => {
-  return "+" + parseInt(character.ability_scores.str.modifier) + (parseInt(character.ability_scores.dex.modifier) + parseInt(character.proficiency_bonus));
+  var bonus = [];
+  var bonusWeps = findWeapons(character);
+  var str = parseInt(character.ability_scores.str.modifier); 
+  var dex = parseInt(character.ability_scores.dex.modifier);
+  var pro =  parseInt(character.proficiency_bonus);
+  for (var i = 0; i < bonusWeps.length; i++){
+    if (character.attacks.weapons[i].category.toLowerCase().includes("ranged")){
+      var sign = ((dex + pro) >= 0) ? "+" : 0;
+      bonus[i] = sign + (dex + pro);
+    } else {
+      if (character.attacks.weapons[i].category.toLowerCase().includes("melee")){
+        var sign = ((str + pro) >= 0) ? "+" : 0
+        bonus[i] = sign + (str + pro);
+      }
+    }
+  }
+  return bonus;
   
 }
 const formatPayload = (character, user) => {
-  var invStats = calculateStatWeights(character);
+  var weps = findWeapons(character);
+  console.log(character);
+  var bonus = calcBonus(character);
   var payload = {
     "title": "Character Sheet Demo",
     "fontSize": 10,
@@ -105,7 +141,7 @@ const formatPayload = (character, user) => {
       "Class": character.class[0].name,
       "Background": character.background.name,
       "Race": character.race.name,
-      "Alignment": character.lore.alignment[0].name,
+      "Alignment": setAlignment(character),
       "EXP": character.experience.current + "/" + character.experience.threshold,
       "STR": character.ability_scores.str.score,
       "DXT": character.ability_scores.dex.score,
@@ -114,67 +150,67 @@ const formatPayload = (character, user) => {
       "WIS": character.ability_scores.wis.score,
       "CHR": character.ability_scores.cha.score,
       "ArmorClass": "0",
-      "PersonalityTraits": character.lore.personality_traits,
+      "PersonalityTraits": character?.lore?.personality_traits ?? "",
       "Ideals": character.lore.ideals,
       "Flaws": character.lore.flaws,
-      "Features": character.features[0].desc,
+      "Features": character.traits.name,
       "Languages": "Languages: " + formatArray(character.misc_proficiencies.languages),
       "Armor": "Armor: " + formatArray(character.misc_proficiencies.armor),
       "Weapons": "Weapons: " + formatArray(character.misc_proficiencies.weapons),
-      "STRmod": ("+" + character.ability_scores.str.modifier),
-      "DXTmod": ("+" + character.ability_scores.dex.modifier),
-      "CONmod": ("+" + character.ability_scores.con.modifier),
-      "INTmod": ("+" + character.ability_scores.int.modifier),
-      "WISmod": ("+" + character.ability_scores.wis.modifier),
-      "CHRmod": ("+" + character.ability_scores.cha.modifier),
-      "ProBonus": ("+" + character.proficiency_bonus),
+      "STRmod": addSign(character.ability_scores.str.modifier),
+      "DXTmod": addSign(character.ability_scores.dex.modifier),
+      "CONmod": addSign(character.ability_scores.con.modifier),
+      "INTmod": addSign(character.ability_scores.int.modifier),
+      "WISmod": addSign(character.ability_scores.wis.modifier),
+      "CHRmod": addSign(character.ability_scores.cha.modifier),
+      "ProBonus": addSign(character.proficiency_bonus),
       "Bonds": character.lore.bonds,
       "Initiative": character.initiative_bonus,
       "Speed": character.walking_speed,
-      "STstr": ("+" + character.saving_throws.str.modifier),
-      "STdxt": ("+" + character.saving_throws.str.modifier),
-      "STcon": ("+" + character.saving_throws.con.modifier),
-      "STint": ("+" + character.saving_throws.int.modifier),
-      "STwis": ("+" + character.saving_throws.wis.modifier),
-      "STchr": ("+" + character.saving_throws.cha.modifier),
+      "STstr": addSign(character.saving_throws.str.modifier),
+      "STdxt": addSign(character.saving_throws.str.modifier),
+      "STcon": addSign(character.saving_throws.con.modifier),
+      "STint": addSign(character.saving_throws.int.modifier),
+      "STwis": addSign(character.saving_throws.wis.modifier),
+      "STchr": addSign(character.saving_throws.cha.modifier),
       "CurrentHP": character.health.current,
       "MaxHP": character.health.max,
       "TempHP": character.health.temp,
-      "Acrobatics": ("+" + character.skills.acrobatics.modifier),
-      "AnimalHandling": ("+" + character.skills.animal_handling.modifier),
-      "Arcana": ("+" + character.skills.arcana.modifier),
-      "Athletics": ("+" + character.skills.athletics.modifier),
-      "Deception": ("+" + character.skills.deception.modifier),
-      "History": ("+" + character.skills.history.modifier),
-      "Insight": ("+" + character.skills.insight.modifier),
-      "Intimidation": ("+" + character.skills.intimidation.modifier),
-      "Investigation": ("+" + character.skills.investigation.modifier),
-      "Medicine": ("+" + character.skills.medicine.modifier),
-      "Nature": ("+" + character.skills.nature.modifier),
-      "Perception": ("+" + character.skills.perception.modifier),
-      "Performance": ("+" + character.skills.performance.modifier),
-      "Persuasion": ("+" + character.skills.persuasion.modifier),
-      "Religion": ("+" + character.skills.religion.modifier),
+      "Acrobatics": addSign(character.skills.acrobatics.modifier),
+      "AnimalHandling": addSign(character.skills.animal_handling.modifier),
+      "Arcana": addSign(character.skills.arcana.modifier),
+      "Athletics": addSign(character.skills.athletics.modifier),
+      "Deception": addSign(character.skills.deception.modifier),
+      "History": addSign(character.skills.history.modifier),
+      "Insight": addSign(character.skills.insight.modifier),
+      "Intimidation": addSign(character.skills.intimidation.modifier),
+      "Investigation": addSign(character.skills.investigation.modifier),
+      "Medicine": addSign(character.skills.medicine.modifier),
+      "Nature": addSign(character.skills.nature.modifier),
+      "Perception": addSign(character.skills.perception.modifier),
+      "Performance": addSign(character.skills.performance.modifier),
+      "Persuasion": addSign(character.skills.persuasion.modifier),
+      "Religion": addSign(character.skills.religion.modifier),
       "SleightOfHand": "+0",
       "Stealth": "+0",
       "Survival": "+0",
-      "Attack1": character.attacks.weapons[0].name,
-      "Attack2": character.attacks.weapons[1].name,
-      "Attack3": character.attacks.weapons[2].name,
-      "Bonus3": calcBonus(character),
-      "Bonus2": calcBonus(character),
-      "Bonus1": calcBonus(character),
-      "Damage1": character.attacks.weapons[0].damage.damage_type + "/" + character.attacks.weapons[0].damage.damage_dice,
-      "Damage2": character.attacks.weapons[1].damage.damage_type + "/" + character.attacks.weapons[1].damage.damage_dice,
-      "Damage3": character.attacks.weapons[2].damage.damage_type + "/" + character.attacks.weapons[2].damage.damage_dice,
+      "Attack1": weps[0],
+      "Attack2": weps[1],
+      "Attack3": weps[2],
+      "Bonus3": bonus[2],
+      "Bonus2": bonus[1],
+      "Bonus1": bonus[0],
+      "Damage1": (character.attacks.weapons[0] != undefined) ? character.attacks.weapons[0].damage.damage_type + "/" + character.attacks.weapons[0].damage.damage_dice : "",
+      "Damage2": (character.attacks.weapons[1] != undefined) ? character.attacks.weapons[1].damage.damage_type + "/" + character.attacks.weapons[1].damage.damage_dice : "",
+      "Damage3": (character.attacks.weapons[2] != undefined) ? character.attacks.weapons[2].damage.damage_type + "/" + character.attacks.weapons[2].damage.damage_dice : "",
       "HitDice": character.hit_dice[0].current + "d" + character.hit_dice[0].type,
       "Inspiration": ((character.inspiration) ? "+1" : "+0"),
       "Username": character.name,
-      "CP": invStats[0],
-      "SP": invStats[1],
-      "EP": invStats[2],
-      "GP": invStats[3],
-      "PP": invStats[4],
+      "CP": character.treasure.cp,
+      "SP": character.treasure.sp,
+      "EP": character.treasure.ep,
+      "GP": character.treasure.gp,
+      "PP": character.treasure.pp,
       "Inventory": getInventory(character),
       "AcrobaticsPro": isProficient(character.skills.acrobatics.proficiency),
       "AnimalHandlingPro": isProficient(character.skills.animal_handling.proficiency),
@@ -197,20 +233,18 @@ const formatPayload = (character, user) => {
       "STintPro": isProficient(character.saving_throws.int.proficiency),
       "STwisPro": isProficient(character.saving_throws.wis.proficiency),
       "STchrPro": isProficient(character.saving_throws.cha.proficiency),
-      "HitDiceTotal": character.hit_dice[0].max + "d" + character.hit_dice[0].type
+      "HitDiceTotal": character.hit_dice[0].max + "d" + character.hit_dice[0].type,
+      "Tools": "Tools: " + formatArray(character.misc_proficiencies.tools)
     }
   }
     return payload;
 }
 
 const pdfExport = async(character, user) => {
-  //console.log(JSON.stringify(character));
-  //console.log(calculateAC(character));
   axios.post('api/pdf/pdfGen', formatPayload(character, user), {responseType: 'blob'}).then(response => {
     const file = new Blob([response.data], {
       type: "application/pdf"
     });
-    //download(JSON.stringify(character), 'character.txt', 'text/plain');
     const fileURL = URL.createObjectURL(file);
     window.open(fileURL);
   })
