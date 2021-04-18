@@ -30,6 +30,7 @@ const DraftCharacterCard = ({ character }) => {
 
 const UploadCharacter = () => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const maxImageSize = 10000000; // bytes
   const acceptedFileTypes = 'text/plain';
   const characterLimit = 28;
@@ -95,6 +96,10 @@ const UploadCharacter = () => {
             var jsonChar = JSON.parse(myFileItemReader.result);
             console.log(jsonChar);
             dispatch(submitCharacter(jsonChar));
+            localStorage.setItem('state', JSON.stringify(jsonChar));
+            dispatch(setCurrentCharacter(jsonChar.charID));
+            history.push('/dashboard');
+            window.location.reload();
             //var myResult = myFileItemReader.result;
             //setCharSheet(myResult);
             //console.log(charSheet);
