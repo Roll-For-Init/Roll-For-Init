@@ -100,9 +100,6 @@ const UploadCharacter = () => {
             dispatch(setCurrentCharacter(jsonChar.charID));
             history.push('/dashboard');
             window.location.reload();
-            //var myResult = myFileItemReader.result;
-            //setCharSheet(myResult);
-            //console.log(charSheet);
           },
           false
         );
