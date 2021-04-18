@@ -13,6 +13,7 @@ import Description from './Description.jsx';
 import { Features, FeatureCard } from './Features.jsx';
 import Masonry from 'react-masonry-css';
 import { SpellBook, SpellCard } from './Spells';
+import Inventory from './Inventory';
 
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
@@ -77,16 +78,31 @@ const Page = ({page, character, charID}) => {
       return <Features charID={charID} features={character.features} traits={character.traits} />;
     case "spellbook":
       return <SpellBook spellcasting={character.spells} modifier={
-                  character.spells
-                    ? character.ability_scores[
-                        character.spells.casting_ability
-                      ].modifier
-                    : null
-                  }
-                proficiency={character.proficiency_bonus}
-                charID={charID}
-                prepared={preparedSpells.includes(character.class[0].name.toLowerCase())}/> 
+          character.spells
+            ? character.ability_scores[
+                character.spells.casting_ability
+              ].modifier
+            : null
+          }
+        proficiency={character.proficiency_bonus}
+        charID={charID}
+        prepared={preparedSpells.includes(character.class[0].name.toLowerCase())}
+      />;
     case "inventory":
+      return <Inventory
+        charID={charID}
+        features={[]}
+        traits={[]}
+        treasure={character.treasure}
+        character={character}
+        str_score={character.ability_scores.str.score}
+        inventory={character.inventory}
+        weapons={character.attacks.weapons.concat(
+          character.attacks.magic_weapons
+        )}
+        charClassName={character.class[0].name}
+        armor={character.equipped_armor}
+      />;
     case "dashboard":
     default:
       return (
@@ -147,6 +163,7 @@ export const DashBoard = () => {
   const [showLongRest, setShowLongRest] = useState(false);
   const [showExp, setShowExp] = useState(false);
   const [showRoller, setShowRoller] = useState(false);
+  const [showFeatures, setShowFeaures] = useState(true);
   const [currentPercentage, setCurrentPercentage] = character.level
     ? useState(
         `${(character.experience.current / character.experience.threshold) *

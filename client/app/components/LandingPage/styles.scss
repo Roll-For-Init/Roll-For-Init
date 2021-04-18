@@ -65,6 +65,7 @@
 }
 
 .close {
+  transition: 0.15s ease all;
   font-size: 1.75rem;
   box-shadow: none;
   color: $off-white;

@@ -1,140 +1,139 @@
 @import 'client/app/variables';
 
 .dashboard {
+  .death-saves {
+    button {
+      position: relative;
 
-    .death-saves {
-        
-        button {
-            position: relative;
+      &:nth-last-child(2) {
+        margin-left: 4px;
+        margin-right: 4px;
+      }
+      &:first-child::before {
+        display: none;
+      }
 
-            &:nth-last-child(2) {
-                margin-left: 4px;
-                margin-right: 4px;
-            }
-            &:first-child::before {
-                display: none;
-            }
-
-            &::before{
-                content: '';
-                position: absolute;
-                top: .8rem;
-                left: -.45rem;
-                width: .6rem;
-                height: .1rem;
-                background: $medium-blue;
-                z-index: 0;
-            }
-        } 
-        
-        .success {
-            .circle-filled {
-                circle {
-                    fill: $green;
-                    stroke: $medium-blue;
-                  }
-                  &:hover circle {
-                    fill: $dark-green;
-                  }
-                  &:active circle {
-                    fill: $medium-green;
-                  }
-            }
-            .circle-outline {
-                circle {
-                    stroke: $medium-blue;
-                }
-                &:hover circle {
-                    fill: lighten($medium-green, 10%);
-                }
-                &:active circle {
-                    fill: $dark-green;
-                }
-            }
-        }
-        .fail {
-            .circle-filled {
-                circle {
-                    fill: $red;
-                    stroke: $medium-blue;
-                  }
-                  &:hover circle {
-                    fill: darken($red, 15%);
-                  }
-                  &:active circle {
-                    fill: $desat-red;
-                  }
-            }
-            .circle-outline {
-                circle {
-                    stroke: $medium-blue;
-                }
-                &:hover circle {
-                    fill: lighten($red, 10%);
-                }
-                &:active circle {
-                    fill: $desat-red;
-                }
-            }
-
-        }
-        
+      &::before {
+        content: '';
+        position: absolute;
+        top: 0.8rem;
+        left: -0.45rem;
+        width: 0.6rem;
+        height: 0.1rem;
+        background: $medium-blue;
+        z-index: 0;
+      }
     }
-    .status-bar {
-        display: flex;
-        flex-flow: row nowrap;
-        padding: 0;
-        .on-top {
-            z-index: 5;
+
+    .success {
+      .circle-filled {
+        circle {
+          fill: $green;
+          stroke: $medium-blue;
         }
-        .filled, .unfilled {
-            box-sizing: border-box;
-            flex: none;
-            border-top-left-radius: 8px;
-            border-bottom-left-radius: 8px;
+        &:hover circle {
+          fill: $dark-green;
         }
-        .full {
-            border-radius: 8px;
+        &:active circle {
+          fill: $medium-green;
         }
-        .filled {
-            margin-left: -100%;
+      }
+      .circle-outline {
+        circle {
+          stroke: $medium-blue;
         }
-        .unfilled {
-            width:100%;
-            padding-top: .2rem;
-            padding-bottom: .2rem;
-        }
-        .green {
-            background-color: $green;
+        &:hover circle {
+          fill: lighten($medium-green, 10%);
         }
         .blue {
             background-color: $light-blue;
         }
-    }
-    .line-height-small {
-        line-height: 1rem;
-    }
-    .spell-slot {
-        background-color: transparent;
-        margin: 0;
-        border: none;
-        padding: 0;
-        box-shadow: none;
-        &.used::after {
-            content: '●';
-            margin: 0;
+        &:active circle {
+          fill: $dark-green;
         }
-        &.unused::after {
-            content: '○';
-            margin: 0;
-        }
+      }
     }
-    .hover-effect {
-        &:hover {
-            background-color: $dark-off-white;
-
+    .fail {
+      .circle-filled {
+        circle {
+          fill: $red;
+          stroke: $medium-blue;
         }
+        &:hover circle {
+          fill: darken($red, 15%);
+        }
+        &:active circle {
+          fill: $desat-red;
+        }
+      }
+      .circle-outline {
+        circle {
+          stroke: $medium-blue;
+        }
+        &:hover circle {
+          fill: lighten($red, 10%);
+        }
+        &:active circle {
+          fill: $desat-red;
+        }
+      }
     }
+  }
+  .status-bar {
+    display: flex;
+    flex-flow: row nowrap;
+    padding: 0;
+    .on-top {
+      z-index: 5;
+    }
+    .filled,
+    .unfilled {
+      box-sizing: border-box;
+      flex: none;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+    }
+    .full {
+      border-radius: 8px;
+    }
+    .filled {
+      margin-left: -100%;
+    }
+    .unfilled {
+      width: 100%;
+      padding-top: 0.2rem;
+      padding-bottom: 0.2rem;
+    }
+    .green {
+      background-color: $green;
+    }
+    .blue {
+      background-color: $light-blue;
+    }
+  }
+  .line-height-small {
+    line-height: 1rem;
+  }
+  .spell-slot {
+    background-color: transparent;
+    margin: 0;
+    border: none;
+    padding: 0;
+    box-shadow: none;
+    &.used::after {
+      content: '●';
+      margin: 0;
+    }
+    &.unused::after {
+      content: '○';
+      margin: 0;
+    }
+  }
+  .hover-effect {
+    &:hover {
+      background-color: $dark-off-white;
+    }
+  }
   /******* header *******/
 
   .h3 {
@@ -173,12 +172,12 @@
         display: inline-block;
         margin-right: 2.5rem;
         margin-bottom: 0;
-        letter-spacing: .96px;
+        letter-spacing: 0.96px;
         // height:100%;
         vertical-align: middle;
       }
       h2 {
-          font-size: 2.5rem;
+        font-size: 2.5rem;
       }
       svg {
         margin-top: 2.5px;
@@ -193,7 +192,8 @@
   }
 
   /******* button bar *******/
-  .btn-primary, .btn-secondary {
+  .btn-primary,
+  .btn-secondary {
     margin: auto;
     margin-right: 20px;
     width: auto;
@@ -206,7 +206,6 @@
     border-radius: 8px;
     font-size: 1.15rem;
     letter-spacing: 1.92px;
-
   }
 
   /******* cards *******/
@@ -223,10 +222,10 @@
 
   .short-card {
     width: auto;
-    font-size: .9rem;
+    font-size: 0.9rem;
   }
   .small-caps {
-      font-size: 1.2rem;
+    font-size: 1.2rem;
   }
 
   .abilities {
@@ -275,24 +274,22 @@
   }
   .skills {
     .px-5 {
-        padding-left: 2.5rem !important;
-        padding-right: 2.5rem !important;
-        
+      padding-left: 2.5rem !important;
+      padding-right: 2.5rem !important;
     }
   }
-
 
   /******* layuot *******/
   @media (min-width: 1200px) {
     .col-xl-5 {
-        -ms-flex: 0 0 48%;
-        flex: 0 0 48%;
-        max-width: 48%;
+      -ms-flex: 0 0 48%;
+      flex: 0 0 48%;
+      max-width: 48%;
     }
     .col-xl-7 {
-        -ms-flex: 0 0 52%;
-        flex: 0 0 52%;
-        max-width: 52%;
+      -ms-flex: 0 0 52%;
+      flex: 0 0 52%;
+      max-width: 52%;
     }
   }
   @media (min-width: 576px) {
@@ -321,7 +318,7 @@
     margin-right: 0;
     margin-left: 0;
   }
-  
+
   /******* titles *******/
 
   .card-title {
@@ -342,67 +339,67 @@
   }
 
   .hit-points {
-      .health-bar {
-        .current-health {
-          position: absolute;
-          top: 0;
-          left: 0;
-          height: 100%;
-          z-index: 10;
-          border-radius: 8px;
-          &.green {
-            background-color: $green;
-          }
-          &.yellow {
-            background-color: $yellow;
-          }
-          &.red {
-            background-color: $red;
-          }
+    .health-bar {
+      .current-health {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        z-index: 10;
+        border-radius: 8px;
+        &.green {
+          background-color: $green;
         }
-        h3 {
-          position: relative;
-          z-index: 20;
-          color: $very-dark-blue;
+        &.yellow {
+          background-color: $yellow;
+        }
+        &.red {
+          background-color: $red;
         }
       }
-      .content-card {
-        padding-top: .2rem;
-        padding-bottom: .2rem;
+      h3 {
+        position: relative;
+        z-index: 20;
+        color: $very-dark-blue;
       }
-      .btn-success {
-        background-color: $dark-green;
-        border: none;
-        box-shadow: none;
-        font-size: 1rem;
-        padding: 2px 5px;
-        max-height: 1.67rem;
-        line-height: 1;
-        flex-grow: 0;
-        width: auto;
-        margin: auto; 
-        display: block;
-      }
-      .btn-alert {
-        background-color: $desat-red;
-        border: none;
-        box-shadow: none;
-        font-size: 1rem;
-        padding: 2px 5px;
-        max-height: 1.67rem;
-        line-height: 1;
-        flex-grow: 0;
-        width: auto;
-        margin: auto;
-        display: block;   
-        color: white;
-      }
+    }
+    .content-card {
+      padding-top: 0.2rem;
+      padding-bottom: 0.2rem;
+    }
+    .btn-success {
+      background-color: $dark-green;
+      border: none;
+      box-shadow: none;
+      font-size: 1rem;
+      padding: 2px 5px;
+      max-height: 1.67rem;
+      line-height: 1;
+      flex-grow: 0;
+      width: auto;
+      margin: auto;
+      display: block;
+    }
+    .btn-alert {
+      background-color: $desat-red;
+      border: none;
+      box-shadow: none;
+      font-size: 1rem;
+      padding: 2px 5px;
+      max-height: 1.67rem;
+      line-height: 1;
+      flex-grow: 0;
+      width: auto;
+      margin: auto;
+      display: block;
+      color: white;
+    }
   }
 
   .pinned {
-      .translucent-card {
-          max-width: 100%;
-      }
+    .translucent-card {
+      max-width: 100%;
+    }
   }
 
   .btn-alert {
@@ -419,41 +416,38 @@
   /******* tables *******/
   .maincol {
     .table {
-        margin-bottom: 0;
+      margin-bottom: 0;
     }
     td {
-        padding: {
-            top: 0;
-            bottom: 0;
-            left: .15rem;
-            right: .15rem;
-        }
-        &:first-child {
-          font-size: 150%;
-          line-height: 1;
-        }
+      padding: {
+        top: 0;
+        bottom: 0;
+        left: 0.15rem;
+        right: 0.15rem;
+      }
+      &:first-child {
+        font-size: 150%;
+        line-height: 1;
+      }
     }
   }
   .pinned, .spells-container {
     .table {
-        margin-bottom: 0;
-        margin-top: -5px;
-        
+      margin-bottom: 0;
+      margin-top: -5px;
     }
     td {
-        padding: {
-            left: .45rem;
-            right: .45rem;
-            top: .15rem;
-            bottom: .15rem;
-        }
-        vertical-align: top;
-
+      padding: {
+        left: 0.45rem;
+        right: 0.45rem;
+        top: 0.15rem;
+        bottom: 0.15rem;
+      }
+      vertical-align: top;
     }
     tr {
-        padding: 0;
+      padding: 0;
     }
-
   }
   /******* buttons *******/
   // .btn-outline-success {
@@ -549,10 +543,10 @@
   }
 
   .btn-outline-primary {
-      @extend .btn-outline-success;
-      border: {
-        color: $blue !important;
-      }
+    @extend .btn-outline-success;
+    border: {
+      color: $blue !important;
+    }
   }
   .wrapper-button {
     margin: auto;
@@ -560,44 +554,49 @@
     display: block;
     background-color: transparent;
     box-shadow: none;
-    padding-top: .2rem;
-    padding-bottom: .2rem;
+    padding-top: 0.2rem;
+    padding-bottom: 0.2rem;
 
     svg {
       margin: auto;
       display: block;
       height: 2rem;
       path {
-        transition: .15s;
+        transition: 0.15s;
       }
 
       &.star-filled {
-        .sparkles, .fill {
+        .sparkles,
+        .fill {
           fill: $medium-blue;
         }
         .outline {
           fill: transparent;
         }
         &:hover {
-          .sparkles, .fill {
+          .sparkles,
+          .fill {
             fill: $dark-blue;
           }
         }
         &:active {
-          .sparkles, .fill {
+          .sparkles,
+          .fill {
             fill: $very-dark-blue;
           }
         }
       }
       &.star-outline {
-        .sparkles, .outline {
+        .sparkles,
+        .outline {
           fill: $dark-blue-disabled;
         }
         .fill {
           fill: transparent;
         }
         &:hover {
-          .sparkles, .fill {
+          .sparkles,
+          .fill {
             fill: $dark-blue-disabled;
           }
           .outline {
@@ -605,7 +604,8 @@
           }
         }
         &:active {
-          .sparkles, .fill {
+          .sparkles,
+          .fill {
             fill: $very-dark-blue;
           }
           .outline {
@@ -615,55 +615,55 @@
       }
       &.circle-filled {
         circle {
-            fill: $dark-blue;
-          }
-          &:hover circle {
-            fill: $very-dark-blue;
-          }
-          &:active circle {
-            fill: $dark-blue-disabled;
-          }
+          fill: $dark-blue;
+        }
+        &:hover circle {
+          fill: $very-dark-blue;
+        }
+        &:active circle {
+          fill: $dark-blue-disabled;
+        }
       }
       &.circle-outline {
         circle.outline {
-            stroke: $dark-blue-disabled;
-            fill: transparent;
-          }
+          stroke: $dark-blue-disabled;
+          fill: transparent;
+        }
+        circle.fill {
+          fill: transparent;
+        }
+        &:hover {
           circle.fill {
-            fill: transparent;
+            fill: $dark-blue-disabled;
           }
-          &:hover {
-            circle.fill {
-              fill: $dark-blue-disabled;
-            }
+        }
+        &:active {
+          circle.fill {
+            fill: $very-dark-blue;
           }
-          &:active {
-            circle.fill {
-              fill: $very-dark-blue;
-            }
-          }
+        }
       }
     }
-}
-.wrapper-button-inline {
+  }
+  .wrapper-button-inline {
     @extend .wrapper-button;
     margin: 0;
     svg {
-        height: auto;
+      height: auto;
     }
     display: inline-block;
     padding-right: 3px;
-}
-.exp-add {
+  }
+  .exp-add {
     padding: 0;
     padding-left: 2px;
     padding-right: 2px;
     vertical-align: top;
     text-align: center;
-}
-.misc-stats h2 {
-  height: 2.4rem;
-}
+  }
+  .misc-stats h2 {
+    height: 2.4rem;
+  }
 
   .list-item {
     display: inline-block;
@@ -708,9 +708,9 @@
     color: $dark-blue !important;
   }
   .modal {
-      .btn-alert {
-          font-size: .75rem;
-      }
+    .btn-alert {
+      font-size: 0.75rem;
+    }
   }
   .modal-button {
     font-size: 1.25rem;
@@ -719,21 +719,21 @@
     margin: 20px auto 0 auto;
   }
   .modal-dialog {
-      max-width: auto;
-      width: auto;
+    max-width: auto;
+    width: auto;
   }
   .modal-table {
     margin-bottom: 0;
     margin-left: auto;
     margin-right: auto;
     width: 1px;
-    &>tr {
+    & > tr {
       display: table-cell;
       border: none;
       margin: 0;
       padding: 1px;
       vertical-align: top;
-      &>td {
+      & > td {
         display: block;
         border: none;
         margin: 0;
@@ -741,6 +741,182 @@
       }
     }
   }
+
+  .inventory-container {
+    .my-masonry-grid {
+      margin-left: -20px;
+    }
+    .my-masonry-grid_column {
+      padding-left: 20px;
+    }
+    .translucent-card {
+      max-width: 100%;
+      padding: 10px;
+      margin: 25px;
+      h4 {
+        margin-bottom: 0;
+        text-align: center;
+        color: white;
+      }
+      &:first-child {
+        margin-left: 0;
+      }
+      &:last-child {
+        margin-left: 0;
+        margin-right: 0;
+      }
+    }
+    .search-container {
+      margin-top: 10px;
+      display: flex;
+      justify-content: center;
+    }
+  
+    .search-bar {
+      position: relative;
+      margin-bottom: 0;
+      i {
+        position: absolute;
+        top: 7.5px;
+        right: 10px;
+        color: $dark-blue-disabled;
+      }
+      input {
+        border: none !important;
+        font-size: inherit !important;
+        padding: 5px 10px;
+        &:focus {
+          outline: none;
+        }
+      }
+    }
+    .big-letters {
+      text-transform: uppercase;
+      justify-content: center;
+      letter-spacing: 0.2rem;
+      color: white;
+      text-align: center;
+      margin-top: 0;
+      flex: 1;
+    }
+    .filter-text {
+      color: white;
+      margin: auto 15px;
+      font-size: 1.2em;
+    }
+  
+    .filter-button {
+      color: $dark-blue;
+      margin: 0 15px 0 0;
+      font-variant: normal;
+      letter-spacing: normal;
+      padding: 0 10px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  
+    .content-card {
+      border: none;
+      margin: 0;
+    }
+    .treasure-card {
+      padding: 10px;
+      line-height: normal;
+      margin: 0;
+    }
+    .borderless-card {
+      padding: 0 10px;
+      margin-right: 10px;
+      &.copper {
+        border: 3px solid $copper;
+      }
+      &.silver {
+        border: 3px solid $silver;
+      }
+      &.electrum {
+        border: 3px solid $electrum;
+      }
+      &.gold {
+        border: 3px solid $gold;
+      }
+      &.platinum {
+        border: 3px solid $platinum;
+        margin-right: 20px;
+      }
+    }
+  
+    .modal-header-container {
+      margin-top: 0;
+      display: flex;
+      .modal-header-button {
+        display: flex;
+        justify-content: center;
+        width: 40px;
+        align-items: center;
+        vertical-align: center;
+        &:first-child {
+          margin-right: auto;
+        }
+        &:last-child {
+          margin-left: auto;
+        }
+      }
+      .hidden {
+        visibility: hidden;
+      }
+    }
+  
+    .modal-eq-card-container {
+      margin: 10px 20px;
+    }
+    .modal-button {
+      max-width: 200px;
+      width: 80%;
+      padding: 5px 0;
+      margin: 10px auto 0 auto;
+      letter-spacing: normal;
+    }
+  
+    .off-white {
+      color: $off-white;
+    }
+  
+    .wrapper-button {
+      margin: auto;
+      margin-right: 0.25rem;
+  
+      svg {
+        height: 1.5rem;
+      }
+    }
+  
+    .adjust-treasure-container {
+      margin-bottom: 0;
+      .content-card {
+        border: 3px solid $maroon;
+        box-shadow: 1px 2px 2px hsla(0, 0, 0, 67%);
+      }
+      .treasure-dropdown {
+        margin: 0 20px 0 10px;
+      }
+      .plus-minus-button {
+        min-width: 40px;
+        margin: 0;
+        &:last-child {
+          margin-left: 10px;
+        }
+      }
+    }
+    .card-declined-msg {
+      color: $red;
+      padding: 0;
+      text-align: center;
+      margin: 0;
+      margin-top: 10px;
+    }
+  }
+
   .spells-container {
     .active {
       .dd-header__title, .dd-header__action {
@@ -947,7 +1123,7 @@
           // letter-spacing: .2rem;
         }
       }
-    }
-    
-  }  
+    } 
+  }
 }
+
