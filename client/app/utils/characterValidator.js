@@ -20,7 +20,6 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
     }
 
     for(let item of items.set) {
-        console.log("ITEM", item);
         if(item.equipment && item.equipment.unit) {
             item={
                 ...item.equipment
@@ -86,7 +85,6 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
     for(let key in items.choices) {
         let item = items.choices[key];
-        console.log("ITEM", item);
         if(!(item.desc || (item.equipment && item.equipment.desc) || item.equipment.choose)) {
             equipment.inventory.push(item);
             continue;
