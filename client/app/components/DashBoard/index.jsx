@@ -531,12 +531,12 @@ export const DashBoard = () => {
               <D20 fill="#ffffff" width="45" height="45" />
             </button>
           </span>
-          <span style={{paddingLeft:'500px'}}>
-          <button className="text-uppercase btn btn-primary" onClick={() => {download(character)}}>
+          <span className="wrapper-button-inline float-right" style={{paddingTop: '15px'}}>
+          <button className="text-uppercase btn btn-primary"  onClick={() => {download(character)}}>
           Download Character
           </button>
           </span>
-          <span style={{paddingLeft:'0px'}}>
+          <span className="wrapper-button-inline float-right" style={{paddingTop: '15px'}}>
           <button className="text-uppercase btn btn-primary" onClick={() => {pdfExport(character, user)}}>
           Export as PDF
           </button>
