@@ -6,7 +6,9 @@ import Dropzone from 'react-dropzone';
 import charPlaceholder from '../../../public/assets/imgs/char-placeholder.png';
 import './styles.scss';
 import { PropTypes } from 'prop-types';
-import { setCurrentCharacter, submitExistingCharacter } from '../../redux/actions';
+import { setCurrentCharacter, submitExistingCharacter, submitCharacter } from '../../redux/actions';
+import CharacterService from '../../redux/services/character.service';
+
 
 const DraftCharacterCard = ({ character }) => {
   const dispatch = useDispatch();
@@ -27,8 +29,10 @@ const DraftCharacterCard = ({ character }) => {
 };
 
 const UploadCharacter = () => {
+  const dispatch = useDispatch();
+  const history = useHistory();
   const maxImageSize = 10000000; // bytes
-  const acceptedFileTypes = 'application/pdf';
+  const acceptedFileTypes = 'text/plain';
   const characterLimit = 28;
   const acceptedFileTypesArray = acceptedFileTypes.split(',').map(item => {
     return item.trim();
@@ -38,7 +42,7 @@ const UploadCharacter = () => {
   const [fileName, setFileName] = useState('No file chosen');
   const [errors, setErrors] = useState('');
 
-  const verifyFile = files => {
+  const verifyFile = (files) => {
     if (files && files.length > 0) {
       const currentFile = files[0];
       const currentFileType = currentFile.type;
@@ -53,8 +57,8 @@ const UploadCharacter = () => {
         return false;
       }
       if (!acceptedFileTypesArray.includes(currentFileType)) {
-        console.log('Please only upload a PDF.');
-        setErrors('Please only upload a PDF.');
+        console.log('Please only upload a text file.');
+        setErrors('Please only upload a text file.');
         return false;
       }
       return true;
@@ -78,6 +82,7 @@ const UploadCharacter = () => {
           )}...${files[0].type.substring(files[0].type.lastIndexOf('/') + 1)}`;
         } else {
           nameToShow = file;
+          
         }
         setFileName(nameToShow);
         setErrors('');
@@ -87,15 +92,20 @@ const UploadCharacter = () => {
         myFileItemReader.addEventListener(
           'load',
           () => {
-            console.log(myFileItemReader.result);
-            const myResult = myFileItemReader.result;
-            setCharSheet(myResult);
-            console.log(charSheet);
+
+            var jsonChar = JSON.parse(myFileItemReader.result);
+            console.log(jsonChar);
+            dispatch(submitCharacter(jsonChar));
+            localStorage.setItem('state', JSON.stringify(jsonChar));
+            dispatch(setCurrentCharacter(jsonChar.charID));
+            history.push('/dashboard');
+            window.location.reload();
           },
           false
         );
 
-        myFileItemReader.readAsDataURL(currentFile);
+        myFileItemReader.readAsText(currentFile);
+
       }
     }
   };
@@ -123,11 +133,11 @@ const UploadCharacter = () => {
               <h5>Upload a Character</h5>
             </div>
             <div className="modal-sect">
-              <p>Please upload your Roll For Init PDF character sheet.</p>
+              <p>Please upload your Roll For Init character text file.</p>
             </div>
             <Dropzone
               onDrop={handleOnDrop}
-              accept="application/pdf"
+              accept="text/plain"
               multiple={false}
               maxSize={maxImageSize}
             >

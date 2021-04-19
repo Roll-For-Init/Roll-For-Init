@@ -7,7 +7,7 @@ const webpackHotMiddleware = require('webpack-hot-middleware');
 const webpackDevMiddleware = require('webpack-dev-middleware');
 const historyApiFallback = require('connect-history-api-fallback');
 const { createProxyMiddleware } = require('http-proxy-middleware');
-
+const bodyParser = require('body-parser');
 const config = require('../config/config');
 
 module.exports.init = async () => {
@@ -26,10 +26,13 @@ module.exports.init = async () => {
   const app = express();
   app.options('*', cors());
   app.use(createProxyMiddleware(api.routes, api.options));
-  app.use(express.urlencoded({ extended: true }));
-  app.use(express.json());
+  app.use(bodyParser.json());
+  app.use(bodyParser.urlencoded({extended: true}));
+  //app.use(express.json());
+  //app.use(express.urlencoded({ extended: true }));
   app.use(cors({ origin: '*' }));
   app.use(cookieParser());
+
 
   // API Routing
   app.use('/api/', require('./routes'));
