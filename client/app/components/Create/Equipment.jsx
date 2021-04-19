@@ -100,6 +100,20 @@ const EquipmentItem = ({
                     )}
                   </p>
                 )}
+                {equipment.desc.ac && (
+                  <p className="equipment-item m-0">
+                    AC:&nbsp;
+                    <i className="equipment-item-info">
+                      {`${equipment.desc.base}${
+                        equipment.desc.dex_bonus ? ' + Dex. modifier' : ''
+                      }${
+                        equipment.desc.max_bonus !== null
+                          ? ` max ${equipment.desc.max_bonus}`
+                          : ''
+                      }`}
+                    </i>
+                  </p>
+                )}
                 {equipment.desc.range && (
                   <p className="equipment-item">
                     Range:&nbsp;
@@ -460,16 +474,6 @@ export const Equipment = ({ charID, setPage }) => {
 
   const [name, setName] = useState('');
 
-  // const addEquipment = idx => {
-  //   setAddedEquipment(...addedEquipment, idx);
-  // };
-
-  // const removeEquipment = idx => {
-  //   setAddedEquipment(
-  //     addedEquipment.filter(equipment => equipment.index != idx)
-  //   );
-  // };
-
   const history = useHistory();
 
   const validateAndStore = () => {
@@ -499,11 +503,6 @@ export const Equipment = ({ charID, setPage }) => {
     window.scrollTo(0, 0);
   };
 
-  // const onFinish = () => {
-  //   validateAndStore();
-  //   history.push('/dashboard');
-  // };
-
   useEffect(() => {
     const promises = [];
     promises.push(
@@ -527,31 +526,32 @@ export const Equipment = ({ charID, setPage }) => {
         }
       )
     );
-    Promise.all(promises).then(() => {
-      setEquipmentLoaded(true);
-    }).then(() => {
-      for(let set of equipmentList) {
-        if(set.equipment?.desc?.contents) {
-          CharacterService.getEquipmentDetails(set.equipment.desc.contents).then(
-            details => {
+    Promise.all(promises)
+      .then(() => {
+        setEquipmentLoaded(true);
+      })
+      .then(() => {
+        for (let set of equipmentList) {
+          if (set.equipment?.desc?.contents) {
+            CharacterService.getEquipmentDetails(
+              set.equipment.desc.contents
+            ).then(details => {
               set.equipment.desc.contents = details;
-            }
-          )
-        }
-      }
-      for(let set of equipmentOptions) {
-        if(set.from[0]?.desc?.contents) {
-          for(let option of set.from) {
-            CharacterService.getEquipmentDetails(option.desc.contents).then(
-              details=> {
-                option.desc.contents = details;
-              }
-            )
+            });
           }
-
         }
-      }
-    });
+        for (let set of equipmentOptions) {
+          if (set.from[0]?.desc?.contents) {
+            for (let option of set.from) {
+              CharacterService.getEquipmentDetails(option.desc.contents).then(
+                details => {
+                  option.desc.contents = details;
+                }
+              );
+            }
+          }
+        }
+      });
   }, []);
 
   const breakpointColumnsObj = {
@@ -607,7 +607,6 @@ export const Equipment = ({ charID, setPage }) => {
               />
             );
           })}
-          {/* {document.getElementById('#nameModal').classList.contains('in') && ( */}
           {character.class?.spellcasting?.level <= 1 && (
             <button
               className="text-uppercase btn-primary btn-lg px-5 btn-floating"

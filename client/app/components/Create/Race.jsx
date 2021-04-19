@@ -260,7 +260,7 @@ const AbilityBonusCard = ({ ability_bonuses }) => {
           return `+${ability.bonus} ${ability.ability_score.full_name}`;
         else
           return (
-            <div key={index} style={{color: "#404959"}}>
+            <div key={index} style={{ color: '#404959' }}>
               +{ability.bonus} {ability.ability_score.full_name}
               <br />
             </div>
@@ -411,7 +411,7 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
       {raceInfo.options.length > 0 && (
         <div className="card translucent-card">
           <h4 className="card content-card card-title">Race Options</h4>
-          <div>
+          <>
             {raceInfo.options.map((option, index) => {
               return (
                 <>
@@ -442,6 +442,7 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
                       stateKey={`${option.header
                         .toLowerCase()
                         .replace(' ', '-')}-${option.type}-${index}`}
+                      key={index}
                     />
                   </div>
                   {Array.isArray(option.desc) &&
@@ -464,7 +465,7 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
                 </>
               );
             })}
-          </div>
+          </>
         </div>
       )}
       {raceInfo.profCount > 0 && (
