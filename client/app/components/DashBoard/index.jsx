@@ -134,6 +134,30 @@ const calcBonus = (character) => {
   return bonus;
   
 }
+
+const getFeatures = (character) => {
+  var features = "Features: ";
+  if (character.features[0] != undefined){
+    for (var i = 0; i < character.features.length; i++){
+      if (i == character.features.length - 1){
+        features += character.features[i].name + ".\n\n";
+        break;
+      }
+      features += character.features[i].name + ", ";
+    }
+  }
+  features += "Traits: ";
+  if (character.traits[0] != undefined){
+    for (var i = 0; i < character.traits.length; i++){
+      if (i == character.traits.length - 1){
+        features += character.traits[i].name + ".";
+        break;
+      }
+      features += character.traits[i].name + ", ";
+    }
+  }
+  return features;
+}
 const formatPayload = (character, user) => {
   var weps = findWeapons(character);
   console.log(character);
@@ -159,7 +183,7 @@ const formatPayload = (character, user) => {
       "PersonalityTraits": character?.lore?.personality_traits ?? "",
       "Ideals": character.lore.ideals,
       "Flaws": character.lore.flaws,
-      "Features": character.traits.name,
+      "Features": getFeatures(character),
       "Languages": "Languages: " + formatArray(character.misc_proficiencies.languages),
       "Armor": "Armor: " + formatArray(character.misc_proficiencies.armor),
       "Weapons": "Weapons: " + formatArray(character.misc_proficiencies.weapons),
