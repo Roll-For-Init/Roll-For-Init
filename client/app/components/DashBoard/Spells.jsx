@@ -262,6 +262,11 @@ export const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared
                 />
               }
             </div>
+        </div>
+          <div className="float-right" style={{margin:'25px'}}>
+            <div className="card content-card description-card">
+                    <h5 className="mb-0">Spells prepared: <span><h4 className="mb-0" style={{display:'inline-block'}}>{currentPrepared}/{maxPrepared}</h4></span></h5>
+            </div>
           </div>
         </div>
       </div>
@@ -297,7 +302,7 @@ export const SpellCard = ({ spell, level, index, prepared, togglePinned, toggleP
             </h5>
           </div>
           {prepared && level > 0 && togglePrepared &&
-            <div className="col-auto pr-0">
+            <div className="col-auto pr-0 pl-2">
               <button
                 onClick={() => togglePrepared(level, index)}
                 className={`btn ${

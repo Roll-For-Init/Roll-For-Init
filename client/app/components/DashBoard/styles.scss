@@ -179,9 +179,6 @@
       h2 {
         font-size: 2.5rem;
       }
-      svg {
-        margin-top: 2.5px;
-      }
     }
     .button-icon {
       max-width: 43px;
@@ -645,6 +642,51 @@
       }
     }
   }
+  .dice-roller {
+      .modal-dialog {
+          max-width:700px;
+      }
+      .d20, .d12, .d10, .d8, .d6, .d4 {
+        font-size: 5rem;
+        display: inline-block;
+        vertical-align: top;
+        padding-left: 8px;
+      }
+      .d20 {
+          font-family: 'dPolyd20'!important;
+      }
+      .d12 {
+          font-family: 'dPolyd12' !important;
+      }
+      .d10 {
+          font-family: 'dPolyd10' !important;
+      }
+      .d8 {
+        font-family: 'dPolyd8' !important;
+      }
+      .d6 {
+        font-family: 'dPolyd6' !important;
+      }
+      .d4 {
+        font-family: 'dPolyd4' !important;
+      }
+      td {
+          text-align:center;
+          div {
+              line-height: 4rem;
+          }
+          h2 {
+              display: inline-block;
+          }
+      }
+      .point-button {
+        margin: 0px;
+        box-shadow: none !important;
+        width: auto;
+        padding: 10px;
+      }
+  }
+
   .wrapper-button-inline {
     @extend .wrapper-button;
     margin: 0;

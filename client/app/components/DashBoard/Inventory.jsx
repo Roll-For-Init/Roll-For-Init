@@ -200,7 +200,7 @@ export const Inventory = ({
     }
     else if (type === 'armor') {
       armor[idx].pinned = !armor[idx].pinned;
-      dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
+      dispatch(setArrayUpdate(charID, 'armor', armor));
     }
     else if (type === 'treasure') {
       treasure.other[idx].pinned = !treasure.other[idx].pinned;
@@ -227,7 +227,7 @@ export const Inventory = ({
       })
     }
     armor[idx].equipped = !armor[idx].equipped;
-    dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
+    dispatch(setArrayUpdate(charID, 'armor', armor));
   }
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
