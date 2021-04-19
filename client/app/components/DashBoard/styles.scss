@@ -769,11 +769,9 @@
     }
 
     .add-item-container {
-      //padding-top: 45px;
-      //flex-direction: column;
-      //display: flex;
-      //justify-content: center;
-
+      flex-direction: column;
+      display: flex;
+      align-items: flex-start;
       width: 100%;
       overflow: auto;
       max-height: 245px;

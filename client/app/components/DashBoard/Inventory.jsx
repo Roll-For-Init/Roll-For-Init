@@ -448,10 +448,291 @@ export const Inventory = ({
     CharacterService.getSubList('equipment-categories/tools').then(list => {
       setAllTools(list.equipment);
     });
-    CharacterService.getIndexedList('magic-items').then(list => {
-      setAllMagicItems(list.equipment);
-    });
+    // CharacterService.getIndexedList('magic-items').then(list => {
+    //   setAllMagicItems(list.equipment);
+    // });
   }, []);
+
+  const getItemByURL = url => {
+    // cut /api/ out of the url
+    let subURL = url.substring(5, url.length);
+    console.log('Adding item from ' + subURL);
+    CharacterService.getSubList(subURL).then(list => {
+      console.log([list]);
+      parseEquipment([makeEquipmentDesc(list)], [], []);
+      //return list;
+    });
+  };
+
+  const makeEquipmentDesc = itemDetails => {
+    let desc;
+    if (
+      itemDetails.gear_category &&
+      itemDetails.gear_category.index == 'equipment-packs'
+    ) {
+      desc = {
+        name: itemDetails.name,
+        index: itemDetails.index,
+        cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+        contents: itemDetails.contents,
+      };
+    } else if (
+      itemDetails.equipment_category.index == 'weapon' &&
+      itemDetails.special == undefined
+    ) {
+      desc = {
+        name: itemDetails.name,
+        index: itemDetails.index,
+        category: `${itemDetails.category_range} Weapon`,
+        damage: {
+          damage_type: itemDetails.damage.damage_type.name,
+          damage_dice: itemDetails.damage.damage_dice,
+        },
+        cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+        weight: itemDetails.weight,
+        desc: itemDetails.properties.map(prop => prop.name).join(', '),
+      };
+      if (itemDetails.two_handed_damage != undefined) {
+        desc.damage.two_handed = {
+          damage_type: itemDetails.two_handed_damage.damage_type.name,
+          damage_dice: itemDetails.two_handed_damage.damage_dice,
+        };
+      }
+      if (itemDetails.range != undefined) {
+        desc.range = itemDetails.range;
+      }
+    } else if (itemDetails.equipment_category.index == 'armor') {
+      let armorClassDeets = itemDetails.armor_class;
+      let ac = armorClassDeets.dex_bonus
+        ? `${armorClassDeets.base} + Dex. modifier`
+        : `${armorClassDeets.base}`;
+      desc = {
+        name: itemDetails.name,
+        index: itemDetails.index,
+        category: `${itemDetails.armor_category} Armor`,
+        ac: ac,
+        cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
+        weight: itemDetails.weight,
+        dex_bonus: armorClassDeets.dex_bonus,
+        max_bonus: armorClassDeets.max_bonus,
+        base: armorClassDeets.base,
+        str_minimum: itemDetails.str_minimum,
+        stealth_disadvantage: itemDetails.stealth_disadvantage,
+      };
+      if (itemDetails.str_minimum > 0) desc.strength = itemDetails.str_minimum;
+      if (itemDetails.stealth_disadvantage) desc.desc = 'stealth disadvantage';
+    } else {
+      desc = {
+        name: itemDetails.name,
+        index: itemDetails.index,
+        category: null,
+        quantity: null,
+        cost: null,
+        weight: null,
+        desc: null,
+      };
+      let keys = Object.keys(itemDetails);
+      for (let key in keys) {
+        if (key.includes('category') && !key.includes('equipment')) {
+          desc.category =
+            typeof itemDetails[key] == 'string'
+              ? itemDetails[key]
+              : itemDetails[key].name;
+          break;
+        }
+      }
+      if (itemDetails.weapon_category != undefined)
+        desc.category = `${itemDetails.category_range} Weapon`;
+      if (itemDetails.damage != undefined)
+        desc.damage = {
+          damage_type: itemDetails.damage.damage_type.name,
+          damage_dice: itemDetails.damage.damage_dice,
+        };
+      if (itemDetails.two_handed_damage != undefined) {
+        desc.damage.two_handed = {
+          damage_type: itemDetails.two_handed_damage.damage_type.name,
+          damage_dice: itemDetails.two_handed_damage.damage_dice,
+        };
+      }
+      if (itemDetails.quantity != undefined)
+        desc.quantity = itemDetails.quantity;
+      if (itemDetails.cost != undefined)
+        desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
+      if (itemDetails.weight != undefined) desc.weight = itemDetails.weight;
+      if (itemDetails.special != undefined)
+        desc.special = itemDetails.special.join(' ');
+      if (itemDetails.range != undefined) {
+        desc.range = itemDetails.range;
+      }
+      if (itemDetails.desc != undefined) desc.desc = itemDetails.desc;
+      else if (itemDetails.properties != undefined)
+        desc.desc = itemDetails.properties.map(prop => prop.name).join(', ');
+    }
+
+    return desc;
+  };
+
+  const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
+    const equipment = {
+      equipped_armor: [],
+      attacks: {
+        advantage: 0,
+        weapons: [],
+        magic_weapons: [],
+      },
+      inventory: [],
+      treasure: {
+        cp: 0,
+        sp: 0,
+        ep: 0,
+        gp: 0,
+        pp: 0,
+        other: [],
+      },
+    };
+
+    for (let item of items) {
+      console.log(item);
+      if (item.equipment && item.equipment.unit) {
+        item = {
+          ...item.equipment,
+        };
+      } else if (
+        item.equipment &&
+        item.equipment.desc &&
+        item.equipment.desc.contents
+      ) {
+        for (let thing of item.equipment.desc.contents) {
+          let costAmt = thing.item.desc.cost.match(/\d+/g);
+          let denom = thing.item.desc.cost.match(/[a-zA-Z]+/g);
+          equipment.inventory.push({
+            ...thing.item.desc,
+            cost: { amount: costAmt, denomination: denom },
+            name: thing.item.name,
+            quantity: thing.quantity,
+          });
+        }
+        continue;
+      } else if (!(item.desc || (item.equipment && item.equipment.desc))) {
+        item.equipment
+          ? equipment.inventory.push({
+              ...item.equipment,
+              quantity: item.quantity,
+            })
+          : equipment.inventory.push(item);
+        continue;
+      } else if (item.equipment) {
+        let costAmt = item.equipment.desc
+          ? item.equipment.desc.cost.match(/\d+/g)
+          : 0;
+        let denom = item.equipment.desc
+          ? item.equipment.desc.cost.match(/[a-zA-Z]+/g)
+          : '';
+        item = {
+          ...item.equipment.desc,
+          cost: {
+            amount: costAmt,
+            denomination: denom,
+          },
+          name: item.equipment.name,
+          quantity: item.quantity ? 1 : item.quantity,
+        };
+      } else {
+        let costAmt = item.cost ? item.cost.match(/\d+/g) : 0;
+        let denom = item.cost ? item.cost.match(/[a-zA-Z]+/g) : '';
+        console.log('way inside parse');
+        console.log(item);
+        item = {
+          ...item.desc,
+          cost: {
+            amount: costAmt,
+            denomination: denom,
+          },
+          name: item.name,
+          quantity: item.quantity ? 1 : item.quantity,
+        };
+      }
+
+      sortEquipment(equipment, item, weaponProficiencies, armorProficiencies);
+    }
+    console.log(equipment);
+  };
+
+  const sortEquipment = (
+    equipment,
+    item,
+    weaponProficiencies,
+    armorProficiencies
+  ) => {
+    //console.log(item);
+    let category = item.category ? item.category.toLowerCase() : 'pack';
+    if (category.includes('weapon')) {
+      item.pinned = false;
+      //console.log(weaponProficiencies, item)
+      if (
+        weaponProficiencies.find(weapon =>
+          weapon
+            .toLowerCase()
+            .includes(
+              item.name.substring(0, item.name.indexOf(' ')).toLowerCase()
+            )
+        )
+      )
+        item.proficiency = true;
+      else item.proficiency = false;
+      item.properties = item.desc.split(', ');
+      delete item.desc;
+
+      //if(category.includes("magic")) equipment.attacks.magic_weapons.push(item);
+      /*else*/ equipment.attacks.weapons.push(item);
+    } else if (category.includes('armor')) {
+      item.pinned = false;
+      item.equipped = false;
+      item.armor_class = {
+        base: item.base,
+        dex_bonus: item.dex_bonus,
+        max_bonus: item.max_bonus,
+      };
+      if (
+        armorProficiencies.find(armor =>
+          armor.toLowerCase().includes(item.category.toLowerCase())
+        )
+      )
+        item.proficiency = true;
+      else if (
+        armorProficiencies.includes('All armor') &&
+        !item.category.toLowerCase().includes('shield')
+      )
+        item.proficiency = true;
+      else if (
+        armorProficiencies.includes('Shields') &&
+        item.category.toLowerCase().includes('shield')
+      )
+        item.proficiency = true;
+      else if (
+        armorProficiencies.find(
+          armor => armor.toLowerCase() === item.name.toLowerCase()
+        )
+      )
+        item.proficiency = true;
+      else item.proficiency = false;
+
+      delete item.dex_bonus;
+      delete item.max_bonus;
+      delete item.base;
+      equipment.equipped_armor.push(item);
+    } else if (category.includes('currency')) {
+      equipment.treasure[item.unit] += item.quantity;
+    } else if (category.includes('treasure')) {
+      item.pinned = false;
+      equipment.treasure.other.push(item);
+    } else {
+      item.pinned = false;
+      equipment.inventory.push(item);
+    }
+
+    console.log(item);
+  };
 
   const WeaponPage = () => {
     const [addedItem, setAddedItem] = useState(null);
@@ -491,6 +772,7 @@ export const Inventory = ({
         )}
         {addedItem && (
           <>
+            {getItemByURL(addedItem.url)}
             <div className="modal-eq-card-container">
               <EquipmentItem
                 equipment={addedItem}
@@ -584,8 +866,8 @@ export const Inventory = ({
   };
 
   const TreasurePage = () => {
-    const [name, setName] = useState(null);
-    const [value, setValue] = useState(null);
+    const [name, setName] = useState('');
+    const [value, setValue] = useState('');
 
     return (
       <>
@@ -640,13 +922,13 @@ export const Inventory = ({
   const OtherPage = () => {
     const [addedItem, setAddedItem] = useState(null);
     const [showCustomPage, setShowCustomPage] = useState(false);
-    const [name, setName] = useState(null);
-    const [category, setCategory] = useState(null);
-    const [weight, setWeight] = useState(null);
-    const [cost, setCost] = useState(null);
-    const [coin, setCoin] = useState(null);
-    const [quantity, setQuantity] = useState(null);
-    const [description, setDescription] = useState(null);
+    const [name, setName] = useState('');
+    const [category, setCategory] = useState('');
+    const [weight, setWeight] = useState('');
+    const [cost, setCost] = useState('');
+    const [coin, setCoin] = useState('');
+    const [quantity, setQuantity] = useState('');
+    const [description, setDescription] = useState('');
 
     return (
       <>
