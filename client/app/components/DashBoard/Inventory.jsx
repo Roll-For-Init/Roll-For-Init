@@ -9,62 +9,59 @@ import Dropdown from '../shared/Dropdown';
 import Modal from 'react-bootstrap4-modal';
 import { useDispatch } from 'react-redux';
 import { Star } from '../../utils/svgLibrary';
-import characterService from '../../redux/services/character.service';
+import CharacterService from '../../redux/services/character.service';
 import { isRegExp, update } from 'lodash';
 import Equipment from '../Create/Equipment';
 
 // const character = useSelector(state => state.characters[charID]);
 
-
-
 export const EquipmentItem = ({
   equipment,
   modal = false,
-  selectionEq,
-  setSelectionEq,
-  dropdown = false,
   charClassName,
-  stateKey,
-  noButton = false,
   togglePinned,
-  toggleEquipped
+  toggleEquipped,
 }) => {
   // const [selection, setSelection] = useState(null)
 
   return (
-    <div
-      className={`card content-card equipment-card`}
-    >
+    <div className={`card content-card equipment-card`}>
       <div className="row">
         <div className="col px-0">
           <h5>
-            <button className="wrapper-button" onClick={() => { togglePinned(); }}>
-              <Star className={equipment.pinned ? "star-filled" : "star-outline"} />
-            </button>
+            {!modal && (
+              <button
+                className="wrapper-button"
+                onClick={() => {
+                  togglePinned();
+                }}
+              >
+                <Star
+                  className={equipment.pinned ? 'star-filled' : 'star-outline'}
+                />
+              </button>
+            )}
             <span>
-              {equipment.quantity > 1 &&
-              !(equipment.category === 'currency') ? (
-                equipment.equipment ? (
-                  `${equipment.equipment.name} (${equipment.quantity})`
-                ) : (
-                  `${equipment.name} (${equipment.quantity})`
-                )
-              ) : equipment.equipment ? (
-                equipment.equipment.name
-              ) : (
-                equipment.name
-              )}
+              {equipment.quantity > 1 && !(equipment.category === 'currency')
+                ? equipment.equipment
+                  ? `${equipment.equipment.name} (${equipment.quantity})`
+                  : `${equipment.name} (${equipment.quantity})`
+                : equipment.equipment
+                ? equipment.equipment.name
+                : equipment.name}
             </span>
           </h5>
         </div>
-        {equipment.ac && (
+        {equipment.ac && !modal && (
           <div className="col-auto pr-0">
             <button
               onClick={() => toggleEquipped()}
               className={`btn ${
                 equipment.equipped ? `btn-clicked` : `btn-outline-success`
               } d-inline`}
-            >{equipment.equipped ? 'Equipped' : 'Equip'}</button>
+            >
+              {equipment.equipped ? 'Equipped' : 'Equip'}
+            </button>
           </div>
         )}
       </div>
@@ -171,6 +168,89 @@ export const EquipmentItem = ({
           )}
         </div>
       )}
+      {/* {modal && (
+        <>
+          <hr />
+          {equipment.damage && (
+            <>
+              <div className="same-line">
+                <span
+                  className="equipment-item m-0"
+                  style={{
+                    margin: 'auto',
+                    marginRight: '5px',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  Attack Bonus:
+                </span>
+                <FloatingLabel
+                  id="attack_bonus"
+                  name="attack_bonus"
+                  placeholder="none"
+                  type="text"
+                />
+              </div>
+              <p className="equipment-item m-0">
+                Damage Bonus:&nbsp;
+                {equipment.damage_bonus ? (
+                  <i className="equipment-item-info">
+                    {equipment.damage_bonus}
+                  </i>
+                ) : (
+                  <i className="equipment-item-info none">none</i>
+                )}
+              </p>
+            </>
+          )}
+          {equipment.ac && (
+            <p className="equipment-item m-0">
+              AC Bonus:&nbsp;
+              {equipment.ac_bonus ? (
+                <i className="equipment-item-info">{equipment.ac_bonus}</i>
+              ) : (
+                <i className="equipment-item-info none">none</i>
+              )}
+            </p>
+          )}
+          <div className="equipment-item m-0">
+            Description:&nbsp;
+            {equipment.desc ? (
+              <div className="equipment-card-body">
+                {Array.isArray(equipment.desc) ? (
+                  <p>
+                    <hr />
+                    <ReactReadMoreReadLess
+                      charLimit={250}
+                      readMoreText="Show more"
+                      readLessText="Show less"
+                      readMoreClassName="read-more-less--more"
+                      readLessClassName="read-more-less--less"
+                    >
+                      {equipment.desc.join('\n')}
+                    </ReactReadMoreReadLess>
+                  </p>
+                ) : (
+                  <p className="equipment-item m-0">
+                    <i className="equipment-item-info">
+                      {charClassName.toLowerCase() !== 'monk' &&
+                        equipment.properties
+                          .filter(property => property.toLowerCase() !== 'monk')
+                          .map((property, idx, arr) =>
+                            idx !== arr.length - 1
+                              ? property.toLowerCase() + ', '
+                              : property.toLowerCase()
+                          )}
+                    </i>
+                  </p>
+                )}
+              </div>
+            ) : (
+              <i className="equipment-item-info none">none</i>
+            )}
+          </div>
+        </>
+      )} */}
     </div>
   );
 };
@@ -197,38 +277,34 @@ export const Inventory = ({
     if (type === 'weapon') {
       weapons[idx].pinned = !weapons[idx].pinned;
       dispatch(setUpdate(charID, 'attacks', { weapons: weapons }));
-    }
-    else if (type === 'armor') {
+    } else if (type === 'armor') {
       armor[idx].pinned = !armor[idx].pinned;
       dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
-    }
-    else if (type === 'treasure') {
+    } else if (type === 'treasure') {
       treasure.other[idx].pinned = !treasure.other[idx].pinned;
-      dispatch(setUpdate(charID, 'treasure', {other: treasure.other}));
-    }
-    else if (type === 'other') {
+      dispatch(setUpdate(charID, 'treasure', { other: treasure.other }));
+    } else if (type === 'other') {
       inventory[idx].pinned = !inventory[idx].pinned;
       dispatch(setArrayUpdate(charID, 'inventory', inventory));
     }
   };
 
   const toggleEquipped = (armor, idx) => {
-    const isShield = armor[idx].category.toLowerCase().includes("shield");
-    console.log("toggling", armor[idx]);
+    const isShield = armor[idx].category.toLowerCase().includes('shield');
+    console.log('toggling', armor[idx]);
     if (!armor[idx].equipped) {
       armor = armor.map(a => {
-        if (isShield && a.category.toLowerCase().includes("shield")) {
+        if (isShield && a.category.toLowerCase().includes('shield')) {
           a.equipped = false;
-        }
-        else if (!isShield && !a.category.toLowerCase().includes("shield")) {
+        } else if (!isShield && !a.category.toLowerCase().includes('shield')) {
           a.equipped = false;
         }
         return a;
-      })
+      });
     }
     armor[idx].equipped = !armor[idx].equipped;
     dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
-  }
+  };
 
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [showTreasureModal, setShowTreasureModal] = useState(false);
@@ -237,6 +313,12 @@ export const Inventory = ({
   const [searchTerm, setSearchTerm] = useState('');
   const [denomination, setDenomination] = useState(null);
   const [cardDeclined, setCardDeclined] = useState(false);
+
+  const [allWeapons, setAllWeapons] = useState(null);
+  const [allArmor, setAllArmor] = useState(null);
+  const [allAdventuringGear, setAllAdventuringGear] = useState(null);
+  const [allTools, setAllTools] = useState(null);
+  const [allMagicItems, setAllMagicItems] = useState(null);
 
   const getTotalWeight = () => {
     let totalWeight = 0;
@@ -294,13 +376,54 @@ export const Inventory = ({
     setSearchTerm(event.target.value);
   };
 
-  const AddItem = item => {
-    // dispatch(
-    //   setUpdate(charID, 'treasure', {
-    //     [denomination[0].index]: currentTreasure,
-    //   })
-    // );
-    // console.log('Updated character treasure.');
+  const AddItem = (itemToAdd, modelArrayName, arrayToUpdate) => {
+    if (Array.isArray(arrayToUpdate)) {
+      let isDuplicate = false;
+
+      arrayToUpdate.forEach(item => {
+        if (item !== null && item.name === itemToAdd.name) {
+          console.log('Duplicate item found. Increasing quantity.');
+          item.quantity++;
+          if (arrayToUpdate === armor || arrayToUpdate === inventory) {
+            dispatch(setArrayUpdate(charID, arrayToUpdate, arrayToUpdate));
+          } else if (arrayToUpdate === weapons) {
+            dispatch(
+              setUpdate(charID, modelArrayName, {
+                [arrayToUpdate]: arrayToUpdate,
+              })
+            );
+          } else if (arrayToUpdate === treasure.other) {
+            dispatch(
+              setUpdate(charID, modelArrayName, {
+                other: arrayToUpdate,
+              })
+            );
+          }
+          isDuplicate = true;
+        }
+      });
+
+      if (!isDuplicate) {
+        arrayToUpdate.push(itemToAdd);
+        if (arrayToUpdate === armor || arrayToUpdate === inventory) {
+          dispatch(setArrayUpdate(charID, arrayToUpdate, arrayToUpdate));
+        } else if (arrayToUpdate === weapons) {
+          dispatch(
+            setUpdate(charID, modelArrayName, {
+              [arrayToUpdate]: arrayToUpdate,
+            })
+          );
+        } else if (arrayToUpdate === treasure.other) {
+          dispatch(
+            setUpdate(charID, modelArrayName, {
+              other: arrayToUpdate,
+            })
+          );
+        }
+      }
+
+      console.log(`Added ${itemToAdd.name} to inventory.`);
+    }
   };
 
   const getEquipmentArray = () => {
@@ -309,6 +432,26 @@ export const Inventory = ({
     else if (currentAddModalPage === 'treasure') return treasure.other;
     else if (currentAddModalPage === 'other') return inventory;
   };
+
+  useEffect(() => {
+    CharacterService.getSubList('equipment-categories/weapon').then(list => {
+      setAllWeapons(list.equipment);
+    });
+    CharacterService.getSubList('equipment-categories/armor').then(list => {
+      setAllArmor(list.equipment);
+    });
+    CharacterService.getSubList('equipment-categories/adventuring-gear').then(
+      list => {
+        setAllAdventuringGear(list.equipment);
+      }
+    );
+    CharacterService.getSubList('equipment-categories/tools').then(list => {
+      setAllTools(list.equipment);
+    });
+    CharacterService.getIndexedList('magic-items').then(list => {
+      setAllMagicItems(list.equipment);
+    });
+  }, []);
 
   const WeaponPage = () => {
     const [addedItem, setAddedItem] = useState(null);
@@ -327,21 +470,23 @@ export const Inventory = ({
                 ></input>
               </h4>
             </div>
-            {weapons
-              .filter(
-                f =>
-                  f.name &&
-                  f.name.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-              .map((weapon, idx) => (
-                <button
-                  className="btn btn-secondary modal-button"
-                  key={idx}
-                  onClick={() => setAddedItem(weapon)}
-                >
-                  {weapon.name}
-                </button>
-              ))}
+            <div className="add-item-container">
+              {allWeapons
+                .filter(
+                  f =>
+                    f.name &&
+                    f.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((weapon, idx) => (
+                  <button
+                    className="btn btn-secondary modal-button mb-0"
+                    key={idx}
+                    onClick={() => setAddedItem(weapon)}
+                  >
+                    {weapon.name}
+                  </button>
+                ))}
+            </div>
           </>
         )}
         {addedItem && (
@@ -350,20 +495,19 @@ export const Inventory = ({
               <EquipmentItem
                 equipment={addedItem}
                 charClassName={charClassName}
-                noButton
                 modal
               />
             </div>
             <div className="same-line">
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary modal-button-submit"
                 onClick={() => setAddedItem(null)}
               >
                 Cancel
               </button>
               <button
-                className="btn btn-primary"
-                onClick={() => AddItem('attack', addedItem)}
+                className="btn btn-primary modal-button-submit"
+                onClick={() => AddItem(addedItem, 'attacks', weapons)}
               >
                 Add
               </button>
@@ -391,21 +535,23 @@ export const Inventory = ({
                 ></input>
               </h4>
             </div>
-            {armor
-              .filter(
-                f =>
-                  f.name &&
-                  f.name.toLowerCase().includes(searchTerm.toLowerCase())
-              )
-              .map((armor, idx) => (
-                <button
-                  className="btn btn-secondary modal-button"
-                  key={idx}
-                  onClick={() => setAddedItem(armor)}
-                >
-                  {armor.name}
-                </button>
-              ))}
+            <div className="add-item-container">
+              {allArmor
+                .filter(
+                  f =>
+                    f.name &&
+                    f.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((armor, idx) => (
+                  <button
+                    className="btn btn-secondary modal-button mb-0"
+                    key={idx}
+                    onClick={() => setAddedItem(armor)}
+                  >
+                    {armor.name}
+                  </button>
+                ))}
+            </div>
           </>
         )}
         {addedItem && (
@@ -414,19 +560,19 @@ export const Inventory = ({
               <EquipmentItem
                 equipment={addedItem}
                 charClassName={charClassName}
-                noButton
+                modal
               />
             </div>
             <div className="same-line">
               <button
-                className="btn btn-secondary"
+                className="btn btn-secondary modal-button-submit"
                 onClick={() => setAddedItem(null)}
               >
                 Cancel
               </button>
               <button
-                className="btn btn-primary"
-                onClick={() => AddItem('attack', addedItem)}
+                className="btn btn-primary modal-button-submit"
+                onClick={() => AddItem(addedItem, 'equipped_armor', armor)}
               >
                 Add
               </button>
@@ -438,13 +584,13 @@ export const Inventory = ({
   };
 
   const TreasurePage = () => {
-    const [addedItem, setAddedItem] = useState(null);
     const [name, setName] = useState(null);
     const [value, setValue] = useState(null);
+
     return (
       <>
         <div className="modal-eq-card-container">
-          <div className="card content-card treasure-card mb-0">
+          <div className="card content-card treasure-card">
             <FloatingLabel
               id="name"
               name="name"
@@ -455,15 +601,7 @@ export const Inventory = ({
             />
             <hr />
             <div className="same-line">
-              <p
-                style={{
-                  margin: 'auto',
-                  marginRight: '5px',
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                Value (optional):
-              </p>
+              <p className="custom-item-field-label">Value (optional):</p>
               <FloatingLabel
                 id="value"
                 name="value"
@@ -477,14 +615,20 @@ export const Inventory = ({
         </div>
         <div className="same-line">
           <button
-            className="btn btn-secondary"
-            onClick={() => setAddedItem(null)}
+            className="btn btn-secondary modal-button-submit"
+            onClick={() => setCurrentAddModalPage('add item')}
           >
             Cancel
           </button>
           <button
-            className="btn btn-primary"
-            onClick={() => AddItem('attack', addedItem)}
+            className="btn btn-primary modal-button-submit"
+            onClick={() =>
+              AddItem(
+                { name: name, value: value, pinned: false },
+                'treasure',
+                treasure.other
+              )
+            }
           >
             Add
           </button>
@@ -494,18 +638,200 @@ export const Inventory = ({
   };
 
   const OtherPage = () => {
+    const [addedItem, setAddedItem] = useState(null);
+    const [showCustomPage, setShowCustomPage] = useState(false);
+    const [name, setName] = useState(null);
+    const [category, setCategory] = useState(null);
+    const [weight, setWeight] = useState(null);
+    const [cost, setCost] = useState(null);
+    const [coin, setCoin] = useState(null);
+    const [quantity, setQuantity] = useState(null);
+    const [description, setDescription] = useState(null);
+
     return (
-      <div className="row search-container">
-        <h4 className="search-bar">
-          <i className="bi bi-search" />
-          <input
-            type="text"
-            placeholder="Search"
-            value={searchTerm}
-            onChange={searchHandleChange}
-          ></input>
-        </h4>
-      </div>
+      <>
+        {addedItem === null && showCustomPage === false && (
+          <>
+            <button
+              className="btn btn-primary modal-button mt-0"
+              onClick={() => setShowCustomPage(true)}
+            >
+              Custom
+            </button>
+            <div className="row search-container">
+              <h4 className="search-bar">
+                <i className="bi bi-search" />
+                <input
+                  type="text"
+                  placeholder="Search"
+                  value={searchTerm}
+                  onChange={searchHandleChange}
+                ></input>
+              </h4>
+            </div>
+            <div className="add-item-container">
+              {allAdventuringGear
+                .concat(allTools)
+                .filter(
+                  f =>
+                    f.name &&
+                    f.name.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+                .map((weapon, idx) => (
+                  <button
+                    className="btn btn-secondary modal-button mb-0"
+                    key={idx}
+                    onClick={() => setAddedItem(weapon)}
+                  >
+                    {weapon.name}
+                  </button>
+                ))}
+            </div>
+          </>
+        )}
+        {addedItem && showCustomPage === false && (
+          <>
+            <div className="modal-eq-card-container">
+              <EquipmentItem
+                equipment={addedItem}
+                charClassName={charClassName}
+                modal
+              />
+            </div>
+            <div className="same-line">
+              <button
+                className="btn btn-secondary modal-button-submit"
+                onClick={() => setAddedItem(null)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary modal-button-submit"
+                onClick={() => AddItem(addedItem, 'inventory', inventory)}
+              >
+                Add
+              </button>
+            </div>
+          </>
+        )}
+        {showCustomPage && (
+          <>
+            <div className="modal-eq-card-container">
+              <div className="card content-card treasure-card">
+                <FloatingLabel
+                  id="name"
+                  name="name"
+                  placeholder="Name"
+                  type="text"
+                  value={name}
+                  onChange={e => setName(e.target.value)}
+                />
+                <hr />
+                <div className="same-line">
+                  <p className="custom-item-field-label">
+                    Category (optional):
+                  </p>
+                  <FloatingLabel
+                    id="category"
+                    name="category"
+                    placeholder="e.g. arcane focus"
+                    type="text"
+                    value={category}
+                    onChange={e => setCategory(e.target.value)}
+                  />
+                </div>
+                <div className="same-line">
+                  <p className="custom-item-field-label">Cost (optional):</p>
+                  <FloatingLabel
+                    id="cost"
+                    name="cost"
+                    placeholder="e.g. 50"
+                    type="number"
+                    value={cost}
+                    onChange={e => setCost(e.target.value)}
+                  />
+                </div>
+                <div className="same-line">
+                  <p className="custom-item-field-label">
+                    Denomination (optional):
+                  </p>
+                  <FloatingLabel
+                    id="denomination"
+                    name="denomination"
+                    placeholder="e.g. gp"
+                    type="text"
+                    value={coin}
+                    onChange={e => setCoin(e.target.value)}
+                  />
+                </div>
+                <div className="same-line">
+                  <p className="custom-item-field-label">Weight (optional):</p>
+                  <FloatingLabel
+                    id="weight"
+                    name="weight"
+                    placeholder="e.g. 4"
+                    type="number"
+                    value={weight}
+                    onChange={e => setWeight(e.target.value)}
+                  />
+                </div>
+                <div className="same-line">
+                  <p className="custom-item-field-label">
+                    Quantity (optional):&nbsp;
+                  </p>
+                  <FloatingLabel
+                    id="quantity"
+                    name="quantity"
+                    placeholder="e.g. 10"
+                    type="number"
+                    value={quantity}
+                    onChange={e => setQuantity(e.target.value)}
+                  />
+                </div>
+                <hr />
+                <p className="m-0">Description (optional):&nbsp;</p>
+                <FloatingLabel
+                  component="textarea"
+                  id="description"
+                  name="description"
+                  placeholder="none"
+                  type="text"
+                  value={description}
+                  onChange={e => setDescription(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="same-line">
+              <button
+                className="btn btn-secondary modal-button-submit"
+                onClick={() => setShowCustomPage(false)}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn btn-primary modal-button-submit"
+                onClick={() =>
+                  AddItem(
+                    {
+                      name: name,
+                      category: category,
+                      cost: { amount: cost, denomination: coin },
+                      weight: weight,
+                      quantity: quantity,
+                      desc: [description],
+                      pinned: false,
+                    },
+                    'inventory',
+                    inventory
+                  )
+                }
+              >
+                Add
+              </button>
+            </div>
+          </>
+        )}
+      </>
     );
   };
 
@@ -520,24 +846,44 @@ export const Inventory = ({
   const [filterAll, setFilterAll] = useState(true);
   const [filterFavorites, setFilterFavorites] = useState(false);
   const [filterEquipped, setFilterEquipped] = useState(false);
-  const [filterWeapons, setFilterWeapons] = useState(false);
-  const [filterArmor, setFilterArmor] = useState(false);
-  const [filterTreasure, setFilterTreasure] = useState(false);
-  const [filterOther, setFilterOther] = useState(false);
+  const [filterWeapons, setFilterWeapons] = useState(true);
+  const [filterArmor, setFilterArmor] = useState(true);
+  const [filterTreasure, setFilterTreasure] = useState(true);
+  const [filterOther, setFilterOther] = useState(true);
   const [selectedCard, setSelectedCard] = useState(false);
   const [currentAddModalPage, setCurrentAddModalPage] = useState('add item');
 
   const filterOptions = [
     { filter: filterFavorites, setFilter: setFilterFavorites, array: [] },
     { filter: filterEquipped, setFilter: setFilterEquipped, array: [] },
-    { filter: filterWeapons, setFilter: setFilterWeapons, array: weapons.map((w, idx) => {return {...w, type: 'weapon', index: idx}}) },
-    { filter: filterArmor, setFilter: setFilterArmor, array: armor.map((a, idx) => {return {...a, type: 'armor', index: idx}}) },
+    {
+      filter: filterWeapons,
+      setFilter: setFilterWeapons,
+      array: weapons.map((w, idx) => {
+        return { ...w, type: 'weapon', index: idx };
+      }),
+    },
+    {
+      filter: filterArmor,
+      setFilter: setFilterArmor,
+      array: armor.map((a, idx) => {
+        return { ...a, type: 'armor', index: idx };
+      }),
+    },
     {
       filter: filterTreasure,
       setFilter: setFilterTreasure,
-      array: treasure.other.map((t, idx) => {return {...t, type: 'treasure', index: idx}}),
+      array: treasure.other.map((t, idx) => {
+        return { ...t, type: 'treasure', index: idx };
+      }),
     },
-    { filter: filterOther, setFilter: setFilterOther, array: inventory.map((i, idx) => {return {...i, type: 'other', index: idx}}) },
+    {
+      filter: filterOther,
+      setFilter: setFilterOther,
+      array: inventory.map((i, idx) => {
+        return { ...i, type: 'other', index: idx };
+      }),
+    },
   ];
 
   const onFilterAll = () => {
@@ -546,6 +892,8 @@ export const Inventory = ({
       filterOptions.forEach(filterOption => filterOption.setFilter(false));
     } else {
       filterOptions.forEach(filterOption => filterOption.setFilter(true));
+      setFilterFavorites(false);
+      setFilterEquipped(false);
     }
   };
 
@@ -553,7 +901,9 @@ export const Inventory = ({
     setFilter(!filter);
     if (
       filterOptions.filter(filterOption => filterOption.filter === false)
-        .length === 0
+        .length === 0 &&
+      !filterFavorites &&
+      !filterEquipped
     ) {
       setFilterAll(true);
       filterOptions.forEach(filterOption => filterOption.setFilter(false));
@@ -562,13 +912,23 @@ export const Inventory = ({
     }
   };
 
-  const filterArray = () => {
+  const getFilterArray = () => {
     let optionsArray = [];
     filterOptions.forEach(filterOption => {
       if (filterAll || filterOption.filter) {
         optionsArray = optionsArray.concat(filterOption.array);
       }
     });
+
+    if (optionsArray.length === 0 && (filterFavorites || filterEquipped)) {
+      optionsArray = weapons.concat(armor, inventory, treasure.other);
+    }
+    if (filterFavorites) {
+      optionsArray = optionsArray.filter(item => item.pinned);
+    }
+    if (filterEquipped) {
+      optionsArray = optionsArray.filter(item => item.equipped);
+    }
     return optionsArray.filter(i => i.name);
   };
 
@@ -658,7 +1018,7 @@ export const Inventory = ({
               >
                 <i className="bi bi-chevron-left"></i>
               </button>
-              <h4 className="big-letters">{currentAddModalPage}</h4>
+              <h3 className="big-letters">{currentAddModalPage}</h3>
               <button
                 className="btn btn-secondary modal-header-button mr-0"
                 onClick={() => setShowAddItemModal(false)}
@@ -670,28 +1030,28 @@ export const Inventory = ({
               <>
                 <button
                   type="button"
-                  className="btn btn-secondary modal-button"
+                  className="btn btn-secondary modal-button mt-0 mb-0"
                   onClick={() => setCurrentAddModalPage('weapon')}
                 >
                   Weapon
                 </button>
                 <button
                   type="button"
-                  className="btn btn-secondary modal-button"
+                  className="btn btn-secondary modal-button mb-0"
                   onClick={() => setCurrentAddModalPage('armor')}
                 >
                   Armor
                 </button>
                 <button
                   type="button"
-                  className="btn btn-secondary modal-button"
+                  className="btn btn-secondary modal-button mb-0"
                   onClick={() => setCurrentAddModalPage('treasure')}
                 >
                   Treasure
                 </button>
                 <button
                   type="button"
-                  className="btn btn-secondary modal-button"
+                  className="btn btn-secondary modal-button mb-0"
                   onClick={() => setCurrentAddModalPage('other')}
                 >
                   Other
@@ -710,13 +1070,13 @@ export const Inventory = ({
           className="translucent-card w-100 mt-0"
           style={{ padding: '25px 25px 10px' }}
         >
-          {filterArray().length !== 0 ? (
+          {getFilterArray().length !== 0 ? (
             <Masonry
               breakpointCols={breakpointColumnsObj}
               className="my-masonry-grid"
               columnClassName="my-masonry-grid_column"
             >
-              {filterArray().map((item, idx) => {
+              {getFilterArray().map((item, idx) => {
                 return (
                   <EquipmentItem
                     equipment={item}
@@ -724,8 +1084,14 @@ export const Inventory = ({
                     setSelectionEq={setSelectedCard}
                     charClassName={charClassName}
                     noButton
-                    togglePinned={() => {togglePinned(item.type, item.index)}}
-                    toggleEquipped={() => {item.type === 'armor' && toggleEquipped(armor, item.index)}}
+                    togglePinned={() => {
+                      togglePinned(item.type, item.index);
+                    }}
+                    toggleEquipped={() => {
+                      item.type === 'armor' &&
+                        toggleEquipped(armor, item.index);
+                    }}
+                    key={idx}
                   />
                 );
               })}
