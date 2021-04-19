@@ -14,6 +14,7 @@ import Logout from './components/Logout';
 import Upload from './components/Upload';
 import Create from './components/Create';
 import DashBoard from './components/DashBoard';
+import Legal from './components/Legal';
 
 import { finishLoading } from './redux/actions/app';
 import { clearAlert } from './redux/actions/alert';
@@ -52,6 +53,7 @@ const App = () => {
             <Route exact path="/upload" component={Upload} />
             <Route exact path="/create" component={Create} />
             <Route exact path="/dashboard" component={DashBoard} />
+            <Route exact path="/legal" component={Legal} />
             <Route component={NotFound} />
           </Switch>
         </div>

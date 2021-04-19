@@ -310,6 +310,7 @@ const LandingPage = () => {
   );
 
   return (
+    <>
     <div className="container landing">
       <div className="filler-space"></div>
       <div className="row align-items-center">
@@ -398,6 +399,15 @@ const LandingPage = () => {
         </div>
       )}
     </div>
+    <Link to="/legal">
+    <button
+          type="button"
+          className="btn btn-secondary btn-lg legal"
+        >
+          Legal
+    </button>
+  </Link>
+  </>
   );
 };
 

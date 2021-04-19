@@ -763,6 +763,15 @@
   .modal-dialog {
     max-width: auto;
     width: auto;
+    .modal-sect {
+        border: none;
+        h1, h2, h3, h4, h5 {
+            font-variant: normal;
+        }
+        .content-card {
+            border: none;
+        }
+    }
   }
   .modal-table {
     margin-bottom: 0;
@@ -957,6 +966,35 @@
       text-align: center;
       margin: 0;
       margin-top: 10px;
+    }
+  }
+  .big-letters {
+    text-transform: uppercase;
+    justify-content: center;
+    letter-spacing: 0.2rem;
+    color: white;
+    text-align: center;
+    margin-top: 0;
+    flex: 1;
+  }
+  .modal-header-container {
+    margin-top: 0;
+    display: flex;
+    .modal-header-button {
+      display: flex;
+      justify-content: center;
+      width: 40px;
+      align-items: center;
+      vertical-align: center;
+      &:first-child {
+        margin-right: auto;
+      }
+      &:last-child {
+        margin-left: auto;
+      }
+    }
+    .hidden {
+      visibility: hidden;
     }
   }
 
