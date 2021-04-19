@@ -26,7 +26,7 @@ const download = (character)  => {
     const element = document.createElement("a");
     const file = new Blob([JSON.stringify(character)], {type: 'text/plain'});
     element.href = URL.createObjectURL(file);
-    element.download = "character.txt";
+    element.download = String(character.name);
     document.body.appendChild(element);
     element.click();
 }
@@ -155,7 +155,7 @@ const formatPayload = (character, user) => {
       "INT": character.ability_scores.int.score,
       "WIS": character.ability_scores.wis.score,
       "CHR": character.ability_scores.cha.score,
-      "ArmorClass": "0",
+      "ArmorClass": addSign(character.ac),
       "PersonalityTraits": character?.lore?.personality_traits ?? "",
       "Ideals": character.lore.ideals,
       "Flaws": character.lore.flaws,
