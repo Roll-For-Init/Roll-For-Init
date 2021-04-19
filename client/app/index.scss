@@ -3,6 +3,31 @@
 @import url('https://cdn.rawgit.com/fponticelli/dicefont/fc6b8c47/dist/dicefont/dicefont.css');
 @import 'client/app/variables';
 
+@font-face {
+    font-family: 'dPolyd20';
+    src: url('../public/assets/fonts/dpoly-fonts/DPoly-Twenty-Sider.otf'); 
+}
+@font-face {
+    font-family: 'dPolyd12';
+    src: url('../public/assets/fonts/dpoly-fonts/DPoly-Twelve-Sider.otf');
+}
+@font-face {
+    font-family: 'dPolyd10';
+    src: url('../public/assets/fonts/dpoly-fonts/DPoly-Ten-Sider.otf');
+}
+@font-face {
+    font-family: 'dPolyd8';
+    src: url('../public/assets/fonts/dpoly-fonts/DPoly-Eight-Sider.otf'); 
+}
+@font-face {
+    font-family: 'dPolyd6';
+    src: url('../public/assets/fonts/dpoly-fonts/DPoly-Six-Sider.otf');
+}
+@font-face {
+    font-family: 'dPolyd4';
+    src: url('../public/assets/fonts/dpoly-fonts/DPoly-Four-Sider.otf');
+}
+
 html {
   font-size: 16px;
   --webkit-text-size-adjust: none !important;

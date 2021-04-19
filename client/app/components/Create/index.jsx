@@ -576,6 +576,7 @@ const PageViewer = ({ charID}) => {
         page={character.page}
         setPage={setPage}
         charID={charID}
+        character={character}
       />
       <Page page={character.page} setCharPage={setCharPage} charID={charID} raceIconsOffWhite={raceIconsOffWhite} raceIconsMedBlue={raceIconsMedBlue} classIconsOffWhite={classIconsOffWhite} classIconsMedBlue={classIconsMedBlue}/>
       {/*<div className="col-md-6 offset-md-3 pb-0 pt-md-3 container">

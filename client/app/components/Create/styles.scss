@@ -1,5 +1,26 @@
 @import 'client/app/variables';
 
+
+.label {
+    display: inline-block;
+    float: left;
+    clear: left;
+    width: 250px;
+    text-align: right;
+    padding: 20px;
+  }
+
+.input {
+    display: inline-block;
+    float: left;
+    
+}
+
+.centered {
+    margin: auto;
+    width: 50%;
+    padding: 20px;
+}
 .side-drawer {
   border-right: 1px solid black;
   padding: 0px;
@@ -736,42 +757,65 @@ hr {
         padding: 0;
         text-align: left;
       }
-      & > .btn-outline-success {
-        border: {
-          style: solid !important;
-          color: $green !important;
-          width: 3px !important;
-          radius: 8px;
-        }
+      &>.btn-outline-success,
+  &>.btn-clicked {
+    width: auto;
+    color: $dark-blue;
+    box-shadow: none !important;
+    float: left;
+    font-size: 1rem;
+    padding: 5px;
+    max-height: 2rem;
+    line-height: 1;
+    flex-grow: 0;
+    margin: auto 0px;
+    background-color: transparent;
+   // margin: 2px;
+    border-radius: 8px;
+
+    &[disabled] {
+      opacity: 50%;
+    }
+
+
+    // max-width: 4.5rem;
+    // margin: 0 0px 10px 0px;
+  }
+
+  &>.btn-outline-success {
+    border: 3px solid $medium-green !important;
+    background-color: $off-white;
+    &:not([disabled]) {
+      &:hover {
+        background-color: $medium-off-white;
         color: $dark-blue;
-        box-shadow: none;
-        float: right;
-        font-size: 1rem;
-        padding: 2px 5px;
-        max-height: 1.67rem;
-        line-height: 1;
-        flex-grow: 0;
-        margin: auto 0px;
-
-        &:hover,
-        &:active {
-          background-color: $medium-off-white;
-        }
       }
-      & > .btn-clicked {
-        @extend .btn-outline-success;
-        background-color: $green;
-        color: $off-white;
-
-        &:hover {
-          background-color: $medium-green;
-          border-color: $medium-green !important;
-        }
-        &:active {
-          background-color: $dark-green;
-        }
-        //how to make it go back to default immediately on click?
+      &:active {
+        color: $white;
+        background-color: $dark-green !important;
+        border: 3px solid $dark-green !important;
       }
+    }
+    &[disabled] {
+      background-color: $medium-off-white !important;
+    }
+  }
+  &>.btn-clicked {
+    color: white;
+    background-color: $medium-green;
+    border: 3px solid $medium-green !important;
+    &:not([disabled]) {
+      &:hover {
+        color: white;
+        background-color: $dark-green;
+        border: 3px solid $dark-green !important;
+      }
+      &:active {
+        color: $dark-blue;
+        background-color: $off-white;
+      }
+    }
+  }
       & > .btn-inactive {
         @extend .btn-outline-success;
         background-color: $medium-off-white;

@@ -2,7 +2,7 @@ const axios = require('axios')
 
 const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
     const equipment = {
-        equipped_armor: [],
+        armor: [],
         attacks: {
             advantage: 0,
             weapons: [],
@@ -20,7 +20,6 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
     }
 
     for(let item of items.set) {
-        console.log(item);
         if(item.equipment && item.equipment.unit) {
             item={
                 ...item.equipment
@@ -86,8 +85,7 @@ const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
 
     for(let key in items.choices) {
         let item = items.choices[key];
-        console.log("ITEM", item);
-        if(!(item.desc || (item.equipment && item.equipment.desc))) {
+        if(!(item.desc || (item.equipment && item.equipment.desc) || item.equipment.choose)) {
             equipment.inventory.push(item);
             continue;
         }
@@ -229,7 +227,7 @@ const fillModel = async (equipment, character) => { //will probably need a separ
             ability_scores: ability_relevant.ability_scores,
             saving_throws: ability_relevant.saving_throws,
             skills: ability_relevant.skills,
-            ac: acCalculator(equipment.equipped_armor, character.class.index, ability_relevant.ability_scores), 
+            ac: acCalculator(equipment.armor, character.class.index, ability_relevant.ability_scores), 
             health: {//not expandable for multiple subraces...it's checking for hill dwarf lazily
                 current: health,
                 max: health, 
@@ -302,7 +300,7 @@ const sortEquipment = (equipment, item, weaponProficiencies, armorProficiencies)
         delete item.dex_bonus;
         delete item.max_bonus;
         delete item.base;
-        equipment.equipped_armor.push(item);
+        equipment.armor.push(item);
     }
     else if (category.includes("currency")) {
        

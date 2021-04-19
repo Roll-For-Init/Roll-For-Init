@@ -7,6 +7,8 @@ import { setUpdate, setArrayUpdate } from '../../redux/actions/characters';
 import './styles.scss';
 import FloatingLabel from 'floating-label-react';
 import Modal from 'react-bootstrap4-modal';
+import axios from 'axios';
+import characterService from '../../redux/services/character.service';
 import EditableLabel from 'react-editable-label';
 import skullIcon from '../../../public/assets/imgs/skull-icon.png'
 import Description from './Description.jsx';
@@ -18,6 +20,267 @@ import { Inventory, EquipmentItem } from './Inventory';
 import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
 //swap race class icons with white
+
+const download = (character)  => {
+    const element = document.createElement("a");
+    const file = new Blob([JSON.stringify(character)], {type: 'text/plain'});
+    element.href = URL.createObjectURL(file);
+    element.download = String(character.name);
+    document.body.appendChild(element);
+    element.click();
+}
+
+
+const getInventory = (character) => {
+  var inventory = "";
+  for (var i = 0; i < character.inventory.length; i++){
+    if (character.inventory[i].name != undefined){
+      inventory += character.inventory[i].name + " (" + character.inventory[i].quantity + ")\n";
+    }
+  }
+  return inventory;
+}
+
+const calcArmorClass = (character) => {
+  var armorClass = 0;
+  var armorArray = character.armor;
+  for (var i = 0; i < armorArray.length; i++){
+    armorClass += parseInt(armorArray[i].armor_class.base);
+  }
+  return armorClass;
+}
+
+const formatArray = (toFormat) => {
+  var formattedString = "";
+  for (var i = 0; i < toFormat.length; i++){
+    if (i == toFormat.length - 1){
+      formattedString += toFormat[i] + "."
+      break;
+    }
+    formattedString += toFormat[i] + ", "
+  }
+  return formattedString;
+}
+
+const isProficient = (proficiency) => {
+  if (proficiency){
+    return "⬤"
+  }
+  else return "";
+}
+
+const addSign = (number) => {
+  var toPrint = "";
+  if (number >= 0){
+    toPrint = "+" + String(number);
+  }
+  return toPrint;
+}
+
+const setAlignment = (character) => {
+  if (character.lore.alignment === null){
+    return "";
+  } else {
+    return character.lore.alignment[0].name;
+  }
+}
+
+const findWeapons = (character) => {
+  var weps = [];
+  var wepCount = 0;
+  //console.log(character.attacks.weapons.length);
+  if (character.attacks.weapons != null){
+    for (var i = 0; i < character.attacks.weapons.length; i++){
+      weps.push(character.attacks.weapons[i].name);
+      wepCount++;
+    }
+  }
+  if (wepCount < 3){
+    console.log(character.attacks);
+    if (character.spells != null){
+      for (var i = wepCount; i < weps.length; i++){
+        weps.push(character.spells.cards[i].spell_type);
+        }
+      }
+    }
+  return weps;
+}
+
+/*const getTypes = (character) => {
+  var types = [];
+  var weps = findWeapons(character);
+  for (var i = 0; i < weps.length; i++){
+  }
+}*/
+
+const calcBonus = (character) => {
+  var bonus = [];
+  var bonusWeps = findWeapons(character);
+  var str = parseInt(character.ability_scores.str.modifier); 
+  var dex = parseInt(character.ability_scores.dex.modifier);
+  var pro =  parseInt(character.proficiency_bonus);
+  for (var i = 0; i < bonusWeps.length; i++){
+    if (character.attacks.weapons[i].category.toLowerCase().includes("ranged")){
+      var sign = ((dex + pro) >= 0) ? "+" : 0;
+      bonus[i] = sign + (dex + pro);
+    } else {
+      if (character.attacks.weapons[i].category.toLowerCase().includes("melee")){
+        var sign = ((str + pro) >= 0) ? "+" : 0
+        bonus[i] = sign + (str + pro);
+      }
+    }
+  }
+  return bonus;
+  
+}
+
+const getFeatures = (character) => {
+  var features = "Features: ";
+  if (character.features[0] != undefined){
+    for (var i = 0; i < character.features.length; i++){
+      if (i == character.features.length - 1){
+        features += character.features[i].name + ".\n\n";
+        break;
+      }
+      features += character.features[i].name + ", ";
+    }
+  }
+  features += "Traits: ";
+  if (character.traits[0] != undefined){
+    for (var i = 0; i < character.traits.length; i++){
+      if (i == character.traits.length - 1){
+        features += character.traits[i].name + ".";
+        break;
+      }
+      features += character.traits[i].name + ", ";
+    }
+  }
+  return features;
+}
+const formatPayload = (character, user) => {
+  var weps = findWeapons(character);
+  console.log(character);
+  var bonus = calcBonus(character);
+  var payload = {
+    "title": "Character Sheet Demo",
+    "fontSize": 10,
+    "textColor": "#333333",
+    "data": {
+      "Name": character.name,
+      "Class": character.class[0].name,
+      "Background": character.background.name,
+      "Race": character.race.name,
+      "Alignment": setAlignment(character),
+      "EXP": character.experience.current + "/" + character.experience.threshold,
+      "STR": character.ability_scores.str.score,
+      "DXT": character.ability_scores.dex.score,
+      "CON": character.ability_scores.con.score,
+      "INT": character.ability_scores.int.score,
+      "WIS": character.ability_scores.wis.score,
+      "CHR": character.ability_scores.cha.score,
+      "ArmorClass": addSign(character.ac),
+      "PersonalityTraits": character?.lore?.personality_traits ?? "",
+      "Ideals": character.lore.ideals,
+      "Flaws": character.lore.flaws,
+      "Features": getFeatures(character),
+      "Languages": "Languages: " + formatArray(character.misc_proficiencies.languages),
+      "Armor": "Armor: " + formatArray(character.misc_proficiencies.armor),
+      "Weapons": "Weapons: " + formatArray(character.misc_proficiencies.weapons),
+      "STRmod": addSign(character.ability_scores.str.modifier),
+      "DXTmod": addSign(character.ability_scores.dex.modifier),
+      "CONmod": addSign(character.ability_scores.con.modifier),
+      "INTmod": addSign(character.ability_scores.int.modifier),
+      "WISmod": addSign(character.ability_scores.wis.modifier),
+      "CHRmod": addSign(character.ability_scores.cha.modifier),
+      "ProBonus": addSign(character.proficiency_bonus),
+      "Bonds": character.lore.bonds,
+      "Initiative": character.initiative_bonus,
+      "Speed": character.walking_speed,
+      "STstr": addSign(character.saving_throws.str.modifier),
+      "STdxt": addSign(character.saving_throws.str.modifier),
+      "STcon": addSign(character.saving_throws.con.modifier),
+      "STint": addSign(character.saving_throws.int.modifier),
+      "STwis": addSign(character.saving_throws.wis.modifier),
+      "STchr": addSign(character.saving_throws.cha.modifier),
+      "CurrentHP": character.health.current,
+      "MaxHP": character.health.max,
+      "TempHP": character.health.temp,
+      "Acrobatics": addSign(character.skills.acrobatics.modifier),
+      "AnimalHandling": addSign(character.skills.animal_handling.modifier),
+      "Arcana": addSign(character.skills.arcana.modifier),
+      "Athletics": addSign(character.skills.athletics.modifier),
+      "Deception": addSign(character.skills.deception.modifier),
+      "History": addSign(character.skills.history.modifier),
+      "Insight": addSign(character.skills.insight.modifier),
+      "Intimidation": addSign(character.skills.intimidation.modifier),
+      "Investigation": addSign(character.skills.investigation.modifier),
+      "Medicine": addSign(character.skills.medicine.modifier),
+      "Nature": addSign(character.skills.nature.modifier),
+      "Perception": addSign(character.skills.perception.modifier),
+      "Performance": addSign(character.skills.performance.modifier),
+      "Persuasion": addSign(character.skills.persuasion.modifier),
+      "Religion": addSign(character.skills.religion.modifier),
+      "SleightOfHand": "+0",
+      "Stealth": "+0",
+      "Survival": "+0",
+      "Attack1": weps[0],
+      "Attack2": weps[1],
+      "Attack3": weps[2],
+      "Bonus3": bonus[2],
+      "Bonus2": bonus[1],
+      "Bonus1": bonus[0],
+      "Damage1": (character.attacks.weapons[0] != undefined) ? character.attacks.weapons[0].damage.damage_type + "/" + character.attacks.weapons[0].damage.damage_dice : "",
+      "Damage2": (character.attacks.weapons[1] != undefined) ? character.attacks.weapons[1].damage.damage_type + "/" + character.attacks.weapons[1].damage.damage_dice : "",
+      "Damage3": (character.attacks.weapons[2] != undefined) ? character.attacks.weapons[2].damage.damage_type + "/" + character.attacks.weapons[2].damage.damage_dice : "",
+      "HitDice": character.hit_dice[0].current + "d" + character.hit_dice[0].type,
+      "Inspiration": ((character.inspiration) ? "+1" : "+0"),
+      "Username": character.name,
+      "CP": character.treasure.cp,
+      "SP": character.treasure.sp,
+      "EP": character.treasure.ep,
+      "GP": character.treasure.gp,
+      "PP": character.treasure.pp,
+      "Inventory": getInventory(character),
+      "AcrobaticsPro": isProficient(character.skills.acrobatics.proficiency),
+      "AnimalHandlingPro": isProficient(character.skills.animal_handling.proficiency),
+      "ArcanaPro": isProficient(character.skills.arcana.proficiency),
+      "AthleticsPro": isProficient(character.skills.athletics.proficiency),
+      "DeceptionPro": isProficient(character.skills.deception.proficiency),
+      "HistoryPro": isProficient(character.skills.history.proficiency),
+      "InsightPro": isProficient(character.skills.insight.proficiency),
+      "IntimidationPro": isProficient(character.skills.intimidation.proficiency),
+      "InvestigationPro": isProficient(character.skills.investigation.proficiency),
+      "MedicinePro": isProficient(character.skills.medicine.proficiency),
+      "NaturePro": isProficient(character.skills.nature.proficiency),
+      "PerceptionPro": isProficient(character.skills.perception.proficiency),
+      "PerformancePro": isProficient(character.skills.performance.proficiency),
+      "PersuasionPro": isProficient(character.skills.persuasion.proficiency),
+      "ReligionPro": isProficient(character.skills.religion.proficiency),
+      "STstrPro": isProficient(character.saving_throws.str.proficiency),
+      "STdxtPro": isProficient(character.saving_throws.dex.proficiency),
+      "STconPro": isProficient(character.saving_throws.con.proficiency),
+      "STintPro": isProficient(character.saving_throws.int.proficiency),
+      "STwisPro": isProficient(character.saving_throws.wis.proficiency),
+      "STchrPro": isProficient(character.saving_throws.cha.proficiency),
+      "HitDiceTotal": character.hit_dice[0].max + "d" + character.hit_dice[0].type,
+      "Tools": "Tools: " + formatArray(character.misc_proficiencies.tools)
+    }
+  }
+    return payload;
+}
+
+const pdfExport = async(character, user) => {
+  axios.post('api/pdf/pdfGen', formatPayload(character, user), {responseType: 'blob'}).then(response => {
+    const file = new Blob([response.data], {
+      type: "application/pdf"
+    });
+    const fileURL = URL.createObjectURL(file);
+    window.open(fileURL);
+  })
+  .catch(error => {
+    console.log(error);
+  });
+} 
 
 const skillScores = {
   athletics: 'str',
@@ -66,6 +329,8 @@ const fullAbScore = {
   dex: 'Dexterity',
   con: 'Constitution',
 };
+const alphabetForDice = ['0','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+
 
 const preparedSpells = ['wizard', 'cleric', 'druid', 'paladin'];
 
@@ -99,7 +364,7 @@ const Page = ({page, character, charID}) => {
         inventory={character.inventory}
         weapons={character.attacks.weapons}
         charClassName={character.class[0].name}
-        armor={character.equipped_armor}
+        armor={character.armor}
       />;
     case "dashboard":
     default:
@@ -137,7 +402,7 @@ const Page = ({page, character, charID}) => {
                   </div>
                 )}
                 <div className="row">
-                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} weapons={character.attacks.weapons} armor={character.equipped_armor} treasure={character.treasure.other} spells={character.spells.cards} charClassName={character.class[0].name}/>
+                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} weapons={character.attacks.weapons} armor={character.armor} treasure={character.treasure.other} spells={character.spells? character.spells.cards : null} charClassName={character.class[0].name}/>
                 </div>
               </div>
             </div>
@@ -288,6 +553,16 @@ export const DashBoard = () => {
             >
               <D20 fill="#ffffff" width="45" height="45" />
             </button>
+          </span>
+          <span className="wrapper-button-inline float-right" style={{paddingTop: '10px'}}>
+          <button className="text-uppercase btn btn-primary"  onClick={() => {download(character)}}>
+          Download Character
+          </button>
+          </span>
+          <span className="wrapper-button-inline float-right" style={{paddingTop: '10px'}}>
+          <button className="text-uppercase btn btn-primary" onClick={() => {pdfExport(character, user)}}>
+          Export as PDF
+          </button>
           </span>
         </div>
       </div>
@@ -641,12 +916,39 @@ const ShortRest = ({
 };
 
 const DiceRoller = ({ showModal, setShowModal }) => {
+  const [numD20, setNumD20] = useState(0);
+  const [numD12, setNumD12] = useState(0);
+  const [numD10, setNumD10] = useState(0);
+  const [numD8, setNumD8] = useState(0);
+  const [numD6, setNumD6] = useState(0);
+  const [numD4, setNumD4] = useState(0);
+  const [sum, setSum] = useState(0);
+
+  const setStateArray = [setNumD20, setNumD12, setNumD10, setNumD8, setNumD6, setNumD4 ];
+  const stateArray = [numD20, numD12, numD10, numD8, numD6, numD4 ]
+
+  const rollDice = () => {
+    let theSum = 
+      (numD20 * (Math.floor(Math.random() * 20) + 1)) +
+      (numD12 * (Math.floor(Math.random() * 12) + 1)) +
+      (numD10 * (Math.floor(Math.random() * 10) + 1)) +
+      (numD8 * (Math.floor(Math.random() * 8) + 1)) +
+      (numD6 * (Math.floor(Math.random() * 6) + 1)) +
+      (numD4 * (Math.floor(Math.random() * 4) + 1))
+    setSum(theSum);
+    setNumD20(0);
+    setNumD12(0);
+    setNumD8(0);
+    setNumD6(0);
+    setNumD4(0);
+  }
+
   return (
     <Portal>
       <Modal
         id={name}
         visible={showModal}
-        className="modal modal-dialog-centered"
+        className="modal modal-dialog-centered dice-roller"
         dialogClassName="modal-dialog-centered"
         onClickBackdrop={() => setShowModal(false)}
       >
@@ -659,11 +961,36 @@ const DiceRoller = ({ showModal, setShowModal }) => {
           <i className="bi bi-x"></i>
         </button>
         <div className="modal-sect pb-0">
-          <h5>What die, and how many?</h5>
+          <h5>What dice, and how many?</h5>
         </div>
+        <div className="modal-sect pb-0">
+          <span>
+          <table>
+            <tr>
+              <DieChoice className="d20" display={20}/>
+              <DieChoice className="d12" display={12}/>
+              <DieChoice className="d10" display={12}/>
+              <DieChoice className="d8" display={8}/>
+              <DieChoice className="d6" display={6}/>
+              <DieChoice className="d4" display={10}/>
+            </tr>
+            <tr>
+              {[...Array(6)].map((item, index) => {
+                return (
+                  <DieIncrement key={index} setNum={setStateArray[index]} num={stateArray[index]}/>
+                )
+              })}
+            </tr>
+          </table>
+          </span>
+        </div>
+        {sum > 0 && <div className="modal-sect pb-2 mb-0">
+          <h1 className='m-0'>{sum}</h1>
+        </div>}
         <button
           className="text-uppercase btn-primary modal-button"
           data-dismiss="modal"
+          onClick={rollDice}
         >
           Roll
         </button>
@@ -671,6 +998,33 @@ const DiceRoller = ({ showModal, setShowModal }) => {
     </Portal>
   );
 };
+
+const DieIncrement = ({setNum, num}) => {
+  return (
+    <td>
+    <button
+      className="btn btn-secondary point-button"
+      onClick={() => {let newNum = num-1; if(newNum < 0) newNum = 0; setNum(newNum)}}
+    >
+      -
+    </button>
+    <h2>{num}</h2>
+    <button
+      className="btn btn-secondary point-button"
+      onClick={() => setNum(num+1)}
+    >
+      +
+    </button>
+    </td>
+  )
+}
+const DieChoice = ({className, display}) => {
+  return (
+    <td>
+      <div className={className}>{alphabetForDice[display]}</div>
+    </td>
+  )
+}
 const AbilitiesCard = ({ ability_scores }) => {
   return (
     <div className="abilities card translucent-card">
@@ -1395,7 +1749,7 @@ const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, 
     }
     else if (type === 'armor') {
       armor[idx].pinned = !armor[idx].pinned;
-      dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
+      dispatch(setArrayUpdate(charID, 'armor', armor));
     }
     else if (type === 'treasure') {
       treasure[idx].pinned = !treasure[idx].pinned;
@@ -1408,18 +1762,19 @@ const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, 
   }
 
   const cards = () => {
-    const cards = features.map((f, index) => {return {...f, index: index}}).filter(f => (f.name && f.pinned)).map((f) => {
+    let cards = [];
+    if(spells) cards = Array.prototype.concat.apply([], 
+      spells.map(level => {
+        return level.map((s, index) => {return {...s, index: index}})
+          .filter(s => s.pinned)
+          .map((s) => {
+            return <SpellCard spell={s} level={s.level} index={s.index} togglePinned={() => {togglePinned('spell', s.index, s.level)}} prepared={preparedSpells.includes(charClassName.toLowerCase())}/>;
+    })}));
+    cards = cards.concat(features.map((f, index) => {return {...f, index: index}}).filter(f => (f.name && f.pinned)).map((f) => {
       return <FeatureCard feature={f} togglePinned={() => {togglePinned('feature', f.index)}}/>;
-    }).concat(traits.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
+    })).concat(traits.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
       return <FeatureCard feature={t} togglePinned={() => {togglePinned('trait', t.index)}}/>;
-    })).concat(
-      Array.prototype.concat.apply([], 
-        spells.map(level => {
-          return level.map((s, index) => {return {...s, index: index}})
-            .filter(s => s.pinned)
-            .map((s) => {
-              return <SpellCard spell={s} level={s.level} index={s.index} togglePinned={() => {togglePinned('spell', s.index, s.level)}} prepared={preparedSpells.includes(charClassName.toLowerCase())}/>;
-    })}))).concat(weapons.map((w, index) => {return {...w, index: index}}).filter(w => (w.name && w.pinned)).map((w) => {
+    })).concat(weapons.map((w, index) => {return {...w, index: index}}).filter(w => (w.name && w.pinned)).map((w) => {
       return <EquipmentItem equipment={w} charClassName={charClassName} togglePinned={() => {togglePinned('weapon', w.index)}} />;
     })).concat(armor.map((a, index) => {return {...a, index: index}}).filter(a => (a.name && a.pinned)).map((a) => {
       return <EquipmentItem equipment={a} charClassName={charClassName} togglePinned={() => {togglePinned('armor', a.index)}} />;
@@ -1433,7 +1788,7 @@ const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, 
 
   return (
     <div className="row">
-      {cards().length ?
+      {cards().length > 0 ?
         <Masonry
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid"
@@ -1441,7 +1796,7 @@ const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, 
           { cards() }
         </Masonry>
       :
-        <p class="text-center text-white my-1">You don't have anything pinned. Go to the Inventory, Spellbook, or Features pages and click the &#9733; icon to pin something.</p>
+        <p className="text-center text-white my-1">You don't have anything pinned. Go to the Inventory, Spellbook, or Features pages and click the &#9733; icon to pin something.</p>
       }
     </div>
   )
