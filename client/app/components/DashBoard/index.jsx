@@ -21,7 +21,6 @@ import { D20, FancyStar, CircleSlot } from '../../utils/svgLibrary';
 
 //swap race class icons with white
 
-
 const download = (character)  => {
     const element = document.createElement("a");
     const file = new Blob([JSON.stringify(character)], {type: 'text/plain'});
@@ -330,6 +329,8 @@ const fullAbScore = {
   dex: 'Dexterity',
   con: 'Constitution',
 };
+const alphabetForDice = ['0','A','B','C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z']
+
 
 const preparedSpells = ['wizard', 'cleric', 'druid', 'paladin'];
 
@@ -363,7 +364,7 @@ const Page = ({page, character, charID}) => {
         inventory={character.inventory}
         weapons={character.attacks.weapons}
         charClassName={character.class[0].name}
-        armor={character.equipped_armor}
+        armor={character.armor}
       />;
     case "dashboard":
     default:
@@ -400,11 +401,9 @@ const Page = ({page, character, charID}) => {
                   <SpellBoxes spells={character.spells} modifier={character.spells ? (character.ability_scores[character.spells.casting_ability].modifier) : null} proficiency={character.proficiency_bonus} charID={charID}/>
                   </div>
                 )}
-                {character.spells != null && (
                 <div className="row">
-                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} weapons={character.attacks.weapons} armor={character.equipped_armor} treasure={character.treasure.other} spells={character.spells.cards} charClassName={character.class[0].name}/>
+                  <Pinned charID={charID} features={character.features} traits={character.traits} inventory={character.inventory} weapons={character.attacks.weapons} armor={character.armor} treasure={character.treasure.other} spells={character.spells? character.spells.cards : null} charClassName={character.class[0].name}/>
                 </div>
-                )}
               </div>
             </div>
           </div>
@@ -555,12 +554,12 @@ export const DashBoard = () => {
               <D20 fill="#ffffff" width="45" height="45" />
             </button>
           </span>
-          <span className="wrapper-button-inline float-right" style={{paddingTop: '15px'}}>
+          <span className="wrapper-button-inline float-right" style={{paddingTop: '10px'}}>
           <button className="text-uppercase btn btn-primary"  onClick={() => {download(character)}}>
           Download Character
           </button>
           </span>
-          <span className="wrapper-button-inline float-right" style={{paddingTop: '15px'}}>
+          <span className="wrapper-button-inline float-right" style={{paddingTop: '10px'}}>
           <button className="text-uppercase btn btn-primary" onClick={() => {pdfExport(character, user)}}>
           Export as PDF
           </button>
@@ -917,12 +916,39 @@ const ShortRest = ({
 };
 
 const DiceRoller = ({ showModal, setShowModal }) => {
+  const [numD20, setNumD20] = useState(0);
+  const [numD12, setNumD12] = useState(0);
+  const [numD10, setNumD10] = useState(0);
+  const [numD8, setNumD8] = useState(0);
+  const [numD6, setNumD6] = useState(0);
+  const [numD4, setNumD4] = useState(0);
+  const [sum, setSum] = useState(0);
+
+  const setStateArray = [setNumD20, setNumD12, setNumD10, setNumD8, setNumD6, setNumD4 ];
+  const stateArray = [numD20, numD12, numD10, numD8, numD6, numD4 ]
+
+  const rollDice = () => {
+    let theSum = 
+      (numD20 * (Math.floor(Math.random() * 20) + 1)) +
+      (numD12 * (Math.floor(Math.random() * 12) + 1)) +
+      (numD10 * (Math.floor(Math.random() * 10) + 1)) +
+      (numD8 * (Math.floor(Math.random() * 8) + 1)) +
+      (numD6 * (Math.floor(Math.random() * 6) + 1)) +
+      (numD4 * (Math.floor(Math.random() * 4) + 1))
+    setSum(theSum);
+    setNumD20(0);
+    setNumD12(0);
+    setNumD8(0);
+    setNumD6(0);
+    setNumD4(0);
+  }
+
   return (
     <Portal>
       <Modal
         id={name}
         visible={showModal}
-        className="modal modal-dialog-centered"
+        className="modal modal-dialog-centered dice-roller"
         dialogClassName="modal-dialog-centered"
         onClickBackdrop={() => setShowModal(false)}
       >
@@ -935,11 +961,36 @@ const DiceRoller = ({ showModal, setShowModal }) => {
           <i className="bi bi-x"></i>
         </button>
         <div className="modal-sect pb-0">
-          <h5>What die, and how many?</h5>
+          <h5>What dice, and how many?</h5>
         </div>
+        <div className="modal-sect pb-0">
+          <span>
+          <table>
+            <tr>
+              <DieChoice className="d20" display={20}/>
+              <DieChoice className="d12" display={12}/>
+              <DieChoice className="d10" display={12}/>
+              <DieChoice className="d8" display={8}/>
+              <DieChoice className="d6" display={6}/>
+              <DieChoice className="d4" display={10}/>
+            </tr>
+            <tr>
+              {[...Array(6)].map((item, index) => {
+                return (
+                  <DieIncrement key={index} setNum={setStateArray[index]} num={stateArray[index]}/>
+                )
+              })}
+            </tr>
+          </table>
+          </span>
+        </div>
+        {sum > 0 && <div className="modal-sect pb-2 mb-0">
+          <h1 className='m-0'>{sum}</h1>
+        </div>}
         <button
           className="text-uppercase btn-primary modal-button"
           data-dismiss="modal"
+          onClick={rollDice}
         >
           Roll
         </button>
@@ -947,6 +998,33 @@ const DiceRoller = ({ showModal, setShowModal }) => {
     </Portal>
   );
 };
+
+const DieIncrement = ({setNum, num}) => {
+  return (
+    <td>
+    <button
+      className="btn btn-secondary point-button"
+      onClick={() => {let newNum = num-1; if(newNum < 0) newNum = 0; setNum(newNum)}}
+    >
+      -
+    </button>
+    <h2>{num}</h2>
+    <button
+      className="btn btn-secondary point-button"
+      onClick={() => setNum(num+1)}
+    >
+      +
+    </button>
+    </td>
+  )
+}
+const DieChoice = ({className, display}) => {
+  return (
+    <td>
+      <div className={className}>{alphabetForDice[display]}</div>
+    </td>
+  )
+}
 const AbilitiesCard = ({ ability_scores }) => {
   return (
     <div className="abilities card translucent-card">
@@ -1671,7 +1749,7 @@ const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, 
     }
     else if (type === 'armor') {
       armor[idx].pinned = !armor[idx].pinned;
-      dispatch(setArrayUpdate(charID, 'equipped_armor', armor));
+      dispatch(setArrayUpdate(charID, 'armor', armor));
     }
     else if (type === 'treasure') {
       treasure[idx].pinned = !treasure[idx].pinned;
@@ -1684,18 +1762,19 @@ const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, 
   }
 
   const cards = () => {
-    const cards = features.map((f, index) => {return {...f, index: index}}).filter(f => (f.name && f.pinned)).map((f) => {
+    let cards = [];
+    if(spells) cards = Array.prototype.concat.apply([], 
+      spells.map(level => {
+        return level.map((s, index) => {return {...s, index: index}})
+          .filter(s => s.pinned)
+          .map((s) => {
+            return <SpellCard spell={s} level={s.level} index={s.index} togglePinned={() => {togglePinned('spell', s.index, s.level)}} prepared={preparedSpells.includes(charClassName.toLowerCase())}/>;
+    })}));
+    cards = cards.concat(features.map((f, index) => {return {...f, index: index}}).filter(f => (f.name && f.pinned)).map((f) => {
       return <FeatureCard feature={f} togglePinned={() => {togglePinned('feature', f.index)}}/>;
-    }).concat(traits.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
+    })).concat(traits.map((t, index) => {return {...t, index: index}}).filter(t => (t.name && t.pinned)).map((t) => {
       return <FeatureCard feature={t} togglePinned={() => {togglePinned('trait', t.index)}}/>;
-    })).concat(
-      Array.prototype.concat.apply([], 
-        spells.map(level => {
-          return level.map((s, index) => {return {...s, index: index}})
-            .filter(s => s.pinned)
-            .map((s) => {
-              return <SpellCard spell={s} level={s.level} index={s.index} togglePinned={() => {togglePinned('spell', s.index, s.level)}} prepared={preparedSpells.includes(charClassName.toLowerCase())}/>;
-    })}))).concat(weapons.map((w, index) => {return {...w, index: index}}).filter(w => (w.name && w.pinned)).map((w) => {
+    })).concat(weapons.map((w, index) => {return {...w, index: index}}).filter(w => (w.name && w.pinned)).map((w) => {
       return <EquipmentItem equipment={w} charClassName={charClassName} togglePinned={() => {togglePinned('weapon', w.index)}} />;
     })).concat(armor.map((a, index) => {return {...a, index: index}}).filter(a => (a.name && a.pinned)).map((a) => {
       return <EquipmentItem equipment={a} charClassName={charClassName} togglePinned={() => {togglePinned('armor', a.index)}} />;
@@ -1709,7 +1788,7 @@ const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, 
 
   return (
     <div className="row">
-      {cards().length ?
+      {cards().length > 0 ?
         <Masonry
           breakpointCols={breakpointColumnsObj}
           className="my-masonry-grid"
@@ -1717,7 +1796,7 @@ const Pinned = ({charID, features, traits, inventory, weapons, armor, treasure, 
           { cards() }
         </Masonry>
       :
-        <p class="text-center text-white my-1">You don't have anything pinned. Go to the Inventory, Spellbook, or Features pages and click the &#9733; icon to pin something.</p>
+        <p className="text-center text-white my-1">You don't have anything pinned. Go to the Inventory, Spellbook, or Features pages and click the &#9733; icon to pin something.</p>
       }
     </div>
   )

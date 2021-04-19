@@ -43,7 +43,7 @@ const SpellCard = ({ spell, selected, toggleSelected, level }) => {
           <div className="spell-title col-sm">{spell.name}</div>
           <button
             onClick={toggleSelected}
-            className={`btn ${
+            className={`btn btn-card ${
               selected ? `btn-clicked` : `btn-outline-success`
             } d-inline col-sm`}
             name={level}
