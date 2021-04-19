@@ -757,16 +757,17 @@ const LongRest = ({
         dialogClassName="modal-dialog-centered"
         onClickBackdrop={() => setShowModal(false)}
       >
-        <button
-          type="button"
-          className="close"
-          onClick={() => setShowModal(false)}
-          aria-label="Close"
-        >
-          <i className="bi bi-x"></i>
-        </button>
-        <div className="modal-sect pb-0">
-          <h5>Long Rest</h5>
+        <div className="modal-header-container mb-2">
+              <button
+                className={`btn btn-secondary ml-0 modal-header-button hidden`}
+              />
+            <h4 className="big-letters">long rest</h4>
+            <button
+              className="btn btn-secondary modal-header-button mr-0"
+              onClick={() => setShowModal(false)}
+            >
+              <i className="bi bi-x"></i>
+            </button>
         </div>
         <div className="modal-sect pb-0">
           <h5>
@@ -775,6 +776,11 @@ const LongRest = ({
             talking, eating, or standing watch for no more than 2 hours.{' '}
           </h5>
         </div>
+        {(spellSlots && spellsRecovered ==0) && healthRecovered ==0 && diceRecovered ==0 && (
+          <div className="modal-sect pb-0">
+            <h5>You do not currently need to rest. Go forth on your adventure! </h5>
+          </div>
+        ) }
         {spellSlots && spellsRecovered > 0 && (
           <div className="modal-sect pb-0">
             {preparedSpells.includes(charClass.toLowerCase()) ? (
@@ -863,18 +869,18 @@ const ShortRest = ({
         dialogClassName="modal-dialog-centered"
         onClickBackdrop={() => setShowModal(false)}
       >
-        <button
-          type="button"
-          className="close"
-          onClick={() => setShowModal(false)}
-          aria-label="Close"
-        >
-          <i className="bi bi-x"></i>
-        </button>
-        {/* this one moves the "x" down for some reason? */}
-        {/* <div className="modal-sect pb-0">
-          <h5>Short Rest</h5>
-        </div> */}
+        <div className="modal-header-container mb-2">
+              <button
+                className={`btn btn-secondary ml-0 modal-header-button hidden`}
+              />
+            <h4 className="big-letters">short rest</h4>
+            <button
+              className="btn btn-secondary modal-header-button mr-0"
+              onClick={() => setShowModal(false)}
+            >
+              <i className="bi bi-x"></i>
+            </button>
+        </div>
         <div className="modal-sect pb-0">
           <h5>
             A short rest is a period of downtime, at least 1 hour long, during

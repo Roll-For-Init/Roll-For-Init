@@ -238,6 +238,11 @@ export const Spells = ({ charID, setPage }) => {
     history.push('/dashboard');
     CharacterService.validateCharacter(character).then((character) => {
       dispatch(submitCharacter(character));
+      let DBCharacters = JSON.parse(localStorage.getItem('user'));
+      if(DBCharacters) {
+        DBCharacters.characters.push(character);
+        localStorage.setItem('user', JSON.stringify(DBCharacters));
+      }
     })
   };
 

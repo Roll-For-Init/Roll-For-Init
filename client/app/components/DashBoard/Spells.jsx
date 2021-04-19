@@ -263,11 +263,11 @@ export const SpellBook = ({charID, spellcasting, modifier, proficiency, prepared
               }
             </div>
         </div>
-          <div className="float-right" style={{margin:'25px'}}>
+          {prepared && <div className="float-right" style={{margin:'25px'}}>
             <div className="card content-card description-card">
                     <h5 className="mb-0">Spells prepared: <span><h4 className="mb-0" style={{display:'inline-block'}}>{currentPrepared}/{maxPrepared}</h4></span></h5>
             </div>
-          </div>
+          </div>}
         </div>
       </div>
       <div className="row">

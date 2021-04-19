@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { Link, Redirect, useHistory } from 'react-router-dom';
 import Upload from '../Upload';
@@ -255,10 +255,19 @@ CharacterSection.propTypes = {
 
 const LandingPage = () => {
   const { auth, characters } = useSelector(state => state);
+  const [dbCharacters, setDbCharacters] = useState([]);
   // const { isLoggedIn } = useSelector(state => state.auth);
 
   const history = useHistory();
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    if(auth.isLoggedIn===true) {
+      let DBCharacters = JSON.parse(localStorage.getItem('user'));
+      DBCharacters = DBCharacters?.characters;
+      if(DBCharacters?.length > 0) setDbCharacters(DBCharacters);  
+    }
+  }, [])
 
   function handleClick(character) {
     let user = JSON.parse(localStorage.getItem('state'));
@@ -310,6 +319,7 @@ const LandingPage = () => {
   );
 
   return (
+    <>
     <div className="container landing">
       <div className="filler-space"></div>
       <div className="row align-items-center">
@@ -322,7 +332,7 @@ const LandingPage = () => {
         </div>
         <div className="col-1 col-md"></div>
       </div>
-      <CharacterSection characters={characters} />
+      <CharacterSection />
       {auth.isLoggedIn !== true ? (
         <div className="d-grid gap-6 btm-button-container">
           <Link to="/login">
@@ -345,9 +355,9 @@ const LandingPage = () => {
       ) : (
           <div className="character-container">
             <div className="card translucent-card mt-0">
-              {Object.entries(characters).length === 0 ?
+              {Object.entries(dbCharacters).length === 0 ?
                 <div>No Characters Created Yet</div>
-                : Object.entries(characters).map((char, idx) => {
+                : Object.entries(dbCharacters).map((char, idx) => {
               const charInfo = char[1];
               if(!charInfo.ability_scores) return null
               return (
@@ -398,6 +408,15 @@ const LandingPage = () => {
         </div>
       )}
     </div>
+    <Link to="/legal">
+    <button
+          type="button"
+          className="btn btn-secondary btn-lg legal"
+        >
+          Legal
+    </button>
+  </Link>
+  </>
   );
 };
 

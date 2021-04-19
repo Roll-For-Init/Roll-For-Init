@@ -570,6 +570,7 @@ const CharacterSchema = new Schema(
           type: Boolean,
           default: false,
         },
+        ac_bonus: Number,
         /*mechanics: [
         {
           skill: String,
@@ -626,12 +627,12 @@ const CharacterSchema = new Schema(
             type: Boolean,
             default: false,
           },
-          //attack_bonus: Number,
-          //damage_bonus: Number
-          // ammunition: {
-          //   current: Number,
-          //   max: Number
-          // }
+          attack_bonus: Number,
+          damage_bonus: Number,
+        //   ammunition: {
+        //     current: Number,
+        //     max: Number
+        //   }
         },
       ],
       // magic_weapons: [

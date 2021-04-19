@@ -506,6 +506,11 @@ const PageViewer = ({ charID}) => {
               )}
               {character.page.name === 'background' && <p>{fluffText[2].contents}</p>}
               {character.page.name === 'description' && <p>{fluffText[3].contents}</p>}
+              {character.page.name === 'spells' && 
+              <p>Adventurers come by their spellcasting in many different ways, from the divine to innate power. Some choose to specialize in their roles, such as a healer or attacker.
+                Others learn a wide variety of spells to be prepared for all situations. A spellcaster is only as helpful as their arsenal, so it's prudent to choose wisely. 
+              </p>
+              }
               {character.page.name === 'equipment' && charEquipment !== null && (
                 <ul className="shortlist">
                   <h6 className="card-subtitle small-caps">
