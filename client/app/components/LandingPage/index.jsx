@@ -332,7 +332,7 @@ const LandingPage = () => {
         </div>
         <div className="col-1 col-md"></div>
       </div>
-      <CharacterSection characters={dbCharacters} />
+      <CharacterSection />
       {auth.isLoggedIn !== true ? (
         <div className="d-grid gap-6 btm-button-container">
           <Link to="/login">
