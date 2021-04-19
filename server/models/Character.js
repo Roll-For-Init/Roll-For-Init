@@ -546,7 +546,7 @@ const CharacterSchema = new Schema(
       default: false,
     },
     ac: Number,
-    equipped_armor: [
+    armor: [
       {
         name: String,
         category: String,
