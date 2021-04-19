@@ -938,6 +938,7 @@ const DiceRoller = ({ showModal, setShowModal }) => {
     setSum(theSum);
     setNumD20(0);
     setNumD12(0);
+    setNumD10(0);
     setNumD8(0);
     setNumD6(0);
     setNumD4(0);
