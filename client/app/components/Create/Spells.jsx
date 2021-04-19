@@ -38,18 +38,24 @@ const spellPropType = PropTypes.shape({
 const SpellCard = ({ spell, selected, toggleSelected, level }) => {
   return (
     <div className="card content-card spell-card">
-      <div id={spell.index} className="container-fluid px-0">
+      <div id={spell.index} className="px-0">
         <div className="row">
-          <div className="spell-title col-sm">{spell.name}</div>
-          <button
-            onClick={toggleSelected}
-            className={`btn btn-card ${
-              selected ? `btn-clicked` : `btn-outline-success`
-            } d-inline col-sm`}
-            name={level}
-          >
-            {selected ? 'Selected' : 'Select'}
-          </button>
+          <div className="col px-0 d-flex align-items-center">
+            <h5>
+              {spell.name}
+            </h5>
+          </div>
+          <div className="col-auto pr-0">
+            <button
+              onClick={toggleSelected}
+              className={`btn ${
+                selected ? `btn-clicked` : `btn-outline-success`
+              } d-inline`}
+              name={level}
+            >
+              {selected ? 'Selected' : 'Select'}
+            </button>
+          </div>
         </div>
       </div>
       <hr className="solid" />
@@ -190,13 +196,13 @@ export const Spells = ({ charID, setPage }) => {
   const toggleSelected = (level, index) => {
     var known = getKnownSpells(level);
     var payload = null;
-    if (known?.length >= limit[level] - 1) {
+    if (!known?.includes(index) && known?.length >= limit[level] - 1) {
       let unselected = document.getElementsByName(level);
       for (let i = 0; i < unselected.length; i++) {
         if (unselected[i].className.includes('btn-outline-success')) {
           unselected[i].className = unselected[i].className.replace(
             'btn-outline-success',
-            'btn-inactive'
+            'btn-outline-success disabled'
           );
         }
       }
@@ -206,12 +212,12 @@ export const Spells = ({ charID, setPage }) => {
     } else if (known.includes(index)) {
       payload = { [level]: [...known.filter(spell => spell != index)] };
       dispatch(setSpells(payload));
-      if (known.length === limit[level]) {
+      if (known.length <= limit[level]) {
         let unselected = document.getElementsByName(level);
         for (let i = 0; i < unselected.length; i++) {
-          if (unselected[i].className.includes('btn-inactive')) {
+          if (unselected[i].className.includes('disabled')) {
             unselected[i].className = unselected[i].className.replace(
-              'btn-inactive',
+              'btn-outline-success disabled',
               'btn-outline-success'
             );
           }

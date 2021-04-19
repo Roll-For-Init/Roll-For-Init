@@ -480,7 +480,8 @@
 
 .create .equipment-card {
   margin: 0;
-  padding: 10px;
+  margin-bottom: 15px;
+  padding: 5px 8px 10px;
   text-align: left;
   color: $dark-blue;
   transition: border 0.3s, box-shadow 0.3s;
@@ -495,6 +496,7 @@
     color: $dark-blue;
     h5 {
       margin-bottom: 0px;
+      line-height: 2rem;
     }
     &.same-line {
       margin: 0 4.5rem 0 0;
@@ -740,92 +742,17 @@ hr {
 }
 
 .create .spell-card {
-  padding: 8px;
-  height: auto;
-  margin-left: 0px;
-  margin-right: 0px;
-  & > .container-fluid {
-    padding-left: 0;
-    padding-right: 0;
-    & > .row {
-      margin-right: auto;
-      margin-left: auto;
-      & > .spell-title {
-        font-size: 1.25rem;
-        display: inline-block;
-        color: $dark-blue;
-        padding: 0;
-        text-align: left;
-      }
-      &>.btn-outline-success,
-  &>.btn-clicked {
-    width: auto;
+  .row {
+    margin-left: 0;
+    margin-right: 0;
+  }
+  padding: 5px 10px 10px;
+  border: none;
+  margin-bottom: 15px !important;
+  h5 {
     color: $dark-blue;
-    box-shadow: none !important;
-    float: left;
-    font-size: 1rem;
-    padding: 5px;
-    max-height: 2rem;
-    line-height: 1;
-    flex-grow: 0;
-    margin: auto 0px;
-    background-color: transparent;
-   // margin: 2px;
-    border-radius: 8px;
-
-    &[disabled] {
-      opacity: 50%;
-    }
-
-
-    // max-width: 4.5rem;
-    // margin: 0 0px 10px 0px;
-  }
-
-  &>.btn-outline-success {
-    border: 3px solid $medium-green !important;
-    background-color: $off-white;
-    &:not([disabled]) {
-      &:hover {
-        background-color: $medium-off-white;
-        color: $dark-blue;
-      }
-      &:active {
-        color: $white;
-        background-color: $dark-green !important;
-        border: 3px solid $dark-green !important;
-      }
-    }
-    &[disabled] {
-      background-color: $medium-off-white !important;
-    }
-  }
-  &>.btn-clicked {
-    color: white;
-    background-color: $medium-green;
-    border: 3px solid $medium-green !important;
-    &:not([disabled]) {
-      &:hover {
-        color: white;
-        background-color: $dark-green;
-        border: 3px solid $dark-green !important;
-      }
-      &:active {
-        color: $dark-blue;
-        background-color: $off-white;
-      }
-    }
-  }
-      & > .btn-inactive {
-        @extend .btn-outline-success;
-        background-color: $medium-off-white;
-        color: $dark-blue-disabled;
-        &:hover {
-          background-color: $medium-off-white;
-          color: $dark-blue-disabled;
-        }
-      }
-    }
+    margin-bottom: 0;
+    text-align: left;
   }
 
   hr {
@@ -983,7 +910,7 @@ hr {
 
 .btn-card {
   position: absolute;
-  top: 5px;
+  top: 3px;
   right: 10px;
   color: $dark-blue;
   font-size: 1rem;
@@ -995,30 +922,63 @@ hr {
   max-height: 1.67rem;
   border-radius: 8px;
 }
-.btn-outline-success {
-  border: 3px solid $medium-green !important;
-  &:hover {
-    background-color: $medium-off-white;
+
+.create {
+  .btn-outline-success,
+  .btn-clicked {
+    width: auto;
     color: $dark-blue;
+    box-shadow: none !important;
+    float: left;
+    font-size: 1rem;
+    padding: 5px;
+    max-height: 2rem;
+    line-height: 1;
+    flex-grow: 0;
+    margin: auto 0px;
+    background-color: transparent;
+    margin: 2px;
+    border-radius: 8px;
+
+    &.disabled {
+      opacity: 50%;
+      cursor: default;
+    }
   }
-  &:active {
-    color: $white;
-    background-color: $dark-green !important;
-    border: 3px solid $dark-green !important;
-  }
-}
-.btn-clicked {
-  color: white;
-  background-color: $medium-green;
-  border: 3px solid $medium-green !important;
-  &:hover {
-    color: white;
-    background-color: $dark-green;
-    border: 3px solid $dark-green !important;
-  }
-  &:active {
-    color: $dark-blue;
+
+  .btn-outline-success {
+    border: 3px solid $medium-green !important;
     background-color: $off-white;
+    &:not(.disabled) {
+      &:hover {
+        background-color: $medium-off-white;
+        color: $dark-blue;
+      }
+      &:active {
+        color: $white;
+        background-color: $dark-green !important;
+        border: 3px solid $dark-green !important;
+      }
+    }
+    &.disabled {
+      background-color: $medium-off-white !important;
+    }
+  }
+  .btn-clicked {
+    color: white;
+    background-color: $medium-green;
+    border: 3px solid $medium-green !important;
+    &:not([disabled]) {
+      &:hover {
+        color: white;
+        background-color: $dark-green;
+        border: 3px solid $dark-green !important;
+      }
+      &:active {
+        color: $dark-blue;
+        background-color: $off-white;
+      }
+    }
   }
 }
 
