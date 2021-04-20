@@ -732,11 +732,13 @@ const LongRest = ({
       setSpellsRecovered(recovered);
       dispatch(setUpdate(charID, 'spells', { slots: newSlots }));
     }
+    console.log(hitDice);
     if (hitDice.current < hitDice.max) {
       let newHitDice = hitDice;
       let newHitNum = newHitDice[0].current + Math.ceil(newHitDice[0].max / 2);
       if (newHitNum > newHitDice[0].max) newHitNum = newHitDice[0].max;
       newHitDice[0].current = newHitNum;
+      console.log(newHitDice);
       dispatch(setArrayUpdate(charID, 'hit_dice', newHitDice));
       setDiceRecovered(newHitNum);
     }
@@ -1305,6 +1307,7 @@ const HitPointsCard = ({ health, hit_dice, charID, deathThrows }) => {
   );
 
   const updateTemp = amt => {
+    console.log(amt);
     amt = Number.parseInt(amt);
     console.log(amt);
     dispatch(setUpdate(charID, 'health', { temp: amt }));
@@ -1312,9 +1315,11 @@ const HitPointsCard = ({ health, hit_dice, charID, deathThrows }) => {
   };
   const changeHealth = amt => {
     amt = Number.parseInt(amt);
+    console.log(amt, health.temp);
     if (amt < 0 && health.temp > 0) {
       let newAmt = amt + health.temp;
       let newTemp = health.temp + amt;
+      console.log(newTemp, newAmt);
       if (newTemp < 0) newTemp = 0;
       dispatch(setUpdate(charID, 'health', { temp: newTemp }));
       if (newAmt < 0) {
@@ -1383,7 +1388,7 @@ const HitPointsCard = ({ health, hit_dice, charID, deathThrows }) => {
                       <div
                         className={`filled green ${
                           currentPercentage === '100%' ? `full` : ``
-                        }`}
+                        } ${currentHealthClass}`}
                         style={{ width: currentPercentage }}
                       />
                     </div>
@@ -1393,7 +1398,7 @@ const HitPointsCard = ({ health, hit_dice, charID, deathThrows }) => {
                   </div>
                   <div className="col-sm-4 px-1 py-0">
                     <EditableLabel
-                      key={`temp-${temp}`}
+                      key={`temp-${health.temp}`}
                       initialValue={health.temp}
                       labelClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center hover-effect"
                       inputClass="card content-card description-card my-0 mr-2 ml-0 h3 text-center"
