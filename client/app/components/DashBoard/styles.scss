@@ -107,6 +107,12 @@
     .green {
       background-color: $green;
     }
+    .red {
+        background-color: $red;
+    }
+    .yellow {
+        background-color: $yellow;
+    }
     .blue {
       background-color: $light-blue;
     }
@@ -764,13 +770,13 @@
     max-width: auto;
     width: auto;
     .modal-sect {
-        border: none;
+        border-color: transparent;
         h1, h2, h3, h4, h5 {
             font-variant: normal;
         }
-        .content-card {
-            border: none;
-        }
+    }
+    .content-card {
+        border-color: transparent;
     }
   }
   .modal-table {
