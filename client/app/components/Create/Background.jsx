@@ -350,7 +350,7 @@ export const Background = ({ charID, setPage }) => {
     newBackground = newBackground[0];
     console.log("NEW BACKGROUND", newBackground)
     if (newBackground?.index == 'custom') {
-      dispatch(setBackground(charID, { index: null }));
+      dispatch(setBackground(charID, null));
       dispatch(
         setBackground(charID, {
           ...newBackground,
