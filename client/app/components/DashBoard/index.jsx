@@ -1350,12 +1350,12 @@ const HitPointsCard = ({ health, hit_dice, charID, deathThrows }) => {
   const currentHealthClass = () => {
     const healthPercent = (health.current / health.max) * 100;
     if (healthPercent >= 66) {
-      return 'current-health green';
+      return 'green';
     }
     if (healthPercent <= 33) {
-      return 'current-health red';
+      return 'red';
     }
-    return 'current-health yellow';
+    return 'yellow';
   };
 
   return (
@@ -1374,9 +1374,9 @@ const HitPointsCard = ({ health, hit_dice, charID, deathThrows }) => {
                         {health.current}/{health.max}
                       </h3>
                       <div
-                        className={`filled green ${
+                        className={`filled ${currentHealthClass()} ${
                           currentPercentage === '100%' ? `full` : ``
-                        } ${currentHealthClass}`}
+                        }`}
                         style={{ width: currentPercentage }}
                       />
                     </div>
