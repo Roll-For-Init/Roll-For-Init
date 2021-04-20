@@ -482,6 +482,7 @@ export const Equipment = ({ charID, setPage }) => {
       character.equipment = {
         choices: equipmentSelection,
         set: equipmentList,
+        options: equipmentOptions
       };
     }
     character.name = name;
@@ -504,6 +505,15 @@ export const Equipment = ({ charID, setPage }) => {
   };
 
   useEffect(() => {
+    if(character.equipment) {
+      const promises = [];
+      promises.push(setEquipmentList(character.equipment.set));
+      promises.push(setEquipmentOptions(character.equipment.options));
+      Promise.all(promises).then(() => {
+        setEquipmentLoaded(true);
+      })
+      return;
+    }
     const promises = [];
     promises.push(
       CharacterService.getEquipmentDetails(equipmentList).then(
@@ -529,8 +539,6 @@ export const Equipment = ({ charID, setPage }) => {
     Promise.all(promises)
       .then(() => {
         setEquipmentLoaded(true);
-      })
-      .then(() => {
         for (let set of equipmentList) {
           if (set.equipment?.desc?.contents) {
             CharacterService.getEquipmentDetails(
@@ -551,6 +559,9 @@ export const Equipment = ({ charID, setPage }) => {
             }
           }
         }
+      })
+      .then(() => {
+        dispatch(setEquipment(charID, {options: equipmentOptions}))
       });
   }, []);
 
