@@ -96,9 +96,8 @@ const findWeapons = (character) => {
     }
   }
   if (wepCount < 3){
-    console.log(character.attacks);
     if (character.spells != null){
-      for (var i = wepCount; i < weps.length; i++){
+      for (let i = wepCount; i < weps.length; i++){
         weps.push(character.spells.cards[i].spell_type);
         }
       }
@@ -159,7 +158,6 @@ const getFeatures = (character) => {
 }
 const formatPayload = (character, user) => {
   var weps = findWeapons(character);
-  console.log(character);
   var bonus = calcBonus(character);
   var payload = {
     "title": "Character Sheet Demo",
@@ -626,7 +624,6 @@ const ChangeExp = ({ exp, showModal, setShowModal, charID, setPercentage }) => {
     let newCurrent = exp.current + Number.parseInt(value);
     if (newCurrent >= exp.threshold) {
       newCurrent = exp.threshold;
-      console.log('in here');
       setNextLevel(true);
     }
     setPercentage(`${(newCurrent / exp.threshold) * 100}%`);
@@ -719,7 +716,6 @@ const LongRest = ({
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log(spellSlots);
     if (spellSlots) {
       let newSlots = spellSlots;
       let recovered = 0;
@@ -732,13 +728,11 @@ const LongRest = ({
       setSpellsRecovered(recovered);
       dispatch(setUpdate(charID, 'spells', { slots: newSlots }));
     }
-    console.log(hitDice);
-    if (hitDice.current < hitDice.max) {
+    if (hitDice[0].current < hitDice[0].max) {
       let newHitDice = hitDice;
       let newHitNum = newHitDice[0].current + Math.ceil(newHitDice[0].max / 2);
       if (newHitNum > newHitDice[0].max) newHitNum = newHitDice[0].max;
       newHitDice[0].current = newHitNum;
-      console.log(newHitDice);
       dispatch(setArrayUpdate(charID, 'hit_dice', newHitDice));
       setDiceRecovered(newHitNum);
     }
@@ -847,7 +841,6 @@ const ShortRest = ({
       for (let i = 1; i <= newSlots.length; i++) {
         let slot = newSlots[i];
         if (slot.max <= 0) break;
-        console.log(i, slot.max - slot.current);
         recovered = recovered + (slot.max - slot.current);
         slot.current = slot.max;
       }
@@ -1232,7 +1225,6 @@ const StatsCard = ({ initiative, ac, speed, charID }) => {
   );
 };
 const Portal = ({ children }) => {
-  console.log(children);
   return ReactDOM.createPortal(children, document.getElementById('dashboard'));
 };
 /*TODO: why won't it work in component?*/
@@ -1307,19 +1299,15 @@ const HitPointsCard = ({ health, hit_dice, charID, deathThrows }) => {
   );
 
   const updateTemp = amt => {
-    console.log(amt);
     amt = Number.parseInt(amt);
-    console.log(amt);
     dispatch(setUpdate(charID, 'health', { temp: amt }));
     setTemp(amt);
   };
   const changeHealth = amt => {
     amt = Number.parseInt(amt);
-    console.log(amt, health.temp);
     if (amt < 0 && health.temp > 0) {
       let newAmt = amt + health.temp;
       let newTemp = health.temp + amt;
-      console.log(newTemp, newAmt);
       if (newTemp < 0) newTemp = 0;
       dispatch(setUpdate(charID, 'health', { temp: newTemp }));
       if (newAmt < 0) {
@@ -1606,7 +1594,6 @@ const PromptedModal = ({
         </div>
         <table className="table modal-table">
           <tr>
-            {console.log(options.length)}
             {options
               .slice(0, Math.ceil(options.length / 2))
               .map((option, index) => {
@@ -1657,7 +1644,6 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
   const reducer = (state, item) => {
     let push = item.push;
     item = item.item;
-    console.log(state, item);
     let newState = state;
     if (push) {
       state.push(item);
@@ -1665,7 +1651,6 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
     } else if (state.includes(item))
       newState = state.splice(state.indexOf(item), 1);
     dispatch(setArrayUpdate(charID, 'conditions', newState));
-    console.log('NEW STATE', newState);
     return newState;
   };
 
