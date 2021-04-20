@@ -25,11 +25,11 @@ const BackgroundSelector = ({
           <Dropdown
             ddLabel="Background"
             title="Choose 1"
-            items={[...backgrounds]}
+            items={backgrounds}
             width="70%"
             selection={background ? [background] : null}
             setSelection={bg => {
-              selectBackground(bg[0]);
+              selectBackground(bg);
             }}
             classname="header"
           />
@@ -157,7 +157,7 @@ const Proficiencies = ({
 };
 
 const BackgroundOptions = ({
-  background,
+  options,
   userChoices,
   setUserChoices,
   custom,
@@ -165,12 +165,12 @@ const BackgroundOptions = ({
   const skill = ['animal handling', 'acrobatics', 'elvish'];
   return (
     <>
-      {!custom && background.options && (
+      {!custom && options && (
         <div className="card translucent-card">
           <div className="card content-card card-title">
             <h4>Background Options</h4>
           </div>
-          {background.options.map((option, index) => {
+          {options.map((option, index) => {
             return (
               <div className="dd-container" key={index}>
                 <Dropdown
@@ -279,13 +279,13 @@ const FeatureDetails = ({
   );
 };
 
-const customBackground = [{ name: 'Custom', index: 'custom', equipment: [] }];
+const customBackground = { name: 'Custom', index: 'custom', equipment: [] };
 
 export const Background = ({ charID, setPage }) => {
   const dispatch = useDispatch();
 
   const background = useSelector(state => state.characters[charID].background);
-  console.log('reload');
+  const character = useSelector(state => state.characters[charID]);
 
   const reducer = (state, newProp) => {
     let newState = { ...state, ...newProp };
@@ -297,24 +297,23 @@ export const Background = ({ charID, setPage }) => {
     reducer,
     background?.choices ?? {}
   );
-
   const [skillChoices, setSkillChoices] = useState([]);
 
   const [toolAndLanguageChoices, setToolAndLanguageChoices] = useState([]);
 
-  useEffect(() => {
+  /*useEffect(() => {
     const toolSelection = background?.proficiencies?.Tools ?? [];
     const languageSelection = background?.proficiencies?.Languages ?? [];
     setSkillChoices(background?.proficiencies?.Skills ?? []);
     setToolAndLanguageChoices(toolSelection.concat(languageSelection));
-  }, [background]);
+  }, [background]);*/
 
   useEffect(() => {
+    console.log("SKILLS TOOLS", background);
     if (!background || !toolAndLanguageChoices?.size || !skillChoices?.size)
       return;
     let languages = [];
     let tools = [];
-    console.log('toolAndLanguageChoices', toolAndLanguageChoices);
     for (let choice of toolAndLanguageChoices) {
       if (choice?.url.includes('language')) {
         languages.push(choice);
@@ -331,7 +330,8 @@ export const Background = ({ charID, setPage }) => {
         },
       })
     );
-  }, [background, skillChoices, toolAndLanguageChoices]);
+    console.log(background);
+  }, [skillChoices, toolAndLanguageChoices]);
 
   const [backgrounds, setBackgrounds] = useState(null);
   const [skills, setSkills] = useState([]);
@@ -347,7 +347,8 @@ export const Background = ({ charID, setPage }) => {
   const [waterVehicles, setWaterVehicles] = useState([]);
 
   const selectBackground = newBackground => {
-    console.log(newBackground);
+    newBackground = newBackground[0];
+    console.log("NEW BACKGROUND", newBackground)
     if (newBackground?.index == 'custom') {
       dispatch(setBackground(charID, { index: null }));
       dispatch(
@@ -360,36 +361,37 @@ export const Background = ({ charID, setPage }) => {
       return;
     }
     CharacterService.getBackgroundInfo(newBackground).then(bg => {
-      dispatch(setBackground(charID, null));
-      dispatch(setBackground(charID, { ...bg }));
-      // let equipment = { equipment: bg.starting_equipment };
-      // if (bg.other_equipment) {
-      //   equipment.equipment = equipment.equipment.concat(bg.other_equipment);
-      // }
-      // equipment.equipment.push({
-      //   ...bg.starting_currency,
-      //   category: 'currency',
-      // });
-      // temp.equipment = equipment;
-      // temp.equipment_options = bg.equipment_options;
-      // temp.proficiencies = bg.proficiencies;
-      // let personality = {
-      //   traits: bg.personality_traits,
-      //   ideals: bg.ideals,
-      //   bonds: bg.bonds,
-      //   flaws: bg.flaws,
-      // };
-      // temp.description = personality;
-      // temp.desc = bg.desc;
-      // temp.feature = bg.feature;
-      // dispatch(setBackground(charID, { ...temp }));
-    });
+        let equipment = { equipment: bg.starting_equipment };
+        if (bg.other_equipment) {
+          equipment.equipment = equipment.equipment.concat(bg.other_equipment)
+        }
+        equipment.equipment.push({...bg.starting_currency, category: 'currency'});
+        let personality = {
+          traits: bg.personality_traits,
+          ideals: bg.ideals,
+          bonds: bg.bonds,
+          flaws: bg.flaws,
+        };
+        dispatch(setBackground(charID, {
+          index: newBackground.index,
+          name: newBackground.name,
+          ...equipment,
+          equipment_options: bg.equipment_options,
+          proficiencies: bg.proficiencies,
+          description: personality,
+          desc: bg.desc,
+          feature: bg.feature,
+          options: bg.options
+        }))
+      });
   };
 
   useEffect(() => {
-    console.log('get');
+    console.log("[]", background)
+    if(!background) dispatch(setBackground(charID, customBackground));
+
     CharacterService.getIndexedList('backgrounds').then(list => {
-      setBackgrounds(customBackground.concat(list));
+      setBackgrounds([customBackground, ...list]);
     });
     CharacterService.getIndexedList('skills').then(list => {
       setSkills(list);
@@ -453,17 +455,23 @@ export const Background = ({ charID, setPage }) => {
     background?.feature?.desc ?? ''
   );
 
-  useEffect(() => {
+  /*useEffect(() => {
     setCustomName(background?.name != "Custom" ? background?.name : '');
     setCustomDesc(background?.desc ?? '');
     setCustomFeatureName(background?.feature?.name ?? '');
     setCustomFeatureDesc(background?.feature?.desc ?? '');
-  }, [background]);
+  }, [background]);*/
 
   const onNext = () => {
     if (!background) return;
     if (background?.index == 'custom') {
       let customBackground = {
+        proficiencies: {
+          Tools: [],
+          Languages: [],
+          Skills: [...skillChoices],
+          Armor: []
+        },
         name: customName,
         desc: customDesc,
         feature: {
@@ -471,6 +479,13 @@ export const Background = ({ charID, setPage }) => {
           desc: customFeatureDesc,
         },
       };
+      for (let selection of toolAndLanguageChoices) {
+        if (selection.url.includes('language')) {
+          customBackground.proficiencies.Languages.push(selection.name);
+        } else {
+          customBackground.proficiencies.Tools.push(selection.name);
+        }
+      }
       dispatch(setBackground(charID, customBackground));
     }
     setPage({ index: 4, name: 'description' });
@@ -481,6 +496,7 @@ export const Background = ({ charID, setPage }) => {
 
   return (
     <div className="background">
+     {backgrounds ? (
       <>
         <div className="mx-auto d-none d-md-flex title-back-wrapper">
           <h2 className="title-card p-4">Background</h2>
@@ -493,7 +509,6 @@ export const Background = ({ charID, setPage }) => {
             your GM to build one that makes sense for your character.
           </p>
         </div>
-        {backgrounds ? (
           <React.Fragment>
             <BackgroundSelector
               backgrounds={backgrounds}
@@ -508,7 +523,7 @@ export const Background = ({ charID, setPage }) => {
             {background?.index && (
               <>
                 <BackgroundOptions
-                  background={background}
+                  options={background.options}
                   userChoices={userChoices}
                   setUserChoices={setUserChoices}
                   custom={background?.index === 'custom'}
@@ -551,10 +566,10 @@ export const Background = ({ charID, setPage }) => {
               OK
             </button>
           </React.Fragment>
-        ) : (
-          'LOADING'
-        )}
       </>
+       ) : (
+        'LOADING'
+      )}
     </div>
   );
 };
