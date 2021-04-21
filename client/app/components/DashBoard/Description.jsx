@@ -82,7 +82,6 @@ const Description = ({character}) => {
     } else if (build === 'wide-short') {
       buildImage = classSilhouettesWideShort[`${className}.png`];
     }
-
     return buildImage;
   }
 
@@ -98,6 +97,8 @@ const Description = ({character}) => {
     <div className="description-container">
       <div className="translucent-card w-100 row">
           <div className="silhouette-container d-none d-md-flex col-auto">
+            {character.portrait.image === null ? (
+              <>
             <img
               src={raceSilhouettes[`${character.race.name.toLowerCase().replace(/ $/, '-')}.png`]}
             />
@@ -106,9 +107,10 @@ const Description = ({character}) => {
                 character.race.name.toLowerCase().replace(/ $/, '-'),
                 character.class[0].name.toLowerCase().replace(/ $/, '-')
               )}
-            />
+            /></>)
+            : (<img src={character.portrait.image}/>)}
           </div>
-          <div class="col">
+          <div className="col">
           <Masonry
             breakpointCols={breakpointColumnsObj}
             className="my-masonry-grid"

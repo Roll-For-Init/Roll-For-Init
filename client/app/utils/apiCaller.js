@@ -434,8 +434,9 @@ const propogateRacePointer = async racePointer => {
   };
   const race = (await axios.get(racePointer.url)).data;
 
+  let subraceUrl = racePointer.subrace?.toLowerCase().replace(/\s/g, '-')
   const subrace = racePointer.subrace
-    ? (await axios.get(racePointer.subrace.url)).data
+    ? (await axios.get(`api/subraces/${subraceUrl}`)).data
     : null;
   if (subrace) promises.push(propogateSubracePointer(subrace, raceContainer));
 
@@ -659,23 +660,26 @@ const getClassDescriptions = async theClass => {
       );
     });
   }
-  for (let optionSet of theClass.subclass.subclass_options) {
-    optionSet.options.forEach(option => {
-      if (!option.hasOwnProperty('url')) {
-        return;
+  if(theClass.subclass?.subclass_options) {
+    for (let optionSet of theClass.subclass.subclass_options) {
+        optionSet.options.forEach(option => {
+          if (!option.hasOwnProperty('url')) {
+            return;
+          }
+          promises.push(
+            axios
+              .get(option.url)
+              .then(optionDetails => {
+                optionDetails = optionDetails.data;
+                if (optionDetails.desc) option.desc = optionDetails.desc;
+                else option.desc = placeholderDescription;
+              })
+              .catch(err => console.error(err))
+          );
+        });
       }
-      promises.push(
-        axios
-          .get(option.url)
-          .then(optionDetails => {
-            optionDetails = optionDetails.data;
-            if (optionDetails.desc) option.desc = optionDetails.desc;
-            else option.desc = placeholderDescription;
-          })
-          .catch(err => console.error(err))
-      );
-    });
   }
+  
   return Promise.all(promises).then(() => {
     return theClass;
   });
@@ -806,9 +810,10 @@ const equipmentDetails = async equipment => {
       })
   }
   else {
+      console.log(equipment);
     result = equipment.map(theItem => {
-        console.log(theItem);
       theItem.from = theItem.from.map(item => {
+          console.log(item);
         if (item.hasOwnProperty('url')) {
           promises.push(
             axios.get(item.url).then(itemDetails => {
@@ -819,7 +824,7 @@ const equipmentDetails = async equipment => {
               return item;
             })
           );
-        } else if (item.hasOwnProperty('choose')) {
+        } else if (item.hasOwnProperty('choose') && item.from.equipment_category != undefined) {
           let option = item.from.equipment_category;
           promises.push(
             axios

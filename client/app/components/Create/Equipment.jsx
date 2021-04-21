@@ -505,9 +505,8 @@ export const Equipment = ({ charID, setPage }) => {
   };
 
   useEffect(() => {
-    console.log(character.background.equipment, character.background.equipment_options, character.background)
-    console.log(equipmentList, equipmentOptions);
-    if(character.equipment) {
+    console.log(character)
+    if(character.equipment && character.equipment.class===character.class.index && character.equipment.background===character.background.index) {
       const promises = [];
       promises.push(setEquipmentList(character.equipment.set));
       promises.push(setEquipmentOptions(character.equipment.options));
@@ -525,6 +524,8 @@ export const Equipment = ({ charID, setPage }) => {
           dispatch(
             setEquipment(charID, {
               set: equipmentWDetails,
+              class: character.class.index,
+              background: character.background.index
             })
           );
         }

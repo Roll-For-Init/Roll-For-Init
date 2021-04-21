@@ -101,7 +101,9 @@ const character = (state = initialCharacter, action, charID) => {
     case SET_SPELLS:
       return {
         ...state,
-        spells: { ...state.spells, ...payload.spells },
+        class: { ...state.class, 
+            spells: {...state.class.spells, ...payload.spells} 
+        },
       };
     case SET_PAGE:
       return {
