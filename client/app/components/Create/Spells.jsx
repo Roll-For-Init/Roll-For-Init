@@ -251,10 +251,10 @@ export const Spells = ({ charID, setPage }) => {
 
     CharacterService.getSpells(character.class, [0, 1]).then(cards => {
       setSpellChoices(cards);
+      dispatch(setSpells(charID, { cards: cards }));
       if (!limit[1]) {
         dispatch(setSpells(charID, { 1: cards.level1.map(s => s.index) }));
       }
-      dispatch(setSpells(charID, { cards: cards }));
     });
   }, []);
 
