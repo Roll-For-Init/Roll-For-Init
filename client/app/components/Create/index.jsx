@@ -407,13 +407,13 @@ const PageViewer = ({ charID}) => {
   const charEquipment = useSelector(
     state => state.characters[charID].equipment
   );
-  const charSpells = useSelector(state => state.characters[charID].spells);
+  const charSpells = useSelector(state => state.characters[charID].class?.spells);
 
   return character ? (
     <div className="row position-relative" style={{ top: '45px' }}>
       <div className="col-3 d-none d-md-block side-bar overflow-auto">
+        {console.log(charSpells)}
         <div className="btn-group-vertical w-100" role="group">
-          
           <Buttons page={character.page} onPageChange={onPageChange} charRace={charRace} charClass={charClass} raceIconsOffWhite={raceIconsOffWhite} raceIconsMedBlue={raceIconsMedBlue} classIconsOffWhite={classIconsOffWhite} classIconsMedBlue={classIconsMedBlue}/>
           {character.class?.spellcasting?.level <= 1 && (
             <button
@@ -520,7 +520,7 @@ const PageViewer = ({ charID}) => {
                     <ul className="shortlist">
                       {charSpells[0].map(spell => {
                         console.log(charSpells);
-                        return <li>{charSpells.cards.cantrips.find(card => card.index === spell).name}</li>;
+                        return <li>{charSpells.cards.cantrips.find(card => card.index === spell)?.name}</li>;
                       })}
                     </ul>
                   </>

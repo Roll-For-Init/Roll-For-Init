@@ -185,9 +185,9 @@ export const Spells = ({ charID, setPage }) => {
   };
 
   const getKnownSpells = level => {
-    const knownSpells = character.spells
-      ? character.spells[level]
-        ? character.spells[level]
+    const knownSpells = character.class.spells
+      ? character.class.spells[level]
+        ? character.class.spells[level]
         : null
       : null;
     return knownSpells;
@@ -232,6 +232,7 @@ export const Spells = ({ charID, setPage }) => {
   };
 
   const validateAndStore = () => {
+    
     // console.log(character);
     character.name = name;
     console.log(character);

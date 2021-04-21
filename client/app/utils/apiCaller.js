@@ -659,23 +659,26 @@ const getClassDescriptions = async theClass => {
       );
     });
   }
-  for (let optionSet of theClass.subclass.subclass_options) {
-    optionSet.options.forEach(option => {
-      if (!option.hasOwnProperty('url')) {
-        return;
+  if(theClass.subclass?.subclass_options) {
+    for (let optionSet of theClass.subclass.subclass_options) {
+        optionSet.options.forEach(option => {
+          if (!option.hasOwnProperty('url')) {
+            return;
+          }
+          promises.push(
+            axios
+              .get(option.url)
+              .then(optionDetails => {
+                optionDetails = optionDetails.data;
+                if (optionDetails.desc) option.desc = optionDetails.desc;
+                else option.desc = placeholderDescription;
+              })
+              .catch(err => console.error(err))
+          );
+        });
       }
-      promises.push(
-        axios
-          .get(option.url)
-          .then(optionDetails => {
-            optionDetails = optionDetails.data;
-            if (optionDetails.desc) option.desc = optionDetails.desc;
-            else option.desc = placeholderDescription;
-          })
-          .catch(err => console.error(err))
-      );
-    });
   }
+  
   return Promise.all(promises).then(() => {
     return theClass;
   });

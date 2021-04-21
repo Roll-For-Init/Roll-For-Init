@@ -85,6 +85,7 @@ const Class = ({ charID, setPage }) => {
 
 const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
   const theClass = useSelector(state => state.characters[charID].class);
+  const character = useSelector(state => state.characters[charID]);
   const [classInfo, setClassInfo] = useState(undefined);
 
   const reducer = (state, newProp) => {
@@ -127,6 +128,7 @@ const SidePanel = ({ charID, setPage, clearClass, dispatch }) => {
               theClass.spellcasting === null
                 ? null
                 : { ...theClass.spellcasting, ...theClass.main.spellcasting },
+            spells: null
           })
         );
         dispatch(setClass(charID, { subclass: theClass.subclass }));
