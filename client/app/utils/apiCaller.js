@@ -809,9 +809,10 @@ const equipmentDetails = async equipment => {
       })
   }
   else {
+      console.log(equipment);
     result = equipment.map(theItem => {
-        console.log(theItem);
       theItem.from = theItem.from.map(item => {
+          console.log(item);
         if (item.hasOwnProperty('url')) {
           promises.push(
             axios.get(item.url).then(itemDetails => {
@@ -822,7 +823,7 @@ const equipmentDetails = async equipment => {
               return item;
             })
           );
-        } else if (item.hasOwnProperty('choose')) {
+        } else if (item.hasOwnProperty('choose') && item.from.equipment_category != undefined) {
           let option = item.from.equipment_category;
           promises.push(
             axios
