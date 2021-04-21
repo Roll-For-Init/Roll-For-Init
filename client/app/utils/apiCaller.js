@@ -434,8 +434,10 @@ const propogateRacePointer = async racePointer => {
   };
   const race = (await axios.get(racePointer.url)).data;
 
+  console.log(racePointer.subrace);
+  let subraceUrl = racePointer.subrace.toLowerCase().replace(/\s/g, '-')
   const subrace = racePointer.subrace
-    ? (await axios.get(racePointer.subrace.url)).data
+    ? (await axios.get(`api/subraces/${subraceUrl}`)).data
     : null;
   if (subrace) promises.push(propogateSubracePointer(subrace, raceContainer));
 
