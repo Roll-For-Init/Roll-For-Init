@@ -297,9 +297,11 @@ export const Background = ({ charID, setPage }) => {
     reducer,
     background?.choices ?? {}
   );
-  const [skillChoices, setSkillChoices] = useState([]);
+  const [skillChoices, setSkillChoices] = useState(background?.proficiencies?.Skills ?? []);
 
-  const [toolAndLanguageChoices, setToolAndLanguageChoices] = useState([]);
+  const [toolAndLanguageChoices, setToolAndLanguageChoices] = useState(background?.proficiencies?.Tools.concat(
+    background?.proficiencies?.Languages.map((lang) => lang = {name: lang, index: lang.toLowerCase(), url: `api/languages/${lang.toLowerCase()}`})) 
+    ?? []);
 
   /*useEffect(() => {
     const toolSelection = background?.proficiencies?.Tools ?? [];
@@ -386,7 +388,6 @@ export const Background = ({ charID, setPage }) => {
   };
 
   useEffect(() => {
-    console.log("[]", background)
     if(!background) {
       dispatch(setBackground(charID, customBackground));
       dispatch(setBackground(charID, {
@@ -468,6 +469,7 @@ export const Background = ({ charID, setPage }) => {
   }, [background]);*/
 
   const onNext = () => {
+    console.log(background);
     if (!background) return;
     if (background?.index == 'custom') {
       console.log(background);
