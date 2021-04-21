@@ -242,11 +242,11 @@ const fillModel = async (equipment, character) => { //will probably need a separ
             ], 
             initiative_bonus: ability_relevant.ability_scores.dex.modifier, 
             ...equipment, 
-            spells: character.spells ? {
+            spells: character.class.spells ? {
                 slots: levelDetails.slots,
                 casting_ability: character.class.spellcasting.spellcasting_ability.index,
                 advantage: 0,
-                cards: spellsPopulator(character.spells)
+                cards: spellsPopulator(character.class.spells)
             } : null,
             defenses: {
                 advantage: 0, // if advantage is -1, 0, or 1

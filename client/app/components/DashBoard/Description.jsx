@@ -82,7 +82,6 @@ const Description = ({character}) => {
     } else if (build === 'wide-short') {
       buildImage = classSilhouettesWideShort[`${className}.png`];
     }
-
     return buildImage;
   }
 
@@ -98,7 +97,7 @@ const Description = ({character}) => {
     <div className="description-container">
       <div className="translucent-card w-100 row">
           <div className="silhouette-container d-none d-md-flex col-auto">
-            {character.portrait.name === 'char-placeholder.png' ? (
+            {character.portrait.image === null ? (
               <>
             <img
               src={raceSilhouettes[`${character.race.name.toLowerCase().replace(/ $/, '-')}.png`]}
