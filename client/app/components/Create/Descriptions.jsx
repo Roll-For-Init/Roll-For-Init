@@ -116,6 +116,7 @@ export const Descriptions = ({ charID, setPage }) => {
   const [charPort, setCharPort] = useState(charPlaceholder);
   const [fileName, setFileName] = useState('No file chosen');
   const [errors, setErrors] = useState('');
+  const [file, setFile] = useState(null);
 
   const verifyFile = files => {
     if (files && files.length > 0) {
@@ -139,6 +140,17 @@ export const Descriptions = ({ charID, setPage }) => {
       return true;
     }
   };
+  const getBase64 = (file) => {
+    let reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => {
+      setFile(reader.result);
+    };
+    reader.onerror = (error) => {
+      console.log('Error: ', error);
+    };
+ }
+ 
 
   const handleOnDrop = (files, rejectedFiles) => {
     if (rejectedFiles && rejectedFiles.length > 0) {
@@ -158,6 +170,7 @@ export const Descriptions = ({ charID, setPage }) => {
         } else {
           nameToShow = file;
         }
+        getBase64(files[0])
         setFileName(nameToShow);
         setErrors('');
         // imageBase64Data
@@ -179,6 +192,7 @@ export const Descriptions = ({ charID, setPage }) => {
   };
 
   const onNext = () => {
+    console.log(file)
     const description = {
       lore: {
         alignment: selectionAl,
@@ -197,7 +211,7 @@ export const Descriptions = ({ charID, setPage }) => {
         skin: skin,
         hair: hair,
       },
-      portrait: { name: fileName },
+      portrait: { name: fileName, image: file },
     };
     dispatch(setDescription(charID, description));
     setPage({ index: 5, name: 'equipment' });

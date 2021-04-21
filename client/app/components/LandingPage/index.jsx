@@ -97,6 +97,9 @@ const UploadCharacter = () => {
             console.log(jsonChar);
             dispatch(submitCharacter(jsonChar));
             localStorage.setItem('state', JSON.stringify(jsonChar));
+            let user = JSON.parse(localStorage.getItem('user'));
+            user.characters.push(jsonChar);
+            localStorage.setItem('user', JSON.stringify(user));
             dispatch(setCurrentCharacter(jsonChar.charID));
             history.push('/dashboard');
             window.location.reload();
@@ -378,7 +381,7 @@ const LandingPage = () => {
                         :
                         <img
                           className="portrait-icon"
-                          src={charInfo.portrait?.name}
+                          src={charInfo.portrait?.image}
                           alt={charInfo.portrait?.name}
                           width="70"
                           height="70"
