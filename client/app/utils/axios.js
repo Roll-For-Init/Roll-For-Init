@@ -29,7 +29,6 @@ const responseHandler = res => {
   return res;
 };
 const errorHandler = err => {
-  console.log(err);
   return err;
 };
 

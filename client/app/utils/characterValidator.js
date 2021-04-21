@@ -1,4 +1,4 @@
-const axios = require('axios')
+const axios = require('./axios')
 
 const parseEquipment = (items, weaponProficiencies, armorProficiencies) => {
     const equipment = {
@@ -502,3 +502,4 @@ const skillScores = {
 
 
 module.exports = { parseEquipment, fillModel }
+
