@@ -1,4 +1,4 @@
-const axios = require('axios');
+const axios = require('./axios');
 const placeholderDescription = [
   'Please see the 5e SRD for more details @ https://dnd.wizards.com/articles/features/systems-reference-document-srd',
 ];
@@ -33,21 +33,21 @@ const makeEquipmentDesc = async (item, itemDetails) => {
       category: `${itemDetails.category_range} Weapon`,
       damage: {
         damage_type: itemDetails.damage.damage_type.name,
-        damage_dice: itemDetails.damage.damage_dice
+        damage_dice: itemDetails.damage.damage_dice,
       },
       cost: `${itemDetails.cost.quantity}${itemDetails.cost.unit}`,
       weight: itemDetails.weight,
       desc: itemDetails.properties.map(prop => prop.name).join(', '),
     };
-    if(itemDetails.two_handed_damage != undefined) {
-        desc.damage.two_handed = {
-            damage_type: itemDetails.two_handed_damage.damage_type.name,
-            damage_dice: itemDetails.two_handed_damage.damage_dice
-        }
+    if (itemDetails.two_handed_damage != undefined) {
+      desc.damage.two_handed = {
+        damage_type: itemDetails.two_handed_damage.damage_type.name,
+        damage_dice: itemDetails.two_handed_damage.damage_dice,
+      };
     }
     if (itemDetails.range != undefined) {
-        desc.range = itemDetails.range;
-      }  
+      desc.range = itemDetails.range;
+    }
   } else if (itemDetails.equipment_category.index == 'armor') {
     let armorClassDeets = itemDetails.armor_class;
     let ac = armorClassDeets.dex_bonus
@@ -88,15 +88,15 @@ const makeEquipmentDesc = async (item, itemDetails) => {
       desc.category = `${itemDetails.category_range} Weapon`;
     if (itemDetails.damage != undefined)
       desc.damage = {
-          damage_type: itemDetails.damage.damage_type.name,
-          damage_dice: itemDetails.damage.damage_dice
-      }
-      if(itemDetails.two_handed_damage != undefined) {
-          desc.damage.two_handed = {
-              damage_type: itemDetails.two_handed_damage.damage_type.name,
-              damage_dice: itemDetails.two_handed_damage.damage_dice
-          }
-      }
+        damage_type: itemDetails.damage.damage_type.name,
+        damage_dice: itemDetails.damage.damage_dice,
+      };
+    if (itemDetails.two_handed_damage != undefined) {
+      desc.damage.two_handed = {
+        damage_type: itemDetails.two_handed_damage.damage_type.name,
+        damage_dice: itemDetails.two_handed_damage.damage_dice,
+      };
+    }
     if (itemDetails.quantity != undefined) desc.quantity = itemDetails.quantity;
     if (itemDetails.cost != undefined)
       desc.cost = `${itemDetails.cost.quantity}${itemDetails.cost.unit}`;
@@ -190,20 +190,23 @@ const optionsHelper = async (container, options, key) => {
       ? options.header
       : options.type.replace('_', ' ');
     optionSet.type = 'trait';
-    if(options.desc) optionSet.desc = options.desc;
+    if (options.desc) optionSet.desc = options.desc;
   } else if (options.type.toLowerCase().includes('language')) {
     optionSet.header = `extra ${options.type}`;
     optionSet.type = options.type;
-  }
-  else if (options.type.toLowerCase().includes('prof') && !options.from[0].index.toLowerCase().includes('skill')) {
+  } else if (
+    options.type.toLowerCase().includes('prof') &&
+    !options.from[0].index.toLowerCase().includes('skill')
+  ) {
     optionSet.type = options.type;
     optionSet.header = 'tool proficiencies';
-  }
-  else if (options.type.toLowerCase().includes('prof') && options.from[0].index.toLowerCase().includes('skill')) {
-      optionSet.type = options.type;
-      optionSet.header='skill proficiencies';
-  }
-   else {
+  } else if (
+    options.type.toLowerCase().includes('prof') &&
+    options.from[0].index.toLowerCase().includes('skill')
+  ) {
+    optionSet.type = options.type;
+    optionSet.header = 'skill proficiencies';
+  } else {
     optionSet.header = options.type.replace('_', ' ');
     optionSet.type = options.type;
   }
@@ -385,7 +388,7 @@ const propogateSubracePointer = async (subrace, raceContainer) => {
     }
   });
   return Promise.all(promises).then(() => {
-      raceContainer.sub = subrace;
+    raceContainer.sub = subrace;
   });
 };
 
@@ -749,17 +752,17 @@ const equipmentDetails = async equipment => {
   const promises = [];
   let result;
   if (equipment[0]?.equipment) {
-      console.log(equipment);
+    console.log(equipment);
     result = equipment.map(theItem => {
-        console.log(theItem);
-      if(theItem.category && theItem.category == 'currency') {
-          return {
-              equipment: {
-                ...theItem,
-              name: `${theItem.quantity} ${theItem.unit}`
-              },
-              quantity: 1
-          }
+      console.log(theItem);
+      if (theItem.category && theItem.category == 'currency') {
+        return {
+          equipment: {
+            ...theItem,
+            name: `${theItem.quantity} ${theItem.unit}`,
+          },
+          quantity: 1,
+        };
       }
       let item = theItem;
       if (item.equipment.hasOwnProperty('url')) {
