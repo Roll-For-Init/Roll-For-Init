@@ -479,6 +479,7 @@
 }
 
 .create .equipment-card {
+  border: 3px solid $maroon;
   margin: 0;
   margin-bottom: 15px;
   padding: 5px 8px 10px;
@@ -747,7 +748,7 @@ hr {
     margin-right: 0;
   }
   padding: 5px 10px 10px;
-  border: none;
+  border: 3px solid $maroon;
   margin-bottom: 15px !important;
   h5 {
     color: $dark-blue;

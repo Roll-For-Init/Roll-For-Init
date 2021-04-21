@@ -28,6 +28,7 @@ const download = (character)  => {
     element.download = String(character.name);
     document.body.appendChild(element);
     element.click();
+    document.body.removeChild(element);
 }
 
 
@@ -35,7 +36,7 @@ const getInventory = (character) => {
   var inventory = "";
   for (var i = 0; i < character.inventory.length; i++){
     if (character.inventory[i].name != undefined){
-      inventory += character.inventory[i].name + " (" + character.inventory[i].quantity + ")\n";
+      inventory += character.inventory[i].name + (character.inventory[i].quantity > 1 ? " (" + character.inventory[i].quantity + ")\n" : "\n");
     }
   }
   return inventory;
@@ -70,10 +71,8 @@ const isProficient = (proficiency) => {
 }
 
 const addSign = (number) => {
-  var toPrint = "";
-  if (number >= 0){
-    toPrint = "+" + String(number);
-  }
+  var toPrint = number >= 0 ? "+" : "";
+  toPrint += String(number);
   return toPrint;
 }
 
@@ -87,21 +86,17 @@ const setAlignment = (character) => {
 
 const findWeapons = (character) => {
   var weps = [];
-  var wepCount = 0;
   //console.log(character.attacks.weapons.length);
-  if (character.attacks.weapons != null){
-    for (var i = 0; i < character.attacks.weapons.length; i++){
-      weps.push(character.attacks.weapons[i].name);
-      wepCount++;
-    }
+  const weapons = character.attacks.weapons?.sort((x,y) => {return (x.pinned === y.pinned)? 0 : (x.pinned ? -1 : 1);});
+  if (weapons != null){
+    // weps = weapons.map(w => {return w.name});
+    weps = weapons;
   }
-  if (wepCount < 3){
-    if (character.spells != null){
-      for (let i = wepCount; i < weps.length; i++){
-        weps.push(character.spells.cards[i].spell_type);
-        }
-      }
-    }
+  // if (weps.length < 3 && character.spells){
+  //   for (let i = 0; i + weps.length < 3; i++){
+  //     weps.push(character.spells.cards.flat()[i].name);
+  //   }
+  // }
   return weps;
 }
 
@@ -114,23 +109,27 @@ const findWeapons = (character) => {
 
 const calcBonus = (character) => {
   var bonus = [];
-  var bonusWeps = findWeapons(character);
-  var str = parseInt(character.ability_scores.str.modifier); 
-  var dex = parseInt(character.ability_scores.dex.modifier);
-  var pro =  parseInt(character.proficiency_bonus);
-  for (var i = 0; i < bonusWeps.length; i++){
-    if (character.attacks.weapons[i].category.toLowerCase().includes("ranged")){
-      var sign = ((dex + pro) >= 0) ? "+" : 0;
-      bonus[i] = sign + (dex + pro);
-    } else {
-      if (character.attacks.weapons[i].category.toLowerCase().includes("melee")){
-        var sign = ((str + pro) >= 0) ? "+" : 0
-        bonus[i] = sign + (str + pro);
-      }
-    }
-  }
+  var weps = findWeapons(character);
+  var str = character.ability_scores.str.modifier; 
+  var dex = character.ability_scores.dex.modifier;
+  var pro = character.proficiency_bonus;
+  bonus = weps.map(w => {
+    return (w.category.toLowerCase().includes("ranged") || w.properties.includes("Finesse"))
+      ? { attack: dex + pro, damage: dex }
+      : { attack: str + pro, damage: str };
+  });
+  // for (var i = 0; i < bonusWeps.length; i++){
+  //   if (character.attacks.weapons[i]?.properties.includes("ranged")){
+  //     var sign = ((dex + pro) >= 0) ? "+" : 0;
+  //     bonus[i] = sign + (dex + pro);
+  //   } else {
+  //     if (character.attacks.weapons[i]?.category.toLowerCase().includes("melee")){
+  //       var sign = ((str + pro) >= 0) ? "+" : 0
+  //       bonus[i] = sign + (str + pro);
+  //     }
+  //   }
+  // }
   return bonus;
-  
 }
 
 const getFeatures = (character) => {
@@ -156,7 +155,13 @@ const getFeatures = (character) => {
   }
   return features;
 }
+
+const formatDamage = (weapon, bonus) => {
+  return weapon ? weapon.damage.damage_dice + addSign(bonus.damage) + " " + weapon.damage.damage_type : "";
+}
+
 const formatPayload = (character, user) => {
+  console.log(user);
   var weps = findWeapons(character);
   var bonus = calcBonus(character);
   var payload = {
@@ -165,7 +170,7 @@ const formatPayload = (character, user) => {
     "textColor": "#333333",
     "data": {
       "Name": character.name,
-      "Class": character.class[0].name,
+      "Class": character.class[0].name + " " + character.level,
       "Background": character.background.name,
       "Race": character.race.name,
       "Alignment": setAlignment(character),
@@ -176,7 +181,7 @@ const formatPayload = (character, user) => {
       "INT": character.ability_scores.int.score,
       "WIS": character.ability_scores.wis.score,
       "CHR": character.ability_scores.cha.score,
-      "ArmorClass": addSign(character.ac),
+      "ArmorClass": character.ac,
       "PersonalityTraits": character?.lore?.personality_traits ?? "",
       "Ideals": character.lore.ideals,
       "Flaws": character.lore.flaws,
@@ -192,10 +197,10 @@ const formatPayload = (character, user) => {
       "CHRmod": addSign(character.ability_scores.cha.modifier),
       "ProBonus": addSign(character.proficiency_bonus),
       "Bonds": character.lore.bonds,
-      "Initiative": character.initiative_bonus,
+      "Initiative": addSign(character.initiative_bonus),
       "Speed": character.walking_speed,
       "STstr": addSign(character.saving_throws.str.modifier),
-      "STdxt": addSign(character.saving_throws.str.modifier),
+      "STdxt": addSign(character.saving_throws.dex.modifier),
       "STcon": addSign(character.saving_throws.con.modifier),
       "STint": addSign(character.saving_throws.int.modifier),
       "STwis": addSign(character.saving_throws.wis.modifier),
@@ -218,21 +223,21 @@ const formatPayload = (character, user) => {
       "Performance": addSign(character.skills.performance.modifier),
       "Persuasion": addSign(character.skills.persuasion.modifier),
       "Religion": addSign(character.skills.religion.modifier),
-      "SleightOfHand": "+0",
-      "Stealth": "+0",
-      "Survival": "+0",
-      "Attack1": weps[0],
-      "Attack2": weps[1],
-      "Attack3": weps[2],
-      "Bonus3": bonus[2],
-      "Bonus2": bonus[1],
-      "Bonus1": bonus[0],
-      "Damage1": (character.attacks.weapons[0] != undefined) ? character.attacks.weapons[0].damage.damage_type + "/" + character.attacks.weapons[0].damage.damage_dice : "",
-      "Damage2": (character.attacks.weapons[1] != undefined) ? character.attacks.weapons[1].damage.damage_type + "/" + character.attacks.weapons[1].damage.damage_dice : "",
-      "Damage3": (character.attacks.weapons[2] != undefined) ? character.attacks.weapons[2].damage.damage_type + "/" + character.attacks.weapons[2].damage.damage_dice : "",
+      "SleightOfHand": addSign(character.skills.sleight_of_hand.modifier),
+      "Stealth": addSign(character.skills.stealth.modifier),
+      "Survival": addSign(character.skills.survival.modifier),
+      "Attack1": weps[0] ? weps[0].name : "",
+      "Attack2": weps[1] ? weps[1].name : "",
+      "Attack3": weps[2] ? weps[2].name : "",
+      "Bonus3": bonus[2] ? addSign(bonus[2].attack) : "",
+      "Bonus2": bonus[1] ? addSign(bonus[1].attack) : "",
+      "Bonus1": bonus[0] ? addSign(bonus[0].attack) : "",
+      "Damage1": formatDamage(weps[0], bonus[0]),
+      "Damage2": formatDamage(weps[1], bonus[1]),
+      "Damage3": formatDamage(weps[2], bonus[2]),
       "HitDice": character.hit_dice[0].current + "d" + character.hit_dice[0].type,
       "Inspiration": ((character.inspiration) ? "+1" : "+0"),
-      "Username": character.name,
+      "Username": user ? user.username : "",
       "CP": character.treasure.cp,
       "SP": character.treasure.sp,
       "EP": character.treasure.ep,
@@ -254,6 +259,9 @@ const formatPayload = (character, user) => {
       "PerformancePro": isProficient(character.skills.performance.proficiency),
       "PersuasionPro": isProficient(character.skills.persuasion.proficiency),
       "ReligionPro": isProficient(character.skills.religion.proficiency),
+      "SleightOfHandPro": isProficient(character.skills.sleight_of_hand.proficiency),
+      "StealthPro": isProficient(character.skills.stealth.proficiency),
+      "SurvivalPro": isProficient(character.skills.survival.proficiency),
       "STstrPro": isProficient(character.saving_throws.str.proficiency),
       "STdxtPro": isProficient(character.saving_throws.dex.proficiency),
       "STconPro": isProficient(character.saving_throws.con.proficiency),
@@ -1671,7 +1679,7 @@ const ExtraStatsCard = ({ charID, conditions, defenses }) => {
           {conditions.map((condition, index) => {
             return (
               <button
-                className="btn-outline-primary"
+                className="btn btn-outline-primary"
                 onClick={() => removeCondition(condition)}
                 key={`condition-${index}`}
               >

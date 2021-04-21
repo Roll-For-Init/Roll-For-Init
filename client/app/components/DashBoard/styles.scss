@@ -148,6 +148,7 @@
   .toolbar {
     width: 100%;
     margin-top: 44px;
+    z-index: 1010;
     //position:fixed;
     .header {
       height: 45px;
@@ -167,7 +168,7 @@
     .subheader {
       height: 60px;
       background-color: $maroon;
-      z-index: 100;
+      z-index: 90;
       top: 0;
       width: 100%;
       padding: 5px 20px;
@@ -550,6 +551,21 @@
     border: {
       color: $blue !important;
     }
+
+    &:not([disabled]) {
+      &:hover {
+        border: {
+          color: $red !important;
+        }
+      }
+      &:active {
+        background-color: $dark-off-white !important;
+        color: $very-dark-blue !important;
+        border: {
+          color: $desat-red !important;
+        }
+      }
+    }
   }
   .wrapper-button {
     margin: auto;
@@ -796,6 +812,9 @@
         margin: 0;
         padding: 1px;
       }
+    }
+    .btn {
+      letter-spacing: normal;
     }
   }
 

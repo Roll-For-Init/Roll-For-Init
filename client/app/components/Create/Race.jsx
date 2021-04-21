@@ -270,17 +270,6 @@ const AbilityBonusCard = ({ ability_bonuses }) => {
   );
 };
 
-/*
-const abilityBonusProps = {
-  bonus: PropTypes.number.isRequired,
-  ability_score: PropTypes.shape({
-    index: PropTypes.string.isRequired,
-    full_name: PropTypes.string,
-    name: PropTypes.string,
-  }),
-};
-AbilityBonusCard.propTypes = { ...abilityBonusProps };
-*/
 const AbilityBonuses = ({ ability_bonuses }) => {
   return (
     <React.Fragment>
@@ -288,16 +277,11 @@ const AbilityBonuses = ({ ability_bonuses }) => {
     </React.Fragment>
   );
 };
-/*
-AbilityBonuses.propTypes = {
-  ability_bonuses: PropTypes.arrayOf(
-    PropTypes.shape({
-      ...abilityBonusProps,
-    })
-  ),
-};
-*/
-const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
+
+const RaceDetails = ({ charID, clearRace, dispatch }) => {
+  const { race } = useSelector(state => state.characters[charID]);
+  const [raceInfo, setRaceInfo] = useState(undefined);
+
   const reducer = (state, newProp) => {
     let key = Object.keys(newProp)[0];
     if (key.includes('ability')) {
@@ -311,12 +295,13 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
     return newState;
   };
 
-  const [userChoices, setUserChoices] = useReducer(reducer, {});
-
-  const [raceInfo, setRaceInfo] = useState(undefined);
+  const [userChoices, setUserChoices] = useReducer(
+    reducer,
+    race?.choices ?? {}
+  );
 
   useEffect(() => {
-    CharacterService.getRaceInfo(currRace)
+    CharacterService.getRaceInfo(race)
       .then(
         race => {
           console.log(race);
@@ -355,10 +340,7 @@ const RaceDetails = ({ charID, clearRace, dispatch, currRace }) => {
           })
         );
       });
-  }, []);
-
-  const [selection1, setSelection1] = useState([]);
-  const [selection2, setSelection2] = useState([]);
+  }, [race.index]);
 
   const onNext = () => {
     dispatch(setPage(charID, { index: 1, name: 'class' }));

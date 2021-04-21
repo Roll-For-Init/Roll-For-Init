@@ -197,8 +197,13 @@ const optionsHelper = async (container, options, key) => {
   }
   else if (options.type.toLowerCase().includes('prof') && !options.from[0].index.toLowerCase().includes('skill')) {
     optionSet.type = options.type;
-    optionSet.header = 'tool';
-  } else {
+    optionSet.header = 'tool proficiencies';
+  }
+  else if (options.type.toLowerCase().includes('prof') && options.from[0].index.toLowerCase().includes('skill')) {
+      optionSet.type = options.type;
+      optionSet.header='skill proficiencies';
+  }
+   else {
     optionSet.header = options.type.replace('_', ' ');
     optionSet.type = options.type;
   }
@@ -740,7 +745,9 @@ const equipmentDetails = async equipment => {
   const promises = [];
   let result;
   if (equipment[0]?.equipment) {
+      console.log(equipment);
     result = equipment.map(theItem => {
+        console.log(theItem);
       if(theItem.category && theItem.category == 'currency') {
           return {
               equipment: {
@@ -800,6 +807,7 @@ const equipmentDetails = async equipment => {
   }
   else {
     result = equipment.map(theItem => {
+        console.log(theItem);
       theItem.from = theItem.from.map(item => {
         if (item.hasOwnProperty('url')) {
           promises.push(
