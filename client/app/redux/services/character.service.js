@@ -1,4 +1,4 @@
-const axios = require('../utils/axios');
+const axios = require('../../utils/axios');
 const apiCaller = require('../../utils/apiCaller');
 const { parseEquipment, fillModel } = require('../../utils/characterValidator');
 
