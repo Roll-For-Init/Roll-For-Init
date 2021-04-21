@@ -502,3 +502,4 @@ const skillScores = {
 
 
 module.exports = { parseEquipment, fillModel }
+

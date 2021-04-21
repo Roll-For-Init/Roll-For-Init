@@ -240,7 +240,9 @@ const optionsHelper = async (container, options, key) => {
       }
       optionSet.options.push(options);
     } else if (option.index.toLowerCase().includes('skill')) {
-      let optionName = option.name.substring(option.name.indexOf(':') + 2);
+        let optionName;
+        if(option.name.includes(':'))  optionName=option.name.substring(option.name.indexOf(':')+2);
+        else optionName = option.name;
       option.name = optionName;
       let optionObject = option;
       optionSet.options.push(optionObject);
@@ -338,7 +340,8 @@ const proficiencySorter = async (container, key, destination) => {
           else type = profDetails.type;
           name = profDetails.name;
           if (name.toLowerCase().includes('skill')) {
-            name = name.substring(name.indexOf(':') + 2);
+              console.log(name);
+            if(name.includes(':')) name = name.substring(name.indexOf(':') + 2);
           }
           return;
         })

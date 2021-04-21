@@ -38,6 +38,7 @@ const deleteCharacter = characterData => {
 
 const getIndexedList = type => {
   return axios.get(`${API_URL}${type}`).then(items => {
+      console.log(items);
     return items.data.results;
   });
 };
