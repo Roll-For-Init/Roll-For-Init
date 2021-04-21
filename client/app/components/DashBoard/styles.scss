@@ -1243,6 +1243,10 @@
   }
 
   .description-container {
+      .portrait {
+          max-width: 100%;
+          height: auto;
+      }
     .translucent-card {
       max-width: 100%;
       min-height: 400px;

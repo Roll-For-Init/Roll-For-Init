@@ -26,6 +26,7 @@ module.exports.init = async () => {
   const app = express();
   app.options('*', cors());
   app.use(createProxyMiddleware(api.routes, api.options));
+  app.use(bodyParser({limit: '1mb'}));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true}));
   //app.use(express.json());

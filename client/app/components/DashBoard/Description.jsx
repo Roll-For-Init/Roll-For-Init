@@ -98,8 +98,7 @@ const Description = ({character}) => {
     <div className="description-container">
       <div className="translucent-card w-100 row">
           <div className="silhouette-container d-none d-md-flex col-auto">
-            {console.log(character.portrait)}
-            {!character.portrait.image ? (
+            {character.portrait.name === 'char-placeholder.png' ? (
               <>
             <img
               src={raceSilhouettes[`${character.race.name.toLowerCase().replace(/ $/, '-')}.png`]}
