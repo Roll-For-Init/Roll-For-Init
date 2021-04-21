@@ -199,7 +199,7 @@ const optionsHelper = async (container, options, key) => {
     optionSet.type = options.type;
     optionSet.header = 'tool proficiencies';
   }
-  else if (options.from[0].index.toLowerCase().includes('skill')) {
+  else if (options.type.toLowerCase().includes('prof') && options.from[0].index.toLowerCase().includes('skill')) {
       optionSet.type = options.type;
       optionSet.header='skill proficiencies';
   }
