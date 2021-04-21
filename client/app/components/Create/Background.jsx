@@ -309,7 +309,6 @@ export const Background = ({ charID, setPage }) => {
   }, [background]);*/
 
   useEffect(() => {
-    console.log("SKILLS TOOLS", background);
     if (!background || !toolAndLanguageChoices?.size || !skillChoices?.size)
       return;
     let languages = [];
@@ -388,7 +387,13 @@ export const Background = ({ charID, setPage }) => {
 
   useEffect(() => {
     console.log("[]", background)
-    if(!background) dispatch(setBackground(charID, customBackground));
+    if(!background) {
+      dispatch(setBackground(charID, customBackground));
+      dispatch(setBackground(charID, {
+        equipment_options: [],
+        equipment: [],
+      }))
+    } 
 
     CharacterService.getIndexedList('backgrounds').then(list => {
       setBackgrounds([customBackground, ...list]);
@@ -465,6 +470,7 @@ export const Background = ({ charID, setPage }) => {
   const onNext = () => {
     if (!background) return;
     if (background?.index == 'custom') {
+      console.log(background);
       let customBackground = {
         proficiencies: {
           Tools: [],

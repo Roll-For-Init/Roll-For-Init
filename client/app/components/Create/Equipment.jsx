@@ -505,6 +505,8 @@ export const Equipment = ({ charID, setPage }) => {
   };
 
   useEffect(() => {
+    console.log(character.background.equipment, character.background.equipment_options, character.background)
+    console.log(equipmentList, equipmentOptions);
     if(character.equipment) {
       const promises = [];
       promises.push(setEquipmentList(character.equipment.set));

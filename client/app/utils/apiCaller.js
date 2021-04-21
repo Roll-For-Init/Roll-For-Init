@@ -807,6 +807,7 @@ const equipmentDetails = async equipment => {
   }
   else {
     result = equipment.map(theItem => {
+        console.log(theItem);
       theItem.from = theItem.from.map(item => {
         if (item.hasOwnProperty('url')) {
           promises.push(
