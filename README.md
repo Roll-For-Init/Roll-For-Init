@@ -1,26 +1,37 @@
-# NOTE
+# Roll For Init
+A character creator and interactive character sheet web application for the 5e ruleset of the most popular TTRPG in the world. See it live at [rollforinit.herokuapp.com](https://rollforinit.herokuapp.com)! Due to the nature of the hosting, you may need to refresh a few minutes after the initial load to get the full site.
 
-To run this application, create a file secret.env in the root directory like so:
+## Demo
+Want to see what it's all about? Please see the demo here!
 
+[Demo](https://youtu.be/M_4BxkHDhsE)
+
+## To Run
+
+To run this application, create a file secret.env in the root directory following the guide below. Ensure MONGODB_URI_RULESET is populated with the ruleset from the [5e-database](https://github.com/Roll-For-Init/5e-database). Then, in the root directory, simply run:
 ```
-JWT_SECRET=secret
-MONGODB_URI=uri
+npm install
+npm run start
 ```
 
-## Required Variables
-
+### Required Environment Variables
 - JWT_SECRET
   - A secret code such as a uuid.
 - REDIS_URL
   - Redis URI and protocol (similar to MONGODB_URI) for 5e-srd-api. 
   - No need to run local redis-server.
-- MONGODB_URI_DEV
-  - Use if you want an alternative database link for development
-
-## Additional Variables
 - MONGODB_URI
-  - If you are running in production mode
-  - Duplicate value for both to be safe.
+  - Production database for user data
+- MONGODB_URI_DEV
+  - Development database for user data
+- MONGODB_URI_RULESET
+  - Database for ruleset data (read-only)
+
+### Additional Environment Variables
+- PORT
+  - Main port for the web application, defaults to 8080
+- PORT_API
+  - Separate port for the API, defaults to 3005
 - NODE_ENV
   - Set to 'production' if you are building for deployment
   - Set to 'development' if you are developing
@@ -29,71 +40,20 @@ MONGODB_URI=uri
 - SILENCE_WEBPACK=1
   - Add this flag if you want to silence webpack output
 
-# GitHub Ettiquette
+## GitHub Ettiquette
 
 - Commit new features to SEPARATE BRANCHES. Never commit to master.
 - Pull often and frequently.
 - Ensure that your commits are frequent and descriptive.
 
-# MERN Stack Template Project
-
-This is a MERN stack template for future projects of mine.
-
-## Getting Started
-
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
-
-### Prerequisites
-
-- Download Node LTS version here: <https://nodejs.org/en/download/>
-- Download VSCode from here: <https://code.visualstudio.com/>
-- Install both before continuing
-- Download MongoDB from here <https://www.mongodb.com/download-center/community> don’t do anything with it just yet.
-
-### Installing & Starting
-
-- Open Visual Studio Code (Referred to as VSCode)
-- In the left side bar, click the square icon to open the extensions menu
-- Install the extensions:
-  - Prettier
-  - EditorConfig for VSCode
-  - Visual Studio Intellicode
-  - ESLint
-- After installing ESLint, go into its settings by clicking the cog in it’s listing in the extenstion tab, and clicking ‘Configure Extenstion Settings’
-- In here, enable auto fix on save.
-  Once thats done, close the ESLint tab that is open, and press Command-Shift-P on Mac, or Ctrl-Shift-P on windows, and type ‘Git Clone’ into the box that appears and hit enter.
-- In the box that then comes up, enter:
-  <https://github.com/bradwindy/mern-stack-template>
-- Then press enter, then once that is done, click open in the bottom right.
-- Once the project loads up, on both Mac and windows, press Ctrl-BACKTICK (the key next to the number 1 on your kb). This opens terminal and is a super useful shortcut :)
-- Checkout working by typing: `git checkout --track origin/working`
-- In the terminal type `npm install` and hit enter.
-- Once that finshes, the project is ready to go :)
-
-- Open the zip file mongodb came in, for mac users, go to the bin folder and double click mongod to start mongoDB. Windows users look for a similar file and run it.
-- Start the web page and server by typing `npm run dev` into terminal.
-- The site is now available at <http://0.0.0.0:8080/>
-
-## Running the tests
-
-Test information and breakdown to come soon :)
-
-## Deployment
-
-Deployment information coming soon :)
-
 ## Built With
 
-- [MongoDB](https://github.com/mongodb/mongo) - Database used. Will change in the future when API used instead.
+- [MongoDB](https://github.com/mongodb/mongo) - Database used.
 - [React](https://github.com/facebook/react) - Frontend JavaScript library.
 - [Express](https://github.com/expressjs/express) -Server/routing API for web app.
 - [Node](https://github.com/nodejs/node) - Backend JS runtime.
 - [Webpack](https://github.com/webpack/webpack) - JS bundler for performance and ease of deployment.
 - [Sass](https://github.com/sass/sass) - Used for easier CSS styling.
 - [Bootstrap](https://github.com/twbs/bootstrap) - Frontend framework for website elements and styling.
-
-## Author
-
-- **Bradley Windybank**
-- **arkon**
-- A fork of <https://github.com/arkon/MERN-boilerplate>
+- [Bagelbits' 5e SRD API](https://github.com/5e-bits/5e-srd-api) - API of the 5e ruleset, minorly altered for this project.
+- [Bradley Windybank's MERN stack template](https://github.com/bradwindy/mern-stack-template) - Starter project for the beginning of development.
